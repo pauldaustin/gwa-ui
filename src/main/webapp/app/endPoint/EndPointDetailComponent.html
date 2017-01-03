@@ -1,0 +1,10 @@
+<div *ngIf="endPoint">
+  <h2>{{endPoint.name}} details!</h2>
+  <div>
+    <label>id: </label>{{endPoint.id}}</div>
+  <div>
+    <label>name: </label>
+    <input [(ngModel)]="endPoint.name" placeholder="name" />
+  </div>
+  <button (click)="goBack()">Back</button>
+</div>

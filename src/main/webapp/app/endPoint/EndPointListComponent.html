@@ -1,0 +1,14 @@
+<h2>End Points</h2>
+<ul class="endPoints">
+  <li *ngFor="let endPoint of endPoints"
+    [class.selected]="endPoint === selectedEndPoint"
+    (click)="onSelect(endPoint)">
+    <span class="badge">{{endPoint.id}}</span> {{endPoint.name}}
+  </li>
+</ul>
+<div *ngIf="selectedEndPoint">
+  <h2>
+    {{selectedEndPoint.name | uppercase}} is my endPoint
+  </h2>
+  <button (click)="gotoDetail()">View Details</button>
+</div>
