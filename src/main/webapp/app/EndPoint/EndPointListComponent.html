@@ -1,0 +1,31 @@
+
+<div class="panel panel-default no-footer table-responsive">
+  <div class="panel-heading">
+    <h3 class="panel-title">End Points</h3>
+  </div>
+  <table role="table" cellspacing="0" cellpadding="0" class="table table-striped" style="width:100%">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let endPoint of endPoints"
+        [class.selected]="endPoint === selectedEndPoint"
+        (click)="onSelect(endPoint)"
+      >
+        <td><a [routerLink]="['/endPoints', endPoint.id]">{{endPoint.id}}</a></td>
+        <td>{{endPoint.title}}</td>
+        <td>
+          <button (click)="delete(endPoint); $event.stopPropagation()" class="btn btn-default btn-xs" type="button" name="delete" aria-label="Delete">
+            <span class="fa fa-trash" aria-hidden="true"></span>
+            <span class="sr-only">Delete</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

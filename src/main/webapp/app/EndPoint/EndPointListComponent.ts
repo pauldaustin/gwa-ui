@@ -15,13 +15,24 @@ export class EndPointListComponent implements OnInit {
   selectedEndPoint: EndPoint;
 
   constructor(
-    private router: Router,
-    private endPointService: EndPointService) { }
+    protected router: Router,
+    protected endPointService: EndPointService) { }
 
   getEndPoints(): void {
     this.endPointService.getEndPoints().then(endPoints => this.endPoints = endPoints);
   }
 
+  delete(endPoint: EndPoint): void {
+    this.endPointService
+      .delete(endPoint.id)
+      .then(() => {
+        this.endPoints = this.endPoints.filter(e => e !== endPoint);
+        if (this.selectedEndPoint === endPoint) {
+          this.selectedEndPoint = null;
+        }
+      });
+  }
+  
   ngOnInit(): void {
     this.getEndPoints();
   }
@@ -33,4 +44,6 @@ export class EndPointListComponent implements OnInit {
   gotoDetail(): void {
     this.router.navigate(['/endPoints', this.selectedEndPoint.id]);
   }
+  
+  
 }

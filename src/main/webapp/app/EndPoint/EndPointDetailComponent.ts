@@ -29,4 +29,9 @@ export class EndPointDetailComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
+  
+  save(): void {
+    this.endPointService.update(this.endPoint)
+      .then(() => this.goBack());
+  }
 }

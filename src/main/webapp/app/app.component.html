@@ -1,0 +1,68 @@
+<header class="header">
+  <nav id="adminMainMenu" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+  
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#headerMenu" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar" aria-hidden="true"></span>
+          <span class="icon-bar" aria-hidden="true"></span>
+          <span class="icon-bar" aria-hidden="true"></span>
+        </button>
+  
+        <div class="navbar-brand">
+          <a href="http://www2.gov.bc.ca/">
+            <img src="images/gov3_bc_logo.png" class="hidden-xs" />
+            <img src="images/gov3_bc_logo_mobile.png" class="visible-xs-inline-block" />
+          </a>
+          <a routerLink="/endPoints/my"><span class="navbar-brand-title">GW Admin</span></a>
+        </div>
+      </div>
+  
+      <div id="headerMenu" class="navbar-collapse collapse" aria-expanded="false">
+        <ul class="nav navbar-nav navbar-left">
+          <li>
+            <a routerLink="/endPoints/my" routerLinkActive="active" title="My End Points">My End Points</a>
+          </li>
+          <li>
+            <a routerLink="/endPoints" title="All End Points">All End Points</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+    
+<footer class="footer">
+  <nav id="footerMenu" class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+      <div class="navbar-header">
+
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#footerMenuBar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar" aria-hidden="true"></span>
+          <span class="icon-bar" aria-hidden="true"></span>
+          <span class="icon-bar" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div id="footerMenuBar" class="navbar-collapse collapse" aria-expanded="false">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="http://www2.gov.bc.ca/gov/content/about-gov-bc-ca" title="About gov.bc.ca">About gov.bc.ca</a></li>
+          <li><a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" title="Disclaimer">Disclaimer</a></li>
+          <li><a href="http://www2.gov.bc.ca/gov/content/home/privacy" title="Privacy">Privacy</a></li>
+          <li><a href="http://www2.gov.bc.ca/gov/content/home/accessibility" title="Accessibility">Accessibility</a></li>
+          <li><a href="http://www2.gov.bc.ca/gov/content/home/copyright" title="Copyright">Copyright</a></li>
+          <li><a href="http://www2.gov.bc.ca/gov/content/home/contact-us" title="Contact Us">Contact Us</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <div class="version"><small></small></div>
+</footer>

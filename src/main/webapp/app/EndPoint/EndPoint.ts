@@ -2,7 +2,7 @@ import { HttpMethod } from '../model/HttpMethod';
 
 export class EndPoint {
   id : String;
-  name : String;
+  title : String;
   ownerUserName?: String;
   enabled?: boolean;
   httpMethods?: Array<HttpMethod>; 
