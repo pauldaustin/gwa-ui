@@ -5,11 +5,11 @@ import { Location }               from '@angular/common';
 
 import { EndPoint }         from './EndPoint';
 import { EndPointService }  from './EndPointService';
+
 @Component({
   moduleId: module.id,
   selector: 'endpoint-detail',
-  templateUrl: 'EndPointDetailComponent.html',
-  styleUrls: [ 'EndPointDetailComponent.css' ]
+  templateUrl: 'EndPointDetailComponent.html'
 })
 export class EndPointDetailComponent implements OnInit {
   endPoint: EndPoint;

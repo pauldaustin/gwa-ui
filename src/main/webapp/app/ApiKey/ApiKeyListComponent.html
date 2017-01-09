@@ -1,0 +1,36 @@
+<div class="no-footer table-responsive">
+  <table role="table" cellspacing="0" cellpadding="0" class="table table-striped" style="width:100%">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User Title</th>
+        <th>Type</th>
+        <th>Enabled</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let apiKey of apiKeys"
+      >
+        <td>{{apiKey.id}}</td>
+        <td>{{apiKey.user_title}}</td>
+        <td>{{apiKey.created_by}}</td>
+        <td [ngSwitch]="apiKey.developer_key">
+          <span *ngSwitchCase="true">Developer</span>
+          <span *ngSwitchDefault>Application</span>
+        </td>
+        <td [ngSwitch]="apiKey.enabled">
+          <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Enabled"></span>
+          <span *ngSwitchDefault class="fa fa-times" style="color:red" title="Disabled"></span>
+        </td>
+        <td>
+          <button (click)="delete(apiKey); $event.stopPropagation()" class="btn btn-default btn-xs" type="button" name="delete" aria-label="Delete">
+            <span class="fa fa-trash" aria-hidden="true"></span>
+            <span class="sr-only">Delete</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

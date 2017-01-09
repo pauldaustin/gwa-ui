@@ -7,7 +7,7 @@ import { EndPoint } from './EndPoint';
 
 @Injectable()
 export class EndPointService {
-  private serviceUrl = 'api/endPoints';  // URL to web api
+  private serviceUrl = 'http://localhost:8080/gwa/data/endPoints';  // URL to web api
  
   private jsonHeaders = new Headers({'Content-Type': 'application/json'});
 
@@ -16,19 +16,52 @@ export class EndPointService {
   getEndPoints(): Promise<EndPoint[]> {
     return this.http.get(this.serviceUrl)
       .toPromise()
-      .then(response => response.json().data as EndPoint[])
+      .then(response => {
+        let endPoints: EndPoint[] = [];
+        let data = response.json().data;
+        if (data) {
+          response.json().data.forEach((endPointJson: any) => {
+            let endPoint = this.toEndPoint(endPointJson);
+            endPoints.push(endPoint);
+          });
+        }
+        return endPoints;
+      })
       .catch(this.handleError);
   }
 
+  toEndPoint(endPointJson: any) : EndPoint {
+    let endPoint = new EndPoint();
+    Object.assign(endPoint, endPointJson);
+    return endPoint;
+  }
+
   getMyEndPoints(): Promise<EndPoint[]> {
-    return this.getEndPoints();
+    const url = `${this.serviceUrl}/my`;
+    return this.http.get(url)
+      .toPromise()
+      .then(response => {
+        let endPoints: EndPoint[] = [];
+        let data = response.json().data;
+        if (data) {
+          response.json().data.forEach((endPointJson: any) => {
+            let endPoint = this.toEndPoint(endPointJson);
+            endPoints.push(endPoint);
+          });
+        }
+        return endPoints;
+      })
+      .catch(this.handleError);
   }
 
   getEndPoint(id: String): Promise<EndPoint> {
     const url = `${this.serviceUrl}/${id}`;
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json().data as EndPoint)
+      .then(response => {
+        let data = response.json().data;
+        return this.toEndPoint(data);
+      })
       .catch(this.handleError);
   }
 

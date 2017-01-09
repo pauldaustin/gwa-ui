@@ -1,42 +1,31 @@
 import { HttpMethod } from '../model/HttpMethod';
+import { ApiKey } from '../ApiKey/ApiKey';
 
 export class EndPoint {
   id : String;
   title : String;
-  ownerUserName?: String;
-  enabled?: boolean;
-  httpMethods?: Array<HttpMethod>; 
+  created_by: String = "Unknown";
+  upstream_url: String;
+  upstream_username: String;
+  upstream_password: String;
+  enabled: boolean = true;
+  allowed_http_methods: Array<HttpMethod> = [0];
+  _apiKeys: Array<ApiKey> = [];
   
+  get api_keys(): Array<ApiKey> {
+    return this._apiKeys;
+  }
+   
+  get apiKeys(): Array<ApiKey> {
+    return this._apiKeys;
+  }
+  
+  set api_keys(apiKeysJson) {
+    let apiKeys = this._apiKeys;
+    apiKeysJson.forEach((apiKeyJson: any) => {
+      let apiKey = new ApiKey();
+      Object.assign(apiKey, apiKeyJson);
+      apiKeys.push(apiKey);
+    });
+  }
 }
-/*
-API Mapping (Mapping on *.api.gov.bc.ca or *.apps.gov.bc.ca)
-  API Keys
-    Enable support for Developers to  add keys
-    Add Application API Keys
-    Disable a Developer Key
-    Delete an API key
-    Define Rate limits for an API key
-    Define default rate limit for new Developer API keys
-  Flag indicating if ACL should be applied.
-  List of global groups that can access the endpoint in addition t  the endpoint's group
-Apps Mapping (Mapping on (*. or gwa.).apps.gov.bc.ca, secured by Siteminder)
-  Flag indicating if ACL should be applied.
-  List of global groups that can access the endpoint in addition t  the endpoint's group
-Private Endpoint
-  URL (Url of the service t  proxy)
-  Username
-  Password
-Kong Plugin Configuration
-  Supported plugins will be implemented via a simple configuration file per Kong plugin. This will allow addition of new plugins easily.
-  Rate limiting
-    Assigned t  each API Key if supported by owner. Defaults can be defined t  be used for new API keys.
-    Second
-    Minute
-    Hour
-    Day
-    Month
-    Year
-  ACL
-    Each endpoint will have a Kong group named GWA_<EndpointName>
-List of users that can access the endpoint.
-*/

@@ -1,7 +1,7 @@
 {
-  "name": "angular-quickstart",
+  "name": "ca.bc.gov.gwa",
   "version": "1.0.0",
-  "description": "QuickStart package.json from the documentation, supplemented with testing support",
+  "description": "Gateway Admin",
   "scripts": {
     "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",
     "e2e": "tsc && concurrently \"http-server -s\" \"protractor protractor.config.js\" --kill-others --success first",
@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "proprietary",
   "dependencies": {
     "@angular/common": "~2.4.0",
     "@angular/compiler": "~2.4.0",
@@ -28,8 +28,10 @@
     "angular-in-memory-web-api": "~0.2.4",
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
+    "moment": "^2.17.1",
+    "ng2-bootstrap": "^1.1.16-11",
     "rxjs": "5.0.1",
-    "systemjs": "0.19.40", 
+    "systemjs": "0.19.40",
     "zone.js": "^0.7.4"
   },
   "devDependencies": {

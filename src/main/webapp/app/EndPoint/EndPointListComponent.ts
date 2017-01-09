@@ -7,8 +7,7 @@ import { EndPointService } from './EndPointService';
 @Component({
   moduleId: module.id,
   selector: 'endPoint-list',
-  templateUrl: 'EndPointListComponent.html',
-  styleUrls: [ 'EndPointListComponent.css' ]
+  templateUrl: 'EndPointListComponent.html'
 })
 export class EndPointListComponent implements OnInit {
   endPoints: EndPoint[];

@@ -3,31 +3,34 @@ import { BrowserModule }  from '@angular/platform-browser';
 import { FormsModule }    from '@angular/forms';
 import { HttpModule }    from '@angular/http';
  
+import { AccordionModule } from 'ng2-bootstrap';
+import { TabsModule } from 'ng2-bootstrap';
+ 
 import { AppComponent }             from './app.component';
 import { EndPointDetailComponent }  from './EndPoint/EndPointDetailComponent';
 import { EndPointListComponent }    from './EndPoint/EndPointListComponent';
 import { EndPointListMyComponent }  from './EndPoint/EndPointListMyComponent';
 import { EndPointService }          from './EndPoint/EndPointService';
 
-import { AppRoutingModule }         from './app-routing.module';
+import { ApiKeyListComponent }      from './ApiKey/ApiKeyListComponent';
 
-// Imports for loading & configuring the in-memory web api
-import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService }  from './in-memory-data.service';
+import { AppRoutingModule }         from './app-routing.module';
 
 @NgModule({
   imports: [
     BrowserModule, 
     FormsModule,
     HttpModule,
-    InMemoryWebApiModule.forRoot(InMemoryDataService),
+    AccordionModule.forRoot(),
+    TabsModule.forRoot(),
     AppRoutingModule
   ],
   declarations: [
     AppComponent,
     EndPointDetailComponent,
     EndPointListComponent,
-    EndPointListMyComponent
+    EndPointListMyComponent,
+    ApiKeyListComponent
   ],
   providers: [ EndPointService ],
   bootstrap: [ AppComponent ]
