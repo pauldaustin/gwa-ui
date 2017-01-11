@@ -5,7 +5,9 @@ import { HttpModule }    from '@angular/http';
  
 import { AccordionModule } from 'ng2-bootstrap';
 import { TabsModule } from 'ng2-bootstrap';
- 
+
+import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
+
 import { AppComponent }             from './app.component';
 import { EndPointDetailComponent }  from './EndPoint/EndPointDetailComponent';
 import { EndPointListComponent }    from './EndPoint/EndPointListComponent';
@@ -23,7 +25,10 @@ import { AppRoutingModule }         from './app-routing.module';
     HttpModule,
     AccordionModule.forRoot(),
     TabsModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    ConfirmationPopoverModule.forRoot({
+      confirmButtonType: 'danger'
+    })
   ],
   declarations: [
     AppComponent,

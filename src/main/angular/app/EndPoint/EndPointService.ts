@@ -7,7 +7,7 @@ import { EndPoint } from './EndPoint';
 
 @Injectable()
 export class EndPointService {
-  private serviceUrl = 'http://localhost:8080/gwa/data/endPoints';  // URL to web api
+  private serviceUrl = '/gwa/data/endPoints';  // URL to web api
  
   private jsonHeaders = new Headers({'Content-Type': 'application/json'});
 
@@ -69,9 +69,9 @@ export class EndPointService {
     return this.http
       .post(this.serviceUrl, JSON.stringify({name: name}), {headers: this.jsonHeaders})
       .toPromise()
-      .then(res => res.json().data)
+      .then(response => response.json().data)
       .catch(this.handleError);
-  }
+  } 
   
   update(endPoint: EndPoint): Promise<EndPoint> {
     const url = `${this.serviceUrl}/${endPoint.id}`;
@@ -84,11 +84,11 @@ export class EndPointService {
       .catch(this.handleError);
   }
   
-  delete(id: String): Promise<void> {
+  delete(id: String): Promise<any> {
     const url = `${this.serviceUrl}/${id}`;
     return this.http.delete(url, {headers: this.jsonHeaders})
       .toPromise()
-      .then(() => null)
+      .then(response => response.json().data)
       .catch(this.handleError);
   }
 

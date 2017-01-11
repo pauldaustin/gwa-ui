@@ -27,5 +27,19 @@ export class EndPoint {
       Object.assign(apiKey, apiKeyJson);
       apiKeys.push(apiKey);
     });
+  } 
+
+  toJSON(): any {
+    return {
+      id : this.id,
+      title : this.title,
+      created_by: this.created_by,
+      upstream_url: this.upstream_url,
+      upstream_username: this.upstream_username,
+      upstream_password: this.upstream_password,
+      enabled: this.enabled,
+      allowed_http_methods: this.allowed_http_methods,
+      api_keys: this._apiKeys
+    };
   }
 }

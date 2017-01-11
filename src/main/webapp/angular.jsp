@@ -1,7 +1,14 @@
+<%@ page
+  contentType="text/html; charset=UTF-8"
+  pageEncoding="UTF-8"
+  session="false"
+%><%@
+  taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><c:set var="request" value="${pageContext.request}" />
 <!DOCTYPE html>
 <html>
   <head>
-    <script>document.write('<base href="' + document.location + '" />');</script>
+    <base href="${request.contextPath}/" />
     <title>GW Admin</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,18 +20,8 @@
     <link href="https://cdn.datatables.net/scroller/1.2.2/css/dataTables.scroller.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.datatables.net/plug-ins/1.10.6/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
 
-
     <link href="css/rs.css" rel="stylesheet" type="text/css">
     <link href="css/bcgov.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="styles.css">
-    
-    <!-- Polyfills for older browsers -->
-    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
-
-    <script src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
-    <script src="https://unpkg.com/reflect-metadata@0.1.8"></script>
-    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -38,13 +35,13 @@
     <script type="text/javascript" src="js/rs.js"></script>
 
 
-    <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.error(err); });
-    </script>
+    <script src="shim.min.js"></script>
+    <script src="zone.min.js"></script>
+    <script>window.module = 'aot';</script>
   </head>
 
   <body>
     <my-app>Loading...</my-app>
   </body>
+  <script src="dist/build.js"></script>
 </html>

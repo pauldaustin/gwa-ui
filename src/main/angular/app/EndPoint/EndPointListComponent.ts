@@ -24,11 +24,13 @@ export class EndPointListComponent implements OnInit {
   delete(endPoint: EndPoint): void {
     this.endPointService
       .delete(endPoint.id)
-      .then(() => {
-        this.endPoints = this.endPoints.filter(e => e !== endPoint);
-        if (this.selectedEndPoint === endPoint) {
-          this.selectedEndPoint = null;
-        }
+      .then((data) => {
+        if (data.deleted) {
+          this.endPoints = this.endPoints.filter(e => e !== endPoint);
+          if (this.selectedEndPoint === endPoint) {
+            this.selectedEndPoint = null;
+          }
+        } 
       });
   }
   
