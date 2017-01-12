@@ -1,9 +1,20 @@
+<div class="row">
+ <div class="col-lg-6">
+    <div class="input-group">
+      <input #userTitle placeholder="Application Name" type="text" required="true" class="form-control">
+      <span class="input-group-btn">
+        <button (click)="create(userTitle.value); userTitle.value=''" class="btn btn-default btn-success" type="button">Add API Key</button>
+      </span>
+    </div>
+  </div>
+</div>
+
 <div class="no-footer table-responsive">
   <table role="table" cellspacing="0" cellpadding="0" class="table table-striped" style="width:100%">
     <thead>
       <tr>
         <th>ID</th>
-        <th>User Title</th>
+        <th>Application or User Name</th>
         <th>Type</th>
         <th>Enabled</th>
         <th>Actions</th>
@@ -11,11 +22,10 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let apiKey of apiKeys"
+        *ngFor="let apiKey of endPoint.apiKeys"
       >
         <td>{{apiKey.id}}</td>
         <td>{{apiKey.user_title}}</td>
-        <td>{{apiKey.created_by}}</td>
         <td [ngSwitch]="apiKey.developer_key">
           <span *ngSwitchCase="true">Developer</span>
           <span *ngSwitchDefault>Application</span>
@@ -25,7 +35,9 @@
           <span *ngSwitchDefault class="fa fa-times" style="color:red" title="Disabled"></span>
         </td>
         <td>
-          <button (click)="delete(apiKey); $event.stopPropagation()" class="btn btn-default btn-xs btn-danger" type="button" name="delete" aria-label="Delete">
+          <button (confirm)="delete(apiKey)" class="btn btn-default btn-xs btn-danger" type="button" name="delete" aria-label="Delete"
+            mwlConfirmationPopover title="Delete API Key?" message="Are you sure you want to delete API Key?</br /> <b>{{apiKey.id}}</b>" placement="left"
+          >
             <span class="fa fa-trash" aria-hidden="true"></span>
             <span class="sr-only">Delete</span>
           </button>

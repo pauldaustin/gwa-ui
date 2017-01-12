@@ -1,12 +1,19 @@
 package ca.bc.gov.gwa.util;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import ca.bc.gov.gwa.util.JsonParser.EventType;
+
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 
 public interface Json {
   static final String FILE_EXTENSION = "json";
@@ -65,6 +72,46 @@ public interface Json {
     } catch (final IOException e) {
     }
     return stringWriter.toString();
+  }
+
+  static void writeJsonList(final Session session, final String query,
+    final HttpServletResponse response) throws IOException {
+    response.setContentType("application/json");
+    try (
+      PrintWriter writer = response.getWriter()) {
+      final ResultSet resultSet = session.execute(query);
+      writer.println("{\"data\":[");
+      boolean first = true;
+      for (final Row row : resultSet) {
+        if (first) {
+          first = false;
+        } else {
+          writer.println(',');
+        }
+        final String json = row.getString(0);
+        writer.print(json);
+      }
+      writer.println();
+      writer.println("]}");
+    }
+  }
+
+  static void writeJsonObject(final Session session, final String query,
+    final HttpServletResponse response) throws IOException {
+    final ResultSet resultSet = session.execute(query);
+    final Row row = resultSet.one();
+    if (row == null) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    } else {
+      response.setContentType("application/json");
+      try (
+        PrintWriter writer = response.getWriter()) {
+        writer.println("{\"data\":");
+        final String json = row.getString(0);
+        writer.print(json);
+        writer.println("}");
+      }
+    }
   }
 
 }

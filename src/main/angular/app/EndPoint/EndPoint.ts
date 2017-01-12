@@ -2,16 +2,24 @@ import { HttpMethod } from '../model/HttpMethod';
 import { ApiKey } from '../ApiKey/ApiKey';
 
 export class EndPoint {
-  id : String;
-  title : String;
-  created_by: String = "Unknown";
-  upstream_url: String;
-  upstream_username: String;
-  upstream_password: String;
+  id : string;
+  title : string;
+  created_by: string = "Unknown";
+  upstream_url: string;
+  upstream_username: string;
+  upstream_password: string;
   enabled: boolean = true;
   allowed_http_methods: Array<HttpMethod> = [0];
   _apiKeys: Array<ApiKey> = [];
-  
+
+  apiKeyAdd(apiKey: ApiKey) {
+    this._apiKeys.push(apiKey);
+  }
+
+  apiKeyRemove(apiKey: ApiKey) {
+    this._apiKeys = this._apiKeys.filter(key => key !== apiKey);
+  }
+
   get api_keys(): Array<ApiKey> {
     return this._apiKeys;
   }
@@ -21,12 +29,16 @@ export class EndPoint {
   }
   
   set api_keys(apiKeysJson) {
-    let apiKeys = this._apiKeys;
-    apiKeysJson.forEach((apiKeyJson: any) => {
-      let apiKey = new ApiKey();
-      Object.assign(apiKey, apiKeyJson);
-      apiKeys.push(apiKey);
-    });
+    if (apiKeysJson) {
+      let apiKeys = this._apiKeys;
+      apiKeysJson.forEach((apiKeyJson: any) => {
+        let apiKey = new ApiKey();
+        Object.assign(apiKey, apiKeyJson);
+        apiKeys.push(apiKey);
+      });
+    } else {
+      this._apiKeys.length = 0;
+    }
   } 
 
   toJSON(): any {

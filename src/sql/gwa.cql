@@ -65,7 +65,7 @@ INSERT INTO gwa.end_point (id,allowed_http_methods,api_keys,created_by,enabled,r
     {
       id:b5cc4c71-5d61-4073-b127-1269427fe0ff,
       user_title:'IDIR\PXAUSTIN',
-      developer_key:false,
+      developer_key:true,
       enabled:true,
       rate_limit:NULL
     }
@@ -87,7 +87,7 @@ INSERT INTO gwa.end_point (id,allowed_http_methods,api_keys,created_by,enabled,r
     {
       id:b5cc4c71-5d61-4073-b127-1269427fe0fd,
       user_title:'IDIR\PXAUSTIN',
-      developer_key:false,
+      developer_key:true,
       enabled:true,
       rate_limit:NULL
     }

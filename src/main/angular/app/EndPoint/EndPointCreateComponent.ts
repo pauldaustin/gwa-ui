@@ -1,8 +1,11 @@
 import 'rxjs/add/operator/switchMap';
+
 import {
   Component,
   Input
-}            from '@angular/core';
+} from '@angular/core';
+
+import { Router } from '@angular/router';
 
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
@@ -20,6 +23,7 @@ export class EndPointCreateComponent {
   @Input() addEndPointModal: ModalDirective;
    
   constructor(
+    private router: Router,
     private endPointService: EndPointService
   ) {}
  
@@ -28,7 +32,11 @@ export class EndPointCreateComponent {
   }
 
   save(): void {
-   // this.endPointService.update(this.endPoint)
-    //  .then(() => this.goBack());
+   this.endPointService.create(this.endPoint)
+     .then((data) => {
+       const endPointId = data.id;
+       this.addEndPointModal.hide();
+       this.router.navigate(['/endPoints', endPointId]);
+     });
   }
 }

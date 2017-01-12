@@ -1,7 +1,7 @@
 export class ApiKey {
-  id : String;
+  id : string;
   developer_key: boolean;
-  user_title : String;
+  user_title : string;
   enabled: boolean = true;
-  rate_limit: String;
+  rate_limit: string;
 }
