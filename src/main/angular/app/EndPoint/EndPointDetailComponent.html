@@ -4,52 +4,33 @@
     <tab heading="End Point: {{endPoint.id}}" active="true">
       <form #endPointForm="ngForm" class="form-horizontal" role="form">
         <accordion>
-
           <accordion-group heading="Basic" isOpen="true">
-            <div class="form-group" *ngIf="endPoint.id">
-              <label class="col-sm-2 control-label">ID</label>
-              <div class="col-sm-10">
-                <p class="form-control-static">{{endPoint.id}}</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="title" class="col-sm-2 control-label" >Title</label>
-              <div class="col-sm-10">
-                <input #title="ngModel" name="title" [(ngModel)]="endPoint.title" placeholder="title" type="text" required="true" class="form-control"  />
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="title" class="col-sm-2 control-label" >Enabled</label>
-              <div class="col-sm-10">
-                <input name="enabled" [(ngModel)]="endPoint.enabled" placeholder="enabled" type="checkbox" class="form-control" />
-              </div>
-            </div>
+            <form-group-input title="ID" *ngIf="endPoint.id">
+              <p class="form-control-static">{{endPoint.id}}</p>
+            </form-group-input>
+            <form-group-input [form]="form" name="title" title="Title">
+              <input #title="ngModel" name="title" [(ngModel)]="endPoint.title" placeholder="title" type="text" required="true" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="enabled" title="Enabled">
+              <input name="enabled" [(ngModel)]="endPoint.enabled" placeholder="enabled" type="checkbox" class="form-control" />
+            </form-group-input>
           </accordion-group>
           
           <accordion-group heading="Upstream Service" isOpen="true">
-            <div class="form-group">
-              <label for="upstreamUrl" class="col-sm-2 control-label" >Upstream URL</label>
-              <div class="col-sm-10">
-                <input name="upstreamUrl" [(ngModel)]="endPoint.upstream_url" placeholder="http://server.com/" type="url" required="true" class="form-control"  />
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="upstreamUsername" class="col-sm-2 control-label" >Upstream Username</label>
-              <div class="col-sm-10">
-                <input name="upstreamUsername" [(ngModel)]="endPoint.upstream_username" placeholder="Username" type="text" class="form-control"  />
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="upstreamPassword" class="col-sm-2 control-label" >Upstream Password</label>
-              <div class="col-sm-10">
-                <input name="upstreamPassword" [(ngModel)]="endPoint.upstream_password" placeholder="Password" type="password" class="form-control"  />
-              </div>
-            </div>
+            <form-group-input [form]="form" name="upstreamUrl" title="Upstream URL">
+              <input name="upstreamUrl" [(ngModel)]="endPoint.upstream_url" placeholder="http://server.com/" type="url" required="true" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="upstreamUsername" title="Upstream Username">
+              <input name="upstreamUsername" [(ngModel)]="endPoint.upstream_username" placeholder="Username" type="text" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="upstreamPassword" title="Upstream Password">
+              <input name="upstreamPassword" [(ngModel)]="endPoint.upstream_password" placeholder="Password" type="password" class="form-control"  />
+            </form-group-input>
           </accordion-group>
           
         </accordion>
         <div class="btn-toolbar" role="toolbar">
-          <a (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</a>
+          <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
           <button (click)="save()" class="btn btn-sm btn-primary" role="button" [disabled]="!endPointForm.form.valid">Save</button>
         </div>
       </form>

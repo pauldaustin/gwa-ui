@@ -1,6 +1,8 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
-import { FormsModule }    from '@angular/forms';
+
+import { FormsModule } from '@angular/forms';
+
 import { HttpModule }    from '@angular/http';
  
 import {
@@ -12,6 +14,9 @@ import {
 import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
 
 import { AppComponent }             from './app.component';
+import { FormGroupInput }           from './FormGroupInput';
+
+
 import { EndPointCreateComponent }  from './EndPoint/EndPointCreateComponent';
 import { EndPointDetailComponent }  from './EndPoint/EndPointDetailComponent';
 import { EndPointListComponent }    from './EndPoint/EndPointListComponent';
@@ -24,7 +29,7 @@ import { AppRoutingModule }         from './app-routing.module';
 
 @NgModule({
   imports: [
-    BrowserModule, 
+    BrowserModule,
     FormsModule,
     HttpModule,
     AccordionModule.forRoot(),
@@ -37,6 +42,7 @@ import { AppRoutingModule }         from './app-routing.module';
   ],
   declarations: [
     AppComponent,
+    FormGroupInput,
     EndPointCreateComponent,
     EndPointDetailComponent,
     EndPointListComponent,
