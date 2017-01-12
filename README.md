@@ -1,3 +1,3 @@
-# sgw
+# Kong API Gateway Administration
 
-test
+This project contains a web interface for managing the KONG API Gateway. 

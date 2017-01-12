@@ -1,0 +1,42 @@
+<div *ngIf="endPoint">
+
+  <tabset>
+    <tab heading="End Point: {{endPoint.id}}" active="true">
+      <form #endPointForm="ngForm" class="form-horizontal" role="form">
+        <accordion>
+          <accordion-group heading="Basic" isOpen="true">
+            <form-group-input title="ID" *ngIf="endPoint.id">
+              <p class="form-control-static">{{endPoint.id}}</p>
+            </form-group-input>
+            <form-group-input [form]="form" name="title" title="Title">
+              <input #title="ngModel" name="title" [(ngModel)]="endPoint.title" placeholder="title" type="text" required="true" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="enabled" title="Enabled">
+              <input name="enabled" [(ngModel)]="endPoint.enabled" placeholder="enabled" type="checkbox" class="form-control" />
+            </form-group-input>
+          </accordion-group>
+          
+          <accordion-group heading="Upstream Service" isOpen="true">
+            <form-group-input [form]="form" name="upstreamUrl" title="Upstream URL">
+              <input name="upstreamUrl" [(ngModel)]="endPoint.upstream_url" placeholder="http://server.com/" type="url" required="true" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="upstreamUsername" title="Upstream Username">
+              <input name="upstreamUsername" [(ngModel)]="endPoint.upstream_username" placeholder="Username" type="text" class="form-control"  />
+            </form-group-input>
+            <form-group-input [form]="form" name="upstreamPassword" title="Upstream Password">
+              <input name="upstreamPassword" [(ngModel)]="endPoint.upstream_password" placeholder="Password" type="password" class="form-control"  />
+            </form-group-input>
+          </accordion-group>
+          
+        </accordion>
+        <div class="btn-toolbar" role="toolbar">
+          <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
+          <button (click)="save()" class="btn btn-sm btn-primary" role="button" [disabled]="!endPointForm.form.valid">Save</button>
+        </div>
+      </form>
+    </tab>
+    <tab *ngIf="endPoint.id" heading="API Keys">
+      <apiKey-list [endPoint]="endPoint"></apiKey-list>
+    </tab>
+  </tabset>
+</div>

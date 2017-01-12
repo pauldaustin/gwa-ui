@@ -1,0 +1,60 @@
+
+<div class="panel panel-default no-footer table-responsive">
+  <div class="panel-heading">
+    <h3 class="panel-title">End Points</h3>
+  </div>
+  <table role="table" cellspacing="0" cellpadding="0" class="table table-striped" style="width:100%">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Created By</th>
+        <th>Enabled</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let endPoint of endPoints"
+        [class.selected]="endPoint === selectedEndPoint"
+        (click)="onSelect(endPoint)"
+      >
+        <td><a [routerLink]="['/endPoints', endPoint.id]">{{endPoint.id}}</a></td>
+        <td>{{endPoint.title}}</td>
+        <td>{{endPoint.created_by}}</td>
+        <td [ngSwitch]="endPoint.enabled">
+          <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Enabled"></span>
+          <span *ngSwitchDefault class="fa fa-times" style="color:red" title="Disabled"></span>
+        </td>
+        <td>
+          <button (confirm)="delete(endPoint)" class="btn btn-default btn-xs btn-danger" type="button" name="delete" aria-label="Delete"
+            mwlConfirmationPopover title="Delete End Point?" message="Are you sure you want to delete End Point?</br /> <b>{{endPoint.id}}</b>" placement="left"
+          >
+            <span class="fa fa-trash" aria-hidden="true"></span>
+            <span class="sr-only">Delete</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="btn-toolbar" role="toolbar">
+  <a (click)="addEndPointModal.show()" class="btn btn-sm btn-primary" role="button">Add End Point</a>
+</div>
+
+<div bsModal #addEndPointModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEndPointLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="addEndPointModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Add End Point</h4>
+      </div>
+      <div class="modal-body">
+        <endpoint-create [addEndPointModal]="addEndPointModal"></endpoint-create>
+      </div>
+    </div>
+  </div>
+</div>
