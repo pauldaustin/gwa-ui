@@ -35,13 +35,13 @@
     <script type="text/javascript" src="js/rs.js"></script>
 
 
-    <script src="shim.min.js"></script>
-    <script src="zone.min.js"></script>
+    <script src="js/shim.min.js"></script>
+    <script src="js/zone.min.js"></script>
     <script>window.module = 'aot';</script>
   </head>
 
   <body>
     <my-app>Loading...</my-app>
   </body>
-  <script src="dist/build.js"></script>
+  <script src="aot/dist/build.js"></script>
 </html>

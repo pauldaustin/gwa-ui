@@ -49,12 +49,12 @@
           
         </accordion>
         <div class="btn-toolbar" role="toolbar">
-          <a (click)="goBack()" class="btn btn-sm btn-danger" role="button">Cancel</a>
+          <a (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</a>
           <a (click)="save()"   class="btn btn-sm btn-primary" role="button">Save</a>
         </div>
       </form>
     </tab>
-    <tab heading="Api Keys">
+    <tab  *ngIf="endPoint.id" heading="Api Keys">
       <apiKey-list [apiKeys]='endPoint.apiKeys'></apiKey-list>
     </tab>
   </tabset>
