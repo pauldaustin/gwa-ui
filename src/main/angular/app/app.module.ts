@@ -13,9 +13,12 @@ import {
 
 import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
 
-import { AppComponent }             from './app.component';
-import { FormGroupInput }           from './FormGroupInput';
+import {
+  BcGovTemplate,
+  BcGovTemplateModule
+} from './bcgov-template/index';
 
+import { BsFormModule }           from './bs-form/index';
 
 import { EndPointCreateComponent }  from './EndPoint/EndPointCreateComponent';
 import { EndPointDetailComponent }  from './EndPoint/EndPointDetailComponent';
@@ -35,14 +38,27 @@ import { AppRoutingModule }         from './app-routing.module';
     AccordionModule.forRoot(),
     ModalModule.forRoot(),
     TabsModule.forRoot(),
+    BcGovTemplateModule.forRoot({
+        title: 'Gateway Admin',
+        headerMenuItems: [
+          {
+            title: 'My End Points',
+            routerLink: '/endPoints/my'
+          },
+          {
+            title: 'End Points',
+            routerLink: '/endPoints'
+          }
+        ]
+      }
+    ),
     AppRoutingModule,
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger'
-    })
+    }),
+    BsFormModule.forRoot()
   ],
   declarations: [
-    AppComponent,
-    FormGroupInput,
     EndPointCreateComponent,
     EndPointDetailComponent,
     EndPointListComponent,
@@ -50,7 +66,7 @@ import { AppRoutingModule }         from './app-routing.module';
     ApiKeyListComponent
   ],
   providers: [ EndPointService ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [ BcGovTemplate ]
 })
 export class AppModule { }
 

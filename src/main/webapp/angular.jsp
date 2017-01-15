@@ -20,9 +20,8 @@
     <link href="https://cdn.datatables.net/scroller/1.2.2/css/dataTables.scroller.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.datatables.net/plug-ins/1.10.6/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
 
-    <link href="css/rs.css" rel="stylesheet" type="text/css">
-    <link href="css/bcgov.css" rel="stylesheet" type="text/css">
-
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+   
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -40,7 +39,8 @@
   </head>
 
   <body>
-    <my-app>Loading...</my-app>
+    <bcgov-template>
+    </bcgov-template>
   </body>
   <script src="aot/dist/build.js"></script>
 </html>

@@ -4,28 +4,120 @@
     <tab heading="End Point: {{endPoint.id}}" active="true">
       <form #endPointForm="ngForm" class="form-horizontal" role="form">
         <accordion>
-          <accordion-group heading="Basic" isOpen="true">
-            <form-group-input title="ID" *ngIf="endPoint.id">
-              <p class="form-control-static">{{endPoint.id}}</p>
-            </form-group-input>
-            <form-group-input [form]="form" name="title" title="Title">
-              <input #title="ngModel" name="title" [(ngModel)]="endPoint.title" placeholder="title" type="text" required="true" class="form-control"  />
-            </form-group-input>
-            <form-group-input [form]="form" name="enabled" title="Enabled">
-              <input name="enabled" [(ngModel)]="endPoint.enabled" placeholder="enabled" type="checkbox" class="form-control" />
-            </form-group-input>
+          <accordion-group heading="Details" isOpen="true">
+            <div class="row">
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="name"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Name">
+                    <input #title="ngModel" name="name" [(ngModel)]="endPoint.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z]{3,20}" class="form-control"  />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="title"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Title">
+                    <input #title="ngModel" name="title" [(ngModel)]="endPoint.title" placeholder="Title" type="text" required="true" class="form-control"  />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="enabled"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Enabled">
+                    <span class="form-control">
+                      <input name="enabled" [(ngModel)]="endPoint.enabled" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-5">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="apis_deploy"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Deploy {{endPoint.name}}.apis.gov.bc.ca">
+                    <span class="form-control">
+                      <input name="apis_deploy" [(ngModel)]="endPoint.apis_deploy" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-5">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="apps_deploy"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Deploy Siteminder {{endPoint.name}}.apps.gov.bc.ca">
+                    <span class="form-control">
+                      <input name="apps_deploy" [(ngModel)]="endPoint.apps_deploy" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+
+            <bs-form-group
+              [form]="endPointForm"
+            >
+              <bs-input-group prefixText="Methods">
+                <span class="form-control">
+                  <label *ngFor="let methodFlag of endPoint.allowed_http_method_flags" for="allowedHttpMethods" class="checkbox-inline">
+                    <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
+                  </label>
+                </span>
+              </bs-input-group>
+            </bs-form-group>
           </accordion-group>
           
           <accordion-group heading="Upstream Service" isOpen="true">
-            <form-group-input [form]="form" name="upstreamUrl" title="Upstream URL">
-              <input name="upstreamUrl" [(ngModel)]="endPoint.upstream_url" placeholder="http://server.com/" type="url" required="true" class="form-control"  />
-            </form-group-input>
-            <form-group-input [form]="form" name="upstreamUsername" title="Upstream Username">
-              <input name="upstreamUsername" [(ngModel)]="endPoint.upstream_username" placeholder="Username" type="text" class="form-control"  />
-            </form-group-input>
-            <form-group-input [form]="form" name="upstreamPassword" title="Upstream Password">
-              <input name="upstreamPassword" [(ngModel)]="endPoint.upstream_password" placeholder="Password" type="password" class="form-control"  />
-            </form-group-input>
+            <bs-form-group
+              [form]="endPointForm"
+              name="upstreamUrl"
+              inputWidth="col-sm-12"
+            >
+              <bs-input-group prefixIcon="external-link">
+                <input [(ngModel)]="endPoint.upstream_url" name="upstreamUrl" placeholder="Upstream URL (e.g. http://server.com/)" type="url" required="true" pattern="https?://.+"  class="form-control"  />
+              </bs-input-group>
+            </bs-form-group>
+            <div class="row">
+              <div class="col-sm-6">    
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="upstreamUsername"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixIcon="user">
+                    <input [(ngModel)]="endPoint.upstream_username" name="upstreamUsername" placeholder="Upstream Username" type="text" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-sm-6">    
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="upstreamPassword" 
+                 inputWidth=""
+                >
+                  <bs-input-group prefixIcon="key">
+                    <input [(ngModel)]="endPoint.upstream_password" name="upstreamPassword" type="password" placeholder="Upstream Password" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
           </accordion-group>
           
         </accordion>

@@ -7,6 +7,7 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Name</th>
         <th>Title</th>
         <th>Created By</th>
         <th>Enabled</th>
@@ -20,6 +21,7 @@
         (click)="onSelect(endPoint)"
       >
         <td><a [routerLink]="['/endPoints', endPoint.id]">{{endPoint.id}}</a></td>
+        <td>{{endPoint.name}}</td>
         <td>{{endPoint.title}}</td>
         <td>{{endPoint.created_by}}</td>
         <td [ngSwitch]="endPoint.enabled">
