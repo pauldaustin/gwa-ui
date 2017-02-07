@@ -14,38 +14,45 @@ export class EndPoint {
     "PUT",
     "DELETE"
   ];
-  
+
   id : string;
   name : string;
+  upstream_url : string;
+  preserve_host : boolean;
+  created_at : string;
+  retries : number;
+  https_only : boolean;
+  http_if_terminated : boolean;
+  hosts : Array<String>;
+  uris : Array<String>;
+  strip_uri : boolean;
+
   title : string;
   created_by: string = "Unknown";
-  upstream_url: string;
   upstream_username: string;
   upstream_password: string;
-  apps_deploy : boolean;
-  apis_deploy : boolean;
   enabled: boolean = true;
-  allowed_http_method_flags: Array<HttpMethodState> = [];
+  method_flags: Array<HttpMethodState> = [];
   _apiKeys: Array<ApiKey> = [];
 
   constructor() {
-    this.allowed_http_methods = null;
+    this.methods = null;
   }
 
-  get allowed_http_methods(): Array<string> {
-    let allowed_http_methods: Array<string> = [];
-    if (this.allowed_http_method_flags) {
-      for (let methodFlag of this.allowed_http_method_flags) {
+  get methods(): Array<string> {
+    let methods: Array<string> = [];
+    if (this.method_flags) {
+      for (let methodFlag of this.method_flags) {
         if (methodFlag.enabled) {
-          allowed_http_methods.push(methodFlag.name);
+          methods.push(methodFlag.name);
         }
       }
     }
-    return allowed_http_methods;
+    return methods;
   }
   
-  set allowed_http_methods(allowedHttpMethods: Array<string>) {
-    this.allowed_http_method_flags.length = 0;
+  set methods(allowedHttpMethods: Array<string>) {
+    this.method_flags.length = 0;
     for (let method of EndPoint.ALL_METHODS) {
       var enabled : boolean;
       if (allowedHttpMethods) {
@@ -53,7 +60,7 @@ export class EndPoint {
       } else {
         enabled = method == "GET";
       }
-      this.allowed_http_method_flags.push({name: method, enabled: enabled});
+      this.method_flags.push({name: method, enabled: enabled});
     }
   }
  
@@ -89,21 +96,27 @@ export class EndPoint {
   getAllMethods(): Array<string> {
     return EndPoint.ALL_METHODS;
   }
-  
+
   toJSON(): any {
     return {
       id : this.id,
       name : this.name,
+      upstream_url: this.upstream_url,
+      methods: this.methods,
+      preserve_host : this.preserve_host,
+      created_at : this.created_at,
+      retries : this.retries,
+      https_only : this.https_only,
+      http_if_terminated : this.http_if_terminated,
+      hosts : this.hosts,
+      uris : this.uris,
+      strip_uri : this.strip_uri,
+      
       title : this.title,
       created_by: this.created_by,
-      upstream_url: this.upstream_url,
       upstream_username: this.upstream_username,
       upstream_password: this.upstream_password,
-      apis_deploy : this.apis_deploy,
-      apps_deploy : this.apps_deploy,
       enabled: this.enabled,
-      allowed_http_methods: this.allowed_http_methods,
-      api_keys: this._apiKeys
     };
   }
 }

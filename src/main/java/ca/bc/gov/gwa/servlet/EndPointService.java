@@ -1,12 +1,18 @@
 package ca.bc.gov.gwa.servlet;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.kong.KongAdminClient;
 import ca.bc.gov.gwa.util.Json;
+import ca.bc.gov.gwa.util.JsonWriter;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ColumnDefinitions.Definition;
+import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ResultSet;
@@ -42,30 +51,55 @@ import com.datastax.driver.core.utils.UUIDs;
 
 public class EndPointService {
 
-  private final String kongAdminUrl = "http://revolsys.com:8001";
+  private static final List<String> APIS_FIELD_NAMES = Arrays.asList("id", "name", "upstream_url",
+    "preserve_host", "created_at", "retries", "https_only", "http_if_terminated", "hosts", "uris",
+    "methods", "strip_uri");
 
-  private final String appsSuffix = ".apps.revolsys.com";
+  private String kongAdminUrl = "http://localhost:8001";
 
-  private final String apisSuffix = ".apis.revolsys.com";
+  private String appsSuffix = ".apps.revolsys.com";
+
+  private String apisSuffix = ".apis.revolsys.com";
+
+  private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
 
   private Cluster cluster;
 
   private Session session;
 
-  private TableMetadata endPointTable;
+  private final TableMetadata endPointTable;
+
+  private final List<String> endPointFieldNames = new ArrayList<>();
 
   public EndPointService(final String databaseHost, final int databasePort) {
-    try {
-      this.cluster = Cluster.builder()//
-        .addContactPoint(databaseHost)//
-        .withPort(databasePort)
-        .build();
-      final Metadata clusterMetadata = this.cluster.getMetadata();
-      final KeyspaceMetadata gwa = clusterMetadata.getKeyspace("gwa");
-      this.endPointTable = gwa.getTable("end_point");
-      this.session = this.cluster.connect();
-    } finally {
+    final String configFile = "/apps/config/gwa/gwa.json";
+    try (
+      Reader configReader = new FileReader(configFile)) {
+      final Map<String, Object> config = Json.read(configReader);
+      this.kongAdminUrl = (String)config.getOrDefault("kongAdminUrl", this.kongAdminUrl);
+      this.appsSuffix = (String)config.getOrDefault("appsSuffix", this.appsSuffix);
+      this.apisSuffix = (String)config.getOrDefault("apisSuffix", this.apisSuffix);
+      this.unavailableUrl = (String)config.getOrDefault("unavailableUrl", this.unavailableUrl);
+
+    } catch (final FileNotFoundException e) {
+      logError("Unable to find configuration File: " + configFile, e);
+    } catch (final IOException e) {
+      logError("Error reading configuration File: " + configFile, e);
     }
+    this.cluster = Cluster.builder()//
+      .addContactPoint(databaseHost)//
+      .withPort(databasePort)
+      .build();
+    final Metadata clusterMetadata = this.cluster.getMetadata();
+    final KeyspaceMetadata gwa = clusterMetadata.getKeyspace("gwa");
+    this.endPointTable = gwa.getTable("end_point");
+    for (final ColumnMetadata column : this.endPointTable.getColumns()) {
+      final String fieldName = column.getName();
+      if (!"id".equals(fieldName)) {
+        this.endPointFieldNames.add(fieldName);
+      }
+    }
+    this.session = this.cluster.connect();
   }
 
   @SuppressWarnings("unchecked")
@@ -203,28 +237,62 @@ public class EndPointService {
       BufferedReader reader = request.getReader()) {
       final Object data = Json.read(reader);
       if (data instanceof Map) {
-        final UUID endPointId = UUIDs.random();
         final Map<String, Object> dataMap = (Map<String, Object>)data;
-        dataMap.put("id", endPointId);
-        dataMap.put("created_by", userId);
-        final Insert insert = QueryBuilder.insertInto("gwa", "end_point");
-        dataMap.forEach((key, value) -> {
-          if (!(value instanceof List)) {
-            insert.value(key, value);
+        final String name = (String)dataMap.get("name");
+        final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
+        dataMap.put("hosts", hosts);
+
+        final String endPointId = endPointCreateKong(dataMap);
+        if (endPointId == null) {
+
+        } else {
+          endPointCreateCassandra(userId, dataMap, endPointId);
+          response.setContentType("application/json");
+          try (
+            PrintWriter writer = response.getWriter()) {
+            writer.print("{\"data\":{\"inserted\": true,\"id\":\"");
+            writer.print(endPointId);
+            writer.println("\"}}");
           }
-        });
-        this.session.execute(insert);
-        response.setContentType("application/json");
-        try (
-          PrintWriter writer = response.getWriter()) {
-          writer.print("{\"data\":{\"inserted\": true,\"id\":\"");
-          writer.print(endPointId);
-          writer.println("\"}}");
         }
-        endPointUpdateKong(endPointId);
       }
     }
+  }
 
+  private void endPointCreateCassandra(final String userId, final Map<String, Object> dataMap,
+    final String endPointId) {
+    final Insert insert = QueryBuilder.insertInto("gwa", "end_point");
+    insert.value("id", UUID.fromString(endPointId));
+    insert.value("created_by", userId);
+    for (final String fieldName : this.endPointFieldNames) {
+      final Object value = dataMap.get(fieldName);
+      if (value != null) {
+        insert.value(fieldName, value);
+      }
+    }
+    this.session.execute(insert);
+  }
+
+  private String endPointCreateKong(final Map<String, Object> data) {
+    try (
+      KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
+      final Map<String, Object> apiData = new LinkedHashMap<>();
+      for (final String key : APIS_FIELD_NAMES) {
+        final Object value = data.get(key);
+        if (value != null) {
+          apiData.put(key, value);
+        }
+      }
+      final Map<String, Object> endPointData = kongAdminClient.post("/apis/", apiData);
+      if (endPointData.containsKey("errorCode")) {
+        logError(Json.toString(endPointData), null);
+      } else {
+        return (String)endPointData.get("id");
+      }
+    } catch (final IOException | RuntimeException e) {
+      logError("Error updating API", e);
+    }
+    return null;
   }
 
   public void endPointDelete(final HttpServletResponse response, final String userId,
@@ -245,43 +313,113 @@ public class EndPointService {
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       return;
     }
-    if (row == null) {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    } else {
-      response.setContentType("application/json");
-      try (
-        PrintWriter writer = response.getWriter()) {
-        final boolean deleted = row.getBool(0);
-        if (deleted) {
+    response.setContentType("application/json");
+    try (
+      PrintWriter writer = response.getWriter()) {
+      if (row == null || row.getBool(0)) {
+        writer.println("{\"data\":{\"deleted\": true}}");
+      } else {
+        final String recordUserId;
+        if (row.getColumnDefinitions().size() > 1) {
+          recordUserId = row.getString(1);
+        } else {
+          recordUserId = null;
+        }
+        if (recordUserId == null || userId.equals(recordUserId)) {
+          // Record not found so mark it as was deleted
           writer.println("{\"data\":{\"deleted\": true}}");
         } else {
-          final String recordUserId = row.getString(1);
-          if (userId.equals(recordUserId)) {
-            // Record not found so mark it as was deleted
-            writer.println("{\"data\":{\"deleted\": true}}");
-          } else {
-            writer.println(
-              "{\"data\":{\"deleted\": false,\"message\":\"Cannot delete another user's End Point\"}}");
-          }
+          writer.println(
+            "{\"data\":{\"deleted\": false,\"message\":\"Cannot delete another user's End Point\"}}");
         }
       }
     }
   }
 
   public void endPointDeleteKong(final UUID endPointId) throws IOException {
-    final String query = "SELECT name FROM gwa.end_point WHERE id = " + endPointId;
-    final ResultSet resultSet = this.session.execute(query);
-    final Row row = resultSet.one();
-    if (row != null) {
-      final String name = row.getString("name");
-      for (final String prefix : Arrays.asList("apis", "apps")) {
-        final String apiName = prefix + "_" + name;
-        try (
-          KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
-          kongAdminClient.delete("/apis/" + apiName);
+    try (
+      KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
+      kongAdminClient.delete("/apis/" + endPointId);
+    }
+  }
+
+  public void endPointGet(final HttpServletResponse response, final String endPointId)
+    throws IOException {
+    final Map<String, Object> endPoint = endPointGetKong(endPointId);
+    if (endPoint == null) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    } else {
+      final ResultSet resultSet = this.session
+        .execute("SELECT * FROM gwa.end_point WHERE id = " + endPointId);
+      final Row row = resultSet.one();
+      setValues(endPoint, row);
+      final Map<String, Object> data = Collections.singletonMap("data", endPoint);
+      writeJson(response, data);
+    }
+  }
+
+  public Map<String, Object> endPointGetKong(final String apiId) {
+    try (
+      KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
+      final Map<String, Object> endPointData = kongAdminClient.get("/apis/" + apiId);
+      if (endPointData.containsKey("errorCode")) {
+        logError(Json.toString(endPointData), null);
+      } else {
+        return endPointData;
+      }
+    } catch (final IOException | RuntimeException e) {
+      logError("Error querying APIS", e);
+    }
+    return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  public void endPointList(final HttpServletResponse response, final String userId,
+    final boolean all) throws IOException {
+    final Map<String, Row> rowsById = new HashMap<>();
+    final ResultSet resultSet;
+    if (all) {
+      resultSet = this.session.execute("SELECT * FROM gwa.end_point");
+    } else {
+      resultSet = this.session.execute("SELECT * FROM gwa.end_point where created_by = ?", userId);
+    }
+
+    for (final Row row : resultSet) {
+      final UUID endPointId = row.getUUID("id");
+      rowsById.put(endPointId.toString(), row);
+    }
+
+    final Map<String, Object> endPointResponse = endPointListKong();
+    final List<Map<String, Object>> endPoints = (List<Map<String, Object>>)endPointResponse
+      .get("data");
+    for (final Iterator<Map<String, Object>> iterator = endPoints.iterator(); iterator.hasNext();) {
+      final Map<String, Object> endPoint = iterator.next();
+      final String endPointId = (String)endPoint.get("id");
+      final Row row = rowsById.get(endPointId);
+      if (row == null) {
+        if (!all) {
+          iterator.remove();
         }
+      } else {
+        setValues(endPoint, row);
       }
     }
+    writeJson(response, endPointResponse);
+  }
+
+  public Map<String, Object> endPointListKong() {
+    try (
+      KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
+      final Map<String, Object> endPointData = kongAdminClient.get("/apis");
+      if (endPointData.containsKey("errorCode")) {
+        logError(Json.toString(endPointData), null);
+      } else {
+        return endPointData;
+      }
+    } catch (final IOException | RuntimeException e) {
+      logError("Error querying APIS", e);
+    }
+    return Collections.emptyMap();
   }
 
   @SuppressWarnings("unchecked")
@@ -292,66 +430,50 @@ public class EndPointService {
       final Object data = Json.read(reader);
       if (data instanceof Map) {
         final Map<String, Object> dataMap = (Map<String, Object>)data;
-        final String endPointIdString = pathInfo.substring(1);
-        final Update update = QueryBuilder.update("gwa", "end_point");
-        dataMap.forEach((key, value) -> {
-          if ("id".equals(key)) {
-          } else if (value instanceof List) {
-            if ("allowed_http_methods".equals(key)) {
-              final Assignment set = QueryBuilder.set(key, value);
-              update.with(set);
-            }
-          } else {
-            final Assignment set = QueryBuilder.set(key, value);
-            update.with(set);
-          }
-        });
-        final UUID endPointId = UUID.fromString(endPointIdString);
-        final Clause equalId = QueryBuilder.eq("id", endPointId);
-        update.where(equalId);
-        final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-        update.onlyIf(equalCreatedBy);
-        this.session.execute(update);
-        endPointUpdateKong(endPointId);
+        final String endPointId = pathInfo.substring(1);
+        endPointUpdateCassandra(endPointId, userId, dataMap);
+
+        endPointUpdateKong(endPointId, dataMap);
       }
     }
   }
 
-  public void endPointUpdateKong(final String prefix, final String hostSuffix, final String name,
-    final Row row) {
-    final String apiName = prefix + "_" + name;
+  private UUID endPointUpdateCassandra(final String endPointIdString, final String userId,
+    final Map<String, Object> dataMap) {
+    final Update update = QueryBuilder.update("gwa", "end_point");
+    for (final String fieldName : this.endPointFieldNames) {
+      final Object value = dataMap.get(fieldName);
+      final Assignment set = QueryBuilder.set(fieldName, value);
+      update.with(set);
+    }
+
+    final UUID endPointId = UUID.fromString(endPointIdString);
+    final Clause equalId = QueryBuilder.eq("id", endPointId);
+    update.where(equalId);
+    final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
+    update.onlyIf(equalCreatedBy);
+    this.session.execute(update);
+    return endPointId;
+  }
+
+  private void endPointUpdateKong(final String endPointId, final Map<String, Object> data) {
     try (
       KongAdminClient kongAdminClient = new KongAdminClient(this.kongAdminUrl)) {
-      kongAdminClient.delete("/apis/" + apiName);
-      final boolean deployApi = row.getBool(prefix + "_deploy");
-      final boolean enabled = row.getBool("enabled");
-      if (enabled && deployApi) {
-        final Map<String, Object> data = new LinkedHashMap<>();
-        data.put("name", apiName);
-        data.put("request_host", name + hostSuffix);
-        final String upstreamUrl = row.getString("upstream_url");
-        data.put("upstream_url", upstreamUrl);
-        final Map<String, Object> createResult = kongAdminClient.post("/apis/", data);
-        if (createResult.containsKey("errorCode")) {
-          logError(Json.toString(createResult), null);
+      final Map<String, Object> apiData = new LinkedHashMap<>();
+      for (final String key : APIS_FIELD_NAMES) {
+        final Object value = data.get(key);
+        if (value != null) {
+          apiData.put(key, value);
         }
-        final String apiId = (String)createResult.get("id");
-        kongPluginRequestTransformer(kongAdminClient, row, apiId);
       }
-    } catch (final IOException e) {
+      final Map<String, Object> endPointData = kongAdminClient.patch("/apis/" + endPointId,
+        apiData);
+      if (endPointData.containsKey("errorCode")) {
+        logError(Json.toString(endPointData), null);
+      } else {
+      }
+    } catch (final IOException | RuntimeException e) {
       logError("Error updating API", e);
-    }
-
-  }
-
-  public void endPointUpdateKong(final UUID endPointId) {
-    final String query = "SELECT * FROM gwa.end_point WHERE id = " + endPointId;
-    final ResultSet resultSet = this.session.execute(query);
-    final Row row = resultSet.one();
-    if (row != null) {
-      final String name = row.getString("name");
-      endPointUpdateKong("apis", this.apisSuffix, name, row);
-      endPointUpdateKong("apps", this.appsSuffix, name, row);
     }
   }
 
@@ -399,5 +521,27 @@ public class EndPointService {
     final Class<?> clazz = getClass();
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.error(message, e);
+  }
+
+  private void setValues(final Map<String, Object> map, final Row row) {
+    if (row != null) {
+      for (final Definition columnDefinition : row.getColumnDefinitions()) {
+        final String name = columnDefinition.getName();
+        if (!map.containsKey(name) && !row.isNull(name)) {
+          final Object value = row.getObject(name);
+          map.put(name, value);
+        }
+      }
+    }
+  }
+
+  private void writeJson(final HttpServletResponse httpResponse, final Map<String, Object> data)
+    throws IOException {
+    httpResponse.setContentType("application/json");
+    try (
+      PrintWriter writer = httpResponse.getWriter();
+      JsonWriter jsonWriter = new JsonWriter(writer, false)) {
+      jsonWriter.write(data);
+    }
   }
 }

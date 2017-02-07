@@ -16,6 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -106,6 +107,11 @@ public class KongAdminClient implements Closeable {
     return result;
   }
 
+  public Map<String, Object> get(final String path) throws IOException {
+    final HttpGet request = new HttpGet(this.serviceUrl + path);
+    return executeRequest(request);
+  }
+
   public String getContent(final CloseableHttpResponse response) throws IOException {
     final StringBuilder content = new StringBuilder();
     appendContent(content, response);
@@ -122,10 +128,16 @@ public class KongAdminClient implements Closeable {
     }
   }
 
+  public Map<String, Object> patch(final String path, final Map<String, Object> data)
+    throws IOException {
+    final HttpPatch request = new HttpPatch(this.serviceUrl + path);
+    return executeRequestJson(request, data);
+  }
+
   public Map<String, Object> post(final String path, final Map<String, Object> data)
     throws IOException {
-    final HttpPost updateRequest = new HttpPost(this.serviceUrl + path);
-    return executeRequestJson(updateRequest, data);
+    final HttpPost request = new HttpPost(this.serviceUrl + path);
+    return executeRequestJson(request, data);
   }
 
   public Map<String, Object> put(final String path, final Map<String, Object> data)

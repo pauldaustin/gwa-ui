@@ -9,9 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.bc.gov.gwa.util.Json;
-
-import com.datastax.driver.core.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(urlPatterns = "/data/endPoints/*", loadOnStartup = 1)
 public class EndPointServlet extends HttpServlet {
@@ -61,17 +60,13 @@ public class EndPointServlet extends HttpServlet {
     throws ServletException, IOException {
     final String userId = getUserId();
     final String pathInfo = request.getPathInfo();
-    final Session session = this.endPointService.getSession();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      final String query = "SELECT JSON * FROM gwa.end_point";
-      Json.writeJsonList(session, query, response);
+      this.endPointService.endPointList(response, userId, true);
     } else if ("/my".equals(pathInfo)) {
-      final String query = "SELECT JSON * FROM gwa.end_point WHERE created_by = '" + userId + "'";
-      Json.writeJsonList(session, query, response);
+      this.endPointService.endPointList(response, userId, false);
     } else {
       final String endPointId = pathInfo.substring(1);
-      final String query = "SELECT JSON * FROM gwa.end_point WHERE id = " + endPointId;
-      Json.writeJsonObject(session, query, response);
+      this.endPointService.endPointGet(response, endPointId);
     }
   }
 
@@ -112,5 +107,17 @@ public class EndPointServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     this.endPointService = new EndPointService("revolsys.com", 9042);
+  }
+
+  @Override
+  protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+    throws ServletException, IOException {
+    try {
+      super.service(req, resp);
+    } catch (final Throwable e) {
+      final Class<?> clazz = getClass();
+      final Logger logger = LoggerFactory.getLogger(clazz);
+      logger.error("Error handling request", e);
+    }
   }
 }

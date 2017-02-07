@@ -30,6 +30,30 @@
               </div>
             </div>
             <div class="row">
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="created"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Created By">
+                    <p class="form-control form-control-static">{{endPoint.created_by}}</p>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="created"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Created At">
+                    <p class="form-control form-control-static">{{endPoint.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-md-2">
                 <bs-form-group
                   [form]="endPointForm"
@@ -43,40 +67,54 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-5">
+            </div>
+            <div class="row">
+              <div class="col-md-2">
                 <bs-form-group
                   [form]="endPointForm"
-                  name="apis_deploy"
+                  name="strip_uri"
                   inputWidth=""
                 >
-                  <bs-input-group prefixText="Deploy {{endPoint.name}}.apis.gov.bc.ca">
+                  <bs-input-group prefixText="Strip URI">
                     <span class="form-control">
-                      <input name="apis_deploy" [(ngModel)]="endPoint.apis_deploy" type="checkbox" />
+                      <input name="strip_uri" [(ngModel)]="endPoint.strip_uri" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-2">
                 <bs-form-group
                   [form]="endPointForm"
-                  name="apps_deploy"
+                  name="https_only"
                   inputWidth=""
                 >
-                  <bs-input-group prefixText="Deploy Siteminder {{endPoint.name}}.apps.gov.bc.ca">
+                  <bs-input-group prefixText="Https Only">
                     <span class="form-control">
-                      <input name="apps_deploy" [(ngModel)]="endPoint.apps_deploy" type="checkbox" />
+                      <input name="https_only" [(ngModel)]="endPoint.https_only" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-3">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="http_if_terminated"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Http if Terminated">
+                    <span class="form-control">
+                      <input name="http_if_terminated" [(ngModel)]="endPoint.http_if_terminated" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
               </div>
             </div>
-
             <bs-form-group
               [form]="endPointForm"
             >
               <bs-input-group prefixText="Methods">
                 <span class="form-control">
-                  <label *ngFor="let methodFlag of endPoint.allowed_http_method_flags" for="allowedHttpMethods" class="checkbox-inline">
+                  <label *ngFor="let methodFlag of endPoint.method_flags" for="allowedHttpMethods" class="checkbox-inline">
                     <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
                   </label>
                 </span>
@@ -114,6 +152,32 @@
                 >
                   <bs-input-group prefixIcon="key">
                     <input [(ngModel)]="endPoint.upstream_password" name="upstreamPassword" type="password" placeholder="Upstream Password" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="preserve_host"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Preserve Host">
+                    <span class="form-control">
+                      <input name="preserve_host" [(ngModel)]="endPoint.preserve_host" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-4">
+                <bs-form-group
+                  [form]="endPointForm"
+                  name="retries"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Retries">
+                    <input name="retries" [(ngModel)]="endPoint.retries" type="number" min="0" max="32767" class="form-control" />
                   </bs-input-group>
                 </bs-form-group>
               </div>
