@@ -1,11 +1,12 @@
 import { ApiKey } from '../ApiKey/ApiKey';
+import { Plugin } from '../Plugin/Plugin';
 
 interface HttpMethodState {
   name: string;
   enabled: boolean;
 }
 
-export class EndPoint {
+export class Api {
   private static ALL_METHODS: Array<string> = [
     "GET",
     "HEAD",
@@ -34,6 +35,7 @@ export class EndPoint {
   enabled: boolean = true;
   method_flags: Array<HttpMethodState> = [];
   _apiKeys: Array<ApiKey> = [];
+  _plugins: Array<Plugin> = [];
 
   constructor() {
     this.methods = null;
@@ -53,7 +55,7 @@ export class EndPoint {
   
   set methods(allowedHttpMethods: Array<string>) {
     this.method_flags.length = 0;
-    for (let method of EndPoint.ALL_METHODS) {
+    for (let method of Api.ALL_METHODS) {
       var enabled : boolean;
       if (allowedHttpMethods) {
         enabled = allowedHttpMethods.indexOf(method) != -1;
@@ -63,13 +65,15 @@ export class EndPoint {
       this.method_flags.push({name: method, enabled: enabled});
     }
   }
- 
+
+/* API Key Methods */
+
   apiKeyAdd(apiKey: ApiKey) {
     this._apiKeys.push(apiKey);
   }
 
   apiKeyRemove(apiKey: ApiKey) {
-    this._apiKeys = this._apiKeys.filter(key => key !== apiKey);
+    this._apiKeys = this._apiKeys.filter(key => key != apiKey);
   }
 
   get api_keys(): Array<ApiKey> {
@@ -91,10 +95,47 @@ export class EndPoint {
     } else {
       this._apiKeys.length = 0;
     }
-  } 
+  }
 
+/* Plugin Key Methods */
+
+  get plugins(): Array<Plugin> {
+    return this._plugins;
+  }
+  
+  set plugins(pluginsJson) {
+    if (pluginsJson) {
+      let api = this;
+      let plugins = this._plugins;
+      pluginsJson.forEach((pluginJson: any) => {
+        let plugin = new Plugin();
+        Object.assign(plugin, pluginJson);
+        plugin.api = api;
+        plugins.push(plugin);
+      });
+    } else {
+      this._plugins.length = 0;
+    }
+  }
+
+  pluginAdd(plugin: Plugin) {
+    plugin.api = this;
+    for (let i = 0; i < this._plugins.length; i++) {
+      let currentPlugin = this._plugins[i];
+      if (plugin.name < currentPlugin.name) {
+        this._plugins.splice(i, 0, plugin);
+        return;
+      }
+    }
+    this._plugins.push(plugin);
+  }
+
+  pluginRemove(plugin: Plugin) {
+    this._plugins = this._plugins.filter(currentPlugin => currentPlugin.name != plugin.name);
+  }
+  
   getAllMethods(): Array<string> {
-    return EndPoint.ALL_METHODS;
+    return Api.ALL_METHODS;
   }
 
   toJSON(): any {
@@ -111,6 +152,8 @@ export class EndPoint {
       hosts : this.hosts,
       uris : this.uris,
       strip_uri : this.strip_uri,
+      
+      plugins : this.plugins,
       
       title : this.title,
       created_by: this.created_by,

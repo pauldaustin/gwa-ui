@@ -1,39 +1,37 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  Injector,
+  Input 
+} from '@angular/core';
+
+import { BaseListComponent }  from '../Component/BaseListComponent';
 
 import { ApiKey } from './ApiKey';
-import { EndPoint } from '../EndPoint/EndPoint';
-import { EndPointService }  from '../EndPoint/EndPointService';
+import { Api } from '../Api/Api';
+import { ApiKeyService }  from './ApiKeyService';
 
 @Component({
   moduleId: module.id,
   selector: 'apiKey-list',
   templateUrl: 'ApiKeyListComponent.html'
 })
-export class ApiKeyListComponent{
-  @Input() endPoint: EndPoint;
+export class ApiKeyListComponent extends BaseListComponent<ApiKey>{
+  @Input() api: Api;
 
   constructor(
-    private endPointService: EndPointService,
+     injector: Injector,
+     service: ApiKeyService
   ) {
+    super(injector, service);
   }
 
   create(userTitle: string): void {
     userTitle = userTitle.trim();
     if (userTitle) {
-      this.endPointService.createApiKey(this.endPoint.id, userTitle)
-      .then(apiKey => {
-        this.endPoint.apiKeyAdd(apiKey);
-      });
+      let apiKey: ApiKey = new ApiKey();
+      apiKey.api = this.api;
+      apiKey.user_title = userTitle;
+      this.service.addObject(apiKey);
     }
-  }
-
-  delete(apiKey: ApiKey): void {
-    this.endPointService
-      .deleteApiKey(this.endPoint.id, apiKey.id)
-      .then((data) => {
-        if (data.deleted) {
-          this.endPoint.apiKeyRemove(apiKey);
-        } 
-      });
   }
 }

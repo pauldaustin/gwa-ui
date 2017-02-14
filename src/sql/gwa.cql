@@ -1,12 +1,11 @@
-CREATE KEYSPACE
+CREATE KEYSPACE IF NOT EXISTS
   gwa
-IF NOT EXISTS
 WITH REPLICATION = { 
    'class' : 'NetworkTopologyStrategy', 
    'datacenter1' : 1 
 };
 
-DROP TABLE gwa.end_point;
+DROP TABLE gwa.api;
 DROP TYPE gwa.api_key;
 
 CREATE TYPE IF NOT EXISTS
@@ -19,7 +18,7 @@ CREATE TYPE IF NOT EXISTS
 );
 
 CREATE TABLE IF NOT EXISTS
-  gwa.end_point (
+  gwa.api (
   id                    uuid,
   title                 text,
   created_by            text,
@@ -27,8 +26,7 @@ CREATE TABLE IF NOT EXISTS
   upstream_password     text,
   enabled               boolean,
   rate_limit            text,
-  api_keys              list<frozen<api_key>>,
   PRIMARY KEY (id)
 );
-CREATE INDEX created_by
-   ON gwa.end_point (created_by);
+CREATE INDEX api_created_by
+   ON gwa.api (created_by);

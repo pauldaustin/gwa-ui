@@ -3,27 +3,27 @@ import { Component, OnInit }      from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location }               from '@angular/common';
 
-import { EndPoint }         from './EndPoint';
-import { EndPointService }  from './EndPointService';
+import { Api }         from './Api';
+import { ApiService }  from './ApiService';
 
 @Component({
   moduleId: module.id,
-  selector: 'endpoint-detail',
-  templateUrl: 'EndPointDetailComponent.html'
+  selector: 'api-detail',
+  templateUrl: 'ApiDetailComponent.html'
 })
-export class EndPointDetailComponent implements OnInit {
-  endPoint: EndPoint;
+export class ApiDetailComponent implements OnInit {
+  api: Api;
 
   constructor(
-    private endPointService: EndPointService,
+    private apiService: ApiService,
     private route: ActivatedRoute,
     private location: Location
   ) {}
 
   ngOnInit(): void {
     this.route.params
-      .switchMap((params: Params) => this.endPointService.getEndPoint(params['id']))
-      .subscribe(endPoint => this.endPoint = endPoint);
+      .switchMap((params: Params) => this.apiService.getApi(params['id']))
+      .subscribe(api => this.api = api);
   }
 
   goBack(): void {
@@ -31,7 +31,7 @@ export class EndPointDetailComponent implements OnInit {
   }
   
   save(): void {
-    this.endPointService.update(this.endPoint)
+    this.apiService.updateObject(this.api)
       .then(() => this.goBack());
   }
 }

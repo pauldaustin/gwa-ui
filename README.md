@@ -1,3 +1,3 @@
-# Kong API Gateway Administration
+# Kong Api Gateway Administration
 
-This project contains a web interface for managing the KONG API Gateway. 
+This project contains a web interface for managing the KONG Api Gateway. 

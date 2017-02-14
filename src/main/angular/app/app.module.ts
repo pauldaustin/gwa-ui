@@ -1,7 +1,10 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
 
-import { FormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
 
 import { HttpModule }    from '@angular/http';
  
@@ -20,20 +23,27 @@ import {
 
 import { BsFormModule }           from './bs-form/index';
 
-import { EndPointCreateComponent }  from './EndPoint/EndPointCreateComponent';
-import { EndPointDetailComponent }  from './EndPoint/EndPointDetailComponent';
-import { EndPointListComponent }    from './EndPoint/EndPointListComponent';
-import { EndPointListMyComponent }  from './EndPoint/EndPointListMyComponent';
-import { EndPointService }          from './EndPoint/EndPointService';
+import { ApiCreateComponent }  from './Api/ApiCreateComponent';
+import { ApiDetailComponent }  from './Api/ApiDetailComponent';
+import { ApiListComponent }    from './Api/ApiListComponent';
+import { ApiListMyComponent }  from './Api/ApiListMyComponent';
+import { ApiService }          from './Api/ApiService';
 
-import { ApiKeyListComponent }      from './ApiKey/ApiKeyListComponent';
+import { ApiKeyListComponent }     from './ApiKey/ApiKeyListComponent';
+import { ApiKeyService }           from './ApiKey/ApiKeyService';
 
-import { AppRoutingModule }         from './app-routing.module';
+import { PluginListComponent }     from './Plugin/PluginListComponent';
+import { PluginDetailComponent }   from './Plugin/PluginDetailComponent';
+import { PluginAddComponent }      from './Plugin/PluginAddComponent';
+import { PluginService }           from './Plugin/PluginService';
+
+import { AppRoutingModule }        from './app-routing.module';
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     AccordionModule.forRoot(),
     ModalModule.forRoot(),
@@ -42,12 +52,12 @@ import { AppRoutingModule }         from './app-routing.module';
         title: 'Gateway Admin',
         headerMenuItems: [
           {
-            title: 'My End Points',
-            routerLink: '/endPoints/my'
+            title: 'My APIs',
+            routerLink: '/apis/my'
           },
           {
-            title: 'End Points',
-            routerLink: '/endPoints'
+            title: 'APIs',
+            routerLink: '/apis'
           }
         ]
       }
@@ -59,13 +69,20 @@ import { AppRoutingModule }         from './app-routing.module';
     BsFormModule.forRoot()
   ],
   declarations: [
-    EndPointCreateComponent,
-    EndPointDetailComponent,
-    EndPointListComponent,
-    EndPointListMyComponent,
-    ApiKeyListComponent
+    ApiCreateComponent,
+    ApiDetailComponent,
+    ApiListComponent,
+    ApiListMyComponent,
+    ApiKeyListComponent,
+    PluginListComponent,
+    PluginDetailComponent,
+    PluginAddComponent
   ],
-  providers: [ EndPointService ],
+  providers: [
+    ApiService,
+    ApiKeyService,
+    PluginService
+  ],
   bootstrap: [ BcGovTemplate ]
 })
 export class AppModule { }

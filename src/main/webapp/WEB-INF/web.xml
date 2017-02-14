@@ -19,7 +19,7 @@
 
   <servlet-mapping>
       <servlet-name>AngularServlet</servlet-name>
-      <url-pattern>/endPoints/*</url-pattern>
+      <url-pattern>/apis/*</url-pattern>
   </servlet-mapping>
   
   <error-page>

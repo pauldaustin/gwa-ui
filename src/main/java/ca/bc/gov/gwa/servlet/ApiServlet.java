@@ -12,16 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(urlPatterns = "/data/endPoints/*", loadOnStartup = 1)
-public class EndPointServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/rest/apis/*", loadOnStartup = 1)
+public class ApiServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
-  private EndPointService endPointService;
+  private ApiService apiService;
 
   @Override
   public void destroy() {
     super.destroy();
-    this.endPointService.close();
+    this.apiService = null;
   }
 
   @Override
@@ -34,23 +34,29 @@ public class EndPointServlet extends HttpServlet {
     } else if ("/my".equals(pathInfo)) {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
-      String endPointIdString = pathInfo.substring(1);
-      final int slashIndex = endPointIdString.indexOf('/');
+      String apiIdString = pathInfo.substring(1);
+      final int slashIndex = apiIdString.indexOf('/');
       if (slashIndex > -1) {
-        if (endPointIdString.startsWith("apiKeys/", slashIndex + 1)) {
-          final String apiKeyIdString = endPointIdString.substring(slashIndex + 9);
-          endPointIdString = endPointIdString.substring(0, slashIndex);
+        if (apiIdString.startsWith("apiKeys/", slashIndex + 1)) {
+          final String apiKeyIdString = apiIdString.substring(slashIndex + 9);
+          apiIdString = apiIdString.substring(0, slashIndex);
 
-          final UUID endPointId = UUID.fromString(endPointIdString);
+          final UUID apiId = UUID.fromString(apiIdString);
           final UUID apiKeyId = UUID.fromString(apiKeyIdString);
-          this.endPointService.apiKeyDelete(response, userId, endPointId, apiKeyId);
+          this.apiService.apiKeyDelete(response, userId, apiId, apiKeyId);
+          return;
+        } else if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
+          final String pluginId = apiIdString.substring(slashIndex + 9);
+          apiIdString = apiIdString.substring(0, slashIndex);
+
+          this.apiService.pluginDelete(response, userId, apiIdString, pluginId);
           return;
         } else {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       } else {
-        final UUID endPointId = UUID.fromString(endPointIdString);
-        this.endPointService.endPointDelete(response, userId, endPointId);
+        final UUID apiId = UUID.fromString(apiIdString);
+        this.apiService.apiDelete(response, userId, apiId);
       }
     }
   }
@@ -61,12 +67,12 @@ public class EndPointServlet extends HttpServlet {
     final String userId = getUserId();
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.endPointService.endPointList(response, userId, true);
+      this.apiService.apiList(response, userId, true);
     } else if ("/my".equals(pathInfo)) {
-      this.endPointService.endPointList(response, userId, false);
+      this.apiService.apiList(response, userId, false);
     } else {
-      final String endPointId = pathInfo.substring(1);
-      this.endPointService.endPointGet(response, endPointId);
+      final String apiId = pathInfo.substring(1);
+      this.apiService.apiGet(response, apiId);
     }
   }
 
@@ -76,11 +82,20 @@ public class EndPointServlet extends HttpServlet {
     final String userId = getUserId();
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.endPointService.endPointCreate(request, response, userId);
+      this.apiService.apiCreate(request, response, userId);
     } else if ("/my".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
-      this.endPointService.apiKeyCreate(request, response, userId, pathInfo);
+      String apiIdString = pathInfo.substring(1);
+      final int slashIndex = apiIdString.indexOf('/');
+      if (slashIndex > -1) {
+        if (apiIdString.startsWith("plugins", slashIndex + 1)) {
+          apiIdString = apiIdString.substring(0, slashIndex);
+          this.apiService.pluginAdd(request, response, userId, apiIdString);
+        } else if (apiIdString.startsWith("apiKeys", slashIndex + 1)) {
+          this.apiService.apiKeyCreate(request, response, userId, pathInfo);
+        }
+      }
     }
   }
 
@@ -94,7 +109,19 @@ public class EndPointServlet extends HttpServlet {
     } else if ("/my".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
-      this.endPointService.endPointUpdate(request, userId, pathInfo);
+      String apiIdString = pathInfo.substring(1);
+      final int slashIndex = apiIdString.indexOf('/');
+      if (slashIndex > -1) {
+        if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
+          final String pluginId = apiIdString.substring(slashIndex + 9);
+          apiIdString = apiIdString.substring(0, slashIndex);
+          this.apiService.pluginUpdate(request, response, userId, apiIdString, pluginId);
+        } else {
+          response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+      } else {
+        this.apiService.apiUpdate(request, userId, pathInfo);
+      }
     }
   }
 
@@ -106,7 +133,7 @@ public class EndPointServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     super.init();
-    this.endPointService = new EndPointService("revolsys.com", 9042);
+    this.apiService = ApiService.get();
   }
 
   @Override

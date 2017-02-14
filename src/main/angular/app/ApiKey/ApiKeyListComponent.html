@@ -22,7 +22,7 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let apiKey of endPoint.apiKeys"
+        *ngFor="let apiKey of api.apiKeys"
       >
         <td>{{apiKey.id}}</td>
         <td>{{apiKey.user_title}}</td>
@@ -36,7 +36,7 @@
         </td>
         <td>
           <button (confirm)="delete(apiKey)" class="btn btn-default btn-xs btn-danger" type="button" name="delete" aria-label="Delete"
-            mwlConfirmationPopover title="Delete API Key?" message="Are you sure you want to delete API Key?</br /> <b>{{apiKey.id}}</b>" placement="left"
+            mwlConfirmationPopover title="Delete Api Key?" message="Are you sure you want to delete Api Key?</br /> <b>{{apiKey.id}}</b>" placement="left"
           >
             <span class="fa fa-trash" aria-hidden="true"></span>
             <span class="sr-only">Delete</span>
