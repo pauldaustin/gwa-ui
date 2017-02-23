@@ -5,11 +5,16 @@
 >
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.bc.gov.gwa</groupId>
-  <artifactId>gwa</artifactId>
+  <artifactId>gwa-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
   <name>Gateway Admin</name>
 
+  <modules>
+    <module>gwa-admin</module>
+    <!-- module>gwa-developerkey</module-->
+  </modules>
+  
   <developers>
     <developer>
       <name>Paul Austin</name>
@@ -80,6 +85,7 @@
         <configuration>
           <workingDirectory>src/main/angular</workingDirectory>
           <installDirectory>target/temp</installDirectory>
+          <skip>${skip.grunt}</skip>
         </configuration>
         <executions>
           <execution>
@@ -128,7 +134,7 @@
             </goals>
             <configuration>
               <overwrite>true</overwrite>
-              <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/</outputDirectory>
+              <outputDirectory>target/${project.artifactId}-${project.version}/</outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.basedir}/src/main/angular</directory>
@@ -151,12 +157,12 @@
             </goals>
             <configuration>
               <overwrite>true</overwrite>
-              <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/js/</outputDirectory>
+              <outputDirectory>target/${project.artifactId}-${project.version}/js/</outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.basedir}/src/main/angular/node_modules/core-js/client/</directory>
                   <includes>
-                    <include>shim.min.js.*</include>
+                    <include>shim.min.js*</include>
                   </includes>
                 </resource>
                 <resource>
@@ -168,72 +174,31 @@
               </resources>
             </configuration>
           </execution>
+          <execution>
+            <id>angular-copy-css</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>target/${project.artifactId}-${project.version}/css/ngx-datatable/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/node_modules/@swimlane/ngx-datatable/release/</directory>
+                  <includes>
+                    <include>index.css</include>
+                    <include>themes/material.css</include>
+                    <include>assets/icons.css</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${org.slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.2.17</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${org.slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
-      <version>3.1.3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet.jsp.jstl</groupId>
-      <artifactId>javax.servlet.jsp.jstl-api</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-impl</artifactId>
-      <version>1.2.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  </dependencies>
 
 
   <profiles>
@@ -288,5 +253,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <org.slf4j.version>1.7.21</org.slf4j.version>
+    <skip.grunt>true</skip.grunt>
+    <skipWebDeploy>true</skipWebDeploy>
   </properties>
 </project>

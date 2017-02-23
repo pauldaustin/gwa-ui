@@ -1,0 +1,49 @@
+<div>
+  <h1>APIs</h1>
+
+  <ngx-datatable
+    [columns]="columns"
+    [rows]="rows"
+    [cssClasses]="cssClasses"
+    class="material striped fixed-height"
+    columnMode="force"
+  >
+  </ngx-datatable>
+
+  <div class="btn-toolbar" role="toolbar">
+    <a (click)="addApiModal.show()" class="btn btn-sm btn-primary" role="button">Add API</a>
+  </div>
+  
+  <div bsModal #addApiModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addApiLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" (click)="addApiModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Add API</h4>
+        </div>
+        <div class="modal-body">
+          <api-create [addApiModal]="addApiModal"></api-create>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template #idT let-row="row" let-value="value"><a [routerLink]="['/apis', row.id]">{{value}}</a></template>
+
+<template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
+  <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
+  <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
+</span></template>
+
+<template #actionsT let-row="row">
+  <button (confirm)="deleteObject(row)" class="btn btn-default btn-xs btn-danger" type="button"
+    name="delete" aria-label="Delete"
+    mwlConfirmationPopover title="Delete API?" message="Are you sure you want to delete API?</br /> <b>{{row.name}}</b>" placement="left" [appendToBody]="true"
+  >
+    <span class="fa fa-trash" aria-hidden="true"></span>
+    <span class="sr-only">Delete</span>
+  </button>
+</template>

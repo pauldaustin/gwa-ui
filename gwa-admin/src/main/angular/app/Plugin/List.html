@@ -1,0 +1,58 @@
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="input-group">
+      <select [(ngModel)]="pluginName" required class="form-control">
+        <option *ngFor="let name of pluginNames" [value]="name">{{name}}</option>
+      </select>
+      <span class="input-group-btn">
+        <button (click)="addPluginForm.setPluginName(pluginName);addPluginModal.show()" class="btn btn-default btn-success" type="button">Add Plugin</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div bsModal #addPluginModal="bs-modal"
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPluginLabel" aria-hidden="true"
+  [config]="{backdrop: 'static'}"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="addPluginModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Add Plugin</h4>
+      </div>
+      <div class="modal-body">
+        <plugin-add #addPluginForm [modal]="addPluginModal" [api]="api"></plugin-add>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ngx-datatable
+  [columns]="columns"
+  [rows]="rows"
+  [cssClasses]="cssClasses"
+  class="material striped fixed-height"
+  columnMode="force"
+>
+</ngx-datatable>
+
+<template #idT let-row="row" let-value="value"><a [routerLink]="['/apis', row.api_id, 'plugins', row.name]">{{value}}</a></template>
+
+<template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
+  <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
+  <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
+</span></template>
+
+<template #actionsT let-row="row">
+  <button (confirm)="deleteObject(row)" class="btn btn-default btn-xs btn-danger" type="button"
+    name="delete" aria-label="Delete"
+    mwlConfirmationPopover title="Delete Plugin?" message="Are you sure you want to delete Plugin?</br /> <b>{{row.name}}</b>" placement="left" [appendToBody]="true"
+  >
+    <span class="fa fa-trash" aria-hidden="true"></span>
+    <span class="sr-only">Delete</span>
+  </button>
+</template>
