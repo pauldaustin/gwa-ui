@@ -1,7 +1,7 @@
 {
-  "name": "ca.bc.gov.gwa",
+  "name": "ca.bc.gov.gwa.gwa-developer-key",
   "version": "1.0.0",
-  "description": "Gateway Admin",
+  "description": "Gateway Admin - Developer Key",
   "scripts": {
     "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",
     "lint": "tslint ./app/**/*.ts -t verbose",
@@ -30,8 +30,8 @@
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "moment": "^2.17.1",
-    "ng2-bootstrap": "^1.1.16-11",
-    "rxjs": "^5.1.0",
+    "ng2-bootstrap": "~1.1.16-11",
+    "rxjs": "~5.1.0",
     "systemjs": "0.19.40",
     "zone.js": "^0.7.6"
   },
@@ -42,9 +42,9 @@
     "concurrently": "^3.1.0",
     "http-server": "^0.9.0",
     "jasmine-core": "~2.4.1",
+    "protractor": "~4.0.14",
     "lite-server": "^2.2.2",
     "lodash": "^4.16.4",
-    "protractor": "~4.0.14",
     "rimraf": "^2.5.4",
     "rollup": "^0.41.1",
     "rollup-plugin-commonjs": "^7.0.0",

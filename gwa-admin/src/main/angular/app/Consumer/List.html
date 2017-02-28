@@ -3,6 +3,10 @@
     <li class="active">Consumers</li>
   </ol>
 
+  <div class="btn-toolbar" role="toolbar">
+    <a [routerLink]="['/consumers', '_new_']" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
+  </div>
+
   <ngx-datatable
     class="material striped"
     [rows]="rows"
@@ -20,10 +24,6 @@
     (page)='onPage($event)'
   >
   </ngx-datatable>
-
-  <div class="btn-toolbar" role="toolbar">
-    <a [routerLink]="['/consumers', '_new_']" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
-  </div>
 
   <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/consumers', row.id]">{{value}}</a></template>
 

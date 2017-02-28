@@ -11,8 +11,9 @@
   <name>Gateway Admin</name>
 
   <modules>
+    <module>gwa-common</module>
     <module>gwa-admin</module>
-    <!-- module>gwa-developerkey</module-->
+    <module>gwa-developer-key</module>
   </modules>
   
   <developers>
@@ -76,6 +77,9 @@
         <version>2.6</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archiveClasses>true</archiveClasses>
+          <attachClasses>true</attachClasses>
+          <classesClassifier>classes</classesClassifier>
         </configuration>
       </plugin>
       <plugin>
@@ -140,10 +144,6 @@
                   <directory>${project.basedir}/src/main/angular</directory>
                   <includes>
                     <include>aot/**</include>
-                    <include>css/**</include>
-                    <include>fonts/**</include>
-                    <include>images/**</include>
-                    <include>js/**</include>
                   </includes>
                 </resource>
               </resources>

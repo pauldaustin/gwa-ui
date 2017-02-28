@@ -1,5 +1,11 @@
 <div>
-  <h1>APIs</h1>
+  <ol class="breadcrumb">
+    <li class="active">APIs</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar">
+    <a (click)="addApiModal.show()" class="btn btn-sm btn-primary" role="button">Add API</a>
+  </div>
 
   <ngx-datatable
     [columns]="columns"
@@ -9,10 +15,6 @@
     columnMode="force"
   >
   </ngx-datatable>
-
-  <div class="btn-toolbar" role="toolbar">
-    <a (click)="addApiModal.show()" class="btn btn-sm btn-primary" role="button">Add API</a>
-  </div>
   
   <div bsModal #addApiModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addApiLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
     <div class="modal-dialog modal-lg">
