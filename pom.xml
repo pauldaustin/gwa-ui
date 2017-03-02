@@ -160,6 +160,12 @@
               <outputDirectory>target/${project.artifactId}-${project.version}/js/</outputDirectory>
               <resources>
                 <resource>
+                  <directory>${project.basedir}/src/main/angular/dist/</directory>
+                  <includes>
+                    <include>*.js*</include>
+                  </includes>
+                </resource>
+                <resource>
                   <directory>${project.basedir}/src/main/angular/node_modules/core-js/client/</directory>
                   <includes>
                     <include>shim.min.js*</include>

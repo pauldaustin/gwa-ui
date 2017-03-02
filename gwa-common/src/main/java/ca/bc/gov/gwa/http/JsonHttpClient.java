@@ -77,7 +77,6 @@ public class JsonHttpClient implements Closeable {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public <V> V executeRequest(final HttpUriRequest httpRequest)
     throws IOException, ClientProtocolException {
     httpRequest.addHeader("Accept", Json.MIME_TYPE);
@@ -89,12 +88,9 @@ public class JsonHttpClient implements Closeable {
       if (statusCode == 200 || statusCode == 201) {
         return getContentJson(updateResponse);
       } else {
-        final Map<String, Object> errorData = new LinkedHashMap<>();
-        errorData.put("errorCode", statusCode);
-        errorData.put("errorMessage", statusLine.getReasonPhrase());
+        final String message = statusLine.getReasonPhrase();
         final String body = getContent(updateResponse);
-        errorData.put("errorDetail", body);
-        return (V)errorData;
+        throw new HttpStatusException(statusCode, message, body);
       }
     }
   }

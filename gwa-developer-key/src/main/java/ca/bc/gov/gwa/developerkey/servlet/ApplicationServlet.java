@@ -23,7 +23,7 @@ public class ApplicationServlet extends BaseServlet {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       final String deletePath = "/consumers/" + userId + "/acls" + pathInfo;
-      this.apiService.handleDelete(response, deletePath);
+      this.apiService.handleDelete(request, response, deletePath);
     }
   }
 
@@ -47,7 +47,7 @@ public class ApplicationServlet extends BaseServlet {
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
       final String insertPath = "/consumers/" + userId + "/acls";
-      this.apiService.handleInsert(request, response, insertPath, "id", Collections.emptyList());
+      this.apiService.handleInsert(request, response, insertPath, Collections.emptyList());
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }

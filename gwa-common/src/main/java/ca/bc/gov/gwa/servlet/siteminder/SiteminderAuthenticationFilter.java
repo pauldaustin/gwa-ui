@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.conn.HttpHostConnectException;
+import org.slf4j.LoggerFactory;
+
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.util.Uuid;
 
@@ -31,9 +34,9 @@ public class SiteminderAuthenticationFilter implements Filter {
     if (request.getAttribute("siteminderFiltered") == null) {
       request.setAttribute("siteminderFiltered", Boolean.TRUE);
       final HttpServletRequest httpRequest = (HttpServletRequest)request;
+      final HttpServletResponse httpResponse = (HttpServletResponse)response;
       String userId = httpRequest.getHeader("smgov_userguid");
       if (userId == null) {
-        final HttpServletResponse httpResponse = (HttpServletResponse)response;
         httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
       } else {
         final String type = httpRequest.getHeader("smgov_usertype");
@@ -49,7 +52,17 @@ public class SiteminderAuthenticationFilter implements Filter {
         } else {
           name = userDir + ":" + userName;
         }
-        final Set<String> roles = this.apiService.aclGet(userId, name);
+        final Set<String> roles;
+        try {
+          roles = this.apiService.aclGet(userId, name);
+        } catch (final HttpHostConnectException e) {
+          httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+          return;
+        } catch (final Throwable e) {
+          LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
+          httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          return;
+        }
         final SiteminderPrincipal principal = new SiteminderPrincipal(userId, type, name, roles);
 
         final HttpServletRequestWrapper requestWrapper = principal

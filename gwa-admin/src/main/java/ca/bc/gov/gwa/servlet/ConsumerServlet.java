@@ -24,7 +24,7 @@ public class ConsumerServlet extends BaseServlet {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       if (pathInfo.lastIndexOf('/') == 0) {
-        this.apiService.handleDelete(response, "/consumers" + pathInfo);
+        this.apiService.handleDelete(request, response, "/consumers" + pathInfo);
       } else {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       }
@@ -51,7 +51,7 @@ public class ConsumerServlet extends BaseServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.apiService.handleInsert(request, response, "/consumers/", "id", CONSUMERS_FIELD_NAMES);
+      this.apiService.handleInsert(request, response, "/consumers/", CONSUMERS_FIELD_NAMES);
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }

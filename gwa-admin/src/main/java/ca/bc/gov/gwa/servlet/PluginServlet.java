@@ -18,7 +18,8 @@ public class PluginServlet extends BaseServlet {
     if (pathInfo == null || "/".equals(pathInfo)) {
       this.apiService.pluginList(response);
     } else {
-      this.apiService.pluginSchema(response, pathInfo.substring(1));
+      String schemaPath = "/plugins/schema" + pathInfo;
+      this.apiService.handleGet(request, response, schemaPath);
     }
   }
 

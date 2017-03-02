@@ -20,7 +20,7 @@ public class NodeServlet extends BaseServlet {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
     } else {
       final String path = "/cluster?name=" + URLEncoder.encode(name, "UTF-8");
-      this.apiService.handleDelete(response, path);
+      this.apiService.handleDelete(request, response, path);
     }
   }
 

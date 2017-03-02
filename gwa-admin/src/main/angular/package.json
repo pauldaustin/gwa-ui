@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Gateway Admin",
   "scripts": {
-    "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",
-    "lint": "tslint ./app/**/*.ts -t verbose",
-    "lite": "lite-server",
-    "tsc": "tsc",
-    "tsc:w": "tsc -w",
-    "build": "ngc -p tsconfig-aot.json && rollup -c rollup-config.js"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   },
+  "private": true,
   "keywords": [],
   "author": "",
   "license": "proprietary",
@@ -31,11 +32,13 @@
     "core-js": "^2.4.1",
     "moment": "^2.17.1",
     "ng2-bootstrap": "^1.1.16-11",
+    "ng2-bootstrap-modal": "0.0.3",
     "rxjs": "^5.1.0",
     "systemjs": "0.19.40",
     "zone.js": "^0.7.6"
   },
   "devDependencies": {
+    "@angular/cli": "1.0.0-rc.0",
     "@types/jasmine": "2.5.40",
     "@types/node": "^6.0.46",
     "canonical-path": "0.0.2",

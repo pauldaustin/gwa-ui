@@ -34,11 +34,7 @@ public class ApiServlet extends BaseServlet {
           this.apiService.apiKeyDelete(response, userId, apiId, apiKeyId);
           return;
         } else if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
-          final String pluginId = apiIdString.substring(slashIndex + 9);
-          apiIdString = apiIdString.substring(0, slashIndex);
-
-          this.apiService.pluginDelete(response, userId, apiIdString, pluginId);
-          return;
+          this.apiService.handleDelete(request, response, "/apis" + pathInfo);
         } else {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
@@ -74,12 +70,15 @@ public class ApiServlet extends BaseServlet {
     } else if ("/my".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
-      String apiIdString = pathInfo.substring(1);
+      final String apiIdString = pathInfo.substring(1);
       final int slashIndex = apiIdString.indexOf('/');
       if (slashIndex > -1) {
         if (apiIdString.startsWith("plugins", slashIndex + 1)) {
-          apiIdString = apiIdString.substring(0, slashIndex);
-          this.apiService.pluginAdd(request, response, userId, apiIdString);
+          if (apiIdString.indexOf('/', slashIndex + 2) == -1) {
+            this.apiService.handleInsert(request, response, pathInfo);
+          } else {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+          }
         } else if (apiIdString.startsWith("apiKeys", slashIndex + 1)) {
           this.apiService.apiKeyCreate(request, response, userId, pathInfo);
         }
@@ -97,13 +96,12 @@ public class ApiServlet extends BaseServlet {
     } else if ("/my".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
-      String apiIdString = pathInfo.substring(1);
+      final String apiIdString = pathInfo.substring(1);
       final int slashIndex = apiIdString.indexOf('/');
       if (slashIndex > -1) {
         if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
-          final String pluginId = apiIdString.substring(slashIndex + 9);
-          apiIdString = apiIdString.substring(0, slashIndex);
-          this.apiService.pluginUpdate(request, response, userId, apiIdString, pluginId);
+          final String updatePath = "/apis" + pathInfo;
+          this.apiService.handleUpdatePut(request, response, updatePath);
         } else {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }

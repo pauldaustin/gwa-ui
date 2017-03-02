@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.conn.HttpHostConnectException;
+
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.util.LruMap;
@@ -102,7 +104,13 @@ public class GitHubAuthenticationFilter implements Filter {
           if (id != null && login != null) {
             final String userId = "GitHub:" + id;
             final String userName = "GitHub:" + login;
-            final Set<String> roles = this.apiService.aclGet(userId, userName);
+            final Set<String> roles;
+            try {
+              roles = this.apiService.aclGet(userId, userName);
+            } catch (final HttpHostConnectException e) {
+              httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+              return;
+            }
             final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);
             if (orgResponse instanceof List) {
               final List<Map<String, Object>> orgList = (List<Map<String, Object>>)orgResponse;

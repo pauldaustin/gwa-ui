@@ -26,16 +26,15 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
     <script type="text/javascript" src="js/rs.js"></script>
-
-
-    <script src="js/shim.min.js"></script>
-    <script src="js/zone.min.js"></script>
-    <script>window.module = 'aot';</script>
   </head>
 
   <body>
     <bcgov-template>
     </bcgov-template>
   </body>
-  <script src="aot/dist/build.js"></script>
+    <script type="text/javascript" src="js/inline.bundle.js"></script>
+    <script type="text/javascript" src="js/polyfills.bundle.js"></script>
+    <script type="text/javascript" src="js/styles.bundle.js"></script>
+    <script type="text/javascript" src="js/vendor.bundle.js"></script>
+    <script type="text/javascript" src="js/main.bundle.js"></script>
 </html>

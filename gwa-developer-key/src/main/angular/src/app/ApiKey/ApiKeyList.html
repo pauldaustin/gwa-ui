@@ -1,0 +1,55 @@
+<div>
+  <ol class="breadcrumb">
+    <li class="active">API Keys</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar">
+    <button (click)="addApiKey()" class="btn btn-success" type="button">Add API Key</button>
+    <div class="pull-right">
+      <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#helpText" aria-expanded="false" aria-controls="helpText">
+        <span class="fa fa-question-circle" aria-hidden="true"></span>
+        <span class="sr-only">Help</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="collapse" id="helpText">
+    <div class="alert alert-info">
+<p>To access an application a developer must have at least one API key. Create a new one using
+ the Add API Key button. If required an API key can be deleted and a new one created.</p>
+<p>The API Key must be included in the query string parameters for each request to the application.
+For example <code>http://demo.apps.gov.bc.ca/service?api_key=....</code>
+    </div>
+  </div>
+
+  <ngx-datatable
+    class="material striped"
+    [rows]="rows"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="30"
+    [footerHeight]="30"
+    [rowHeight]="30"
+    [externalPaging]="true"
+    [count]="count"
+    [offset]="offset"
+    [limit]="limit"
+    [cssClasses]="cssClasses"
+    [scrollbarV]="true"
+    (page)='onPage($event)'
+  >
+  </ngx-datatable>
+
+  <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
+
+  <template #actionsT let-row="row">
+    <button (confirm)="deleteObject(row)" class="btn btn-danger btn-xs" type="button"
+      name="delete" aria-label="Delete"
+      mwlConfirmationPopover title="Delete API Key?" message="Are you sure you want to delete</br /> <b>{{row.key}}</b>?" placement="left" [appendToBody]="true"
+    >
+      <span class="fa fa-trash" aria-hidden="true"></span>
+      <span class="sr-only">Delete</span>
+    </button>
+  </template>
+
+</div>
