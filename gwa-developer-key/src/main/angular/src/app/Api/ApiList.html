@@ -1,10 +1,10 @@
 <div>
   <ol class="breadcrumb">
-    <li class="active">Apps</li>
+    <li class="active">APIs</li>
   </ol>
 
   <div class="btn-toolbar" role="toolbar">
-  <!--  <button (click)="addApplication()" class="btn btn-success" type="button">Add Application</button> --> 
+  <!--  <button (click)="addApi()" class="btn btn-success" type="button">Add Api</button> --> 
     <div class="pull-right">
       <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#helpText" aria-expanded="false" aria-controls="helpText">
         <span class="fa fa-question-circle" aria-hidden="true"></span>
@@ -16,7 +16,7 @@
   <div class="collapse" id="helpText">
     <div class="alert alert-info">
 <p>Rate limited access can be requested to an application using one of your API keys. Request
-developer access to an application by clicking the Add Application button.</p>
+developer access to an application by clicking the Add Api button.</p>
     </div>
   </div>
 
@@ -43,7 +43,7 @@ developer access to an application by clicking the Add Application button.</p>
   <template #actionsT let-row="row">
     <button (confirm)="deleteObject(row)" class="btn btn-danger btn-xs" type="button"
       name="delete" aria-label="Delete"
-      mwlConfirmationPopover title="Delete Application?" message="Are you sure you want to delete?</br /><b>{{row.name}}</b>" placement="left" [appendToBody]="true"
+      mwlConfirmationPopover title="Delete Api?" message="Are you sure you want to delete?</br /><b>{{row.name}}</b>" placement="left" [appendToBody]="true"
     >
       <span class="fa fa-trash" aria-hidden="true"></span>
       <span class="sr-only">Delete</span>

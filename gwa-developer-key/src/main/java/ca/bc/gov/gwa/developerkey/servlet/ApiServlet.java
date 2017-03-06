@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import ca.bc.gov.gwa.servlet.BaseServlet;
 
-@WebServlet(urlPatterns = "/rest/apps/*", loadOnStartup = 1)
-public class ApplicationServlet extends BaseServlet {
+@WebServlet(urlPatterns = "/rest/apis/*", loadOnStartup = 1)
+public class ApiServlet extends BaseServlet {
   private static final long serialVersionUID = 1L;
 
   @Override

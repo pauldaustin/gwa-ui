@@ -10,11 +10,11 @@ import { HttpModule }    from '@angular/http';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
-import {
-  AccordionModule,
-  ModalModule,
-  TabsModule
-} from 'ng2-bootstrap/ng2-bootstrap';
+import { AccordionModule } from 'ng2-bootstrap/accordion';
+
+import {  ModalModule } from 'ng2-bootstrap/modal';
+
+import { TabsModule } from 'ng2-bootstrap/tabs';
 
 import { BootstrapModalModule } from 'ng2-bootstrap-modal';
 

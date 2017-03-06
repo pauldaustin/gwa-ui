@@ -1,4 +1,4 @@
-export class Application {
+export class Api {
   id : string;
   consumer_id: string;
   group: string;

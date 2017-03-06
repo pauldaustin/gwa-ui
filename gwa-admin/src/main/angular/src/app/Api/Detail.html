@@ -1,6 +1,6 @@
 <div *ngIf="api">
   <ol class="breadcrumb">
-    <li><a href="apis">APIs</a></li>
+    <li><a [routerLink]="['/apis']">APIs</a></li>
     <li class="active">{{api.name}}</li>
   </ol>
 

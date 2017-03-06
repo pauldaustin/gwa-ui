@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.conn.HttpHostConnectException;
+import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.servlet.ApiService;
@@ -109,6 +110,10 @@ public class GitHubAuthenticationFilter implements Filter {
               roles = this.apiService.aclGet(userId, userName);
             } catch (final HttpHostConnectException e) {
               httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+              return;
+            } catch (final Throwable e) {
+              LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
+              httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
               return;
             }
             final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);

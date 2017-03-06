@@ -26,7 +26,7 @@ export abstract class BaseService<T> implements Service<T> {
   protected http: Http = this.injector.get(Http);
 
   protected location: Location = this.injector.get(Location);
-  
+
   protected dialogService: DialogService = this.injector.get(DialogService);
 
   private jsonHeaders = {

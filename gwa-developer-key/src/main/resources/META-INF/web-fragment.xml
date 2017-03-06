@@ -29,7 +29,7 @@
 
   <servlet-mapping>
     <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/apps/*</url-pattern>
+    <url-pattern>/apis/*</url-pattern>
   </servlet-mapping>
   
 </web-fragment>

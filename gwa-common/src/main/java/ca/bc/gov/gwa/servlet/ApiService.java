@@ -142,7 +142,6 @@ public class ApiService implements ServletContextListener {
         consumerRequest.put("custom_id", userId);
         consumerRequest.put("username", name);
         if (id == null) {
-          consumerRequest.put("id", id);
           final Map<String, Object> consumerUpdateResponse = httpClient.put("/consumers",
             consumerRequest);
           id = (String)consumerUpdateResponse.get("id");

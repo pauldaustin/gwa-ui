@@ -18,7 +18,14 @@ import { DialogComponent, DialogService } from "ng2-bootstrap-modal";
 </div>`
 })
 export class MessageDialog extends DialogComponent {
-  constructor(dialogService: DialogService) {
+  constructor(dialogService: DialogService, private closeCallback?: ()=>void) {
     super(dialogService);
+  }
+  
+  close() {
+    super.close();
+    if (this.closeCallback) {
+      this.closeCallback();
+    }
   }
 }

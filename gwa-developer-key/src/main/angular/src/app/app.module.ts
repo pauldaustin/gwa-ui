@@ -1,41 +1,26 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
-
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-
 import { HttpModule }    from '@angular/http';
-
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
-import {
-  AccordionModule,
-  ModalModule,
-  TabsModule
-} from 'ng2-bootstrap/ng2-bootstrap';
-
+import { ModalModule} from 'ng2-bootstrap/modal';
 import { BootstrapModalModule } from 'ng2-bootstrap-modal';
-
 import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
-
+import { AppRoutingModule } from './app-routing.module';
 import {
   BcGovTemplate,
   BcGovTemplateModule
 } from './bcgov-template/index';
-
-import { BsFormModule }           from './bs-form/index';
-
-import { MessageDialog }           from './Component/MessageDialog';
-
-import { ApiKeyListComponent }     from './ApiKey/ApiKeyListComponent';
-import { ApiKeyService }           from './ApiKey/ApiKeyService';
-
-import { ApplicationListComponent }      from './Application/ApplicationListComponent';
-import { ApplicationService }            from './Application/ApplicationService';
-
-import { AppRoutingModule }        from './app-routing.module';
+import { BsFormModule } from './bs-form/index';
+import { MessageDialog } from './Component/MessageDialog';
+import { ApiKeyService } from './ApiKey/ApiKeyService';
+import { ApiKeyListComponent } from './ApiKey/ApiKeyListComponent';
+import { ApiService } from './Api/ApiService';
+import { ApiListComponent } from './Api/ApiListComponent';
+import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
 
 @NgModule({
   imports: [
@@ -44,10 +29,8 @@ import { AppRoutingModule }        from './app-routing.module';
     ReactiveFormsModule,
     HttpModule,
     NgxDatatableModule,
-    AccordionModule.forRoot(),
     ModalModule.forRoot(),
     BootstrapModalModule,
-    TabsModule.forRoot(),
     BcGovTemplateModule.forRoot({
         title: 'GW Dev Keys',
         headerMenuItems: [
@@ -56,8 +39,8 @@ import { AppRoutingModule }        from './app-routing.module';
             routerLink: '/apiKeys'
           },
           {
-            title: 'Apps',
-            routerLink: '/apps'
+            title: 'APIs',
+            routerLink: '/apis'
           },
         ]
       }
@@ -73,12 +56,13 @@ import { AppRoutingModule }        from './app-routing.module';
   ],
   declarations: [
     ApiKeyListComponent,
-    ApplicationListComponent,
+    ApiListComponent,
+    ApiAuthorizeComponent,
     MessageDialog
   ],
   providers: [
     ApiKeyService,
-    ApplicationService,
+    ApiService,
   ],
   bootstrap: [ BcGovTemplate ]
 })

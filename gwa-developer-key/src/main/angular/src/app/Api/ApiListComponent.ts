@@ -6,17 +6,17 @@ import {
 
 import { BaseListComponent }  from '../Component/BaseListComponent';
 
-import { Application } from './Application';
-import { ApplicationService }  from './ApplicationService';
+import { Api } from './Api';
+import { ApiService }  from './ApiService';
 
 @Component({
-  selector: 'application-list',
-  templateUrl: 'ApplicationList.html'
+  selector: 'api-list',
+  templateUrl: 'ApiList.html'
 })
-export class ApplicationListComponent extends BaseListComponent<Application>{
+export class ApiListComponent extends BaseListComponent<Api>{
   constructor(
      injector: Injector,
-     service: ApplicationService
+     service: ApiService
   ) {
     super(injector, service);
     this.paging = true;
@@ -31,8 +31,8 @@ export class ApplicationListComponent extends BaseListComponent<Application>{
     super.ngOnInit();
   }
 
-  addApplication(): void {
-    let application: Application = new Application();
+  addApi(): void {
+    let application: Api = new Api();
     this.service.addObject(
       application
     ).then(
