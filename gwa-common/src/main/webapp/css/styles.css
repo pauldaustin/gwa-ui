@@ -1,0 +1,50 @@
+@import 'ngx-datatable/index.css';
+@import 'ngx-datatable/themes/material.css';
+@import 'ngx-datatable/assets/icons.css';
+
+@font-face {
+  font-family: 'Myriad-Web-Pro';
+  src: url('../fonts/MyriadWebPro.ttf');
+}
+
+.row .form-group {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.form-control .checkbox-inline {
+  padding-top: 0px;
+}
+
+.tab-pane {
+  width: 100%;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-radius: 0px 0px 5px 5px;
+  padding: 10px;
+}
+
+.nav-tabs {
+  margin-bottom: 0;
+}
+
+.ngx-datatable {
+  width:100%;
+}
+.ngx-datatable.scroll-vertical {
+  height: 400px;
+  flex: 1 1 auto;
+}
+.ngx-datatable.fixed-height {
+  height: 400px;
+}
+
+.ngx-datatable .datatable-footer .datatable-pager,
+.ngx-datatable .datatable-footer .datatable-pager ul.pager {
+  display: none;
+}
+.btn-toolbar {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}

@@ -1,0 +1,42 @@
+import {
+  Injectable,
+  Injector
+} from '@angular/core';
+
+import { BaseService } from '../Service/BaseService';
+
+import { Api } from './Api';
+
+@Injectable()
+export class ApiService extends BaseService<Api> {
+ 
+  constructor(injector:Injector) {
+    super(injector);
+  }
+
+  
+  addObject(application: Api): Promise<Api> {
+    return this.addObjectDo(
+      '/apis',
+      application
+    );
+  }
+ 
+  deleteObject(application: Api): Promise<boolean> {
+    return this.deleteObjectDo(
+      `/apis/${application.id}`
+    );
+  }
+
+  getRowsPage(offset: number, limit: number): Promise<any> {
+    return this.getRowsPageDo('/apis', offset, limit);
+  }
+
+  newObject(): Api {
+    return new Api();
+  }
+
+  updateObject(application: Api): Promise<Api> {
+    return null;
+  }
+}
