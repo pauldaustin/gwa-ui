@@ -47,7 +47,7 @@ public class ApiServlet extends BaseServlet {
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
       final String insertPath = "/consumers/" + userId + "/acls";
-      this.apiService.handleInsert(request, response, insertPath, Collections.emptyList());
+      this.apiService.handleAdd(request, response, insertPath, Collections.emptyList());
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }

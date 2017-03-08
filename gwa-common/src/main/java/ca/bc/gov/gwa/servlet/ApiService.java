@@ -1,6 +1,5 @@
 package ca.bc.gov.gwa.servlet;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.util.Json;
-import ca.bc.gov.gwa.util.JsonWriter;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ColumnDefinitions.Definition;
@@ -77,20 +75,6 @@ public class ApiService implements ServletContextListener {
   public static ApiService get() {
     referenceCount.incrementAndGet();
     return instance;
-  }
-
-  @SuppressWarnings("unchecked")
-  public static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest)
-    throws IOException {
-    try (
-      BufferedReader reader = httpRequest.getReader()) {
-      final Object data = Json.read(reader);
-      if (data instanceof Map) {
-        return (Map<String, Object>)data;
-      } else {
-        return null;
-      }
-    }
   }
 
   public static ApiService release() {
@@ -163,9 +147,9 @@ public class ApiService implements ServletContextListener {
     return roles;
   }
 
-  public void apiCreate(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String userId) throws IOException {
-    final Map<String, Object> dataMap = readJsonMap(httpRequest);
+  public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    final String userId) throws IOException {
+    final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
     if (dataMap != null) {
       final String name = (String)dataMap.get("name");
       final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
@@ -264,42 +248,44 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  public void apiGet(final HttpServletResponse httpResponse, final String apiId)
-    throws IOException {
-    final Map<String, Object> api = apiGetKong(httpResponse, apiId);
-    if (api == null) {
-      httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-    } else {
-      final ResultSet resultSet = this.session.execute("SELECT * FROM gwa.api WHERE id = " + apiId);
-      final Row row = resultSet.one();
-      setValues(api, row);
-      final Map<String, Object> data = Collections.singletonMap("data", api);
-      writeJson(httpResponse, data);
-    }
+  public void apiGet(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    final String apiName) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> apiResponse = httpClient.get("/apis/" + apiName);
+      final String apiId = (String)apiResponse.get("id");
+      if (apiId == null) {
+        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+      } else {
+        final Map<String, Object> pluginsResponse = httpClient.get("/apis/" + apiId + "/plugins");
+        @SuppressWarnings("unchecked")
+        final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
+          .get("data");
+        apiResponse.put("plugins", plugins);
+        Json.writeJson(httpResponse, apiResponse);
+      }
+    });
   }
 
-  public Map<String, Object> apiGetKong(final HttpServletResponse httpResponse,
-    final String apiId) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, Object> apiResponse = httpClient.get("/apis/" + apiId);
-      final Map<String, Object> pluginsResponse = httpClient.get("/apis/" + apiId + "/plugins");
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
-        .get("data");
-      apiResponse.put("plugins", plugins);
-      return apiResponse;
-    } catch (final IOException | RuntimeException e) {
-      logError("Error querying API " + apiId, e);
-    }
-    return null;
+  public void apiGetOld(final HttpServletResponse httpResponse, final String apiName)
+    throws IOException {
+    // final Map<String, Object> api = apiGet(httpResponse, apiName);
+    // if (api == null) {
+    // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+    // } else {
+    // final String apiId = (String)api.get("id");
+    // final ResultSet resultSet = this.session.execute("SELECT * FROM gwa.api WHERE id = " +
+    // apiId);
+    // final Row row = resultSet.one();
+    // setValues(api, row);
+    // writeJson(httpResponse, api);
+    // }
   }
 
   @SuppressWarnings("unchecked")
   public void apiKeyCreate(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String userId, final String pathInfo) {
     try {
-      final Map<String, Object> dataMap = readJsonMap(httpRequest);
+      final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
       if (dataMap != null) {
         final Map<String, Object> apiKeyData = (Map<String, Object>)dataMap.get("apiKey");
         final String apiId = pathInfo.substring(1);
@@ -426,7 +412,7 @@ public class ApiService implements ServletContextListener {
         }
       }
     }
-    writeJson(httpResponse, apiResponse);
+    Json.writeJson(httpResponse, apiResponse);
   }
 
   public Map<String, Object> apiListKong(final HttpServletResponse httpResponse) {
@@ -443,7 +429,7 @@ public class ApiService implements ServletContextListener {
   public void apiUpdate(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String userId, final String pathInfo)
     throws IOException {
-    final Map<String, Object> dataMap = readJsonMap(httpRequest);
+    final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
     if (dataMap != null) {
       final String apiId = pathInfo.substring(1);
       apiUpdateCassandra(apiId, userId, dataMap);
@@ -567,6 +553,36 @@ public class ApiService implements ServletContextListener {
     return this.session;
   }
 
+  public void handleAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path) throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData != null) {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        final Map<String, Object> apiResponse = httpClient.post(path, requestData);
+        Json.writeJson(httpResponse, apiResponse);
+      });
+    }
+  }
+
+  public void handleAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
+    throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData != null) {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        final Map<String, Object> insertData = new LinkedHashMap<>();
+        for (final String key : fieldNames) {
+          final Object value = requestData.get(key);
+          if (value != null) {
+            insertData.put(key, value);
+          }
+        }
+        final Map<String, Object> apiResponse = httpClient.post(path, insertData);
+        Json.writeJson(httpResponse, apiResponse);
+      });
+    }
+  }
+
   public void handleDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
@@ -579,39 +595,8 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse, final String path) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
       final Map<String, Object> kongResponse = httpClient.get(path);
-      final Map<String, Object> data = Collections.singletonMap("data", kongResponse);
-      writeJson(httpResponse, data);
+      Json.writeJson(httpResponse, kongResponse);
     });
-  }
-
-  public void handleInsert(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String path) throws IOException {
-    final Map<String, Object> requestData = readJsonMap(httpRequest);
-    if (requestData != null) {
-      handleRequest(httpRequest, httpResponse, (httpClient) -> {
-        final Map<String, Object> apiResponse = httpClient.post(path, requestData);
-        writeJson(httpResponse, apiResponse);
-      });
-    }
-  }
-
-  public void handleInsert(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
-    throws IOException {
-    final Map<String, Object> requestData = readJsonMap(httpRequest);
-    if (requestData != null) {
-      handleRequest(httpRequest, httpResponse, (httpClient) -> {
-        final Map<String, Object> insertData = new LinkedHashMap<>();
-        for (final String key : fieldNames) {
-          final Object value = requestData.get(key);
-          if (value != null) {
-            insertData.put(key, value);
-          }
-        }
-        final Map<String, Object> apiResponse = httpClient.post(path, insertData);
-        writeJson(httpResponse, apiResponse);
-      });
-    }
   }
 
   public void handleList(final HttpServletRequest httpRequest,
@@ -632,7 +617,7 @@ public class ApiService implements ServletContextListener {
         kongResponse = httpClient.getByUrl(url);
         url = (String)kongResponse.remove("next");
       } while (url != null && offsetPage-- > 0);
-      writeJson(httpResponse, kongResponse);
+      Json.writeJson(httpResponse, kongResponse);
     });
   }
 
@@ -657,10 +642,12 @@ public class ApiService implements ServletContextListener {
   public void handleUpdate(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
     throws IOException {
-    final Map<String, Object> requestData = readJsonMap(httpRequest);
-    if (requestData != null) {
-      try (
-        JsonHttpClient httpClient = newKongClient()) {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+
+      final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+      if (requestData == null) {
+        httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      } else {
         final Map<String, Object> updateData = new LinkedHashMap<>();
         for (final String key : fieldNames) {
           final Object value = requestData.get(key);
@@ -668,17 +655,15 @@ public class ApiService implements ServletContextListener {
             updateData.put(key, value);
           }
         }
-        final Map<String, Object> consumerResponse = httpClient.patch(path, updateData);
+        httpClient.patch(path, updateData);
         writeJsonResponse(httpResponse, UPDATED);
-      } catch (final IOException | RuntimeException e) {
-        logError("Error updating: " + path, e);
       }
-    }
+    });
   }
 
   public void handleUpdatePut(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
-    final Map<String, Object> requestData = readJsonMap(httpRequest);
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
     if (requestData != null) {
       try (
         JsonHttpClient httpClient = newKongClient()) {
@@ -742,7 +727,7 @@ public class ApiService implements ServletContextListener {
       final Map<String, Object> pluginResponse = httpClient.get("/plugins/enabled");
       final List<String> pluginNames = (List<String>)pluginResponse.get("enabled_plugins");
       Collections.sort(pluginNames);
-      writeJson(httpResponse, pluginResponse);
+      Json.writeJson(httpResponse, pluginResponse);
     });
   }
 
@@ -766,16 +751,6 @@ public class ApiService implements ServletContextListener {
       writer.print("{\"data\":{\"inserted\": true,\"id\":\"");
       writer.print(id);
       writer.println("\"}}");
-    }
-  }
-
-  private void writeJson(final HttpServletResponse httpResponse, final Map<String, Object> data)
-    throws IOException {
-    httpResponse.setContentType("application/json");
-    try (
-      PrintWriter writer = httpResponse.getWriter();
-      JsonWriter jsonWriter = new JsonWriter(writer, false)) {
-      jsonWriter.write(data);
     }
   }
 

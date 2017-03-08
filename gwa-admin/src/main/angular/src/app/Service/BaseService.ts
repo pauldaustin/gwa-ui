@@ -54,8 +54,7 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return null;
         } else {
-          const data = json.data;
-          Object.assign(object, data);
+          Object.assign(object, json);
           if (callback) {
             callback();
           }
@@ -100,8 +99,7 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return null;
         } else {
-          let data = json.data;
-          Object.assign(object, data);
+          Object.assign(object, json);
           if (callback) {
             callback();
           }
@@ -138,8 +136,7 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return false;
         } else {
-          let data = json.data;
-          var deleted = data.deleted == true;
+          var deleted = json.deleted == true;
           if (callback) {
             callback(deleted);
           }
@@ -163,8 +160,7 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return null;
         } else {
-          let data = json.data;
-          return this.toObject(data);
+          return this.toObject(json);
         }
       })
       .catch(this.handleError.bind(this));

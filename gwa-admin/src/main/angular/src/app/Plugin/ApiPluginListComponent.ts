@@ -13,10 +13,10 @@ import { Plugin } from './Plugin';
 import { PluginService }  from './PluginService';
 
 @Component({
-  selector: 'plugin-list',
-  templateUrl: 'List.html'
+  selector: 'api-plugin-list',
+  templateUrl: 'ApiPluginList.html'
 })
-export class PluginListComponent extends BaseListComponent<Plugin> {
+export class ApiPluginListComponent extends BaseListComponent<Plugin> {
   @Input() api: Api;
     
   pluginNames: string[];

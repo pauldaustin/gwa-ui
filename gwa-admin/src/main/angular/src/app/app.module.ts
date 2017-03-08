@@ -29,7 +29,11 @@ import { BsFormModule }           from './bs-form/index';
 
 import { MessageDialog }           from './Component/MessageDialog';
 
-import { ApiCreateComponent }  from './Api/ApiCreateComponent';
+import { AuthService } from './Authentication/AuthService';
+import { AdminAuthorize } from './Authentication/AdminAuthorize';
+import { UserAuthorize } from './Authentication/UserAuthorize';
+
+import { ApiAddComponent }  from './Api/ApiAddComponent';
 import { ApiDetailComponent }  from './Api/ApiDetailComponent';
 import { ApiListComponent }    from './Api/ApiListComponent';
 import { ApiListMyComponent }  from './Api/ApiListMyComponent';
@@ -38,13 +42,13 @@ import { ApiService }          from './Api/ApiService';
 import { ApiKeyListComponent }     from './ApiKey/ApiKeyListComponent';
 import { ApiKeyService }           from './ApiKey/ApiKeyService';
 
-import { PluginListComponent }     from './Plugin/PluginListComponent';
-import { PluginDetailComponent }   from './Plugin/PluginDetailComponent';
-import { PluginAddComponent }      from './Plugin/PluginAddComponent';
+import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
+import { ApiPluginDetailComponent }   from './Plugin/ApiPluginDetailComponent';
+import { ApiPluginAddComponent }      from './Plugin/ApiPluginAddComponent';
 import { PluginService }           from './Plugin/PluginService';
 
 import { ConsumerListComponent }     from './Consumer/ConsumerListComponent';
-import { ConsumerCreateComponent }   from './Consumer/ConsumerCreateComponent';
+import { ConsumerAddComponent }   from './Consumer/ConsumerAddComponent';
 import { ConsumerDetailComponent }   from './Consumer/ConsumerDetailComponent';
 import { ConsumerService }           from './Consumer/ConsumerService';
 
@@ -103,15 +107,15 @@ import { AppRoutingModule }        from './app-routing.module';
     MessageDialog
   ],
   declarations: [
-    ApiCreateComponent,
+    ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,
     ApiListMyComponent,
     ApiKeyListComponent,
-    PluginListComponent,
-    PluginDetailComponent,
-    PluginAddComponent,
-    ConsumerCreateComponent,
+    ApiPluginListComponent,
+    ApiPluginDetailComponent,
+    ApiPluginAddComponent,
+    ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
     NodeListComponent,
@@ -119,6 +123,9 @@ import { AppRoutingModule }        from './app-routing.module';
     MessageDialog
   ],
   providers: [
+    AuthService,
+    AdminAuthorize,
+    UserAuthorize,
     ApiService,
     ApiKeyService,
     PluginService,

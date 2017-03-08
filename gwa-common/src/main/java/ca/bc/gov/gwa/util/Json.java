@@ -1,5 +1,6 @@
 package ca.bc.gov.gwa.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -7,6 +8,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.bc.gov.gwa.util.JsonParser.EventType;
@@ -110,6 +112,30 @@ public interface Json {
         final String json = row.getString(0);
         writer.print(json);
         writer.println("}");
+      }
+    }
+  }
+
+  static void writeJson(final HttpServletResponse httpResponse,
+    final Map<String, Object> data) throws IOException {
+    httpResponse.setContentType("application/json");
+    try (
+      PrintWriter writer = httpResponse.getWriter();
+      JsonWriter jsonWriter = new JsonWriter(writer, false)) {
+      jsonWriter.write(data);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest)
+    throws IOException {
+    try (
+      BufferedReader reader = httpRequest.getReader()) {
+      final Object data = read(reader);
+      if (data instanceof Map) {
+        return (Map<String, Object>)data;
+      } else {
+        return null;
       }
     }
   }

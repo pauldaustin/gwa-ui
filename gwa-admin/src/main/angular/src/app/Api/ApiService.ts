@@ -28,15 +28,8 @@ export class ApiService extends BaseService<Api> {
     );
   }
 
-  getApi(id: string): Promise<Api> {
-    const url = this.getUrl(`/apis/${id}`);
-    return this.http.get(url)
-      .toPromise()
-      .then(response => {
-        let data = response.json().data;
-        return this.toObject(data);
-      })
-      .catch(this.handleError);
+  getObject(name: string): Promise<Api> {
+     return this.getObjectDo(`/apis/${name}`);
   }
 
   getMyApis(): Promise<Api[]> {

@@ -2,28 +2,25 @@ import {
   Component, 
   Injector
 } from '@angular/core';
-import { BaseDetailComponent } from '../Component/BaseDetailComponent';
 import { Api } from './Api';
 import { ApiService } from './ApiService';
+import { ApiDetailComponent } from './ApiDetailComponent';
 
 @Component({
-  selector: 'api-detail',
+  selector: 'api-add',
   templateUrl: 'ApiDetail.html'
 })
-export class ApiDetailComponent extends BaseDetailComponent<Api> {
+export class ApiAddComponent extends ApiDetailComponent {
 
-  activeTab : string;
-  
   constructor(
     protected injector:Injector,
     protected service: ApiService
   ) {
     super(injector, service);
-    this.idParamName = 'name';
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
+  postSave(savedApi: Api): void {
+    this.router.navigate(['/apis', savedApi.id]);
   }
 
 }

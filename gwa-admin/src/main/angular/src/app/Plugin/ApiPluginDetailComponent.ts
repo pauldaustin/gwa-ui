@@ -2,34 +2,37 @@ import 'rxjs/add/operator/switchMap';
 
 import {
   Component,
-  Input,
-  OnInit
-}              from '@angular/core';
+  Injector,
+  Input
+} from '@angular/core';
 
 import {
-  FormBuilder,
   FormControl,
   FormGroup,
   Validators
-}            from '@angular/forms';
+} from '@angular/forms';
 
-import {
-  ActivatedRoute,
-  Params,
-  Router
-} from '@angular/router';
+import { Params } from '@angular/router';
 
-import { Plugin } from './Plugin';
+import { BaseDetailComponent } from '../Component/BaseDetailComponent';
+
 import { Api } from '../Api/Api';
 import { ApiService } from '../Api/ApiService';
+
+import { Plugin } from './Plugin';
 import { PluginService } from './PluginService';
 
 @Component({
-  selector: 'plugin-detail',
-  templateUrl: './PluginDetailComponent.html'
+  selector: 'api-plugin-detail',
+  templateUrl: './ApiPluginDetail.html'
 })
-export class PluginDetailComponent implements OnInit {
+export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
+  protected apiService: ApiService = this.injector.get(ApiService);
+
+  api : Api;
+
   form : FormGroup;
+  
   formGroupConfig : FormGroup;
   
   groups = [
@@ -38,7 +41,6 @@ export class PluginDetailComponent implements OnInit {
       formGroupName: 'core',
       fields: [
         {name: 'enabled', title: 'Enabled', type: 'checkbox'},
-        {name: 'created_at', title: 'Created At', type: 'text', readOnly: true},
       ],
     }, {
       title: 'Configuration',
@@ -47,23 +49,13 @@ export class PluginDetailComponent implements OnInit {
     }
   ];
   
-  plugin: Plugin;
-  
+  name : string;
+
   constructor(
-    private formBuilder: FormBuilder,
-    protected service: PluginService,
-    protected apiService: ApiService,
-    protected route: ActivatedRoute,
-    private router: Router
+    protected injector:Injector,
+    protected service: PluginService
   ) {
-    this.formGroupConfig = this.formBuilder.group({});
-    
-    this.form = this.formBuilder.group({
-      core: this.formBuilder.group({
-        enabled: true
-      }),
-      config: this.formGroupConfig
-    });
+    super(injector, service);
   }
 
   setPluginName(name: string) {
@@ -101,51 +93,48 @@ export class PluginDetailComponent implements OnInit {
         fields.push(field);
       }
       this.groups[1].fields = fields;
-      if (this.plugin) {
-        this.form.patchValue({
-          core: {
-            enabled: this.plugin.enabled
-          },
-          config: this.plugin.config
-        });
-      }
-    });
+      this.form.patchValue({
+        core: {
+          enabled: this.object.enabled
+        },
+        config: this.object.config
+      });
+     });
   }
   
   ngOnInit(): void {
-    var name:string;
+    this.formGroupConfig = this.formBuilder.group({});
+    
+    this.form = this.formBuilder.group({
+      core: this.formBuilder.group({
+        enabled: true
+      }),
+      config: this.formGroupConfig
+    });
+
     this.route.params
       .switchMap((params: Params) => {
-        name = params['name'];
-        this.setPluginName(name);
-        return this.apiService.getApi(params['api_id']);
+        this.name = params['name'];
+        return this.apiService.getObject(params['apiName']);
       })
       .subscribe((api : Api) => {
+        this.api = api;
         for (let plugin of api.plugins) {
-          if (plugin.name == name) {
-            this.plugin = plugin;
-            this.form.patchValue({
-              core: {
-                enabled: this.plugin.enabled
-              },
-              config: this.plugin.config
-            });
-            return;
+          if (plugin.name == this.name) {
+            this.object = plugin;
           }
         }
-        this.plugin = null;
-      });
-  }
-
-  postSave(): void {
-    this.router.navigate(['/apis', this.plugin.api.id, '/plugins']);
-  }
-
-  save(): void {
-   this.service.updateObject(this.plugin)
-     .then((data) => {
-       this.postSave();
+        if (this.object == null) {
+          this.object = this.service.newObject();
+          this.object.api_id = api.id;
+          this.object.api = api;
+          this.object.name = this.name;
+        }
+        this.setPluginName(this.name);
      });
   }
 
+  postSave(savedObject: Plugin): void {
+    this.router.navigate(['/apis', savedObject.api.id, '/plugins']);
+  }
 }
