@@ -16,20 +16,15 @@
       gwa-common
     </after>
   </ordering>
+  
+  <filter>
+    <filter-name>github-auth</filter-name>
+    <filter-class>ca.bc.gov.gwa.servlet.github.GitHubAuthenticationFilter</filter-class>
+  </filter>
 
   <filter-mapping>
     <filter-name>github-auth</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <servlet-mapping>
-    <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/apiKeys/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/apis/*</url-pattern>
-  </servlet-mapping>
-  
 </web-fragment>

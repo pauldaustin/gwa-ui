@@ -10,6 +10,7 @@ import { ModalModule} from 'ng2-bootstrap/modal';
 import { BootstrapModalModule } from 'ng2-bootstrap-modal';
 import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthService } from './Authentication/AuthService';
 import {
   BcGovTemplate,
   BcGovTemplateModule
@@ -36,11 +37,11 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
         headerMenuItems: [
           {
             title: 'API Keys',
-            routerLink: '/apiKeys'
+            routerLink: 'app/apiKeys'
           },
           {
             title: 'APIs',
-            routerLink: '/apis'
+            routerLink: 'app/apis'
           },
         ]
       }
@@ -61,6 +62,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     MessageDialog
   ],
   providers: [
+    AuthService,
     ApiKeyService,
     ApiService,
   ],

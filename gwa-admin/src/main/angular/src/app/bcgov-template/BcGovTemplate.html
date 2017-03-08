@@ -15,7 +15,7 @@
               <img src="images/gov3_bc_logo.png" class="hidden-xs" />
               <img src="images/gov3_bc_logo_mobile.png" class="visible-xs-inline-block" />
             </a>
-            <a routerLink="/apis/my"><h1 class="navbar-brand-title">{{title}}</h1></a>
+            <a routerLink="/"><h1 class="navbar-brand-title">{{title}}</h1></a>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
         <div class="container">
           <ul class="nav navbar-nav navbar-left">
             <li *ngFor="let menuItem of headerMenuItems">
-              <a routerLink="{{menuItem.routerLink}}" routerLinkActive="active" title="{{menuItem.title}}">{{menuItem.title}}</a>
+              <a routerLink="{{menuItem.routerLink}}" title="{{menuItem.title}}" *ngIf="isMenuVisible(menuItem)">{{menuItem.title}}</a>
             </li>
           </ul>
         </div>

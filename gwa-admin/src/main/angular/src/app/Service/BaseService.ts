@@ -1,3 +1,4 @@
+import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
   Injector
@@ -12,8 +13,6 @@ import {
   Http,
   URLSearchParams
 } from '@angular/http';
-
-import 'rxjs/add/operator/toPromise';
 
 import { DialogService } from "ng2-bootstrap-modal";
 

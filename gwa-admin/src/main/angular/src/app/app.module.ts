@@ -12,7 +12,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { AccordionModule } from 'ng2-bootstrap/accordion';
 
-import {  ModalModule } from 'ng2-bootstrap/modal';
+import { ModalModule } from 'ng2-bootstrap/modal';
 
 import { TabsModule } from 'ng2-bootstrap/tabs';
 
@@ -28,10 +28,10 @@ import {
 import { BsFormModule }           from './bs-form/index';
 
 import { MessageDialog }           from './Component/MessageDialog';
+import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 
 import { AuthService } from './Authentication/AuthService';
-import { AdminAuthorize } from './Authentication/AdminAuthorize';
-import { UserAuthorize } from './Authentication/UserAuthorize';
+import { RoleGuard } from './Authentication/RoleGuard';
 
 import { ApiAddComponent }  from './Api/ApiAddComponent';
 import { ApiDetailComponent }  from './Api/ApiDetailComponent';
@@ -76,23 +76,23 @@ import { AppRoutingModule }        from './app-routing.module';
         headerMenuItems: [
           {
             title: 'My APIs',
-            routerLink: '/apis/my'
+            routerLink: 'app/apis/my'
           },
           {
             title: 'APIs',
-            routerLink: '/apis'
+            routerLink: 'app/apis'
           },
           {
             title: 'Consumers',
-            routerLink: '/consumers'
+            routerLink: 'app/consumers'
           },
           {
             title: 'Nodes',
-            routerLink: '/nodes'
+            routerLink: 'app/nodes'
           },
           {
             title: 'Status',
-            routerLink: '/status'
+            routerLink: 'app/status'
           }
         ]
       }
@@ -118,14 +118,14 @@ import { AppRoutingModule }        from './app-routing.module';
     ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
+    MessageDialog,
     NodeListComponent,
-    StatusDetailComponent,
-    MessageDialog
+    PageNotFoundComponent,
+    StatusDetailComponent
   ],
   providers: [
     AuthService,
-    AdminAuthorize,
-    UserAuthorize,
+    RoleGuard,
     ApiService,
     ApiKeyService,
     PluginService,
@@ -135,5 +135,6 @@ import { AppRoutingModule }        from './app-routing.module';
   ],
   bootstrap: [ BcGovTemplate ]
 })
-export class AppModule { }
+export class AppModule {
+}
 
