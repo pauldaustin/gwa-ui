@@ -51,7 +51,7 @@ public class ConsumerServlet extends BaseServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.apiService.handleInsert(request, response, "/consumers/", CONSUMERS_FIELD_NAMES);
+      this.apiService.handleAdd(request, response, "/consumers/", CONSUMERS_FIELD_NAMES);
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }

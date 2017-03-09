@@ -16,24 +16,19 @@
       gwa-common
     </after>
   </ordering>
-
-  <servlet-mapping>
-    <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/apis/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/consumers/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/nodes/*</url-pattern>
-  </servlet-mapping>
+  
+  <filter>
+    <filter-name>siteminder-auth</filter-name>
+    <filter-class>ca.bc.gov.gwa.servlet.siteminder.SiteminderAuthenticationFilter</filter-class>
+  </filter>
 
   <filter-mapping>
     <filter-name>siteminder-auth</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/app/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>siteminder-auth</filter-name>
+    <url-pattern>/rest/*</url-pattern>
   </filter-mapping>
 </web-fragment>

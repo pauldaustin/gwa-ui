@@ -9,9 +9,9 @@ import { ConsumerService }  from './ConsumerService';
 
 @Component({
   selector: 'consumer-create',
-  templateUrl: 'Detail.html'
+  templateUrl: 'ConsumerDetail.html'
 })
-export class ConsumerCreateComponent {
+export class ConsumerAddComponent {
   consumer: Consumer = new Consumer();
    
   constructor(

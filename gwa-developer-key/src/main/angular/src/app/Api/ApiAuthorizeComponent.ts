@@ -23,7 +23,7 @@ previous page and contact the owner of that page to report the problem.</div>
 
 <div *ngIf="redirectUrl && appAuthorization">
   <ol class="breadcrumb">
-    <li><a [routerLink]="['/apis']">APIs</a></li>
+    <li><a routerLink="/app/apis">APIs</a></li>
     <li>{{appAuthorization.appName}}</li>
     <li class="active">Authorize</li>
   </ol>
@@ -46,7 +46,6 @@ export class ApiAuthorizeComponent extends BaseComponent<Api> {
   constructor(
     injector:Injector,
     service: ApiService,
-    private route: ActivatedRoute
   ) {
     super(injector, service);
   }

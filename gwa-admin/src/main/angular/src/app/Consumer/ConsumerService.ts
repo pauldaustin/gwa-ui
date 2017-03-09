@@ -33,7 +33,7 @@ export class ConsumerService extends BaseService<Consumer> {
     return this.http.get(url)
       .toPromise()
       .then(response => {
-        let data = response.json().data;
+        let data = response.json();
         return this.toObject(data);
       })
       .catch(this.handleError);

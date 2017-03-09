@@ -1,42 +1,29 @@
-<div *ngIf="api">
+<div *ngIf="object">
   <ol class="breadcrumb">
-    <li><a [routerLink]="['/apis']">APIs</a></li>
-    <li class="active">{{api.name}}</li>
+    <li><a routerLink="/app/apis">APIs</a></li>
+    <li class="active">{{object.name}}</li>
   </ol>
 
   <tabset>
     <tab active="true">
-      <template *ngIf="api.id" tabHeading >Api</template>
-      <template *ngIf="api.id == null" tabHeading >Add Api</template>
+      <template *ngIf="object.id" tabHeading >Api</template>
+      <template *ngIf="object.id == null" tabHeading >Add Api</template>
       <form #apiForm="ngForm" class="form-horizontal" role="form">
         <accordion>
           <accordion-group heading="Details" isOpen="true">
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-sm-8">
                 <bs-form-group
                   [form]="apiForm"
                   name="name"
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Name">
-                    <input #title="ngModel" name="name" [(ngModel)]="api.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-z0-9]{2,20}" class="form-control"  />
+                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-z0-9]{2,20}" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="title"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Title">
-                    <input #title="ngModel" name="title" [(ngModel)]="api.title" placeholder="Title" type="text" required="true" class="form-control"  />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3">
+              <div class="col-md-2">
                 <bs-form-group
                   [form]="apiForm"
                   name="enabled"
@@ -44,12 +31,12 @@
                 >
                   <bs-input-group prefixText="Enabled">
                     <span class="form-control">
-                      <input name="enabled" [(ngModel)]="api.enabled" type="checkbox" />
+                      <input name="enabled" [(ngModel)]="object.enabled" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-2">
                 <bs-form-group
                   [form]="apiForm"
                   name="strip_uri"
@@ -57,12 +44,29 @@
                 >
                   <bs-input-group prefixText="Strip URI">
                     <span class="form-control">
-                      <input name="strip_uri" [(ngModel)]="api.strip_uri" type="checkbox" />
+                      <input name="strip_uri" [(ngModel)]="object.strip_uri" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-3">
+            </div>
+            <div class="row">
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <bs-form-group
+                  [form]="apiForm"
+                >
+                  <bs-input-group prefixText="Methods">
+                    <span class="form-control">
+                      <label *ngFor="let methodFlag of object.method_flags" for="allowedHttpMethods" class="checkbox-inline">
+                        <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
+                      </label>
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-2">
                 <bs-form-group
                   [form]="apiForm"
                   name="https_only"
@@ -70,7 +74,7 @@
                 >
                   <bs-input-group prefixText="Https Only">
                     <span class="form-control">
-                      <input name="https_only" [(ngModel)]="api.https_only" type="checkbox" />
+                      <input name="https_only" [(ngModel)]="object.https_only" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
@@ -83,24 +87,13 @@
                 >
                   <bs-input-group prefixText="Http if Terminated">
                     <span class="form-control">
-                      <input name="http_if_terminated" [(ngModel)]="api.http_if_terminated" type="checkbox" />
+                      <input name="http_if_terminated" [(ngModel)]="object.http_if_terminated" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
               </div>
             </div>
-            <bs-form-group
-              [form]="apiForm"
-            >
-              <bs-input-group prefixText="Methods">
-                <span class="form-control">
-                  <label *ngFor="let methodFlag of api.method_flags" for="allowedHttpMethods" class="checkbox-inline">
-                    <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
-                  </label>
-                </span>
-              </bs-input-group>
-            </bs-form-group>
-            <div class="row" *ngIf="api.id">
+            <div class="row" *ngIf="object.id">
               <div class="col-sm-6">
                 <bs-form-group
                   [form]="apiForm"
@@ -108,7 +101,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Created By">
-                    <p class="form-control form-control-static">{{api.created_by}}</p>
+                    <p class="form-control form-control-static">{{object.created_by}}</p>
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -119,7 +112,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Created At">
-                    <p class="form-control form-control-static">{{api.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+                    <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -133,33 +126,9 @@
               inputWidth="col-sm-12"
             >
               <bs-input-group prefixIcon="external-link">
-                <input [(ngModel)]="api.upstream_url" name="upstreamUrl" placeholder="Upstream URL (e.g. http://server.com/)" type="url" required="true" pattern="https?://.+"  class="form-control"  />
+                <input [(ngModel)]="object.upstream_url" name="upstreamUrl" placeholder="Upstream URL (e.g. http://server.com/)" type="url" required="true" pattern="https?://.+"  class="form-control"  />
               </bs-input-group>
             </bs-form-group>
-            <div class="row">
-              <div class="col-sm-6">    
-                <bs-form-group
-                  [form]="apiForm"
-                  name="upstreamUsername"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixIcon="user">
-                    <input [(ngModel)]="api.upstream_username" name="upstreamUsername" placeholder="Upstream Username" type="text" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-sm-6">    
-                <bs-form-group
-                  [form]="apiForm"
-                  name="upstreamPassword" 
-                 inputWidth=""
-                >
-                  <bs-input-group prefixIcon="key">
-                    <input [(ngModel)]="api.upstream_password" name="upstreamPassword" type="password" placeholder="Upstream Password" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-            </div>
             <div class="row">
               <div class="col-md-6">
                 <bs-form-group
@@ -169,7 +138,7 @@
                 >
                   <bs-input-group prefixText="Preserve Host">
                     <span class="form-control">
-                      <input name="preserve_host" [(ngModel)]="api.preserve_host" type="checkbox" />
+                      <input name="preserve_host" [(ngModel)]="object.preserve_host" type="checkbox" />
                     </span>
                   </bs-input-group>
                 </bs-form-group>
@@ -181,7 +150,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Retries">
-                    <input name="retries" [(ngModel)]="api.retries" type="number" min="0" max="32767" class="form-control" />
+                    <input name="retries" [(ngModel)]="object.retries" type="number" min="0" max="32767" class="form-control" />
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -195,8 +164,8 @@
         </div>
       </form>
     </tab>
-    <tab *ngIf="api.id" heading="Plugins">
-      <plugin-list [api]="api"></plugin-list>
+    <tab *ngIf="object.id" heading="Plugins">
+      <api-plugin-list [api]="object"></api-plugin-list>
     </tab>
   </tabset>
 </div>

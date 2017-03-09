@@ -7,7 +7,7 @@ import { ConsumerService }  from './ConsumerService';
 
 @Component({
   selector: 'consumer-detail',
-  templateUrl: 'Detail.html'
+  templateUrl: 'ConsumerDetail.html'
 })
 export class ConsumerDetailComponent implements OnInit {
   consumer: Consumer;

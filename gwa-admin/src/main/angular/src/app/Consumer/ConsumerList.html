@@ -4,7 +4,7 @@
   </ol>
 
   <div class="btn-toolbar" role="toolbar">
-    <a [routerLink]="['/consumers', '_new_']" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
+    <a routerLink="/app/consumers/_add_" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
   </div>
 
   <ngx-datatable
@@ -25,7 +25,7 @@
   >
   </ngx-datatable>
 
-  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/consumers', row.id]">{{value}}</a></template>
+  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/app','consumers', row.id]">{{value}}</a></template>
 
   <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
   

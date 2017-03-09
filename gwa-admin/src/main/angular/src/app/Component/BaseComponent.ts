@@ -2,19 +2,26 @@ import {
   Injector, 
   OnInit 
 } from '@angular/core';
-
-import {Router } from '@angular/router';
-
+import {
+  Location
+} from '@angular/common';
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 import { DialogService } from "ng2-bootstrap-modal";
-
 import { Service } from '../Service/Service';
-
 import { MessageDialog } from '../Component/MessageDialog';
 
 export class BaseComponent<T> implements OnInit {
-  protected router: Router = this.injector.get(Router);
 
   protected dialogService: DialogService = this.injector.get(DialogService);
+
+  protected location: Location = this.injector.get(Location);
+
+  protected route: ActivatedRoute = this.injector.get(ActivatedRoute);
+
+  protected router: Router = this.injector.get(Router);
 
   constructor(
     protected injector:Injector,
@@ -23,6 +30,10 @@ export class BaseComponent<T> implements OnInit {
   }
     
   ngOnInit(): void {
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   protected showError(message: string) {

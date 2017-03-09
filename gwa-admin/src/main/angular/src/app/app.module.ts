@@ -12,7 +12,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { AccordionModule } from 'ng2-bootstrap/accordion';
 
-import {  ModalModule } from 'ng2-bootstrap/modal';
+import { ModalModule } from 'ng2-bootstrap/modal';
 
 import { TabsModule } from 'ng2-bootstrap/tabs';
 
@@ -28,8 +28,12 @@ import {
 import { BsFormModule }           from './bs-form/index';
 
 import { MessageDialog }           from './Component/MessageDialog';
+import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 
-import { ApiCreateComponent }  from './Api/ApiCreateComponent';
+import { AuthService } from './Authentication/AuthService';
+import { RoleGuard } from './Authentication/RoleGuard';
+
+import { ApiAddComponent }  from './Api/ApiAddComponent';
 import { ApiDetailComponent }  from './Api/ApiDetailComponent';
 import { ApiListComponent }    from './Api/ApiListComponent';
 import { ApiListMyComponent }  from './Api/ApiListMyComponent';
@@ -38,13 +42,13 @@ import { ApiService }          from './Api/ApiService';
 import { ApiKeyListComponent }     from './ApiKey/ApiKeyListComponent';
 import { ApiKeyService }           from './ApiKey/ApiKeyService';
 
-import { PluginListComponent }     from './Plugin/PluginListComponent';
-import { PluginDetailComponent }   from './Plugin/PluginDetailComponent';
-import { PluginAddComponent }      from './Plugin/PluginAddComponent';
+import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
+import { ApiPluginDetailComponent }   from './Plugin/ApiPluginDetailComponent';
+import { ApiPluginAddComponent }      from './Plugin/ApiPluginAddComponent';
 import { PluginService }           from './Plugin/PluginService';
 
 import { ConsumerListComponent }     from './Consumer/ConsumerListComponent';
-import { ConsumerCreateComponent }   from './Consumer/ConsumerCreateComponent';
+import { ConsumerAddComponent }   from './Consumer/ConsumerAddComponent';
 import { ConsumerDetailComponent }   from './Consumer/ConsumerDetailComponent';
 import { ConsumerService }           from './Consumer/ConsumerService';
 
@@ -72,23 +76,23 @@ import { AppRoutingModule }        from './app-routing.module';
         headerMenuItems: [
           {
             title: 'My APIs',
-            routerLink: '/apis/my'
+            routerLink: 'app/apis/my'
           },
           {
             title: 'APIs',
-            routerLink: '/apis'
+            routerLink: 'app/apis'
           },
           {
             title: 'Consumers',
-            routerLink: '/consumers'
+            routerLink: 'app/consumers'
           },
           {
             title: 'Nodes',
-            routerLink: '/nodes'
+            routerLink: 'app/nodes'
           },
           {
             title: 'Status',
-            routerLink: '/status'
+            routerLink: 'app/status'
           }
         ]
       }
@@ -103,22 +107,25 @@ import { AppRoutingModule }        from './app-routing.module';
     MessageDialog
   ],
   declarations: [
-    ApiCreateComponent,
+    ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,
     ApiListMyComponent,
     ApiKeyListComponent,
-    PluginListComponent,
-    PluginDetailComponent,
-    PluginAddComponent,
-    ConsumerCreateComponent,
+    ApiPluginListComponent,
+    ApiPluginDetailComponent,
+    ApiPluginAddComponent,
+    ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
+    MessageDialog,
     NodeListComponent,
-    StatusDetailComponent,
-    MessageDialog
+    PageNotFoundComponent,
+    StatusDetailComponent
   ],
   providers: [
+    AuthService,
+    RoleGuard,
     ApiService,
     ApiKeyService,
     PluginService,
@@ -128,5 +135,6 @@ import { AppRoutingModule }        from './app-routing.module';
   ],
   bootstrap: [ BcGovTemplate ]
 })
-export class AppModule { }
+export class AppModule {
+}
 

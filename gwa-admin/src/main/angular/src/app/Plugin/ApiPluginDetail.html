@@ -1,12 +1,11 @@
-<div *ngIf="plugin">
-  <ol class="breadcrumb" *ngIf="plugin.id">
-    <li><a href="apis">APIs</a></li>
-    <li><a href="apis/{{plugin.api_id}}">{{plugin.api.name}}</a></li>
-    <li><a href="apis/{{plugin.api_id}}">Plugins</a></li>
-    <li class="active">{{plugin.name}}</li>
+<div *ngIf="object">
+  <ol class="breadcrumb">
+    <li><a routerLink="/app/apis">APIs</a></li>
+    <li><a [routerLink]="['/app','apis', api.name]">{{api.name}}</a></li>
+    <li><a [routerLink]="['/app','apis', api.name]">Plugins</a></li>
+    <li class="active">{{object.name}}</li>
   </ol>
   
-  <h2>Plugin {{plugin.name}}</h2>
   <form [formGroup]="form" class="form-horizontal" role="form">
     <accordion>
       <accordion-group *ngFor="let group of groups" [heading]="group.title" [isOpen]="group.isOpen != false" [formGroupName]="group.formGroupName">

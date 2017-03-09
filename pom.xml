@@ -15,7 +15,7 @@
     <module>gwa-admin</module>
     <module>gwa-developer-key</module>
   </modules>
-  
+
   <developers>
     <developer>
       <name>Paul Austin</name>
@@ -69,6 +69,24 @@
               <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.2.v20170220</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <contextHandlers>
+            <contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+              <war>${project.basedir}/gwa-admin/target/gwa-admin-${project.version}.war</war>
+              <contextPath>/int/gwa</contextPath>
+            </contextHandler>
+            <contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+              <war>${project.basedir}/gwa-developer-key/target/gwa-developer-key-${project.version}.war</war>
+              <contextPath>/pub/gwa</contextPath>
+            </contextHandler>
+          </contextHandlers>
         </configuration>
       </plugin>
       <plugin>

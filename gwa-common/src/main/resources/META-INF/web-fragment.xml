@@ -14,21 +14,21 @@
   <welcome-file-list>
      <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
-  <filter>
-    <filter-name>github-auth</filter-name>
-    <filter-class>ca.bc.gov.gwa.servlet.github.GitHubAuthenticationFilter</filter-class>
-  </filter>
-  
-  <filter>
-    <filter-name>siteminder-auth</filter-name>
-    <filter-class>ca.bc.gov.gwa.servlet.siteminder.SiteminderAuthenticationFilter</filter-class>
-  </filter>
 
   <servlet>
     <servlet-name>AngularServlet</servlet-name>
-    <jsp-file>/angular.jsp</jsp-file>
+    <jsp-file>/WEB-INF/jsp/angular.jsp</jsp-file>
   </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AngularServlet</servlet-name>
+    <url-pattern>/app/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>AngularServlet</servlet-name>
+    <url-pattern>/app</url-pattern>
+  </servlet-mapping>
 
   <error-page>
     <error-code>400</error-code>
@@ -52,7 +52,7 @@
 
   <error-page>
     <error-code>404</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the page you requested could  not be found.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the page you requested could not be found.</location>
   </error-page>
 
   <error-page>

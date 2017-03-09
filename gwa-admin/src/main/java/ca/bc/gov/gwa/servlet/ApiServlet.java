@@ -56,7 +56,7 @@ public class ApiServlet extends BaseServlet {
       this.apiService.apiList(response, userId, false);
     } else {
       final String apiId = pathInfo.substring(1);
-      this.apiService.apiGet(response, apiId);
+      this.apiService.apiGet(request, response, apiId);
     }
   }
 
@@ -66,7 +66,7 @@ public class ApiServlet extends BaseServlet {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.apiService.apiCreate(request, response, userId);
+      this.apiService.apiAdd(request, response, userId);
     } else if ("/my".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
@@ -75,7 +75,7 @@ public class ApiServlet extends BaseServlet {
       if (slashIndex > -1) {
         if (apiIdString.startsWith("plugins", slashIndex + 1)) {
           if (apiIdString.indexOf('/', slashIndex + 2) == -1) {
-            this.apiService.handleInsert(request, response, pathInfo);
+            this.apiService.handleAdd(request, response, pathInfo);
           } else {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
           }

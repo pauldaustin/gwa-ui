@@ -1,6 +1,6 @@
 <div *ngIf="consumer">
   <ol class="breadcrumb">
-    <li><a [routerLink]="['/consumers']">Consumers</a></li>
+    <li><a routerLink="/app/consumers">Consumers</a></li>
     <li *ngIf="consumer.id" class="active">{{consumer.getLabel()}}</li>
     <li *ngIf="!consumer.id" class="active">Add Consumer</li>
   </ol>

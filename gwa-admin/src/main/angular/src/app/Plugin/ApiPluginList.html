@@ -6,27 +6,8 @@
         <option *ngFor="let name of pluginNames" [value]="name">{{name}}</option>
       </select>
       <span class="input-group-btn">
-        <button (click)="addPluginForm.setPluginName(pluginName);addPluginModal.show()" class="btn btn-success" type="button">Add Plugin</button>
+        <a [routerLink]="['/app','apis', api.name, 'plugins', '_add_', {name: pluginName}]" class="btn btn-success" role="button">Add Plugin</a>
       </span>
-    </div>
-  </div>
-</div>
-
-<div bsModal #addPluginModal="bs-modal"
-  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPluginLabel" aria-hidden="true"
-  [config]="{backdrop: 'static'}"
->
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" (click)="addPluginModal.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Add Plugin</h4>
-      </div>
-      <div class="modal-body">
-        <plugin-add #addPluginForm [modal]="addPluginModal" [api]="api"></plugin-add>
-      </div>
     </div>
   </div>
 </div>
@@ -40,7 +21,7 @@
 >
 </ngx-datatable>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/apis', row.api_id, 'plugins', row.name]">{{value}}</a></template>
+<template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', api.name, 'plugins', row.name]">{{value}}</a></template>
 
 <template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
   <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>

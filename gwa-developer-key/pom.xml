@@ -26,6 +26,7 @@
       <artifactId>gwa-common</artifactId>
       <version>${project.version}</version>
       <classifier>classes</classifier>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>ca.bc.gov.gwa</groupId>

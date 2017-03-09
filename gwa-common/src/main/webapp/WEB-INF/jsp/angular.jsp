@@ -9,7 +9,7 @@
 <html>
   <head>
     <base href="${request.contextPath}/" />
-    <title>Gateway Developer Keys</title>
+    <title>Application</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -31,10 +31,10 @@
   <body>
     <bcgov-template>
     </bcgov-template>
+  </body>
     <script type="text/javascript" src="js/inline.bundle.js"></script>
     <script type="text/javascript" src="js/polyfills.bundle.js"></script>
     <script type="text/javascript" src="js/styles.bundle.js"></script>
     <script type="text/javascript" src="js/vendor.bundle.js"></script>
     <script type="text/javascript" src="js/main.bundle.js"></script>
-  </body>
 </html>

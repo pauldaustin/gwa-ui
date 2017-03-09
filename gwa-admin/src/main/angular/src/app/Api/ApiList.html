@@ -4,7 +4,7 @@
   </ol>
 
   <div class="btn-toolbar" role="toolbar">
-    <a (click)="addApiModal.show()" class="btn btn-sm btn-primary" role="button">Add API</a>
+    <a routerLink="/app/apis/_add_" class="btn btn-success" role="button">Add API</a>
   </div>
 
   <ngx-datatable
@@ -15,25 +15,8 @@
     columnMode="force"
   >
   </ngx-datatable>
-  
-  <div bsModal #addApiModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addApiLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" (click)="addApiModal.hide()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title">Add API</h4>
-        </div>
-        <div class="modal-body">
-          <api-create [addApiModal]="addApiModal"></api-create>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/apis', row.id]">{{value}}</a></template>
+<template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', row.name]">{{value}}</a></template>
 
 <template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
   <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
