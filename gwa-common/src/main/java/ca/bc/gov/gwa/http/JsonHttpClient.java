@@ -90,7 +90,7 @@ public class JsonHttpClient implements Closeable {
       } else {
         final String message = statusLine.getReasonPhrase();
         final String body = getContent(updateResponse);
-        throw new HttpStatusException(statusCode, message, body);
+        throw new HttpStatusException(httpRequest, statusCode, message, body);
       }
     }
   }

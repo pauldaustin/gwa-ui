@@ -1,5 +1,6 @@
 package ca.bc.gov.gwa.servlet;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -440,29 +441,33 @@ public class ApiService implements ServletContextListener {
   @Override
   public void contextInitialized(final ServletContextEvent event) {
     try {
-      final String configFile = "/apps/config/gwa/gwa.json";
-      try (
-        Reader configReader = new FileReader(configFile)) {
-        this.config = Json.read(configReader);
-        this.kongAdminUrl = (String)this.config.getOrDefault("kongAdminUrl", this.kongAdminUrl);
-        this.appsSuffix = (String)this.config.getOrDefault("appsSuffix", this.appsSuffix);
-        this.apisSuffix = (String)this.config.getOrDefault("apisSuffix", this.apisSuffix);
-        this.unavailableUrl = (String)this.config.getOrDefault("unavailableUrl",
-          this.unavailableUrl);
-        // final String databaseHost = (String)this.config.getOrDefault("databaseHost",
-        // "localhost");
-        // final int databasePort = ((Number)this.config.getOrDefault("databasePort", 9042))
-        // .intValue();
-        // this.node = Cluster.builder()//
-        // .addContactPoint(databaseHost)//
-        // .withPort(databasePort)
-        // .build();
+      final File file = new File("/apps/config/gwa/gwa.json");
+      if (file.exists()) {
+        try (
+          Reader configReader = new FileReader(file)) {
+          this.config = Json.read(configReader);
+          // final String databaseHost = (String)this.config.getOrDefault("databaseHost",
+          // "localhost");
+          // final int databasePort = ((Number)this.config.getOrDefault("databasePort", 9042))
+          // .intValue();
+          // this.node = Cluster.builder()//
+          // .addContactPoint(databaseHost)//
+          // .withPort(databasePort)
+          // .build();
 
-      } catch (final FileNotFoundException e) {
-        logError("Unable to find configuration File: " + configFile, e);
-      } catch (final IOException e) {
-        logError("Error reading configuration File: " + configFile, e);
+        } catch (final FileNotFoundException e) {
+          logError("Unable to find configuration File: " + file, e);
+        } catch (final IOException e) {
+          logError("Error reading configuration File: " + file, e);
+        }
+      } else {
+
       }
+      this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
+      this.appsSuffix = getConfig("gwaAppsSuffix", this.appsSuffix);
+      this.apisSuffix = getConfig("gwaApisSuffix", this.apisSuffix);
+      this.unavailableUrl = getConfig("gwaUnavailableUrl", this.unavailableUrl);
+
       // final Metadata nodeMetadata = this.node.getMetadata();
       // final KeyspaceMetadata gwa = nodeMetadata.getKeyspace("gwa");
       // this.apiTable = gwa.getTable("api");
@@ -481,12 +486,26 @@ public class ApiService implements ServletContextListener {
   }
 
   public String getConfig(final String name) {
-    return (String)this.config.get(name);
+    return getConfig(name, null);
   }
 
-  // public Session getSession() {
-  // return this.session;
-  // }
+  public String getConfig(final String name, final String defaultValue) {
+    String value = null;
+    // try {
+    // final InitialContext context = new InitialContext();
+    // value = (String)context.lookup("java:comp/env/" + name);
+    // } catch (final NamingException e) {
+    // }
+    value = System.getProperty(name);
+    if (value == null) {
+      value = (String)this.config.get(name);
+    }
+    if (value == null) {
+      return defaultValue;
+    } else {
+      return value;
+    }
+  }
 
   public void handleAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
