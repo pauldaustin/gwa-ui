@@ -165,8 +165,12 @@ public class GitHubAuthenticationFilter implements Filter {
   @Override
   public void init(final FilterConfig filterConfig) throws ServletException {
     this.apiService = ApiService.get();
-    this.clientId = this.apiService.getConfig("gitHubClientId");
-    this.clientSecret = this.apiService.getConfig("gitHubClientSecret");
+    this.clientId = this.apiService.getConfig("gwaGitHubClientId");
+    this.clientSecret = this.apiService.getConfig("gwaGitHubClientSecret");
+    if (this.clientId == null || this.clientSecret == null) {
+      LoggerFactory.getLogger(getClass())
+        .error("Missing gitHubClientId or gitHubClientSecret configuration");
+    }
   }
 
 }

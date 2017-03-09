@@ -2,13 +2,19 @@ package ca.bc.gov.gwa.http;
 
 import java.io.IOException;
 
+import org.apache.http.client.methods.HttpUriRequest;
+
 public class HttpStatusException extends IOException {
   private final int code;
 
   private final String body;
 
-  public HttpStatusException(final int code, final String message, final String body) {
+  private final HttpUriRequest httpRequest;
+
+  public HttpStatusException(final HttpUriRequest httpRequest, final int code, final String message,
+    final String body) {
     super(message);
+    this.httpRequest = httpRequest;
     this.code = code;
     this.body = body;
   }
@@ -19,5 +25,14 @@ public class HttpStatusException extends IOException {
 
   public int getCode() {
     return this.code;
+  }
+
+  public HttpUriRequest getHttpRequest() {
+    return this.httpRequest;
+  }
+
+  @Override
+  public String toString() {
+    return super.toString() + "\n" + this.httpRequest;
   }
 }
