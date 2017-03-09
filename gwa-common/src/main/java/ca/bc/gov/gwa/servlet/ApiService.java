@@ -34,26 +34,15 @@ import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.util.Json;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ColumnDefinitions.Definition;
-import com.datastax.driver.core.ColumnMetadata;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Update;
-import com.datastax.driver.core.utils.UUIDs;
 
 @WebListener
 public class ApiService implements ServletContextListener {
@@ -92,12 +81,6 @@ public class ApiService implements ServletContextListener {
   private String apisSuffix = ".apis.revolsys.com";
 
   private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
-
-  private Cluster node;
-
-  private Session session;
-
-  private TableMetadata apiTable;
 
   private final List<String> apiFieldNames = new ArrayList<>();
 
@@ -178,7 +161,7 @@ public class ApiService implements ServletContextListener {
         }
       }
     }
-    this.session.execute(insert);
+    // this.session.execute(insert);
   }
 
   private String apiCreateKong(final HttpServletResponse httpResponse,
@@ -200,45 +183,11 @@ public class ApiService implements ServletContextListener {
     return null;
   }
 
-  public void apiDelete(final HttpServletResponse httpResponse, final String userId,
-    final UUID apiId) throws IOException {
-    apiDeleteKong(apiId);
-    final Row row;
-    try {
-      final Delete delete = QueryBuilder.delete()//
-        .from(this.apiTable);
-      delete.where(QueryBuilder.eq("id", apiId));
-      delete.onlyIf(QueryBuilder.eq("created_by", userId));
+  public void apiDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String userId, final UUID apiId)
+    throws IOException {
+    handleDelete(httpRequest, httpResponse, userId);
 
-      final ResultSet resultSet = this.session.execute(delete);
-      row = resultSet.one();
-    } catch (final Throwable e) {
-      final String message = "";
-      logError(message, e);
-      httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      return;
-    }
-    httpResponse.setContentType("application/json");
-    try (
-      PrintWriter writer = httpResponse.getWriter()) {
-      if (row == null || row.getBool(0)) {
-        writer.println("{\"data\":{\"deleted\": true}}");
-      } else {
-        final String recordUserId;
-        if (row.getColumnDefinitions().size() > 1) {
-          recordUserId = row.getString(1);
-        } else {
-          recordUserId = null;
-        }
-        if (recordUserId == null || userId.equals(recordUserId)) {
-          // Record not found so mark it as was deleted
-          writer.println("{\"data\":{\"deleted\": true}}");
-        } else {
-          writer.println(
-            "{\"data\":{\"deleted\": false,\"message\":\"Cannot delete another user's Api\"}}");
-        }
-      }
-    }
   }
 
   public void apiDeleteKong(final UUID apiId) throws IOException {
@@ -291,32 +240,32 @@ public class ApiService implements ServletContextListener {
         final String apiId = pathInfo.substring(1);
         final Update update = QueryBuilder.update("gwa", "api");
 
-        final UserType apiKeyType = this.node.getMetadata()
-          .getKeyspace("gwa")
-          .getUserType("api_key");
-        final String userTitle = (String)apiKeyData.get("user_title");
-        final UUID apiKeyId = UUIDs.random();
-        final UDTValue apiKey = apiKeyType.newValue()
-          .setUUID("id", apiKeyId)
-          .setString("user_title", userTitle)
-          .setBool("developer_key", false)
-          .setBool("enabled", true);
-
-        final Assignment append = QueryBuilder.append("api_keys", apiKey);
-        update.with(append);
-        final Clause equalId = QueryBuilder.eq("id", UUID.fromString(apiId));
-        update.where(equalId);
-        final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-        update.onlyIf(equalCreatedBy);
-        this.session.execute(update);
+        // final UserType apiKeyType = this.node.getMetadata()
+        // .getKeyspace("gwa")
+        // .getUserType("api_key");
+        // final String userTitle = (String)apiKeyData.get("user_title");
+        // final UUID apiKeyId = UUIDs.random();
+        // final UDTValue apiKey = apiKeyType.newValue()
+        // .setUUID("id", apiKeyId)
+        // .setString("user_title", userTitle)
+        // .setBool("developer_key", false)
+        // .setBool("enabled", true);
+        //
+        // final Assignment append = QueryBuilder.append("api_keys", apiKey);
+        // update.with(append);
+        // final Clause equalId = QueryBuilder.eq("id", UUID.fromString(apiId));
+        // update.where(equalId);
+        // final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
+        // update.onlyIf(equalCreatedBy);
+        // // this.session.execute(update);
 
         httpResponse.setContentType("application/json");
         try (
           PrintWriter writer = httpResponse.getWriter()) {
           writer.print("{\"data\":");
           final Map<String, Object> apiKeyMap = new LinkedHashMap<>();
-          apiKeyMap.put("id", apiKeyId);
-          apiKeyMap.put("user_title", userTitle);
+          // apiKeyMap.put("id", apiKeyId);
+          // apiKeyMap.put("user_title", userTitle);
           apiKeyMap.put("developer_key", false);
           apiKeyMap.put("enabled", true);
 
@@ -334,43 +283,43 @@ public class ApiService implements ServletContextListener {
     final UUID apiId, final UUID apiKeyId) throws IOException {
     final Clause equalEndpointId = QueryBuilder.eq("id", apiId);
     final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-    UDTValue apiKey = null;
+    final UDTValue apiKey = null;
     try {
-      final Select select = QueryBuilder.select() //
-        .from(this.apiTable);
-      select.where()//
-        .and(equalEndpointId)//
-        .and(equalCreatedBy);
-      final ResultSet resultSet = this.session.execute(select);
-      final Row row = resultSet.one();
-      if (row == null) {
-        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-        return;
-      } else {
-        final List<UDTValue> apiKeys = row.getList("api_keys", UDTValue.class);
-        for (final UDTValue currentApiKey : apiKeys) {
-          final UUID currentApiKeyId = currentApiKey.getUUID(0);
-          if (currentApiKeyId.equals(apiKeyId)) {
-            apiKey = currentApiKey;
-          }
-        }
-        if (apiKey == null) {
-          httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-          return;
-        }
-      }
+      // final Select select = QueryBuilder.select() //
+      // .from(this.apiTable);
+      // select.where()//
+      // .and(equalEndpointId)//
+      // .and(equalCreatedBy);
+      // final ResultSet resultSet = this.session.execute(select);
+      // final Row row = resultSet.one();
+      // if (row == null) {
+      // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+      // return;
+      // } else {
+      // final List<UDTValue> apiKeys = row.getList("api_keys", UDTValue.class);
+      // for (final UDTValue currentApiKey : apiKeys) {
+      // final UUID currentApiKeyId = currentApiKey.getUUID(0);
+      // if (currentApiKeyId.equals(apiKeyId)) {
+      // apiKey = currentApiKey;
+      // }
+      // }
+      // if (apiKey == null) {
+      // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+      // return;
+      // }
+      // }
     } catch (final Throwable e) {
       final String message = "Error selecting Api key apiID=" + apiId + " apiKeyId=" + apiKeyId;
       logError(message, e);
       httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       return;
     }
-    final Update update = QueryBuilder.update(this.apiTable);
-    update.with(QueryBuilder.discard("api_keys", apiKey));
-    update.where(equalEndpointId);
+    // final Update update = QueryBuilder.update(this.apiTable);
+    // update.with(QueryBuilder.discard("api_keys", apiKey));
+    // update.where(equalEndpointId);
 
     try {
-      this.session.execute(update);
+      // this.session.execute(update);
       writeJsonResponse(httpResponse, DELETED);
     } catch (final DriverException e) {
       final String message = "Error deleting Api key apiID=" + apiId + " apiKeyId=" + apiKeyId;
@@ -384,17 +333,17 @@ public class ApiService implements ServletContextListener {
   public void apiList(final HttpServletResponse httpResponse, final String userId,
     final boolean all) throws IOException {
     final Map<String, Row> rowsById = new HashMap<>();
-    final ResultSet resultSet;
-    if (all) {
-      resultSet = this.session.execute("SELECT * FROM gwa.api");
-    } else {
-      resultSet = this.session.execute("SELECT * FROM gwa.api where created_by = ?", userId);
-    }
-
-    for (final Row row : resultSet) {
-      final UUID apiId = row.getUUID("id");
-      rowsById.put(apiId.toString(), row);
-    }
+    // final ResultSet resultSet;
+    // if (all) {
+    // resultSet = this.session.execute("SELECT * FROM gwa.api");
+    // } else {
+    // resultSet = this.session.execute("SELECT * FROM gwa.api where created_by = ?", userId);
+    // }
+    //
+    // for (final Row row : resultSet) {
+    // final UUID apiId = row.getUUID("id");
+    // rowsById.put(apiId.toString(), row);
+    // }
 
     final Map<String, Object> apiResponse = apiListKong(httpResponse);
     final List<Map<String, Object>> apis = (List<Map<String, Object>>)apiResponse.get("data");
@@ -452,7 +401,7 @@ public class ApiService implements ServletContextListener {
     update.where(equalId);
     final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
     update.onlyIf(equalCreatedBy);
-    this.session.execute(update);
+    // this.session.execute(update);
     return apiId;
   }
 
@@ -477,22 +426,7 @@ public class ApiService implements ServletContextListener {
   }
 
   public void close() {
-    final Session session = this.session;
-    this.session = null;
-    if (session != null) {
-      try {
-        session.close();
-      } catch (final Throwable e) {
-      }
-    }
-    final Cluster node = this.node;
-    this.node = null;
-    if (node != null) {
-      try {
-        node.close();
-      } catch (final Throwable e) {
-      }
-    }
+
   }
 
   @Override
@@ -515,29 +449,30 @@ public class ApiService implements ServletContextListener {
         this.apisSuffix = (String)this.config.getOrDefault("apisSuffix", this.apisSuffix);
         this.unavailableUrl = (String)this.config.getOrDefault("unavailableUrl",
           this.unavailableUrl);
-        final String databaseHost = (String)this.config.getOrDefault("databaseHost", "localhost");
-        final int databasePort = ((Number)this.config.getOrDefault("databasePort", 9042))
-          .intValue();
-        this.node = Cluster.builder()//
-          .addContactPoint(databaseHost)//
-          .withPort(databasePort)
-          .build();
+        // final String databaseHost = (String)this.config.getOrDefault("databaseHost",
+        // "localhost");
+        // final int databasePort = ((Number)this.config.getOrDefault("databasePort", 9042))
+        // .intValue();
+        // this.node = Cluster.builder()//
+        // .addContactPoint(databaseHost)//
+        // .withPort(databasePort)
+        // .build();
 
       } catch (final FileNotFoundException e) {
         logError("Unable to find configuration File: " + configFile, e);
       } catch (final IOException e) {
         logError("Error reading configuration File: " + configFile, e);
       }
-      final Metadata nodeMetadata = this.node.getMetadata();
-      final KeyspaceMetadata gwa = nodeMetadata.getKeyspace("gwa");
-      this.apiTable = gwa.getTable("api");
-      for (final ColumnMetadata column : this.apiTable.getColumns()) {
-        final String fieldName = column.getName();
-        if (!"id".equals(fieldName)) {
-          this.apiFieldNames.add(fieldName);
-        }
-      }
-      this.session = this.node.connect();
+      // final Metadata nodeMetadata = this.node.getMetadata();
+      // final KeyspaceMetadata gwa = nodeMetadata.getKeyspace("gwa");
+      // this.apiTable = gwa.getTable("api");
+      // for (final ColumnMetadata column : this.apiTable.getColumns()) {
+      // final String fieldName = column.getName();
+      // if (!"id".equals(fieldName)) {
+      // this.apiFieldNames.add(fieldName);
+      // }
+      // }
+      // this.session = this.node.connect();
       instance = this;
     } catch (final RuntimeException e) {
       LoggerFactory.getLogger(getClass()).error("Unable to initialize service", e);
@@ -549,9 +484,9 @@ public class ApiService implements ServletContextListener {
     return (String)this.config.get(name);
   }
 
-  public Session getSession() {
-    return this.session;
-  }
+  // public Session getSession() {
+  // return this.session;
+  // }
 
   public void handleAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
