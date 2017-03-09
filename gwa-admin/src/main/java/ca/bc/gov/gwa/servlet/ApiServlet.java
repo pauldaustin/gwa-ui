@@ -39,8 +39,7 @@ public class ApiServlet extends BaseServlet {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       } else {
-        final UUID apiId = UUID.fromString(apiIdString);
-        this.apiService.apiDelete(response, userId, apiId);
+        this.apiService.handleDelete(request, response, pathInfo);
       }
     }
   }
