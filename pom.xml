@@ -209,6 +209,12 @@
         <version>9.4.2.v20170220</version>
         <configuration>
           <reload>manual</reload>
+          <httpConnector>
+            <port>${httpPort}</port>
+          </httpConnector>
+          <stopPort>${stopPort}</stopPort>
+          <stopKey>${stopKey}</stopKey>
+          <stopWait>10</stopWait>
           <contextHandlers>
             <contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
               <war>${project.basedir}/gwa-admin/target/gwa-admin-${project.version}.war</war>
@@ -221,6 +227,26 @@
           </contextHandlers>
           <systemPropertiesFile>${project.basedir}/../gwa-config/gwa.properties</systemPropertiesFile>
         </configuration>
+<!--         <executions>
+          <execution>
+            <id>start-jetty</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-jetty</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+ -->
       </plugin>
     </plugins>
   </build>
