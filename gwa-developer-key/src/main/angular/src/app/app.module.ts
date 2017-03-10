@@ -17,6 +17,7 @@ import {
 } from './bcgov-template/index';
 import { BsFormModule } from './bs-form/index';
 import { MessageDialog } from './Component/MessageDialog';
+import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
 import { ApiKeyListComponent } from './ApiKey/ApiKeyListComponent';
 import { ApiService } from './Api/ApiService';
@@ -59,6 +60,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     ApiKeyListComponent,
     ApiListComponent,
     ApiAuthorizeComponent,
+    PageNotFoundComponent,
     MessageDialog
   ],
   providers: [
