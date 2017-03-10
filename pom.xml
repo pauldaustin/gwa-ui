@@ -131,25 +131,6 @@
         <version>2.4.2</version>
         <executions>
           <execution>
-            <id>angular-copy-resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>target/${project.artifactId}-${project.version}/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular</directory>
-                  <includes>
-                    <include>aot/**</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
             <id>angular-copy-js</id>
             <phase>process-resources</phase>
             <goals>
@@ -188,6 +169,25 @@
             </goals>
             <configuration>
               <overwrite>true</overwrite>
+              <outputDirectory>target/${project.artifactId}-${project.version}/css/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/dist/</directory>
+                  <includes>
+                    <include>*.css*</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>angular-copy-css-datatable</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
               <outputDirectory>target/${project.artifactId}-${project.version}/css/ngx-datatable/</outputDirectory>
               <resources>
                 <resource>
@@ -196,6 +196,12 @@
                     <include>index.css</include>
                     <include>themes/material.css</include>
                     <include>assets/icons.css</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/dist/</directory>
+                  <includes>
+                    <include>*.css*</include>
                   </includes>
                 </resource>
               </resources>
