@@ -11,7 +11,7 @@ export class ApiService extends BaseService<Api> {
   oldVersion : boolean = true;
 
   constructor(injector:Injector) {
-    super(injector, '/apis/');
+    super(injector, '/apis');
     const url = this.getUrl('/version');
     this.http.get(url)
       .toPromise()
