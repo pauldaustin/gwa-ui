@@ -13,6 +13,7 @@ import { ApiService } from './ApiService';
 export class ApiListMyComponent extends ApiListComponent {
   constructor(injector: Injector, apiService: ApiService) {
     super(injector, apiService);
+    this.paging = false;
   }
  
   refresh(): void {

@@ -44,9 +44,9 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
 
   saveDo(): Promise<T> {
     if (this.id) {
-      return this.service.addObject(this.object);
-    } else {
       return this.service.updateObject(this.object);
+    } else {
+      return this.service.addObject(this.object);
     }
   }
 

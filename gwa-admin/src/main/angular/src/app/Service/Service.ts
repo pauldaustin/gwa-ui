@@ -14,6 +14,8 @@ export interface Service<T> {
   getObjects(): Promise<T[]>;
   
   getObject(id: string): Promise<T>;
-  
+
+  getPath() : string;
+
   getRowsPage(offset: number, limit: number): Promise<any>;
 }

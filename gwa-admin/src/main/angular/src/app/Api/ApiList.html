@@ -8,15 +8,26 @@
   </div>
 
   <ngx-datatable
-    [columns]="columns"
+    class="material striped"
     [rows]="rows"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="30"
+    [footerHeight]="30"
+    [rowHeight]="30"
+    [externalPaging]="true"
+    [count]="count"
+    [offset]="offset"
+    [limit]="limit"
     [cssClasses]="cssClasses"
-    class="material striped fixed-height"
-    columnMode="force"
+    [scrollbarV]="true"
+    (page)='onPage($event)'
   >
   </ngx-datatable>
 
 <template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', row.name]">{{value}}</a></template>
+
+<template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
 
 <template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
   <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>

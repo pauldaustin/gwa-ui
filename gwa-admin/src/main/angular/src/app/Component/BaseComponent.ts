@@ -33,7 +33,7 @@ export class BaseComponent<T> implements OnInit {
   }
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(['/app' +this.service.getPath()]);
   }
 
   protected showError(message: string) {

@@ -19,14 +19,13 @@ export class ApiListComponent extends BaseListComponent<Api> {
     protected apiService: ApiService
   ) {
     super(injector, apiService);
+    this.paging = true;
   }
 
   ngOnInit(): void {
     this.columns = [
-      { name: 'Name', cellTemplate: this.idTemplate },
-      { name: 'Title' },
-      { prop: 'created_by', name: 'Created By' },
-      { name: 'Enabled', cellTemplate: this.flagTemplate },
+      { name: 'Name', cellTemplate: this.idTemplate, sortable: false },
+      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
       { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];
     super.ngOnInit();

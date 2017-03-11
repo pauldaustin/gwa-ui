@@ -20,7 +20,7 @@ export class ApiAddComponent extends ApiDetailComponent {
   }
 
   postSave(savedApi: Api): void {
-    this.router.navigate(['/apis', savedApi.id]);
+    this.router.navigate(['/app/apis', savedApi.name]);
   }
 
 }

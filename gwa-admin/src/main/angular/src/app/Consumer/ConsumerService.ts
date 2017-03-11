@@ -1,25 +1,15 @@
+import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
   Injector
 } from '@angular/core';
-
-import 'rxjs/add/operator/toPromise';
-
 import { BaseService } from '../Service/BaseService';
-
 import { Consumer } from './Consumer';
 
 @Injectable()
 export class ConsumerService extends BaseService<Consumer> {
   constructor(injector:Injector) {
-    super(injector);
-  }
-
-  addObject(consumer: Consumer): Promise<Consumer> {
-    return this.addObjectDo(
-      '/consumers',
-      consumer
-    );
+    super(injector, '/consumers');
   }
 
   deleteObject(consumer: Consumer): Promise<boolean> {
@@ -28,29 +18,10 @@ export class ConsumerService extends BaseService<Consumer> {
     );
   }
 
-  getConsumer(id: string): Promise<Consumer> {
-    const url = this.getUrl(`/consumers/${id}`);
-    return this.http.get(url)
-      .toPromise()
-      .then(response => {
-        let data = response.json();
-        return this.toObject(data);
-      })
-      .catch(this.handleError);
-  }
-
-  getObjects(): Promise<Consumer[]> {
-    return this.getObjectsDo('/consumers');
-  }
-
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return this.getRowsPageDo('/consumers', offset, limit);
-  }
-
-  updateObject(Consumer: Consumer): Promise<Consumer> {
+  updateObject(consumer: Consumer): Promise<Consumer> {
     return this.updateObjectDo(
-      `/consumers/${Consumer.id}`,
-      Consumer
+      `/consumers/${consumer.id}`,
+      consumer
     );
   }
 

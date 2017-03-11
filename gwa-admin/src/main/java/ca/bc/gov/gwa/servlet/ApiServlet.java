@@ -1,6 +1,7 @@
 package ca.bc.gov.gwa.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -50,7 +51,8 @@ public class ApiServlet extends BaseServlet {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
-      this.apiService.apiList(response, userId, true);
+      this.apiService.handleList(request, response, "/apis");
+      // this.apiService.apiList(response, userId, true);
     } else if ("/my".equals(pathInfo)) {
       this.apiService.apiList(response, userId, false);
     } else {
@@ -88,7 +90,6 @@ public class ApiServlet extends BaseServlet {
   @Override
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
     if (pathInfo == null || "/".equals(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -105,7 +106,9 @@ public class ApiServlet extends BaseServlet {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       } else {
-        this.apiService.apiUpdate(request, response, userId, pathInfo);
+        final List<String> fieldNames = this.apiService.getApiFieldNames();
+        this.apiService.handleUpdatePatch(request, response, pathInfo, fieldNames);
+        // this.apiService.apiUpdate(request, response, userId, pathInfo);
       }
     }
   }

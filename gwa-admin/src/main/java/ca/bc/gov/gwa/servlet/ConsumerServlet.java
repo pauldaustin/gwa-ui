@@ -66,7 +66,7 @@ public class ConsumerServlet extends BaseServlet {
     } else {
       if (pathInfo.lastIndexOf('/') == 0) {
         final String path = "/consumers" + pathInfo;
-        this.apiService.handleUpdate(request, response, path, CONSUMERS_FIELD_NAMES);
+        this.apiService.handleUpdatePatch(request, response, path, CONSUMERS_FIELD_NAMES);
       } else {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       }
