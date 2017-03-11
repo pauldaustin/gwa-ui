@@ -19,40 +19,73 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Name">
-                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-z0-9]{2,20}" class="form-control"  />
+                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-z0-9_\-]{2,20}" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-2">
+              <div class="col-sm-4">
                 <bs-form-group
                   [form]="apiForm"
-                  name="enabled"
+                  name="created"
                   inputWidth=""
                 >
-                  <bs-input-group prefixText="Enabled">
-                    <span class="form-control">
-                      <input name="enabled" [(ngModel)]="object.enabled" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-2">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="strip_uri"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Strip URI">
-                    <span class="form-control">
-                      <input name="strip_uri" [(ngModel)]="object.strip_uri" type="checkbox" />
-                    </span>
+                  <bs-input-group prefixText="Created At">
+                    <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
                   </bs-input-group>
                 </bs-form-group>
               </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="oldVersion">
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="request_host"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Request Host">
+                    <input #title="ngModel" name="request_host" [(ngModel)]="object.request_host" placeholder="name.apps.gov.bc.ca" type="text" required="true" class="form-control"  />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-sm-6">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="request_path"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Request Path">
+                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="name.apps.gov.bc.ca" type="text" required="true" class="form-control"  />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!oldVersion">
+              <div class="col-md-12">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="hosts"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Hosts">
+                    <input #title="ngModel" name="hosts" [(ngModel)]="object.hosts" placeholder="name.apps.gov.bc.ca" type="text" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row" *ngIf="!oldVersion">
+              <div class="col-md-12">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="uris"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Uris">
+                    <input #title="ngModel" name="uris" [(ngModel)]="object.uris" placeholder="http://name.apps.gov.bc.ca/int" type="text" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row" *ngIf="!oldVersion">
               <div class="col-md-7">
                 <bs-form-group
                   [form]="apiForm"
@@ -93,30 +126,6 @@
                 </bs-form-group>
               </div>
             </div>
-            <div class="row" *ngIf="object.id">
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="created"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Created By">
-                    <p class="form-control form-control-static">{{object.created_by}}</p>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="created"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Created At">
-                    <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-            </div>
           </accordion-group>
           
           <accordion-group heading="Upstream Service" isOpen="true">
@@ -143,7 +152,68 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-2" *ngIf="oldVersion">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="strip_request_path"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Strip URI">
+                    <span class="form-control">
+                      <input name="strip_request_path" [(ngModel)]="object.strip_request_path" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-2" *ngIf="!oldVersion">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="strip_uri"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Strip URI">
+                    <span class="form-control">
+                      <input name="strip_uri" [(ngModel)]="object.strip_uri" type="checkbox" />
+                    </span>
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="upstream_connect_timeout"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Connect Timeout">
+                    <input name="upstream_connect_timeout" [(ngModel)]="object.upstream_connect_timeout" type="number" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-3">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="upstream_send_timeout"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Send Timeout">
+                    <input name="upstream_send_timeout" [(ngModel)]="object.upstream_send_timeout" type="number" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-3">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="upstream_read_timeout"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Read Timeout">
+                    <input name="upstream_read_timeout" [(ngModel)]="object.upstream_read_timeout" type="number" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
+              <div class="col-md-3">
                 <bs-form-group
                   [form]="apiForm"
                   name="retries"

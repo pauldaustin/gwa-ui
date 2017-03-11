@@ -32,11 +32,17 @@ export abstract class BaseService<T> implements Service<T> {
     headers: new Headers({ 'Content-Type': 'application/json' })
   };
 
-  constructor(protected injector:Injector) {
+  constructor(
+    protected injector : Injector,
+    protected path? : string
+  ) {
   }
 
   addObject(object: T): Promise<T> {
-    return null;
+    return this.addObjectDo(
+      this.path,
+      object
+    );
   }
   
   protected addObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
@@ -146,9 +152,9 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getObject(id: string): Promise<T> {
-    return null;
+     return this.getObjectDo(this.path +'/' + id);
   }
-    
+
   getObjectDo(path: string): Promise<T> {
     const url = this.getUrl(path);
     return this.http.get(url)
@@ -166,7 +172,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getObjects(): Promise<T[]> {
-    return null;
+    return this.getObjectsDo(this.path);
   }
   
   getObjectsDo(path: string): Promise<T[]> {
@@ -194,10 +200,14 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
  
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return null;
+  getPath() : string {
+    return this.path;
   }
-  
+
+  getRowsPage(offset: number, limit: number): Promise<any> {
+    return this.getRowsPageDo(this.path, offset, limit);
+  }
+ 
   getRowsPageDo(path: string, offset: number, limit: number): Promise<any> {
     let params = new URLSearchParams();
     params.set('offset', offset.toString()); 

@@ -1,7 +1,8 @@
-import 'rxjs/add/operator/switchMap';
-import { Component, OnInit }      from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-
+import {
+  Component, 
+  Injector
+} from '@angular/core';
+import { BaseDetailComponent } from '../Component/BaseDetailComponent';
 import { Consumer }         from './Consumer';
 import { ConsumerService }  from './ConsumerService';
 
@@ -9,27 +10,11 @@ import { ConsumerService }  from './ConsumerService';
   selector: 'consumer-detail',
   templateUrl: 'ConsumerDetail.html'
 })
-export class ConsumerDetailComponent implements OnInit {
-  consumer: Consumer;
-
+export class ConsumerDetailComponent extends BaseDetailComponent<Consumer> {
   constructor(
-    private consumerService: ConsumerService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
-
-  ngOnInit(): void {
-    this.route.params
-      .switchMap((params: Params) => this.consumerService.getConsumer(params['id']))
-      .subscribe(consumer => this.consumer = consumer);
-  }
-
-  goBack(): void {
-    this.router.navigate(['/consumers']);
-  }
-  
-  save(): void {
-    this.consumerService.updateObject(this.consumer)
-      .then(() => this.goBack());
+    protected injector:Injector,
+    protected service: ConsumerService
+  ) {
+    super(injector, service);
   }
 }

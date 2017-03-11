@@ -15,23 +15,25 @@ export class ApiKeyService extends BaseService<ApiKey> {
   }
 
   addObject(apiKey: ApiKey): Promise<ApiKey> {
-    const api = apiKey.api;
-    return this.addObjectDo(
-      `/apis/${api.id}`,
-      apiKey,
-      () => api.apiKeyAdd(apiKey)
-    );
+//    const api = apiKey.api;
+//    return this.addObjectDo(
+//      `/apis/${api.id}`,
+//      apiKey,
+//      () => api.apiKeyAdd(apiKey)
+//    );
+    return null;
   }
 
 
   deleteObject(apiKey: ApiKey): Promise<boolean> {
-    const api = apiKey.api;
-    return this.deleteObjectDo(
-      `/apis/${api.id}/apiKeys/${apiKey.id}`,
-      deleted => {
-        api.apiKeyRemove(apiKey);
-      }
-    );
+//    const api = apiKey.api;
+//    return this.deleteObjectDo(
+//      `/apis/${api.id}/apiKeys/${apiKey.id}`,
+//      deleted => {
+//        api.apiKeyRemove(apiKey);
+//      }
+//    );
+    return null;
   }
 
   newObject(): ApiKey {

@@ -1,25 +1,26 @@
+import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
   Injector
 } from '@angular/core';
-
-import 'rxjs/add/operator/toPromise';
-
 import { BaseService } from '../Service/BaseService';
-
 import { Api } from './Api';
 
 @Injectable()
 export class ApiService extends BaseService<Api> {
-  constructor(injector:Injector) {
-    super(injector);
-  }
+  oldVersion : boolean = true;
 
-  addObject(api: Api): Promise<Api> {
-    return this.addObjectDo(
-      '/apis',
-      api
-    );
+  constructor(injector:Injector) {
+    super(injector, '/apis/');
+    const url = this.getUrl('/version');
+    this.http.get(url)
+      .toPromise()
+      .then(response => {
+        const json = response.json();
+        if (!json.error) {
+          this.oldVersion = json.version.indexOf('0.9') == 0;
+        }
+      });
   }
 
   deleteObject(api: Api): Promise<boolean> {
@@ -28,18 +29,10 @@ export class ApiService extends BaseService<Api> {
     );
   }
 
-  getObject(name: string): Promise<Api> {
-     return this.getObjectDo(`/apis/${name}`);
-  }
-
   getMyApis(): Promise<Api[]> {
     return this.getObjectsDo('/apis/my');
   }
 
-  getObjects(): Promise<Api[]> {
-    return this.getObjectsDo('/apis');
-  }
-  
   updateObject(api: Api): Promise<Api> {
     return this.updateObjectDo(
       `/apis/${api.id}`,

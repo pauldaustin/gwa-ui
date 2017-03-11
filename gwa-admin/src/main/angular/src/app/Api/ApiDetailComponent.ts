@@ -11,9 +11,6 @@ import { ApiService } from './ApiService';
   templateUrl: 'ApiDetail.html'
 })
 export class ApiDetailComponent extends BaseDetailComponent<Api> {
-
-  activeTab : string;
-  
   constructor(
     protected injector:Injector,
     protected service: ApiService
@@ -22,8 +19,7 @@ export class ApiDetailComponent extends BaseDetailComponent<Api> {
     this.idParamName = 'name';
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
+  get oldVersion() : boolean {
+    return this.service.oldVersion;
   }
-
 }

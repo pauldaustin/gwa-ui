@@ -16,18 +16,36 @@ export class Api {
     "DELETE"
   ];
 
-  id : string;
-  name : string;
-  upstream_url : string;
-  preserve_host : boolean;
-  created_at : string;
-  retries : number;
-  https_only : boolean;
-  http_if_terminated : boolean;
-  hosts : Array<String>;
-  uris : Array<String>;
-  strip_uri : boolean;
+  constructor() {
+    this.methods = null;
+  }
 
+  // All versions
+  id : string;
+  created_at : string;
+  upstream_url : string;
+  preserve_host : string;
+  name : string;
+  
+  // 0.9.x
+  strip_request_path : boolean = true;
+  request_host : string;
+  request_path : string;
+  
+  // 0.10.x
+  hosts : string[];
+  uris : string[];
+//  methods : string;
+  strip_uri : boolean = true;
+  retries : number = 5;
+  upstream_connect_timeout : number = 60000;
+  upstream_send_timeout : number = 60000;
+  upstream_read_timeout : number = 60000;
+  https_only : boolean = false;
+  http_if_terminated : boolean = true;
+  
+
+  // Custom but this needs to be moved
   title : string;
   created_by: string = "Unknown";
   upstream_username: string;
@@ -36,10 +54,6 @@ export class Api {
   method_flags: Array<HttpMethodState> = [];
   _apiKeys: Array<ApiKey> = [];
   _plugins: Array<Plugin> = [];
-
-  constructor() {
-    this.methods = null;
-  }
 
   get methods(): Array<string> {
     let methods: Array<string> = [];
@@ -63,37 +77,6 @@ export class Api {
         enabled = method == "GET";
       }
       this.method_flags.push({name: method, enabled: enabled});
-    }
-  }
-
-/* API Key Methods */
-
-  apiKeyAdd(apiKey: ApiKey) {
-    this._apiKeys.push(apiKey);
-  }
-
-  apiKeyRemove(apiKey: ApiKey) {
-    this._apiKeys = this._apiKeys.filter(key => key != apiKey);
-  }
-
-  get api_keys(): Array<ApiKey> {
-    return this._apiKeys;
-  }
-   
-  get apiKeys(): Array<ApiKey> {
-    return this._apiKeys;
-  }
-  
-  set api_keys(apiKeysJson) {
-    if (apiKeysJson) {
-      let apiKeys = this._apiKeys;
-      apiKeysJson.forEach((apiKeyJson: any) => {
-        let apiKey = new ApiKey();
-        Object.assign(apiKey, apiKeyJson);
-        apiKeys.push(apiKey);
-      });
-    } else {
-      this._apiKeys.length = 0;
     }
   }
 
@@ -140,18 +123,26 @@ export class Api {
 
   toJSON(): any {
     return {
-      id : this.id,
-      name : this.name,
+      id: this.id,
+      created_at: this.created_at,
       upstream_url: this.upstream_url,
+      preserve_host: this.preserve_host,
+      name: this.name,
+      
+      strip_request_path: this.strip_request_path,
+      request_host: this.request_host,
+      request_path: this.request_path,
+      
+      hosts: this.hosts,
+      uris: this.uris,
       methods: this.methods,
-      preserve_host : this.preserve_host,
-      created_at : this.created_at,
-      retries : this.retries,
-      https_only : this.https_only,
-      http_if_terminated : this.http_if_terminated,
-      hosts : this.hosts,
-      uris : this.uris,
-      strip_uri : this.strip_uri,
+      strip_uri: this.strip_uri,
+      retries: this.retries,
+      upstream_connect_timeout: this.upstream_connect_timeout,
+      upstream_send_timeout: this.upstream_send_timeout,
+      upstream_read_timeout: this.upstream_read_timeout,
+      https_only: this.https_only,
+      http_if_terminated: this.http_if_terminated,
       
       plugins : this.plugins,
       

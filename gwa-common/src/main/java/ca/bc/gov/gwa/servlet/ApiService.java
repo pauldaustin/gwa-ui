@@ -48,9 +48,14 @@ import com.datastax.driver.core.querybuilder.Update;
 @WebListener
 public class ApiService implements ServletContextListener {
 
-  private static final List<String> APIS_FIELD_NAMES = Arrays.asList("id", "name", "upstream_url",
-    "preserve_host", "created_at", "retries", "https_only", "http_if_terminated", "hosts", "uris",
-    "methods", "strip_uri");
+  private static final List<String> APIS_FIELD_NAMES_OLD = Arrays.asList("id", "name",
+    "request_host", "request_path", "strip_request_path", "preserve_host", "created_at",
+    "upstream_url");
+
+  private static final List<String> APIS_FIELD_NAMES = Arrays.asList("id", "created_at",
+    "upstream_url", "preserve_host", "name", "hosts", "uris", "methods", "strip_uri", "retries",
+    "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
+    "http_if_terminated");
 
   private static ApiService instance;
 
@@ -86,6 +91,8 @@ public class ApiService implements ServletContextListener {
   private final List<String> apiFieldNames = new ArrayList<>();
 
   private Map<String, Object> config = Collections.emptyMap();
+
+  private String version;
 
   public ApiService() {
   }
@@ -133,19 +140,43 @@ public class ApiService implements ServletContextListener {
 
   public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
     final String userId) throws IOException {
-    final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
-    if (dataMap != null) {
-      final String name = (String)dataMap.get("name");
-      final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
-      dataMap.put("hosts", hosts);
-
-      final String apiId = apiCreateKong(httpResponse, dataMap);
-      if (apiId == null) {
-
-      } else {
-        apiCreateCassandra(userId, dataMap, apiId);
-        writeInserted(httpResponse, apiId);
-      }
+    // final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
+    // if (dataMap != null) {
+    // final String name = (String)dataMap.get("name");
+    // final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
+    // dataMap.put("hosts", hosts);
+    //
+    // final String apiId = apiCreateKong(httpResponse, dataMap);
+    // if (apiId == null) {
+    //
+    // } else {
+    // apiCreateCassandra(userId, dataMap, apiId);
+    // writeInserted(httpResponse, apiId);
+    // }
+    // }
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData != null) {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        final Map<String, Object> data = new LinkedHashMap<>();
+        for (final String key : getApiFieldNames()) {
+          final Object value = requestData.get(key);
+          if (value != null) {
+            data.put(key, value);
+          }
+        }
+        final String name = (String)data.get("name");
+        if (getVersion().startsWith("0.9")) {
+        } else {
+          @SuppressWarnings("unchecked")
+          List<String> hosts = (List<String>)data.get("hosts");
+          if (hosts == null || hosts.isEmpty()) {
+            hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
+            data.put("hosts", hosts);
+          }
+        }
+        final Map<String, Object> apiResponse = httpClient.post("/apis", data);
+        Json.writeJson(httpResponse, apiResponse);
+      });
     }
   }
 
@@ -170,7 +201,7 @@ public class ApiService implements ServletContextListener {
     try (
       JsonHttpClient httpClient = newKongClient()) {
       final Map<String, Object> apiData = new LinkedHashMap<>();
-      for (final String key : APIS_FIELD_NAMES) {
+      for (final String key : getApiFieldNames()) {
         final Object value = data.get(key);
         if (value != null) {
           apiData.put(key, value);
@@ -411,7 +442,7 @@ public class ApiService implements ServletContextListener {
     try (
       JsonHttpClient httpClient = newKongClient()) {
       final Map<String, Object> apiData = new LinkedHashMap<>();
-      for (final String key : APIS_FIELD_NAMES) {
+      for (final String key : getApiFieldNames()) {
         final Object value = data.get(key);
         if (value != null) {
           apiData.put(key, value);
@@ -485,6 +516,15 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public List<String> getApiFieldNames() {
+    final String version = getVersion();
+    if (version.startsWith("0.9")) {
+      return APIS_FIELD_NAMES_OLD;
+    } else {
+      return APIS_FIELD_NAMES;
+    }
+  }
+
   public String getConfig(final String name) {
     return getConfig(name, null);
   }
@@ -505,6 +545,27 @@ public class ApiService implements ServletContextListener {
     } else {
       return value;
     }
+  }
+
+  public String getVersion() {
+    if (this.version == null) {
+      try (
+        JsonHttpClient httpClient = newKongClient()) {
+        final Map<String, Object> kongResponse = httpClient.get("");
+        this.version = (String)kongResponse.get("version");
+
+      } catch (final Throwable e) {
+        return "0.9.x";
+      }
+    }
+    return this.version;
+  }
+
+  public void getVersion(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) throws IOException {
+    final String version = getVersion();
+    final Map<String, Object> response = Collections.singletonMap("version", version);
+    Json.writeJson(httpResponse, response);
   }
 
   public void handleAdd(final HttpServletRequest httpRequest,
@@ -593,7 +654,7 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  public void handleUpdate(final HttpServletRequest httpRequest,
+  public void handleUpdatePatch(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
     throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
