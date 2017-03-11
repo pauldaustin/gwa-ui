@@ -12,18 +12,18 @@
         <accordion>
           <accordion-group heading="Details" isOpen="true">
             <div class="row">
-              <div class="col-sm-8">
+              <div class="col-sm-6">
                 <bs-form-group
                   [form]="apiForm"
                   name="name"
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Name">
-                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-z0-9_\-]{2,20}" class="form-control"  />
+                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-zA-Z0-9_\-]{2,30}" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-sm-4">
+              <div class="col-sm-6">
                 <bs-form-group
                   [form]="apiForm"
                   name="created"
@@ -43,7 +43,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Request Host">
-                    <input #title="ngModel" name="request_host" [(ngModel)]="object.request_host" placeholder="name.apps.gov.bc.ca" type="text" required="true" class="form-control"  />
+                    <input #title="ngModel" name="request_host" [(ngModel)]="object.request_host" placeholder="name.apps.gov.bc.ca" type="text" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -54,7 +54,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Request Path">
-                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="name.apps.gov.bc.ca" type="text" required="true" class="form-control"  />
+                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="name.apps.gov.bc.ca" type="text" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -139,7 +139,7 @@
               </bs-input-group>
             </bs-form-group>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <bs-form-group
                   [form]="apiForm"
                   name="preserve_host"
@@ -152,7 +152,7 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-2" *ngIf="oldVersion">
+              <div class="col-md-4" *ngIf="oldVersion">
                 <bs-form-group
                   [form]="apiForm"
                   name="strip_request_path"
@@ -165,7 +165,7 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-2" *ngIf="!oldVersion">
+              <div class="col-md-4" *ngIf="!oldVersion">
                 <bs-form-group
                   [form]="apiForm"
                   name="strip_uri"
@@ -178,9 +178,20 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
+               <div class="col-md-4" *ngIf="!oldVersion">
+                <bs-form-group
+                  [form]="apiForm"
+                  name="retries"
+                  inputWidth=""
+                >
+                  <bs-input-group prefixText="Retries">
+                    <input name="retries" [(ngModel)]="object.retries" type="number" min="0" max="32767" class="form-control" />
+                  </bs-input-group>
+                </bs-form-group>
+              </div>
             </div>
-            <div class="row">
-              <div class="col-md-3">
+            <div class="row" *ngIf="!oldVersion">
+              <div class="col-md-4">
                 <bs-form-group
                   [form]="apiForm"
                   name="upstream_connect_timeout"
@@ -191,7 +202,7 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <bs-form-group
                   [form]="apiForm"
                   name="upstream_send_timeout"
@@ -202,7 +213,7 @@
                   </bs-input-group>
                 </bs-form-group>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <bs-form-group
                   [form]="apiForm"
                   name="upstream_read_timeout"
@@ -210,17 +221,6 @@
                 >
                   <bs-input-group prefixText="Read Timeout">
                     <input name="upstream_read_timeout" [(ngModel)]="object.upstream_read_timeout" type="number" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-3">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="retries"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Retries">
-                    <input name="retries" [(ngModel)]="object.retries" type="number" min="0" max="32767" class="form-control" />
                   </bs-input-group>
                 </bs-form-group>
               </div>
