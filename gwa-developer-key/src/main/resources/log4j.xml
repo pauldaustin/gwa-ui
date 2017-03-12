@@ -11,10 +11,10 @@
     <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
       <param
         name="ActiveFileName"
-        value="log/gwa/gwa-developer-key.log" />
+        value="log/gwa-developer-key.log" />
       <param
         name="FileNamePattern"
-        value="log/gwa/gwa-developer-key.%d.log" />
+        value="log/gwa-developer-key.%d.log" />
     </rollingPolicy>
 
     <layout class="org.apache.log4j.PatternLayout">

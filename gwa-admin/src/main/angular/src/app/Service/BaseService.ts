@@ -204,15 +204,20 @@ export abstract class BaseService<T> implements Service<T> {
     return this.path;
   }
 
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return this.getRowsPageDo(this.path, offset, limit);
-  }
- 
-  getRowsPageDo(path: string, offset: number, limit: number): Promise<any> {
+  getRowsPage(
+    offset: number,
+    limit: number,
+    filterFieldName : string,
+    filterValue : string
+  ): Promise<any> {
     let params = new URLSearchParams();
     params.set('offset', offset.toString()); 
-    params.set('limit', limit.toString()); 
-    const url = this.getUrl(path);
+    params.set('limit', limit.toString());
+    if (filterFieldName && filterValue) {
+      params.set("filterFieldName", filterFieldName);
+      params.set("filterValue", filterValue);
+    }
+    const url = this.getUrl(this.path);
     return this.http.get(
       url,
       {

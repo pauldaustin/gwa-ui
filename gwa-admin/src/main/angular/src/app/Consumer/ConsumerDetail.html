@@ -1,24 +1,24 @@
-<div *ngIf="consumer">
+<div *ngIf="object">
   <ol class="breadcrumb">
     <li><a routerLink="/app/consumers">Consumers</a></li>
-    <li *ngIf="consumer.id" class="active">{{consumer.getLabel()}}</li>
-    <li *ngIf="!consumer.id" class="active">Add Consumer</li>
+    <li *ngIf="object.id" class="active">{{object.username}}</li>
+    <li *ngIf="!object.id" class="active">Add Consumer</li>
   </ol>
 
   <form #consumerForm="ngForm" role="form">
     <bs-form-group>
       <bs-input-group prefixText="Username">
-        <input #title="ngModel" name="name" [(ngModel)]="consumer.username" placeholder="Login User Name" type="text" class="form-control" />
+        <input #title="ngModel" name="name" [(ngModel)]="object.username" placeholder="Login User Name" required="true" type="text" class="form-control" />
       </bs-input-group>
     </bs-form-group>
-    <bs-form-group>
+    <bs-form-group *ngIf="object.custom_id">
       <bs-input-group prefixText="Custom Id">
-        <input #title="ngModel" name="cutom_id" [(ngModel)]="consumer.custom_id" placeholder="External User Identifier" type="text" class="form-control" />
+        <input #title="ngModel" name="cutom_id" [(ngModel)]="object.custom_id" placeholder="External User Identifier" type="text" class="form-control" />
       </bs-input-group>
     </bs-form-group>
-    <bs-form-group *ngIf="consumer.id">
+    <bs-form-group *ngIf="object.id">
       <bs-input-group prefixText="Created At">
-        <p class="form-control form-control-static">{{consumer.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
       </bs-input-group>
     </bs-form-group>
     

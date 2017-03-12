@@ -28,6 +28,12 @@ export class BaseListComponent<T> extends BaseComponent<T> {
 
   limit: number = 100;
 
+  filterFields : any[];
+  
+  filterFieldName : string;
+   
+  filterValue : string;
+ 
   paging: boolean = false;
 
   cssClasses= {
@@ -84,7 +90,7 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   }
   
   fetch(offset: number, limit: number, callback: any) {
-    this.service.getRowsPage(offset, limit).then(callback);
+    this.service.getRowsPage(offset, limit, this.filterFieldName, this.filterValue).then(callback);
   }
 
   onPage(event: any) {

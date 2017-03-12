@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'app/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'app/consumers',  component: ConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'app/consumers/_add_',  component: ConsumerAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'app/consumers/:id', component: ConsumerDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'app/consumers/:username', component: ConsumerDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'app/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'app/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: '**', component: PageNotFoundComponent }

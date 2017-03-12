@@ -100,14 +100,16 @@ public class ApiServlet extends BaseServlet {
       final int slashIndex = apiIdString.indexOf('/');
       if (slashIndex > -1) {
         if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
-          final String updatePath = "/apis" + pathInfo;
+          final String path = "/apis" + pathInfo;
+          final String updatePath = path;
           this.apiService.handleUpdatePut(request, response, updatePath);
         } else {
           response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       } else {
+        final String path = "/apis" + pathInfo;
         final List<String> fieldNames = this.apiService.getApiFieldNames();
-        this.apiService.handleUpdatePatch(request, response, pathInfo, fieldNames);
+        this.apiService.handleUpdatePatch(request, response, path, fieldNames);
         // this.apiService.apiUpdate(request, response, userId, pathInfo);
       }
     }

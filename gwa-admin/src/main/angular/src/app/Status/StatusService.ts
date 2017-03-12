@@ -11,7 +11,7 @@ export class StatusService extends BaseService<any> {
     super(injector);
   }
 
-  getObject(id: string): Promise<any> {
+  getStatus(): Promise<any> {
     return this.getObjectDo('/status');
   }
 

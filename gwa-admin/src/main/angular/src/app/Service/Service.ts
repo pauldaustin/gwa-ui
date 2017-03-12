@@ -17,5 +17,5 @@ export interface Service<T> {
 
   getPath() : string;
 
-  getRowsPage(offset: number, limit: number): Promise<any>;
+  getRowsPage(offset : number, limit : number, filterFieldName : string, filterValue : string): Promise<any>;
 }

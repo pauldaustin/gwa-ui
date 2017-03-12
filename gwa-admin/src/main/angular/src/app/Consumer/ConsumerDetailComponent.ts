@@ -16,5 +16,6 @@ export class ConsumerDetailComponent extends BaseDetailComponent<Consumer> {
     protected service: ConsumerService
   ) {
     super(injector, service);
+    this.idParamName = 'username';
   }
 }

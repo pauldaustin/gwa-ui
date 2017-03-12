@@ -20,6 +20,11 @@ export class ConsumerListComponent extends BaseListComponent<Consumer> {
   ) {
     super(injector, service);
     this.paging = true;
+    this.filterFields = [
+      { prop: "username", name: "Username"},
+      { prop: "custom_id", name: "Custom ID"},
+    ];
+    this.filterFieldName = "username";
   }
 
   ngOnInit(): void {

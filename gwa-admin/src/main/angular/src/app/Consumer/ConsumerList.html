@@ -4,7 +4,19 @@
   </ol>
 
   <div class="btn-toolbar" role="toolbar">
-    <a routerLink="/app/consumers/_add_" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
+    <div class="form-inline">
+      <a routerLink="/app/consumers/_add_" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
+      <div class="form-group" *ngIf="filterFields">
+        <div class="input-group">
+          <span class="input-group-addon">Filter</span>
+          <select [(ngModel)]="filterFieldName" class="form-control" (ngModelChange)="refresh()">
+            <option *ngFor="let field of filterFields" value="{{field.prop}}">{{field.name}}</option>
+          </select>
+          <span class="input-group-addon">=</span>
+          <input [(ngModel)]="filterValue" placeholder="Filter" type="text" class="form-control" (ngModelChange)="refresh()" />
+        </div>
+      </div>
+    </div>
   </div>
 
   <ngx-datatable
@@ -25,7 +37,7 @@
   >
   </ngx-datatable>
 
-  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/app','consumers', row.id]">{{value}}</a></template>
+  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/app','consumers', row.username]">{{value}}</a></template>
 
   <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
   

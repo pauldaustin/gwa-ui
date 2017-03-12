@@ -627,6 +627,11 @@ public class ApiService implements ServletContextListener {
         } catch (final Throwable e) {
         }
       }
+      final String filterFieldName = httpRequest.getParameter("filterFieldName");
+      final String filterValue = httpRequest.getParameter("filterValue");
+      if (filterFieldName != null && filterValue != null) {
+        url += "&" + filterFieldName + "=" + filterValue;
+      }
       Map<String, Object> kongResponse = Collections.emptyMap();
       do {
         kongResponse = httpClient.getByUrl(url);

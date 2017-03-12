@@ -2,9 +2,8 @@ import {
   Component, 
   Injector
 } from '@angular/core';
-
+import { Params } from '@angular/router';
 import { BaseDetailComponent } from '../Component/BaseDetailComponent';
-
 import { StatusService } from './StatusService';
 
 @Component({
@@ -36,8 +35,8 @@ import { StatusService } from './StatusService';
 export class StatusDetailComponent extends BaseDetailComponent<any> {
 
   columns = [
-    { name: 'Name', sortable: false },
-    { name: 'Value',sortable: false }
+    { name : 'Name', sortable : false },
+    { name : 'Value', sortable : false }
   ];
 
   constructor(
@@ -45,6 +44,14 @@ export class StatusDetailComponent extends BaseDetailComponent<any> {
     protected statusService: StatusService
   ) {
     super(injector, statusService);
+  }
+
+  ngOnInit() {
+    this.route.params
+      .switchMap((params: Params) => {
+        return this.statusService.getStatus();
+      })
+      .subscribe(object => this.object = object);
   }
   
   get serverRows(): any[] {

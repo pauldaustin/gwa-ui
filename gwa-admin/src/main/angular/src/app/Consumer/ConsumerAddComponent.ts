@@ -1,31 +1,26 @@
-import 'rxjs/add/operator/switchMap';
-
-import { Component } from '@angular/core';
-
-import { Router } from '@angular/router';
-
-import { Consumer }         from './Consumer';
-import { ConsumerService }  from './ConsumerService';
+import {
+  Component, 
+  Injector
+} from '@angular/core';
+import { Consumer } from './Consumer';
+import { ConsumerService } from './ConsumerService';
+import { ConsumerDetailComponent } from './ConsumerDetailComponent';
 
 @Component({
-  selector: 'consumer-create',
+  selector: 'consumer-add',
   templateUrl: 'ConsumerDetail.html'
 })
-export class ConsumerAddComponent {
-  consumer: Consumer = new Consumer();
-   
+export class ConsumerAddComponent extends ConsumerDetailComponent {
+
   constructor(
-    private router: Router,
-    private consumerService: ConsumerService
+    protected injector:Injector,
+    protected service: ConsumerService
   ) {
+    super(injector, service);
   }
 
-  goBack(): void {
-    this.router.navigate(['/consumers']);
+  postSave(savedConsumer: Consumer): void {
+    this.router.navigate(['/app/consumers', savedConsumer.username]);
   }
-  
-  save(): void {
-    this.consumerService.addObject(this.consumer)
-      .then((consumer) => this.goBack());
-  }
+
 }

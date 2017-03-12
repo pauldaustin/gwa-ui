@@ -19,7 +19,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Name">
-                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-z][a-zA-Z0-9_\-]{2,30}" class="form-control"  />
+                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
@@ -54,7 +54,7 @@
                   inputWidth=""
                 >
                   <bs-input-group prefixText="Request Path">
-                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="name.apps.gov.bc.ca" type="text" class="form-control"  />
+                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="/int" type="text" class="form-control"  />
                   </bs-input-group>
                 </bs-form-group>
               </div>
