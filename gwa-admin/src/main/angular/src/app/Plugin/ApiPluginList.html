@@ -28,12 +28,8 @@
   <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
 </span></template>
 
-<template #actionsT let-row="row">
-  <button (confirm)="deleteObject(row)" class="btn btn-danger btn-xs" type="button"
-    name="delete" aria-label="Delete"
-    mwlConfirmationPopover title="Delete Plugin?" message="Are you sure you want to delete Plugin?</br /> <b>{{row.name}}</b>" placement="left" [appendToBody]="true"
-  >
-    <span class="fa fa-trash" aria-hidden="true"></span>
-    <span class="sr-only">Delete</span>
-  </button>
-</template>
+  <template #actionsT let-row="row">
+    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+      <md-icon>delete</md-icon>
+    </button>
+  </template>

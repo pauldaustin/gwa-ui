@@ -9,7 +9,12 @@ import { Consumer } from './Consumer';
 @Injectable()
 export class ConsumerService extends BaseService<Consumer> {
   constructor(injector:Injector) {
-    super(injector, '/consumers');
+    super(
+      injector, 
+      '/consumers',
+      'Consumer',
+      'username'
+    );
   }
 
   deleteObject(consumer: Consumer): Promise<boolean> {

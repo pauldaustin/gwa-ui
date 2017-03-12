@@ -76,7 +76,7 @@ public class ApiServlet extends BaseServlet {
       if (slashIndex > -1) {
         if (apiIdString.startsWith("plugins", slashIndex + 1)) {
           if (apiIdString.indexOf('/', slashIndex + 2) == -1) {
-            this.apiService.handleAdd(request, response, pathInfo);
+            this.apiService.handleAdd(request, response, "/apis" + pathInfo);
           } else {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
           }

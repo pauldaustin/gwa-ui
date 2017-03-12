@@ -3,8 +3,13 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
+import {
+  MdDialog,
+  MdDialogRef
+} from '@angular/material';
 
 import { BaseComponent } from './BaseComponent';
+import { DeleteDialog } from './DeleteDialog';
 
 import { Service } from '../Service/Service';
 
@@ -20,6 +25,8 @@ export class BaseListComponent<T> extends BaseComponent<T> {
 
   columns : any[];
 
+  dialog: MdDialog = this.injector.get(MdDialog);
+  
   rows: Array<T> = [];
 
   count: number = 0;
@@ -59,8 +66,22 @@ export class BaseListComponent<T> extends BaseComponent<T> {
       this.service.getObjects().then(objects => this.rows = objects);
     }
   }
-  
+
   deleteObject(object: T): void {
+    let dialogRef = this.dialog.open(DeleteDialog, {
+      data: {
+        typeTitle: this.service.getTypeTitle(),
+        objectLabel: this.service.getLabel(object),
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'Delete') {
+        this.deleteObjectDo(object);
+      }
+    });
+  }
+
+  protected deleteObjectDo(object: T): void {
     this.service.deleteObject(object)
       .then((deleted) => {
         if (deleted) {

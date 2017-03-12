@@ -1,31 +1,44 @@
-<div *ngIf="object">
-  <ol class="breadcrumb">
-    <li><a routerLink="/app/consumers">Consumers</a></li>
-    <li *ngIf="object.id" class="active">{{object.username}}</li>
-    <li *ngIf="!object.id" class="active">Add Consumer</li>
-  </ol>
+<md-tab-group *ngIf="object">
+  <md-tab>
+    <template md-tab-label>
+      <span *ngIf="object.id" class="active">Consumer: {{object.username}}</span>
+      <span *ngIf="!object.id" class="active">Add Consumer</span>
+    </template>
 
-  <form #consumerForm="ngForm" role="form">
-    <bs-form-group>
-      <bs-input-group prefixText="Username">
-        <input #title="ngModel" name="name" [(ngModel)]="object.username" placeholder="Login User Name" required="true" type="text" class="form-control" />
-      </bs-input-group>
-    </bs-form-group>
-    <bs-form-group *ngIf="object.custom_id">
-      <bs-input-group prefixText="Custom Id">
-        <input #title="ngModel" name="cutom_id" [(ngModel)]="object.custom_id" placeholder="External User Identifier" type="text" class="form-control" />
-      </bs-input-group>
-    </bs-form-group>
-    <bs-form-group *ngIf="object.id">
-      <bs-input-group prefixText="Created At">
-        <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
-      </bs-input-group>
-    </bs-form-group>
-    
-    <div class="btn-toolbar" role="toolbar">
-      <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
-      <button (click)="save()" class="btn btn-sm btn-primary" role="button" [disabled]="!consumerForm.form.valid">Save</button>
-    </div>
-  </form>
+    <form #consumerForm="ngForm" role="form">
+      <md-input-container class="full-width">
+        <input
+          mdInput
+          placeholder="Username"
+          name="username"
+          [(ngModel)]="object.username"
+          required="true"
+        />
+      </md-input-container>
 
-</div>
+      <md-input-container *ngIf="object.custom_id" class="full-width">
+        <input
+          mdInput
+          placeholder="Custom Id"
+          name="custom_id"
+          [(ngModel)]="object.custom_id"
+          disabled
+        />
+      </md-input-container>
+
+      <md-input-container *ngIf="object.created_at" class="full-width">
+        <input
+          mdInput
+          placeholder="Created At"
+          value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}"
+          disabled
+        />
+      </md-input-container>
+
+      <md-toolbar>
+        <button (click)="goBack()" md-raised-button>Cancel</button>
+        <button (click)="save()" md-raised-button color="primary" [disabled]="!consumerForm.form.valid">Save</button>
+      </md-toolbar>
+    </form>
+  </md-tab>
+</md-tab-group>

@@ -1,241 +1,241 @@
-<div *ngIf="object">
-  <ol class="breadcrumb">
-    <li><a routerLink="/app/apis">APIs</a></li>
-    <li class="active">{{object.name}}</li>
-  </ol>
+<md-tab-group *ngIf="object" [selectedIndex]=[tabIndex]>
+  <md-tab>
+    <template md-tab-label>
+      <span *ngIf="object.id" class="active">Api: {{object.name}}</span>
+      <span *ngIf="!object.id" class="active">Add API</span>
+    </template>
 
-  <tabset>
-    <tab active="true">
-      <template *ngIf="object.id" tabHeading >Api</template>
-      <template *ngIf="object.id == null" tabHeading >Add Api</template>
-      <form #apiForm="ngForm" class="form-horizontal" role="form">
-        <accordion>
-          <accordion-group heading="Details" isOpen="true">
-            <div class="row">
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="name"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Name">
-                    <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" class="form-control"  />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="created"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Created At">
-                    <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+    <form #apiForm="ngForm" class="form-horizontal" role="form">
+      <md-card>
+        <md-card-content>
+          <div class="row">
+            <div class="col-sm-6">
+              <bs-form-group
+                [form]="apiForm"
+                name="name"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Name">
+                  <input #title="ngModel" name="name" [(ngModel)]="object.name" placeholder="Application Short Name" type="text" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" class="form-control"  />
+                </bs-input-group>
+              </bs-form-group>
             </div>
-            <div class="row" *ngIf="oldVersion">
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="request_host"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Request Host">
-                    <input #title="ngModel" name="request_host" [(ngModel)]="object.request_host" placeholder="name.apps.gov.bc.ca" type="text" class="form-control"  />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-sm-6">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="request_path"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Request Path">
-                    <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="/int" type="text" class="form-control"  />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+            <div class="col-sm-6">
+              <bs-form-group
+                [form]="apiForm"
+                name="created"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Created At">
+                  <p class="form-control form-control-static">{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+                </bs-input-group>
+              </bs-form-group>
             </div>
-            <div class="row" *ngIf="!oldVersion">
-              <div class="col-md-12">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="hosts"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Hosts">
-                    <input #title="ngModel" name="hosts" [(ngModel)]="object.hosts" placeholder="name.apps.gov.bc.ca" type="text" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+          </div>
+          <div class="row" *ngIf="oldVersion">
+            <div class="col-sm-6">
+              <bs-form-group
+                [form]="apiForm"
+                name="request_host"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Request Host">
+                  <input #title="ngModel" name="request_host" [(ngModel)]="object.request_host" placeholder="name.apps.gov.bc.ca" type="text" class="form-control"  />
+                </bs-input-group>
+              </bs-form-group>
             </div>
-            <div class="row" *ngIf="!oldVersion">
-              <div class="col-md-12">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="uris"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Uris">
-                    <input #title="ngModel" name="uris" [(ngModel)]="object.uris" placeholder="http://name.apps.gov.bc.ca/int" type="text" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+            <div class="col-sm-6">
+              <bs-form-group
+                [form]="apiForm"
+                name="request_path"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Request Path">
+                  <input #title="ngModel" name="request_path" [(ngModel)]="object.request_path" placeholder="/int" type="text" class="form-control"  />
+                </bs-input-group>
+              </bs-form-group>
             </div>
-            <div class="row" *ngIf="!oldVersion">
-              <div class="col-md-7">
-                <bs-form-group
-                  [form]="apiForm"
-                >
-                  <bs-input-group prefixText="Methods">
-                    <span class="form-control">
-                      <label *ngFor="let methodFlag of object.method_flags" for="allowedHttpMethods" class="checkbox-inline">
-                        <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
-                      </label>
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-2">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="https_only"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Https Only">
-                    <span class="form-control">
-                      <input name="https_only" [(ngModel)]="object.https_only" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-3">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="http_if_terminated"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Http if Terminated">
-                    <span class="form-control">
-                      <input name="http_if_terminated" [(ngModel)]="object.http_if_terminated" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+          </div>
+          <div class="row" *ngIf="!oldVersion">
+            <div class="col-md-12">
+              <bs-form-group
+                [form]="apiForm"
+                name="hosts"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Hosts">
+                  <input #title="ngModel" name="hosts" [(ngModel)]="object.hosts" placeholder="name.apps.gov.bc.ca" type="text" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
             </div>
-          </accordion-group>
-          
-          <accordion-group heading="Upstream Service" isOpen="true">
-            <bs-form-group
-              [form]="apiForm"
-              name="upstreamUrl"
-              inputWidth="col-sm-12"
-            >
-              <bs-input-group prefixIcon="external-link">
-                <input [(ngModel)]="object.upstream_url" name="upstreamUrl" placeholder="Upstream URL (e.g. http://server.com/)" type="url" required="true" pattern="https?://.+"  class="form-control"  />
-              </bs-input-group>
-            </bs-form-group>
-            <div class="row">
-              <div class="col-md-4">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="preserve_host"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Preserve Host">
-                    <span class="form-control">
-                      <input name="preserve_host" [(ngModel)]="object.preserve_host" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-4" *ngIf="oldVersion">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="strip_request_path"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Strip URI">
-                    <span class="form-control">
-                      <input name="strip_request_path" [(ngModel)]="object.strip_request_path" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-4" *ngIf="!oldVersion">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="strip_uri"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Strip URI">
-                    <span class="form-control">
-                      <input name="strip_uri" [(ngModel)]="object.strip_uri" type="checkbox" />
-                    </span>
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-               <div class="col-md-4" *ngIf="!oldVersion">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="retries"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Retries">
-                    <input name="retries" [(ngModel)]="object.retries" type="number" min="0" max="32767" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+          </div>
+          <div class="row" *ngIf="!oldVersion">
+            <div class="col-md-12">
+              <bs-form-group
+                [form]="apiForm"
+                name="uris"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Uris">
+                  <input #title="ngModel" name="uris" [(ngModel)]="object.uris" placeholder="http://name.apps.gov.bc.ca/int" type="text" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
             </div>
-            <div class="row" *ngIf="!oldVersion">
-              <div class="col-md-4">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="upstream_connect_timeout"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Connect Timeout">
-                    <input name="upstream_connect_timeout" [(ngModel)]="object.upstream_connect_timeout" type="number" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-4">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="upstream_send_timeout"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Send Timeout">
-                    <input name="upstream_send_timeout" [(ngModel)]="object.upstream_send_timeout" type="number" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
-              <div class="col-md-4">
-                <bs-form-group
-                  [form]="apiForm"
-                  name="upstream_read_timeout"
-                  inputWidth=""
-                >
-                  <bs-input-group prefixText="Read Timeout">
-                    <input name="upstream_read_timeout" [(ngModel)]="object.upstream_read_timeout" type="number" class="form-control" />
-                  </bs-input-group>
-                </bs-form-group>
-              </div>
+          </div>
+          <div class="row" *ngIf="!oldVersion">
+            <div class="col-md-7">
+              <bs-form-group
+                [form]="apiForm"
+              >
+                <bs-input-group prefixText="Methods">
+                  <span class="form-control">
+                    <label *ngFor="let methodFlag of object.method_flags" for="allowedHttpMethods" class="checkbox-inline">
+                      <input type="checkbox" name="allowedHttpMethods" [checked]="methodFlag.enabled" (change)="methodFlag.enabled = $event.target.checked"> {{methodFlag.name}}
+                    </label>
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
             </div>
-          </accordion-group>
-          
-        </accordion>
-        <div class="btn-toolbar" role="toolbar">
-          <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
-          <button (click)="save()" class="btn btn-sm btn-primary" role="button" [disabled]="!apiForm.form.valid">Save</button>
-        </div>
-      </form>
-    </tab>
-    <tab *ngIf="object.id" heading="Plugins">
-      <api-plugin-list [api]="object"></api-plugin-list>
-    </tab>
-  </tabset>
-</div>
+            <div class="col-md-2">
+              <bs-form-group
+                [form]="apiForm"
+                name="https_only"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Https Only">
+                  <span class="form-control">
+                    <input name="https_only" [(ngModel)]="object.https_only" type="checkbox" />
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+            <div class="col-md-3">
+              <bs-form-group
+                [form]="apiForm"
+                name="http_if_terminated"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Http if Terminated">
+                  <span class="form-control">
+                    <input name="http_if_terminated" [(ngModel)]="object.http_if_terminated" type="checkbox" />
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+      <md-card>
+        <md-card-title>Upstream Service</md-card-title>
+        <md-card-content>
+          <bs-form-group
+            [form]="apiForm"
+            name="upstreamUrl"
+            inputWidth="col-sm-12"
+          >
+            <bs-input-group prefixIcon="external-link">
+              <input [(ngModel)]="object.upstream_url" name="upstreamUrl" placeholder="Upstream URL (e.g. http://server.com/)" type="url" required="true" pattern="https?://.+"  class="form-control"  />
+            </bs-input-group>
+          </bs-form-group>
+          <div class="row">
+            <div class="col-md-4">
+              <bs-form-group
+                [form]="apiForm"
+                name="preserve_host"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Preserve Host">
+                  <span class="form-control">
+                    <input name="preserve_host" [(ngModel)]="object.preserve_host" type="checkbox" />
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+            <div class="col-md-4" *ngIf="oldVersion">
+              <bs-form-group
+                [form]="apiForm"
+                name="strip_request_path"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Strip URI">
+                  <span class="form-control">
+                    <input name="strip_request_path" [(ngModel)]="object.strip_request_path" type="checkbox" />
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+            <div class="col-md-4" *ngIf="!oldVersion">
+              <bs-form-group
+                [form]="apiForm"
+                name="strip_uri"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Strip URI">
+                  <span class="form-control">
+                    <input name="strip_uri" [(ngModel)]="object.strip_uri" type="checkbox" />
+                  </span>
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+             <div class="col-md-4" *ngIf="!oldVersion">
+              <bs-form-group
+                [form]="apiForm"
+                name="retries"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Retries">
+                  <input name="retries" [(ngModel)]="object.retries" type="number" min="0" max="32767" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+          </div>
+          <div class="row" *ngIf="!oldVersion">
+            <div class="col-md-4">
+              <bs-form-group
+                [form]="apiForm"
+                name="upstream_connect_timeout"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Connect Timeout">
+                  <input name="upstream_connect_timeout" [(ngModel)]="object.upstream_connect_timeout" type="number" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+            <div class="col-md-4">
+              <bs-form-group
+                [form]="apiForm"
+                name="upstream_send_timeout"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Send Timeout">
+                  <input name="upstream_send_timeout" [(ngModel)]="object.upstream_send_timeout" type="number" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+            <div class="col-md-4">
+              <bs-form-group
+                [form]="apiForm"
+                name="upstream_read_timeout"
+                inputWidth=""
+              >
+                <bs-input-group prefixText="Read Timeout">
+                  <input name="upstream_read_timeout" [(ngModel)]="object.upstream_read_timeout" type="number" class="form-control" />
+                </bs-input-group>
+              </bs-form-group>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+
+      <div class="btn-toolbar" role="toolbar">
+        <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
+        <button (click)="save()" class="btn btn-sm btn-primary" role="button" [disabled]="!apiForm.form.valid">Save</button>
+      </div>
+    </form>
+  </md-tab>
+
+  <md-tab *ngIf="object.id" label="Plugins">
+    <api-plugin-list [api]="object"></api-plugin-list>
+  </md-tab>
+
+</md-tab-group>

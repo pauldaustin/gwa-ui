@@ -1,24 +1,13 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
-
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-
 import { HttpModule }    from '@angular/http';
+import { MaterialModule } from '@angular/material';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
-import { AccordionModule } from 'ng2-bootstrap/accordion';
-
-import { ModalModule } from 'ng2-bootstrap/modal';
-
-import { TabsModule } from 'ng2-bootstrap/tabs';
-
-import { BootstrapModalModule } from 'ng2-bootstrap-modal';
-
-import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
 
 import {
   BcGovTemplate,
@@ -27,7 +16,8 @@ import {
 
 import { BsFormModule }           from './bs-form/index';
 
-import { MessageDialog }           from './Component/MessageDialog';
+import { DeleteDialog } from './Component/DeleteDialog';
+import { MessageDialog } from './Component/MessageDialog';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 
 import { AuthService } from './Authentication/AuthService';
@@ -38,9 +28,6 @@ import { ApiDetailComponent }  from './Api/ApiDetailComponent';
 import { ApiListComponent }    from './Api/ApiListComponent';
 import { ApiListMyComponent }  from './Api/ApiListMyComponent';
 import { ApiService }          from './Api/ApiService';
-
-import { ApiKeyListComponent }     from './ApiKey/ApiKeyListComponent';
-import { ApiKeyService }           from './ApiKey/ApiKeyService';
 
 import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent }   from './Plugin/ApiPluginDetailComponent';
@@ -66,11 +53,8 @@ import { AppRoutingModule }        from './app-routing.module';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
+    MaterialModule,
     NgxDatatableModule,
-    AccordionModule.forRoot(),
-    ModalModule.forRoot(),
-    TabsModule.forRoot(),
-    BootstrapModalModule,
     BcGovTemplateModule.forRoot({
         title: 'Gateway Admin',
         headerMenuItems: [
@@ -98,26 +82,24 @@ import { AppRoutingModule }        from './app-routing.module';
       }
     ),
     AppRoutingModule,
-    ConfirmationPopoverModule.forRoot({
-      confirmButtonType: 'danger'
-    }),
     BsFormModule.forRoot()
   ],
   entryComponents: [
-    MessageDialog
+    MessageDialog,
+    DeleteDialog
   ],
   declarations: [
     ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,
     ApiListMyComponent,
-    ApiKeyListComponent,
     ApiPluginListComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
     ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
+    DeleteDialog,
     MessageDialog,
     NodeListComponent,
     PageNotFoundComponent,
@@ -127,7 +109,6 @@ import { AppRoutingModule }        from './app-routing.module';
     AuthService,
     RoleGuard,
     ApiService,
-    ApiKeyService,
     PluginService,
     ConsumerService,
     NodeService,

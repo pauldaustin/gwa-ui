@@ -135,6 +135,6 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   }
 
   postSave(savedObject: Plugin): void {
-    this.router.navigate(['/apis', savedObject.api.id, '/plugins']);
+    this.router.navigate(['/app/apis', savedObject.api.name, {tabIndex: 1}]);
   }
 }

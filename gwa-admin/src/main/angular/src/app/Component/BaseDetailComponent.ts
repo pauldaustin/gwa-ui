@@ -18,6 +18,8 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
   
   object: T;
 
+  tabIndex : number = 0;
+
   protected formBuilder: FormBuilder = this.injector.get(FormBuilder);
 
   constructor(injector: Injector, service : Service<T>) {
@@ -27,6 +29,9 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
   ngOnInit() {
     this.route.params
       .switchMap((params: Params) => {
+        if (params['tabIndex']) {
+          this.tabIndex = params['tabIndex'];
+        }
         this.id = params[this.idParamName];
         if (this.id) {
           return this.service.getObject(this.id);

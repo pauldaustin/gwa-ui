@@ -6,16 +6,20 @@ import {
   Location
 } from '@angular/common';
 import {
+  MdDialog,
+  MdDialogRef
+} from '@angular/material';
+import {
   ActivatedRoute,
   Router
 } from '@angular/router';
-import { DialogService } from "ng2-bootstrap-modal";
+
 import { Service } from '../Service/Service';
 import { MessageDialog } from '../Component/MessageDialog';
 
 export class BaseComponent<T> implements OnInit {
 
-  protected dialogService: DialogService = this.injector.get(DialogService);
+  dialog: MdDialog = this.injector.get(MdDialog);
 
   protected location: Location = this.injector.get(Location);
 
@@ -37,14 +41,11 @@ export class BaseComponent<T> implements OnInit {
   }
 
   protected showError(message: string) {
-    if (this.dialogService != null) {
-      let disposable = this.dialogService.addDialog(
-        MessageDialog, {
-          title:'Error', 
-          message:message,
-          alertType: 'danger'
-        }
-      );
-    }
+    let dialogRef = this.dialog.open(MessageDialog, {
+      data: {
+        title: 'Error',
+        message: message,
+      }
+    });
   }
 }

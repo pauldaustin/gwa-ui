@@ -14,7 +14,10 @@ import {
   URLSearchParams
 } from '@angular/http';
 
-import { DialogService } from "ng2-bootstrap-modal";
+import {
+  MdDialog,
+  MdDialogRef
+} from '@angular/material';
 
 import { Service } from './Service';
 
@@ -26,7 +29,7 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected location: Location = this.injector.get(Location);
 
-  protected dialogService: DialogService = this.injector.get(DialogService);
+  dialog: MdDialog = this.injector.get(MdDialog);
 
   private jsonHeaders = {
     headers: new Headers({ 'Content-Type': 'application/json' })
@@ -34,7 +37,9 @@ export abstract class BaseService<T> implements Service<T> {
 
   constructor(
     protected injector : Injector,
-    protected path? : string
+    protected path? : string,
+    protected typeTitle? : string,
+    protected labelFieldName? : string
   ) {
   }
 
@@ -75,15 +80,12 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected showError(message: string) {
-    if (this.dialogService != null) {
-      let disposable = this.dialogService.addDialog(
-        MessageDialog, {
-          title:'Error', 
-          message:message,
-          alertType: 'danger'
-        }
-      );
-    }
+    let dialogRef = this.dialog.open(MessageDialog, {
+      data: {
+        title: 'Error',
+        message: message,
+      }
+    });
   }
 
   protected getUrl(path: string): string {
@@ -113,7 +115,6 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
-
 
   deleteObject(object: T): Promise<boolean> {
     return null;
@@ -151,6 +152,14 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
 
+  getLabel(object: T): string {
+    if (object) {
+      return object[this.labelFieldName];
+    } else {
+      return null;
+    }
+  }
+  
   getObject(id: string): Promise<T> {
      return this.getObjectDo(this.path +'/' + id);
   }
@@ -248,7 +257,11 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
-
+ 
+  getTypeTitle() : string {
+    return this.typeTitle;
+  }
+  
   newObject(): T {
     return null;
   }

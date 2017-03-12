@@ -1,4 +1,3 @@
-import { ApiKey } from '../ApiKey/ApiKey';
 import { Plugin } from '../Plugin/Plugin';
 
 interface HttpMethodState {
@@ -52,7 +51,6 @@ export class Api {
   upstream_password: string;
   enabled: boolean = true;
   method_flags: Array<HttpMethodState> = [];
-  _apiKeys: Array<ApiKey> = [];
   _plugins: Array<Plugin> = [];
 
   get methods(): Array<string> {

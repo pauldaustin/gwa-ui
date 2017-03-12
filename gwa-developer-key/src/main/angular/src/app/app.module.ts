@@ -1,14 +1,13 @@
 import { NgModule }       from '@angular/core';
-import { BrowserModule }  from '@angular/platform-browser';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
+import { MaterialModule } from '@angular/material';
+import { BrowserModule }  from '@angular/platform-browser';
+
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { ModalModule} from 'ng2-bootstrap/modal';
-import { BootstrapModalModule } from 'ng2-bootstrap-modal';
-import {ConfirmationPopoverModule} from 'angular-confirmation-popover';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './Authentication/AuthService';
 import {
@@ -16,6 +15,7 @@ import {
   BcGovTemplateModule
 } from './bcgov-template/index';
 import { BsFormModule } from './bs-form/index';
+import { DeleteDialog } from './Component/DeleteDialog';
 import { MessageDialog } from './Component/MessageDialog';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
@@ -30,9 +30,8 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
+    MaterialModule,
     NgxDatatableModule,
-    ModalModule.forRoot(),
-    BootstrapModalModule,
     BcGovTemplateModule.forRoot({
         title: 'GW Dev Keys',
         headerMenuItems: [
@@ -48,12 +47,10 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
       }
     ),
     AppRoutingModule,
-    ConfirmationPopoverModule.forRoot({
-      confirmButtonType: 'danger'
-    }),
     BsFormModule.forRoot()
   ],
   entryComponents: [
+    DeleteDialog,
     MessageDialog
   ],
   declarations: [
@@ -61,6 +58,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     ApiListComponent,
     ApiAuthorizeComponent,
     PageNotFoundComponent,
+    DeleteDialog,
     MessageDialog
   ],
   providers: [

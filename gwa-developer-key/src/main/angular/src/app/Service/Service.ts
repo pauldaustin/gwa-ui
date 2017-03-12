@@ -11,9 +11,15 @@ export interface Service<T> {
 
   updateObject(object: T): Promise<T>;
 
+  getLabel(object: T): string;
+
   getObjects(): Promise<T[]>;
   
   getObject(id: string): Promise<T>;
-  
-  getRowsPage(offset: number, limit: number): Promise<any>;
+
+  getPath() : string;
+
+  getRowsPage(offset : number, limit : number, filterFieldName : string, filterValue : string): Promise<any>;
+
+  getTypeTitle() : string;
 }

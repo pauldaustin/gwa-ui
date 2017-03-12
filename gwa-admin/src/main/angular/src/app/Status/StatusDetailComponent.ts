@@ -9,26 +9,28 @@ import { StatusService } from './StatusService';
 @Component({
   selector: 'status-detail',
   template: `
-<div>
-  <h1>Status</h1>
+<div class="row">
+  <div class="col-md-6">
+    <h2>Server Status</h2>
+    <ngx-datatable
+      [columns]="columns"
+      [rows]="serverRows"
+      class="material striped"
+      columnMode="force"
+    >
+    </ngx-datatable>
+  </div>
 
-  <h2>Server</h2>
-  <ngx-datatable
-    [columns]="columns"
-    [rows]="serverRows"
-    class="material striped"
-    columnMode="force"
-  >
-  </ngx-datatable>
-
-  <h2>Database</h2>
-  <ngx-datatable
-    [columns]="columns"
-    [rows]="databaseRows"
-    class="material striped"
-    columnMode="force"
-  >
-  </ngx-datatable>
+  <div class="col-md-6">
+    <h2>Database Status</h2>
+    <ngx-datatable
+      [columns]="columns"
+      [rows]="databaseRows"
+      class="material striped"
+      columnMode="force"
+    >
+    </ngx-datatable>
+  </div>
 </div>
   `
 })

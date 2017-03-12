@@ -7,9 +7,10 @@
   </ol>
   
   <form [formGroup]="form" class="form-horizontal" role="form">
-    <accordion>
-      <accordion-group *ngFor="let group of groups" [heading]="group.title" [isOpen]="group.isOpen != false" [formGroupName]="group.formGroupName">
-        <div class="row">
+    <md-card *ngFor="let group of groups">
+      <md-card-title>{{group.title}}</md-card-title>
+      <md-card-content>
+        <div class="row" [formGroupName]="group.formGroupName">
           <bs-form-group *ngFor="let field of group.fields"
             [form]="form"
             [name]="field.name"
@@ -31,8 +32,8 @@
             </bs-input-group>
           </bs-form-group>
         </div>
-      </accordion-group>
-    </accordion>
+      </md-card-content>
+    </md-card>
   </form>
 
   <div class="btn-toolbar" role="toolbar">

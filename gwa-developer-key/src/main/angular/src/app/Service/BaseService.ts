@@ -14,7 +14,10 @@ import {
   URLSearchParams
 } from '@angular/http';
 
-import { DialogService } from "ng2-bootstrap-modal";
+import {
+  MdDialog,
+  MdDialogRef
+} from '@angular/material';
 
 import { Service } from './Service';
 
@@ -26,17 +29,25 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected location: Location = this.injector.get(Location);
 
-  protected dialogService: DialogService = this.injector.get(DialogService);
+  dialog: MdDialog = this.injector.get(MdDialog);
 
   private jsonHeaders = {
     headers: new Headers({ 'Content-Type': 'application/json' })
   };
 
-  constructor(protected injector:Injector) {
+  constructor(
+    protected injector : Injector,
+    protected path? : string,
+    protected typeTitle? : string,
+    protected labelFieldName? : string
+  ) {
   }
 
   addObject(object: T): Promise<T> {
-    return null;
+    return this.addObjectDo(
+      this.path,
+      object
+    );
   }
   
   protected addObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
@@ -69,15 +80,12 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected showError(message: string) {
-    if (this.dialogService != null) {
-      let disposable = this.dialogService.addDialog(
-        MessageDialog, {
-          title:'Error', 
-          message:message,
-          alertType: 'danger'
-        }
-      );
-    }
+    let dialogRef = this.dialog.open(MessageDialog, {
+      data: {
+        title: 'Error',
+        message: message,
+      }
+    });
   }
 
   protected getUrl(path: string): string {
@@ -107,7 +115,6 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
-
 
   deleteObject(object: T): Promise<boolean> {
     return null;
@@ -145,10 +152,18 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
 
-  getObject(id: string): Promise<T> {
-    return null;
+  getLabel(object: T): string {
+    if (object) {
+      return object[this.labelFieldName];
+    } else {
+      return null;
+    }
   }
-    
+  
+  getObject(id: string): Promise<T> {
+     return this.getObjectDo(this.path +'/' + id);
+  }
+
   getObjectDo(path: string): Promise<T> {
     const url = this.getUrl(path);
     return this.http.get(url)
@@ -166,7 +181,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getObjects(): Promise<T[]> {
-    return null;
+    return this.getObjectsDo(this.path);
   }
   
   getObjectsDo(path: string): Promise<T[]> {
@@ -194,15 +209,24 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
  
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return null;
+  getPath() : string {
+    return this.path;
   }
-  
-  getRowsPageDo(path: string, offset: number, limit: number): Promise<any> {
+
+  getRowsPage(
+    offset: number,
+    limit: number,
+    filterFieldName : string,
+    filterValue : string
+  ): Promise<any> {
     let params = new URLSearchParams();
     params.set('offset', offset.toString()); 
-    params.set('limit', limit.toString()); 
-    const url = this.getUrl(path);
+    params.set('limit', limit.toString());
+    if (filterFieldName && filterValue) {
+      params.set("filterFieldName", filterFieldName);
+      params.set("filterValue", filterValue);
+    }
+    const url = this.getUrl(this.path);
     return this.http.get(
       url,
       {
@@ -233,7 +257,11 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
-
+ 
+  getTypeTitle() : string {
+    return this.typeTitle;
+  }
+  
   newObject(): T {
     return null;
   }

@@ -49,6 +49,17 @@ body {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+.bcgov-header .navbar-nav > li > a.active-link {
+  color: #fcba19;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.bcgov-header .navbar-toggle {
+  border-width: 0px;
+  border-radius: 0px;
+  padding: 4px;
+  margin: 16px 6px 17px 6px;
+}
 
 .bcgov-content {
   padding-top: 120px;
@@ -102,13 +113,6 @@ body {
 .bcgov-footer nav li a:hover,
 .bcgov-footer nav li a:visited {
   text-decoration: underline;
-}
-
-.bcgov-header .navbar-toggle {
-  border-width: 0px;
-  border-radius: 0px;
-  padding: 4px;
-  margin: 16px 6px 17px 6px;
 }
 
 .bcgov-footer .navbar-toggle {

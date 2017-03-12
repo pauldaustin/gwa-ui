@@ -12,8 +12,6 @@ import {
 
 import { Router } from '@angular/router';
 
-import { ModalDirective } from 'ng2-bootstrap/modal';
-
 import { Api } from '../Api/Api';
 import { Plugin } from './Plugin';
 import { PluginService } from './PluginService';

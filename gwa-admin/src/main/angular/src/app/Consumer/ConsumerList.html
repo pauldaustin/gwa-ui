@@ -1,23 +1,26 @@
 <div>
-  <ol class="breadcrumb">
-    <li class="active">Consumers</li>
-  </ol>
-
-  <div class="btn-toolbar" role="toolbar">
-    <div class="form-inline">
-      <a routerLink="/app/consumers/_add_" class="btn btn-sm btn-primary" role="button">Add Consumer</a>
-      <div class="form-group" *ngIf="filterFields">
-        <div class="input-group">
-          <span class="input-group-addon">Filter</span>
-          <select [(ngModel)]="filterFieldName" class="form-control" (ngModelChange)="refresh()">
-            <option *ngFor="let field of filterFields" value="{{field.prop}}">{{field.name}}</option>
-          </select>
-          <span class="input-group-addon">=</span>
-          <input [(ngModel)]="filterValue" placeholder="Filter" type="text" class="form-control" (ngModelChange)="refresh()" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <md-toolbar>
+    <a routerLink="/app/consumers/_add_" md-raised-button>Add Consumer</a>
+    <md-select
+      placeholder="Filter Field"
+      [(ngModel)]="filterFieldName"
+      (ngModelChange)="refresh()"
+    >
+      <md-option
+        *ngFor="let field of filterFields"
+        [value]="field.prop"
+      >{{field.name}}</md-option>
+    </md-select>
+    <span>=</span>
+    <md-input-container>
+      <input
+        mdInput
+        placeholder="Filter Value"
+        [(ngModel)]="filterValue"
+        (ngModelChange)="refresh()"
+      />
+    </md-input-container>
+  </md-toolbar>
 
   <ngx-datatable
     class="material striped"
@@ -26,7 +29,7 @@
     [columnMode]="'force'"
     [headerHeight]="30"
     [footerHeight]="30"
-    [rowHeight]="30"
+    [rowHeight]="42"
     [externalPaging]="true"
     [count]="count"
     [offset]="offset"
@@ -42,12 +45,8 @@
   <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
   
   <template #actionsT let-row="row">
-    <button (confirm)="deleteObject(row)" class="btn btn-danger btn-xs" type="button"
-      name="delete" aria-label="Delete"
-      mwlConfirmationPopover title="Delete Consumer?" message="Are you sure you want to delete Consumer?</br /> <b>{{row.id}}</b>" confirmText="Delete" placement="left" [appendToBody]="true"
-    >
-      <span class="fa fa-trash" aria-hidden="true"></span>
-      <span class="sr-only">Delete</span>
+    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+      <md-icon>delete</md-icon>
     </button>
   </template>
 </div>

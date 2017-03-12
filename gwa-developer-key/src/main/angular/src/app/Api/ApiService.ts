@@ -11,10 +11,14 @@ import { Api } from './Api';
 export class ApiService extends BaseService<Api> {
  
   constructor(injector:Injector) {
-    super(injector);
+    super(
+      injector,
+      '/apis',
+      'Consumer',
+      'username'
+    );
   }
 
-  
   addObject(application: Api): Promise<Api> {
     return this.addObjectDo(
       '/apis',

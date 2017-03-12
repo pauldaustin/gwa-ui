@@ -1,24 +1,26 @@
 import { Component } from '@angular/core';
-import { DialogComponent, DialogService } from "ng2-bootstrap-modal";
- 
-@Component({  selector: 'confirm',
+import {
+  MdDialog, 
+  MdDialogRef 
+} from '@angular/material';
+
+@Component({
+  selector: 'message-dialog',
   template: `
-<div class="modal-content">
-  <div class="modal-header">
-    <button type="button" class="close" (click)="close()" >&times;</button>
-    <h4 class="modal-title">{{title}}</h4>
-  </div>
-  <div class="modal-body">
-    <div *ngIf="alertType" class="alert alert-{{alertType}}" role="alert">{{message}}</div>
-    <p *ngIf="!alertType">{{message}}</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="close()" >Close</button>
-  </div>
-</div>`
+<h1 md-dialog-title>{{title}}?</h1>
+<div md-dialog-content>{{message}}</div>
+<div md-dialog-actions>
+  <button md-button md-dialog-close>Close</button>
+</div>
+  `,
 })
-export class MessageDialog extends DialogComponent {
-  constructor(dialogService: DialogService) {
-    super(dialogService);
+export class MessageDialog {
+  title : string = this.dialogRef.config.data['title'];
+  
+  message : string = this.dialogRef.config.data['message'];
+  
+  constructor(
+    public dialogRef : MdDialogRef<MessageDialog>,
+   ) {
   }
 }

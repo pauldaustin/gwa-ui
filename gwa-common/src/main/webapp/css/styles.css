@@ -16,15 +16,6 @@
   padding-top: 0px;
 }
 
-.tab-pane {
-  width: 100%;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  border-radius: 0px 0px 5px 5px;
-  padding: 10px;
-}
-
 .nav-tabs {
   margin-bottom: 0;
 }
@@ -33,11 +24,11 @@
   width:100%;
 }
 .ngx-datatable.scroll-vertical {
-  height: 400px;
+  height: 480px;
   flex: 1 1 auto;
 }
 .ngx-datatable.fixed-height {
-  height: 400px;
+  height: 480px;
 }
 
 .ngx-datatable .datatable-footer .datatable-pager,
@@ -47,4 +38,18 @@
 .btn-toolbar {
   margin-top: 1em;
   margin-bottom: 1em;
+}
+.btn-toolbar .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  padding-left: 6px;
+  float: left;
+}
+.btn-toolbar .input-group {
+  display: inline-table;
+  vertical-align: middle;
+}
+.btn-toolbar .input-group-addon {
+  width: auto;
 }

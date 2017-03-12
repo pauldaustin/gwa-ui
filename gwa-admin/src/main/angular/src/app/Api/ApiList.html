@@ -1,23 +1,26 @@
 <div>
-  <ol class="breadcrumb">
-    <li class="active">APIs</li>
-  </ol>
-
-  <div class="btn-toolbar" role="toolbar">
-    <div class="form-inline">
-      <a routerLink="/app/apis/_add_" class="btn btn-success" role="button">Add API</a>
-      <div class="form-group" *ngIf="filterFields">
-        <div class="input-group">
-          <span class="input-group-addon">Filter</span>
-          <select [(ngModel)]="filterFieldName" class="form-control" (ngModelChange)="refresh()">
-            <option *ngFor="let field of filterFields" value="{{field.prop}}">{{field.name}}</option>
-          </select>
-          <span class="input-group-addon">=</span>
-          <input [(ngModel)]="filterValue" placeholder="Filter" type="text" class="form-control" (ngModelChange)="refresh()" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <md-toolbar>
+    <a routerLink="/app/apis/_add_" md-raised-button>Add API</a>
+    <md-select
+      placeholder="Filter Field"
+      [(ngModel)]="filterFieldName"
+      (ngModelChange)="refresh()"
+    >
+      <md-option
+        *ngFor="let field of filterFields"
+        [value]="field.prop"
+      >{{field.name}}</md-option>
+    </md-select>
+    <span>=</span>
+    <md-input-container>
+      <input
+        mdInput
+        placeholder="Filter Value"
+        [(ngModel)]="filterValue"
+        (ngModelChange)="refresh()"
+      />
+    </md-input-container>
+  </md-toolbar>
 
   <ngx-datatable
     class="material striped"
@@ -26,7 +29,7 @@
     [columnMode]="'force'"
     [headerHeight]="30"
     [footerHeight]="30"
-    [rowHeight]="30"
+    [rowHeight]="42"
     [externalPaging]="true"
     [count]="count"
     [offset]="offset"
@@ -36,24 +39,22 @@
     (page)='onPage($event)'
   >
   </ngx-datatable>
+  
+  <template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', row.name]">{{value}}</a></template>
+  
+  <template #upstreamT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
+  
+  <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
+  
+  <template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
+    <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
+    <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
+  </span></template>
+  
+  <template #actionsT let-row="row">
+    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+      <md-icon>delete</md-icon>
+    </button>
+  </template>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', row.name]">{{value}}</a></template>
-
-<template #upstreamT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
-
-<template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
-
-<template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
-  <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
-  <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
-</span></template>
-
-<template #actionsT let-row="row">
-  <button (confirm)="deleteObject(row)" class="btn btn-danger btn-xs" type="button"
-    name="delete" aria-label="Delete"
-    mwlConfirmationPopover title="Delete API?" message="Are you sure you want to delete API?</br /> <b>{{row.name}}</b>" placement="left" [appendToBody]="true"
-  >
-    <span class="fa fa-trash" aria-hidden="true"></span>
-    <span class="sr-only">Delete</span>
-  </button>
-</template>
+</div>
