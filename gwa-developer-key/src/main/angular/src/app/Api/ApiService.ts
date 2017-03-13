@@ -32,10 +32,6 @@ export class ApiService extends BaseService<Api> {
     );
   }
 
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return this.getRowsPageDo('/apis', offset, limit);
-  }
-
   newObject(): Api {
     return new Api();
   }

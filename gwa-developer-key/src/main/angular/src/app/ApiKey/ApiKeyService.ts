@@ -13,7 +13,7 @@ export class ApiKeyService extends BaseService<ApiKey> {
   constructor(injector:Injector) {
     super(
       injector,
-      '/apiKey',
+      '/apiKeys',
       'Api Key',
       'name'
     );
@@ -31,10 +31,6 @@ export class ApiKeyService extends BaseService<ApiKey> {
     return this.deleteObjectDo(
       `/apiKeys/${apiKey.id}`
     );
-  }
-
-  getRowsPage(offset: number, limit: number): Promise<any> {
-    return this.getRowsPageDo('/apiKeys', offset, limit);
   }
 
   newObject(): ApiKey {

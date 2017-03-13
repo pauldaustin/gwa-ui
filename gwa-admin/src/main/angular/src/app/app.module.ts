@@ -4,6 +4,7 @@ import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpModule }    from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
@@ -13,8 +14,6 @@ import {
   BcGovTemplate,
   BcGovTemplateModule
 } from './bcgov-template/index';
-
-import { BsFormModule }           from './bs-form/index';
 
 import { DeleteDialog } from './Component/DeleteDialog';
 import { MessageDialog } from './Component/MessageDialog';
@@ -50,6 +49,7 @@ import { AppRoutingModule }        from './app-routing.module';
 @NgModule({
   imports: [
     BrowserModule,
+    FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
@@ -82,7 +82,6 @@ import { AppRoutingModule }        from './app-routing.module';
       }
     ),
     AppRoutingModule,
-    BsFormModule.forRoot()
   ],
   entryComponents: [
     MessageDialog,

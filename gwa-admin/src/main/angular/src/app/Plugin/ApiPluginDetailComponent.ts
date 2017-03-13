@@ -37,7 +37,6 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   
   groups = [
     {
-      title: 'Details',
       formGroupName: 'core',
       fields: [
         {name: 'enabled', title: 'Enabled', type: 'checkbox'},

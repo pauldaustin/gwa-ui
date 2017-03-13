@@ -1,44 +1,50 @@
-<div *ngIf="object">
-  <ol class="breadcrumb">
-    <li><a routerLink="/app/apis">APIs</a></li>
-    <li><a [routerLink]="['/app','apis', api.name]">{{api.name}}</a></li>
-    <li><a [routerLink]="['/app','apis', api.name]">Plugins</a></li>
-    <li class="active">{{object.name}}</li>
-  </ol>
-  
-  <form [formGroup]="form" class="form-horizontal" role="form">
-    <md-card *ngFor="let group of groups">
-      <md-card-title>{{group.title}}</md-card-title>
-      <md-card-content>
-        <div class="row" [formGroupName]="group.formGroupName">
-          <bs-form-group *ngFor="let field of group.fields"
-            [form]="form"
-            [name]="field.name"
-            inputWidth="col-sm-12"
-          >
-            <bs-input-group [prefixText]="field.title">
-              <span [ngSwitch]="field.readOnly">
-                <p *ngSwitchCase="true" class="form-control form-control-static">{{plugin[field.name]}}</p>
-                <span *ngSwitchDefault [ngSwitch]="field.type">
-                  <span *ngSwitchCase="'checkbox'" class="form-control">
-                    <input [formControlName]="field.name" type="checkbox" />
-                  </span>
-                  <select *ngSwitchCase="'select'" [formControlName]="field.name" class="form-control">
+<md-tab-group *ngIf="object">
+  <md-tab>
+    <template md-tab-label>Plugin: {{object.name}}</template>
+ 
+    <form [formGroup]="form" class="form-horizontal" role="form">
+      <md-card>
+        <md-card-content>
+          <div *ngFor="let group of groups">
+            <h2 *ngIf="group.title">{{group.title}}</h2>
+            <div [formGroupName]="group.formGroupName">
+              <div *ngFor="let field of group.fields">
+                <div [ngSwitch]="field.type">
+                  <md-slide-toggle
+                    *ngSwitchCase="'checkbox'"
+                    [formControlName]="field.name"
+                    [disabled]="field.readOnly"
+                    color="primary"
+                  >{{field.name}}</md-slide-toggle>
+                  <md-select *ngSwitchCase="'select'"
+                    [placeholder]="field.name"
+                    [formControlName]="field.name"
+                    [disabled]="field.readOnly"
+                  >
                     <option *ngFor="let value of field.values" [value]="value">{{value}}</option>
-                  </select>
-                  <input *ngSwitchDefault [formControlName]="field.name" [placeholder]="field.placeholder" [type]="field.type" [required]="field.required" class="form-control" />
-                </span>
-              </span>
-            </bs-input-group>
-          </bs-form-group>
-        </div>
-      </md-card-content>
-    </md-card>
-  </form>
-
-  <div class="btn-toolbar" role="toolbar">
-    <button (click)="goBack()" class="btn btn-sm btn-default" role="button">Cancel</button>
-    <button (click)="save()" class="btn btn-sm btn-primary" role="button">Save</button>
-  </div>
-
-</div>
+                  </md-select>
+                  <md-input-container *ngSwitchDefault class="full-width">
+                    <input
+                      mdInput
+                      [placeholder]="field.name"
+                      [name]="field.name"
+                      [type]="field.type"
+                      [required]="field.required"
+                      [formControlName]="field.name"
+                      [disabled]="field.readOnly"
+                    />
+                  </md-input-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+        <md-card-actions>
+          <button (click)="goBack()" md-raised-button>Cancel</button>
+          <button (click)="save()" md-raised-button color="primary">Save</button>
+        </md-card-actions>
+      </md-card>
+    </form>
+  
+  </md-tab>
+</md-tab-group>

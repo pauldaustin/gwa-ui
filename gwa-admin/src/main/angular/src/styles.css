@@ -9,3 +9,6 @@
 .mat-tab-body {
   padding: 1em;
 }
+.mat-slide-toggle {
+  display:inline-block;
+}

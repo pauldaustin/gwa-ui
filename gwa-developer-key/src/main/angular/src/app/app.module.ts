@@ -14,7 +14,6 @@ import {
   BcGovTemplate,
   BcGovTemplateModule
 } from './bcgov-template/index';
-import { BsFormModule } from './bs-form/index';
 import { DeleteDialog } from './Component/DeleteDialog';
 import { MessageDialog } from './Component/MessageDialog';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
@@ -47,7 +46,6 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
       }
     ),
     AppRoutingModule,
-    BsFormModule.forRoot()
   ],
   entryComponents: [
     DeleteDialog,

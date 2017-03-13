@@ -1,8 +1,8 @@
 <md-tab-group *ngIf="object">
   <md-tab>
     <template md-tab-label>
-      <span *ngIf="object.id" class="active">Consumer: {{object.username}}</span>
-      <span *ngIf="!object.id" class="active">Add Consumer</span>
+      <span *ngIf="object.id">Consumer: {{object.username}}</span>
+      <span *ngIf="!object.id">Add Consumer</span>
     </template>
 
     <form #consumerForm="ngForm" role="form">
