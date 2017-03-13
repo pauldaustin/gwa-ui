@@ -23,7 +23,9 @@ export class ApiService extends BaseService<Api> {
       .then(response => {
         const json = response.json();
         if (!json.error) {
-          this.oldVersion = json.version.indexOf('0.9') == 0;
+          if (json.version) {
+            this.oldVersion = json.version.indexOf('0.9') == 0;
+          }
         }
       });
   }

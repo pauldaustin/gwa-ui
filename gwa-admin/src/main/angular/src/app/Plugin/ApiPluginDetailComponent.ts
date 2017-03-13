@@ -42,7 +42,6 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
         {name: 'enabled', title: 'Enabled', type: 'checkbox'},
       ],
     }, {
-      title: 'Configuration',
       formGroupName: 'config',
       fields: new Array<any>(),
     }

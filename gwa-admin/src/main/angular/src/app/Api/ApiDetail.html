@@ -81,31 +81,31 @@
           </div>
           <div class="containerX">
             <div class="container=" *ngIf="!oldVersion">
-              <div fxFlex="1 1 65"><label>Methods:</label></div>
-              <div fxFlex="1 1 100" *ngFor="let methodFlag of object.method_flags">
-                <md-slide-toggle
-                  [checked]="methodFlag.enabled"
-                  (change)="methodFlag.enabled = $event.checked"
-                  color="primary"
-                  style="display: inline-block"
-                >{{methodFlag.name}}</md-slide-toggle>
-              </div>
-              <div fxFlex="1 1 110">
+              <span fxFlex="1 1 110px">
                 <md-slide-toggle
                   name="https_only"
                   [(ngModel)]="object.https_only"
                   color="primary"
                   style="display: inline-block"
                 >Https Only</md-slide-toggle>
-              </div>
-              <div fxFlex="1 1 160">
+              </span>
+              <span fxFlex="1 1 160px">
                 <md-slide-toggle
                   name="http_if_terminated"
                   [(ngModel)]="object.http_if_terminated"
                   color="primary"
                   style="display: inline-block"
                 >Http if Terminated</md-slide-toggle>
-              </div>
+              </span>
+              <span fxFlex="1 1 65px"><label>Methods:</label></span>
+              <span fxFlex="1 1 100px" *ngFor="let methodFlag of object.method_flags">
+                <md-slide-toggle
+                  [checked]="methodFlag.enabled"
+                  (change)="methodFlag.enabled = $event.checked"
+                  color="primary"
+                  style="display: inline-block"
+                >{{methodFlag.name}}</md-slide-toggle>
+              </span>
             </div>
           </div>
 
@@ -189,6 +189,7 @@
             </div>
           </div>
         </md-card-content>
+
         <md-card-actions>
           <button (click)="goBack()" md-button>Cancel</button>
           <button (click)="save()" md-raised-button color="primary" [disabled]="!apiForm.form.valid">Save</button>

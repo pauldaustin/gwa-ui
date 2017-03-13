@@ -66,10 +66,11 @@ export class Api {
   }
   
   set methods(allowedHttpMethods: Array<string>) {
+    const hasValue = Array.isArray(allowedHttpMethods);
     this.method_flags.length = 0;
     for (let method of Api.ALL_METHODS) {
       var enabled : boolean;
-      if (allowedHttpMethods) {
+      if (hasValue) {
         enabled = allowedHttpMethods.indexOf(method) != -1;
       } else {
         enabled = method == "GET";
