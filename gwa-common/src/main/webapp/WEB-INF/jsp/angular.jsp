@@ -15,20 +15,22 @@
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://code.jquery.com/ui/1.11.2/themes/cupertino/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css" rel="stylesheet" type="text/css">
-
-    <link href="css/styles.css" rel="stylesheet" type="text/css">
    
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
-    <script type="text/javascript" src="js/rs.js"></script>
     <link href="css/styles.bundle.css" rel="stylesheet"/></head>
+    <style type="text/css">
+@import 'ngx-datatable/index.css';
+@import 'ngx-datatable/themes/material.css';
+@import 'ngx-datatable/assets/icons.css';
+
+@font-face {
+  font-family: 'Myriad-Web-Pro';
+  src: url('../fonts/MyriadWebPro.ttf');
+}
+    </style>
   </head>
 
   <body>

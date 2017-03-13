@@ -1,6 +1,5 @@
-<div></div>
-  <md-toolbar>
-    <a routerLink="/app/apis/_add_" md-raised-button>Add API</a>
+<div>
+  <md-toolbar *ngIf="pluginNames">
     <md-select
       placeholder="Filter Field"
       [(ngModel)]="pluginName"
@@ -9,7 +8,7 @@
       <md-option
         *ngFor="let name of pluginNames"
         [value]="name"
-      >name</md-option>
+      >{{name}}</md-option>
     </md-select>
     <a [routerLink]="['/app','apis', api.name, 'plugins', '_add_', {name: pluginName}]" md-raised-button color="primary">Add Plugin</a>
   </md-toolbar>

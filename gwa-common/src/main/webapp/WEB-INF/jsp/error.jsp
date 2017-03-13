@@ -138,6 +138,55 @@ body {
 .bcgov-footer .navbar-toggle:hover .icon-bar {
   background-color: #003366;
 }
+
+.navbar-default {
+  background-color: #003366;
+}
+.navbar-default .navbar-brand {
+  color: white;
+}
+.navbar-default .navbar-brand a {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-default .navbar-brand:focus,
+.navbar-default .navbar-brand:hover {
+    color: #eeeeee;
+}
+
+.navbar-default .navbar-brand {
+  padding: 0px 0px 0px 5px;
+  height: 100%;
+  line-height: normal;
+}
+
+.navbar-default .navbar-brand > a {
+  padding-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.navbar-default .navbar-brand .navbar-brand-title {
+  font-size: 28px;
+}
+
+.navbar-default .navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li > a:hover {
+  color: #dddddd;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: white;
+}
+.navbar-default .navbar-toggle:hover .icon-bar,
+.navbar-default .navbar-toggle:focus .icon-bar {
+  background-color: #888;
+}
     </style>
   </head>
   <body>

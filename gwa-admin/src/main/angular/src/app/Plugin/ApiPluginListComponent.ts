@@ -30,7 +30,9 @@ export class ApiPluginListComponent extends BaseListComponent<Plugin> {
     super(injector, service);
     service.getPluginNames().then(pluginNames => {
       this.pluginNames = pluginNames;
-      this.pluginName = this.pluginNames[0];
+      if (pluginNames && pluginNames.length > 0) {
+        this.pluginName = this.pluginNames[0];
+      }
     });
   }
 
