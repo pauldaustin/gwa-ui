@@ -22,9 +22,10 @@
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="css/styles.bundle.css" rel="stylesheet"/></head>
     <style type="text/css">
-@import 'ngx-datatable/index.css';
-@import 'ngx-datatable/themes/material.css';
-@import 'ngx-datatable/assets/icons.css';
+@import 'css/deeppurple-amber.css';
+@import 'css/ngx-datatable/index.css';
+@import 'css/ngx-datatable/themes/material.css';
+@import 'css/ngx-datatable/assets/icons.css';
 
 @font-face {
   font-family: 'Myriad-Web-Pro';
