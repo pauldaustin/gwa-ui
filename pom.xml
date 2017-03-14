@@ -143,7 +143,50 @@
                 <resource>
                   <directory>${project.basedir}/src/main/angular/build</directory>
                   <includes>
-                    <include>**</include>
+                    <include>app/**</include>
+                    <include>main.*</include>
+                    <include>systemjs.config.server.js</include>
+                    <include>styles.css</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>angular-copy-css</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>target/${project.artifactId}-${project.version}/css/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/node_modules/@angular/material/core/theming/prebuilt/</directory>
+                  <includes>
+                    <include>deeppurple-amber.css</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>angular-copy-css-datatable</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>target/${project.artifactId}-${project.version}/css/ngx-datatable/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/node_modules/@swimlane/ngx-datatable/release/</directory>
+                  <includes>
+                    <include>index.css</include>
+                    <include>themes/material.css</include>
+                    <include>assets/icons.css</include>
                   </includes>
                 </resource>
               </resources>
