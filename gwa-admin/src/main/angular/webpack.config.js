@@ -1,7 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const webpackAngularExternals = require('webpack-angular-externals');
-const webpackRxjsExternals = require('webpack-rxjs-externals');
 
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
@@ -10,109 +8,102 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const postcssUrl = require('postcss-url');
 
-const { NoEmitOnErrorsPlugin, LoaderOptionsPlugin } = require('webpack');
-const { GlobCopyWebpackPlugin, BaseHrefWebpackPlugin } = require('@angular/cli/plugins/webpack');
-const { CommonsChunkPlugin } = require('webpack').optimize;
-const { AotPlugin } = require('@ngtools/webpack');
+const {NoEmitOnErrorsPlugin, LoaderOptionsPlugin} = require('webpack');
+const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
+const {CommonsChunkPlugin} = webpack.optimize;
+const {AotPlugin} = require('@ngtools/webpack');
 
 const nodeModules = path.join(process.cwd(), 'node_modules');
-const entryPoints = ["inline","polyfills","sw-register","styles","vendor","main"];
+const entryPoints = [ "inline", "polyfills", "sw-register", "styles", "vendor", "core", "platform-browser", "common", "compiler", "http", "forms", "router", "flex-layout", "material", "main" ];
 const baseHref = undefined;
 const deployUrl = undefined;
 
-const camelCase = require('lodash.camelcase');
+function vendorChunk(name, packageName) {
+  return new CommonsChunkPlugin({
+    "name" : name,
+    "minChunks" : (module) => module.resource && module.resource.startsWith(path.join(nodeModules, packageName)),
+    "chunks" : [
+      "main",
+      "vendor"
+    ]
+  })
+}
 
 module.exports = {
-  "devtool": "source-map",
-  "resolve": {
-    "extensions": [
+  "devtool" : "source-map",
+  "resolve" : {
+    "extensions" : [
       ".ts",
       ".js"
     ],
-    "modules": [
+    "modules" : [
       "./node_modules"
     ]
   },
-  "resolveLoader": {
-    "modules": [
+  "resolveLoader" : {
+    "modules" : [
       "./node_modules"
     ]
   },
-  "entry": {
-    "main": [
+  "entry" : {
+    "main" : [
       "./src/main.ts"
     ],
-    "polyfills": [
+    "polyfills" : [
       "./src/polyfills.ts"
     ],
-    "styles": [
+    "styles" : [
       "./src/styles.css"
     ]
   },
-  "output": {
-    "path": path.join(process.cwd(), "dist"),
-    "filename": "[name].bundle.js",
-    "chunkFilename": "[id].chunk.js",
-    "libraryTarget": "umd"
+  "output" : {
+    "path" : path.join(process.cwd(), "dist"),
+    "filename" : "[name].bundle.js",
+    "chunkFilename" : "[id].chunk.js"
   },
-  "externals": [
-    webpackRxjsExternals(),
-    webpackAngularExternals(),
-//    function(context, request, callback) {
-//      if (/^@swimlane/.test(request)) {
-//        return callback(null, {
-//          root: ['ng', camelCase(request.replace(/^@swimlane\//, ''))],
-//          commonjs: request,
-//          commonjs2: request,
-//          amd: request
-//        });
-//      }
-//      callback();
-//    },
-  ],
-  "module": {
-    "rules": [
+  "module" : {
+    "rules" : [
       {
-        "enforce": "pre",
-        "test": /\.js$/,
-        "loader": "source-map-loader",
-        "exclude": [
+        "enforce" : "pre",
+        "test" : /\.js$/,
+        "loader" : "source-map-loader",
+        "exclude" : [
           /\/node_modules\//
         ]
       },
       {
-        "test": /\.json$/,
-        "loader": "json-loader"
+        "test" : /\.json$/,
+        "loader" : "json-loader"
       },
       {
-        "test": /\.html$/,
-        "loader": "raw-loader"
+        "test" : /\.html$/,
+        "loader" : "raw-loader"
       },
       {
-        "test": /\.(eot|svg)$/,
-        "loader": "file-loader?name=[name].[hash:20].[ext]"
+        "test" : /\.(eot|svg)$/,
+        "loader" : "file-loader?name=[name].[hash:20].[ext]"
       },
       {
-        "test": /\.(jpg|png|gif|otf|ttf|woff|woff2|cur|ani)$/,
-        "loader": "url-loader?name=[name].[hash:20].[ext]&limit=10000"
+        "test" : /\.(jpg|png|gif|otf|ttf|woff|woff2|cur|ani)$/,
+        "loader" : "url-loader?name=[name].[hash:20].[ext]&limit=10000"
       },
       {
-        "exclude": [
+        "exclude" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.css$/,
-        "loaders": [
+        "test" : /\.css$/,
+        "loaders" : [
           "exports-loader?module.exports.toString()",
           "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
           "postcss-loader"
         ]
       },
       {
-        "exclude": [
+        "exclude" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.scss$|\.sass$/,
-        "loaders": [
+        "test" : /\.scss$|\.sass$/,
+        "loaders" : [
           "exports-loader?module.exports.toString()",
           "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
           "postcss-loader",
@@ -120,11 +111,11 @@ module.exports = {
         ]
       },
       {
-        "exclude": [
+        "exclude" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.less$/,
-        "loaders": [
+        "test" : /\.less$/,
+        "loaders" : [
           "exports-loader?module.exports.toString()",
           "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
           "postcss-loader",
@@ -132,11 +123,11 @@ module.exports = {
         ]
       },
       {
-        "exclude": [
+        "exclude" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.styl$/,
-        "loaders": [
+        "test" : /\.styl$/,
+        "loaders" : [
           "exports-loader?module.exports.toString()",
           "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
           "postcss-loader",
@@ -144,172 +135,194 @@ module.exports = {
         ]
       },
       {
-        "include": [
+        "include" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.css$/,
-        "loaders": ExtractTextPlugin.extract({
-  "use": [
-    "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
-    "postcss-loader"
-  ],
-  "fallback": "style-loader",
-  "publicPath": ""
-})
+        "test" : /\.css$/,
+        "loaders" : ExtractTextPlugin.extract({
+          "use" : [
+            "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
+            "postcss-loader"
+          ],
+          "fallback" : "style-loader",
+          "publicPath" : ""
+        })
       },
       {
-        "include": [
+        "include" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.scss$|\.sass$/,
-        "loaders": ExtractTextPlugin.extract({
-  "use": [
-    "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
-    "postcss-loader",
-    "sass-loader"
-  ],
-  "fallback": "style-loader",
-  "publicPath": ""
-})
+        "test" : /\.scss$|\.sass$/,
+        "loaders" : ExtractTextPlugin.extract({
+          "use" : [
+            "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
+            "postcss-loader",
+            "sass-loader"
+          ],
+          "fallback" : "style-loader",
+          "publicPath" : ""
+        })
       },
       {
-        "include": [
+        "include" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.less$/,
-        "loaders": ExtractTextPlugin.extract({
-  "use": [
-    "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
-    "postcss-loader",
-    "less-loader"
-  ],
-  "fallback": "style-loader",
-  "publicPath": ""
-})
+        "test" : /\.less$/,
+        "loaders" : ExtractTextPlugin.extract({
+          "use" : [
+            "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
+            "postcss-loader",
+            "less-loader"
+          ],
+          "fallback" : "style-loader",
+          "publicPath" : ""
+        })
       },
       {
-        "include": [
+        "include" : [
           path.join(process.cwd(), "src/styles.css")
         ],
-        "test": /\.styl$/,
-        "loaders": ExtractTextPlugin.extract({
-  "use": [
-    "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
-    "postcss-loader",
-    "stylus-loader?{\"sourceMap\":false,\"paths\":[]}"
-  ],
-  "fallback": "style-loader",
-  "publicPath": ""
-})
+        "test" : /\.styl$/,
+        "loaders" : ExtractTextPlugin.extract({
+          "use" : [
+            "css-loader?{\"sourceMap\":false,\"importLoaders\":1}",
+            "postcss-loader",
+            "stylus-loader?{\"sourceMap\":false,\"paths\":[]}"
+          ],
+          "fallback" : "style-loader",
+          "publicPath" : ""
+        })
       },
       {
-        "test": /\.ts$/,
-        "loader": "@ngtools/webpack"
-      }
+        "test" : /\.ts$/,
+        "loader" : "@ngtools/webpack"
+      },
     ]
   },
-  "plugins": [
+  "plugins" : [
     new NoEmitOnErrorsPlugin(),
     new GlobCopyWebpackPlugin({
-      "patterns": [
+      "patterns" : [
         "assets",
         "favicon.ico"
       ],
-      "globOptions": {
-        "cwd": "/Users/paustin/Development/ALL/ca.bc.gov.gwa/gwa-admin/src/main/angular/src",
-        "dot": true,
-        "ignore": "**/.gitkeep"
+      "globOptions" : {
+        "cwd" : "/Users/paustin/Development/ALL/ca.bc.gov.gwa/gwa-admin/src/main/angular/src",
+        "dot" : true,
+        "ignore" : "**/.gitkeep"
       }
     }),
     new ProgressPlugin(),
     new HtmlWebpackPlugin({
-      "template": "./src/index.html",
-      "filename": "./index.html",
-      "hash": false,
-      "inject": true,
-      "compile": true,
-      "favicon": false,
-      "minify": false,
-      "cache": true,
-      "showErrors": true,
-      "chunks": "all",
-      "excludeChunks": [],
-      "title": "Webpack App",
-      "xhtml": true,
-      "chunksSortMode": function sort(left, right) {
+      "template" : "./src/index.html",
+      "filename" : "./index.html",
+      "hash" : false,
+      "inject" : true,
+      "compile" : true,
+      "favicon" : false,
+      "minify" : false,
+      "cache" : true,
+      "showErrors" : true,
+      "chunks" : "all",
+      "excludeChunks" : [],
+      "title" : "Webpack App",
+      "xhtml" : true,
+      "chunksSortMode" : function sort(left, right) {
         let leftIndex = entryPoints.indexOf(left.names[0]);
         let rightindex = entryPoints.indexOf(right.names[0]);
         if (leftIndex > rightindex) {
-            return 1;
+          return 1;
+        } else if (leftIndex < rightindex) {
+          return -1;
+        } else {
+          return 0;
         }
-        else if (leftIndex < rightindex) {
-            return -1;
-        }
-        else {
-            return 0;
-        }
-    }
+      }
     }),
     new BaseHrefWebpackPlugin({}),
     new CommonsChunkPlugin({
-      "name": "inline",
-      "minChunks": null
+      "name" : "inline",
+      "minChunks" : null
     }),
     new CommonsChunkPlugin({
-      "name": "vendor",
-      "minChunks": (module) => module.resource && module.resource.startsWith(nodeModules),
-      "chunks": [
+      "name" : "vendor",
+      "minChunks" : (module) => module.resource && module.resource.startsWith(nodeModules),
+      "chunks" : [
         "main"
       ]
     }),
+    vendorChunk("rxjs", "@angular/rxjs"),
+    vendorChunk("core", "@angular/core"),
+    vendorChunk("common", "@angular/common"),
+    vendorChunk("compiler", "@angular/compiler"),
+    vendorChunk("platform-browser", "@angular/platform-browser"),
+    vendorChunk("platform-browser-dynamic", "@angular/platform-browser-dynamic"),
+    vendorChunk("forms", "@angular/forms"),
+    vendorChunk("router", "@angular/router"),
+    vendorChunk("http", "@angular/http"),
+    vendorChunk("material", "@angular/material"),
+    vendorChunk("flex-layout", "@angular/flex-layout"),
+    vendorChunk("datatable", "@swimlane/datatable"),
     new ExtractTextPlugin({
-      "filename": "[name].bundle.css",
-      "disable": true
+      "filename" : "[name].bundle.css",
+      "disable" : true
     }),
     new LoaderOptionsPlugin({
-      "sourceMap": false,
-      "options": {
-        "postcss": [
+      "sourceMap" : false,
+      "options" : {
+        "postcss" : [
           autoprefixer(),
-          postcssUrl({"url": (URL) => {
-            // Only convert absolute URLs, which CSS-Loader won't process into require().
-            if (!URL.startsWith('/')) {
+          postcssUrl({
+            "url" : (URL) => {
+              // Only convert absolute URLs, which CSS-Loader won't process into require().
+              if (!URL.startsWith('/')) {
                 return URL;
+              }
+              // Join together base-href, deploy-url and the original URL.
+              // Also dedupe multiple slashes into single ones.
+              return `/${baseHref || ''}/${deployUrl || ''}/${URL}`.replace(/\/\/+/g, '/');
             }
-            // Join together base-href, deploy-url and the original URL.
-            // Also dedupe multiple slashes into single ones.
-            return `/${baseHref || ''}/${deployUrl || ''}/${URL}`.replace(/\/\/+/g, '/');
-        }})
+          })
         ],
-        "sassLoader": {
-          "sourceMap": false,
-          "includePaths": []
+        "sassLoader" : {
+          "sourceMap" : false,
+          "includePaths" : []
         },
-        "lessLoader": {
-          "sourceMap": false
+        "lessLoader" : {
+          "sourceMap" : false
         },
-        "context": ""
+        "context" : ""
       }
     }),
-    new AotPlugin({
-      "mainPath": "main.ts",
-      "hostReplacementPaths": {
-        "environments/environment.ts": "environments/environment.ts"
+    new webpack.optimize.UglifyJsPlugin({
+      "mangle" : {
+        "screw_ie8" : true
       },
-      "exclude": [],
-      "tsConfigPath": "src/tsconfig.app.json",
-      "skipCodeGeneration": true
+      "compress" : {
+        "screw_ie8" : true,
+        "warnings" : false
+      },
+      "sourceMap" : false,
+      "output": {
+        "comments": false
+      } 
+    }),
+    new AotPlugin({
+      "mainPath" : "main.ts",
+      "exclude" : [],
+      "tsConfigPath" : "src/tsconfig.app.json",
+      "skipCodeGeneration" : true
     })
   ],
-  "node": {
-    "fs": "empty",
-    "global": true,
-    "crypto": "empty",
-    "tls": "empty",
-    "net": "empty",
-    "process": true,
-    "module": false,
-    "clearImmediate": false,
-    "setImmediate": false
+  "node" : {
+    "fs" : "empty",
+    "global" : true,
+    "crypto" : "empty",
+    "tls" : "empty",
+    "net" : "empty",
+    "process" : true,
+    "module" : false,
+    "clearImmediate" : false,
+    "setImmediate" : false
   }
 };
