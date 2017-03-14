@@ -14,8 +14,8 @@ export class ApiService extends BaseService<Api> {
     super(
       injector,
       '/apis',
-      'Consumer',
-      'username'
+      'API',
+      'group'
     );
   }
 

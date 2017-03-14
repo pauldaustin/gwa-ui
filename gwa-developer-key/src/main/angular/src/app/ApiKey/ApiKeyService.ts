@@ -15,7 +15,7 @@ export class ApiKeyService extends BaseService<ApiKey> {
       injector,
       '/apiKeys',
       'Api Key',
-      'name'
+      'key'
     );
   }
 

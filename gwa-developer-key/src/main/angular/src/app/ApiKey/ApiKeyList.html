@@ -1,18 +1,8 @@
 <div>
-  <ol class="breadcrumb">
-    <li class="active">API Keys</li>
-  </ol>
-
-  <div class="btn-toolbar" role="toolbar">
-    <button (click)="addApiKey()" class="btn btn-success" type="button">Add API Key</button>
-    <div class="pull-right">
-      <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#helpText" aria-expanded="false" aria-controls="helpText">
-        <span class="fa fa-question-circle" aria-hidden="true"></span>
-        <span class="sr-only">Help</span>
-      </button>
-    </div>
-  </div>
-  
+  <md-toolbar>
+    <a (click)="addApiKey()" md-raised-button>Add API Key</a>
+  </md-toolbar>
+<!--  
   <div class="collapse" id="helpText">
     <div class="alert alert-info">
 <p>To access an application a developer must have at least one API key. Create a new one using
@@ -21,7 +11,7 @@
 For example <code>http://demo.apps.gov.bc.ca/service?api_key=....</code>
     </div>
   </div>
-
+ --> 
   <ngx-datatable
     class="material striped"
     [rows]="rows"
@@ -47,5 +37,4 @@ For example <code>http://demo.apps.gov.bc.ca/service?api_key=....</code>
       <md-icon>delete</md-icon>
     </button>
   </template>
-
 </div>

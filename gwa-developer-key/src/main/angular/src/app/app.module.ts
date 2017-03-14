@@ -36,11 +36,11 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
         headerMenuItems: [
           {
             title: 'API Keys',
-            routerLink: 'app/apiKeys'
+            routerLink: 'ui/apiKeys'
           },
           {
             title: 'APIs',
-            routerLink: 'app/apis'
+            routerLink: 'ui/apis'
           },
         ]
       }

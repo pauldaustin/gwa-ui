@@ -11,7 +11,7 @@ import { ApiKeyService }  from './ApiKeyService';
 
 @Component({
   selector: 'apiKey-list',
-  templateUrl: './ApiKeyList.html'
+  templateUrl: 'app/ApiKey/ApiKeyList.html'
 })
 export class ApiKeyListComponent extends BaseListComponent<ApiKey>{
   constructor(
