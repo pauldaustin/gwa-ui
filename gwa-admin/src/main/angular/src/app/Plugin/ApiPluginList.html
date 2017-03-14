@@ -10,7 +10,7 @@
         [value]="name"
       >{{name}}</md-option>
     </md-select>
-    <a [routerLink]="['/app','apis', api.name, 'plugins', '_add_', {name: pluginName}]" md-raised-button color="primary">Add Plugin</a>
+    <a [routerLink]="['/ui','apis', api.name, 'plugins', '_add_', {name: pluginName}]" md-raised-button color="primary">Add Plugin</a>
   </md-toolbar>
 
   <ngx-datatable
@@ -22,7 +22,7 @@
   >
   </ngx-datatable>
   
-  <template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', api.name, 'plugins', row.name]">{{value}}</a></template>
+  <template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', api.name, 'plugins', row.name]">{{value}}</a></template>
   
   <template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
     <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>

@@ -19,7 +19,7 @@ import { ApiPluginDetailComponent } from './ApiPluginDetailComponent';
 
 @Component({
   selector: 'api-plugin-add',
-  templateUrl: 'ApiPluginDetail.html'
+  templateUrl: 'app/Plugin/ApiPluginDetail.html'
 })
 export class ApiPluginAddComponent extends ApiPluginDetailComponent {
 }

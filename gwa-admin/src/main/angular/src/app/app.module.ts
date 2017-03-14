@@ -59,24 +59,20 @@ import { AppRoutingModule }        from './app-routing.module';
         title: 'Gateway Admin',
         headerMenuItems: [
           {
-            title: 'My APIs',
-            routerLink: 'app/apis/my'
-          },
-          {
             title: 'APIs',
-            routerLink: 'app/apis'
+            routerLink: 'ui/apis'
           },
           {
             title: 'Consumers',
-            routerLink: 'app/consumers'
+            routerLink: 'ui/consumers'
           },
           {
             title: 'Nodes',
-            routerLink: 'app/nodes'
+            routerLink: 'ui/nodes'
           },
           {
             title: 'Status',
-            routerLink: 'app/status'
+            routerLink: 'ui/status'
           }
         ]
       }

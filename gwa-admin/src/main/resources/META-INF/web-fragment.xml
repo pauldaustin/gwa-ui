@@ -24,7 +24,7 @@
 
   <filter-mapping>
     <filter-name>siteminder-auth</filter-name>
-    <url-pattern>/app/*</url-pattern>
+    <url-pattern>/ui/*</url-pattern>
   </filter-mapping>
 
   <filter-mapping>

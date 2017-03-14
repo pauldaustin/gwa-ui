@@ -20,8 +20,8 @@
    
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="css/styles.bundle.css" rel="stylesheet"/></head>
     <style type="text/css">
+@import 'styles.css';
 @import 'css/deeppurple-amber.css';
 @import 'css/ngx-datatable/index.css';
 @import 'css/ngx-datatable/themes/material.css';
@@ -37,19 +37,14 @@
   <body>
     <bcgov-template>
     </bcgov-template>
-      <script type="text/javascript" src="js/inline.bundle.js"></script>
-      <script type="text/javascript" src="js/polyfills.bundle.js"></script>
-      <script type="text/javascript" src="js/styles.bundle.js"></script>
-      <script type="text/javascript" src="js/vendor.bundle.js"></script>
-      <script type="text/javascript" src="js/core.bundle.js"></script>
-      <script type="text/javascript" src="js/platform-browser.bundle.js"></script>
-      <script type="text/javascript" src="js/common.bundle.js"></script>
-      <script type="text/javascript" src="js/compiler.bundle.js"></script>
-      <script type="text/javascript" src="js/http.bundle.js"></script>
-      <script type="text/javascript" src="js/forms.bundle.js"></script>
-      <script type="text/javascript" src="js/router.bundle.js"></script>
-      <script type="text/javascript" src="js/flex-layout.bundle.js"></script>
-      <script type="text/javascript" src="js/material.bundle.js"></script>
-      <script type="text/javascript" src="js/main.bundle.js"></script></body>
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+    <script src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
+    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
+    <script src="systemjs.config.server.js"></script>
+    <script>
+    System.import('main.js')
+    .catch(function(err){ console.error(err); });
+    </script>
+    
   </body>
 </html>

@@ -131,89 +131,19 @@
         <version>2.4.2</version>
         <executions>
           <execution>
-            <id>angular-copy-js</id>
+            <id>angular-copy</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
               <overwrite>true</overwrite>
-              <outputDirectory>target/${project.artifactId}-${project.version}/js/</outputDirectory>
+              <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${project.basedir}/src/main/angular/dist/</directory>
+                  <directory>${project.basedir}/src/main/angular/build</directory>
                   <includes>
-                    <include>*.js*</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/</directory>
-                  <includes>
-                    <include>systemjs.config.server.js</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/node_modules/core-js/client/</directory>
-                  <includes>
-                    <include>shim.min.js*</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/node_modules/zone.js/dist/</directory>
-                  <includes>
-                    <include>zone.min.js</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>angular-copy-css</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>target/${project.artifactId}-${project.version}/css/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/dist/</directory>
-                  <includes>
-                    <include>*.css*</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/node_modules/@angular/material/core/theming/prebuilt/</directory>
-                  <includes>
-                    <include>deeppurple-amber.css</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>angular-copy-css-datatable</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>target/${project.artifactId}-${project.version}/css/ngx-datatable/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/node_modules/@swimlane/ngx-datatable/release/</directory>
-                  <includes>
-                    <include>index.css</include>
-                    <include>themes/material.css</include>
-                    <include>assets/icons.css</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/dist/</directory>
-                  <includes>
-                    <include>*.css*</include>
+                    <include>**</include>
                   </includes>
                 </resource>
               </resources>

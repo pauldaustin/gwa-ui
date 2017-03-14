@@ -8,7 +8,7 @@ import { ApiService } from './ApiService';
 
 @Component({
   selector: 'api-my-list',
-  templateUrl: 'ApiList.html'
+  templateUrl: 'app/Api/ApiList.html'
 })
 export class ApiListMyComponent extends ApiListComponent {
   constructor(injector: Injector, apiService: ApiService) {

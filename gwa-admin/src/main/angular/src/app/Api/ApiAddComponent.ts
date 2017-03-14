@@ -8,7 +8,7 @@ import { ApiDetailComponent } from './ApiDetailComponent';
 
 @Component({
   selector: 'api-add',
-  templateUrl: 'ApiDetail.html'
+  templateUrl: 'app/Api/ApiDetail.html'
 })
 export class ApiAddComponent extends ApiDetailComponent {
 
@@ -20,7 +20,7 @@ export class ApiAddComponent extends ApiDetailComponent {
   }
 
   postSave(savedApi: Api): void {
-    this.router.navigate(['/app/apis', savedApi.name]);
+    this.router.navigate(['/ui/apis', savedApi.name]);
   }
 
 }

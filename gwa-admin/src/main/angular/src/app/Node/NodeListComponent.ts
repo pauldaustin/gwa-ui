@@ -10,7 +10,7 @@ import { NodeService } from './NodeService';
 
 @Component({
   selector: 'node-list',
-  templateUrl: 'NodeList.html'
+  templateUrl: 'app/Node/NodeList.html'
 })
 export class NodeListComponent extends BaseListComponent<Node> {
 

@@ -1,6 +1,6 @@
 <div>
   <md-toolbar>
-    <a routerLink="/app/apis/_add_" md-raised-button>Add API</a>
+    <a routerLink="/ui/apis/_add_" md-raised-button>Add API</a>
     <md-select
       placeholder="Filter Field"
       [(ngModel)]="filterFieldName"
@@ -40,7 +40,7 @@
   >
   </ngx-datatable>
   
-  <template #idT let-row="row" let-value="value"><a [routerLink]="['/app','apis', row.name]">{{value}}</a></template>
+  <template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.name]">{{value}}</a></template>
   
   <template #upstreamT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
   

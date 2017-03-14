@@ -8,7 +8,7 @@ import { ApiService } from './ApiService';
 
 @Component({
   selector: 'api-detail',
-  templateUrl: 'ApiDetail.html'
+  templateUrl: 'app/Api/ApiDetail.html'
 })
 export class ApiDetailComponent extends BaseDetailComponent<Api> {
   constructor(

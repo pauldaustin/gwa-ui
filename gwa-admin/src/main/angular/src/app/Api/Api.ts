@@ -1,6 +1,6 @@
 import { Plugin } from '../Plugin/Plugin';
 
-interface HttpMethodState {
+export interface HttpMethodState {
   name: string;
   enabled: boolean;
 }

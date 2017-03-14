@@ -22,12 +22,12 @@
 
   <servlet-mapping>
     <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/app/*</url-pattern>
+    <url-pattern>/ui/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>AngularServlet</servlet-name>
-    <url-pattern>/app</url-pattern>
+    <url-pattern>/ui</url-pattern>
   </servlet-mapping>
 
   <error-page>

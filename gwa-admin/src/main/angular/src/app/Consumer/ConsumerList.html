@@ -1,6 +1,6 @@
 <div>
   <md-toolbar>
-    <a routerLink="/app/consumers/_add_" md-raised-button>Add Consumer</a>
+    <a routerLink="/ui/consumers/_add_" md-raised-button>Add Consumer</a>
     <md-select
       placeholder="Filter Field"
       [(ngModel)]="filterFieldName"
@@ -40,7 +40,7 @@
   >
   </ngx-datatable>
 
-  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/app','consumers', row.username]">{{value}}</a></template>
+  <template #idT let-row="row" let-value="value"><a *ngIf="value" [routerLink]="['/ui','consumers', row.username]">{{value}}</a></template>
 
   <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
   

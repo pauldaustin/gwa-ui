@@ -24,7 +24,7 @@ import { PluginService } from './PluginService';
 
 @Component({
   selector: 'api-plugin-detail',
-  templateUrl: './ApiPluginDetail.html'
+  templateUrl: 'app/Plugin/ApiPluginDetail.html'
 })
 export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   protected apiService: ApiService = this.injector.get(ApiService);
@@ -133,6 +133,6 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   }
 
   postSave(savedObject: Plugin): void {
-    this.router.navigate(['/app/apis', savedObject.api.name, {tabIndex: 1}]);
+    this.router.navigate(['/ui/apis', savedObject.api.name, {tabIndex: 1}]);
   }
 }

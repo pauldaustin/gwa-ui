@@ -8,7 +8,7 @@ import { ConsumerDetailComponent } from './ConsumerDetailComponent';
 
 @Component({
   selector: 'consumer-add',
-  templateUrl: 'ConsumerDetail.html'
+  templateUrl: 'app/Consumer/ConsumerDetail.html'
 })
 export class ConsumerAddComponent extends ConsumerDetailComponent {
 
@@ -20,7 +20,7 @@ export class ConsumerAddComponent extends ConsumerDetailComponent {
   }
 
   postSave(savedConsumer: Consumer): void {
-    this.router.navigate(['/app/consumers', savedConsumer.username]);
+    this.router.navigate(['/ui/consumers', savedConsumer.username]);
   }
 
 }
