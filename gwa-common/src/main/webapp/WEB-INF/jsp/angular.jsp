@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: 'Myriad-Web-Pro';
-  src: url('../fonts/MyriadWebPro.ttf');
+  src: url('fonts/MyriadWebPro.ttf');
 }
     </style>
   </head>
@@ -37,9 +37,28 @@
   <body>
     <bcgov-template>
     </bcgov-template>
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+       
+    <script type="text/javascript" src="https://unpkg.com/rxjs@5.2.0/bundles/Rx.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/core@2.4.8/bundles/core.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/common@2.4.8/bundles/common.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/compiler@2.4.8/bundles/compiler.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/forms@2.4.8/bundles/forms.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/platform-browser@2.4.8/bundles/platform-browser.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/platform-browser-dynamic@2.4.8/bundles/platform-browser-dynamic.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/http@2.4.8/bundles/http.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/router@3.4.8/bundles/router.umd.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/flex-layout@2.0.0-rc.1/bundles/flex-layout.umd.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/hammerjs@2.0.8/hammer.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@angular/material@2.0.0-beta.2/bundles/material.umd.js"></script>
+    <!-- script type="text/javascript" src="https://unpkg.com/@swimlane/ngx-datatable@6.3.0/release/index.min.js"></script> -->
+       
     <script type="text/javascript" src="js/inline.bundle.js"></script>
     <script type="text/javascript" src="js/polyfills.bundle.js"></script>
+    <script type="text/javascript" src="js/styles.bundle.js"></script>
+ 
     <script type="text/javascript" src="js/vendor.bundle.js"></script>
+ 
     <script type="text/javascript" src="js/main.bundle.js"></script>
   </body>
 </html>
