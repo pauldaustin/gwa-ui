@@ -45,9 +45,13 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
           return Promise.resolve(object);
         }
       })
-      .subscribe(object => this.object = object);
+      .subscribe(object => this.setObject(object));
   }
 
+  protected setObject(object : T) {
+    this.object = object;
+  }
+  
   postSave(savedObject: T): void {
     this.goBack();
   }

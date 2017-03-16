@@ -4,10 +4,11 @@ import {
   Injector
 } from '@angular/core';
 import { BaseService } from '../Service/BaseService';
-import { Endpoint } from './Endpoint';
+import { Api } from '../Api/Api';
+import { Plugin } from '../Plugin/Plugin';
 
 @Injectable()
-export class EndpointService extends BaseService<Endpoint> {
+export class EndpointService extends BaseService<Api> {
   oldVersion : boolean = true;
 
   endPointUriTemplates : string[] = [
@@ -22,22 +23,11 @@ export class EndpointService extends BaseService<Endpoint> {
       'API',
       'name'
     );
-    const url = this.getUrl('/version');
-    this.http.get(url)
-      .toPromise()
-      .then(response => {
-        const json = response.json();
-        if (!json.error) {
-          if (json.version) {
-            this.oldVersion = json.version.indexOf('0.9') == 0;
-          }
-        }
-      });
   }
 
-  deleteObject(endpoint: Endpoint): Promise<boolean> {
+  deleteObject(api : Api): Promise<boolean> {
     return this.deleteObjectDo(
-      `/endpoints/${endpoint.id}`
+      `/endpoints/${api.id}`
     );
   }
 
@@ -45,14 +35,25 @@ export class EndpointService extends BaseService<Endpoint> {
     return this.getObjectsDo('/endpoints/my');
   }
 
-  updateObject(endpoint: Endpoint): Promise<Endpoint> {
+  updateObject(api : Api): Promise<Api> {
     return this.updateObjectDo(
-      `/endpoints/${endpoint.id}`,
+      `/endpoints/${api.id}`,
       endpoint
     );
   }
 
-  newObject(): Endpoint {
-    return new Endpoint();
+  newObject(): Api {
+    const plugin = new Plugin();
+    plugin.name = 'bcgov-gwa-endpoint';
+    plugin.config = {
+      uri_template: endPointUriTemplates[0],
+      upstream_username: null,
+      upstream_password: null
+    }
+
+    const api = new Api();
+    api.pluginAdd(api);
+
+    return api;
   }
 }

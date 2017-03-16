@@ -2,7 +2,7 @@ import {
   Component, 
   Injector
 } from '@angular/core';
-import { Endpoint } from './Endpoint';
+import { Api } from '../Api/Api';
 import { EndpointService } from './EndpointService';
 import { EndpointDetailComponent } from './EndpointDetailComponent';
 
@@ -19,7 +19,7 @@ export class EndpointAddComponent extends EndpointDetailComponent {
     super(injector, service);
   }
 
-  postSave(savedEndpoint: Endpoint): void {
+  postSave(savedEndpoint: Api): void {
     this.router.navigate(['/ui/endpoints', savedEndpoint.name]);
   }
 

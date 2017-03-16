@@ -218,43 +218,74 @@ public class ApiService implements ServletContextListener {
   public void endpointAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String userId) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
-      final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-      if (requestData != null) {
-        final List<String> apiFieldNames = getApiFieldNames();
-        final Map<String, Object> apiRequest = getMap(requestData, apiFieldNames);
-        final Map<String, Object> endPoint = (Map<String, Object>)requestData.get("endPoint");
-        addData(endPoint, requestData, ENDPOINT_FIELD_NAMES);
+      final Map<String, Object> apiRequest = new LinkedHashMap<>();
+      final Map<String, Object> endPointRequest = new LinkedHashMap<>();
 
-        final String uriTemplate = (String)endPoint.get("uri_template");
-        final String name = (String)apiRequest.get("name");
-        final String uri = uriTemplate.replace("{name}", name);
-        final int index1 = uri.indexOf("//");
-        final int index2 = uri.indexOf("/", index1 + 2);
-        String host;
-        if (index2 == -1) {
-          host = uri.substring(index1 + 2);
-        } else {
-          host = uri.substring(index1 + 2, index2);
-          final String uriPrefix = uri.substring(index2);
-          if (uriPrefix.length() > 1) {
-            final List<String> uris = Arrays.asList(uriPrefix);
-            apiRequest.put("uris", uris);
-          }
-        }
-        final List<String> hosts = Arrays.asList(host);
-        apiRequest.put("hosts", hosts);
-
+      if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
+        endPointRequest)) {
         final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
         final String id = (String)apiResponse.get("id");
         if (id != null) {
-          final Map<String, Object> pluginConfig = getMap(requestData, ENDPOINT_FIELD_NAMES);
-          pluginConfig.put("created_by", userId);
-          final Map<String, Object> endPointRequest = new LinkedHashMap<>();
-          endPointRequest.put("name", "bcgov-gwa-endpoint");
-          endPointRequest.put("config", endPoint);
           final String pluginPath = "/apis/" + id + "/plugins";
           httpClient.post(pluginPath, endPointRequest);
+        }
+        Json.writeJson(httpResponse, apiResponse);
+      }
+    });
+  }
 
+  private boolean endPointSetKongParameters(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String userId,
+    final Map<String, Object> apiRequest, final Map<String, Object> endPointRequest)
+    throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData == null) {
+      writeJsonError(httpResponse, "Missing JSON request body");
+      return false;
+    } else {
+      final List<String> apiFieldNames = getApiFieldNames();
+      addData(apiRequest, requestData, apiFieldNames);
+      final Map<String, Object> endPoint = (Map<String, Object>)requestData.get("endPoint");
+      endPoint.put("created_by", userId);
+      addData(endPoint, requestData, ENDPOINT_FIELD_NAMES);
+
+      final String uriTemplate = (String)endPoint.get("uri_template");
+      final String name = (String)apiRequest.get("name");
+      final String uri = uriTemplate.replace("{name}", name);
+      final int index1 = uri.indexOf("//");
+      final int index2 = uri.indexOf("/", index1 + 2);
+      String host;
+      if (index2 == -1) {
+        host = uri.substring(index1 + 2);
+      } else {
+        host = uri.substring(index1 + 2, index2);
+        final String uriPrefix = uri.substring(index2);
+        if (uriPrefix.length() > 1) {
+          final List<String> uris = Arrays.asList(uriPrefix);
+          apiRequest.put("uris", uris);
+        }
+      }
+      final List<String> hosts = Arrays.asList(host);
+      apiRequest.put("hosts", hosts);
+      endPointRequest.put("name", "bcgov-gwa-endpoint");
+      endPointRequest.put("config", endPoint);
+      return true;
+    }
+  }
+
+  public void endpointUpdate(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String userId) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> apiRequest = new LinkedHashMap<>();
+      final Map<String, Object> endPointRequest = new LinkedHashMap<>();
+
+      if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
+        endPointRequest)) {
+        final Map<String, Object> apiResponse = httpClient.patch("/apis", apiRequest);
+        final String id = (String)apiResponse.get("id");
+        if (id != null) {
+          final String pluginPath = "/apis/" + id + "/plugins";
+          httpClient.patch(pluginPath, endPointRequest);
         }
         Json.writeJson(httpResponse, apiResponse);
       }

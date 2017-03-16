@@ -15,7 +15,6 @@ import { ConsumerDetailComponent } from './Consumer/ConsumerDetailComponent';
 
 import { EndpointAddComponent } from './Endpoint/EndpointAddComponent';
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
-import { EndpointListMyComponent } from './Endpoint/EndpointListMyComponent';
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
 
 import { NodeListComponent } from './Node/NodeListComponent';
@@ -29,7 +28,6 @@ const routes: Routes = [
   { path: 'ui/apis/:name', component: ApiDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/endpoints/my',  component: EndpointListMyComponent, pathMatch: 'full' },
   { path: 'ui/endpoints',  component: EndpointListComponent },
   { path: 'ui/endpoints/_add_', component: EndpointAddComponent, pathMatch: 'full' },
   { path: 'ui/endpoints/:name', component: EndpointDetailComponent },

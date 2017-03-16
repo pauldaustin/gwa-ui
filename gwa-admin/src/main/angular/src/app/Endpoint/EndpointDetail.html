@@ -41,7 +41,7 @@
               fxFlex
               placeholder="URI Template"
               name="uri_template"
-              [(ngModel)]="object.uri_template"
+              [(ngModel)]="endPoint.uri_template"
               required="true"
             >
               <md-option *ngFor="let value of endPointUriTemplates" [value]="value">{{value}}</md-option>
@@ -50,7 +50,7 @@
               <input
                 mdInput
                 placeholder="URI" 
-                value="{{object.uri_template}}"
+                value="{{Endpoint.uri(endPoint)}}"
                 disabled="true"
               />
             </md-input-container>
@@ -99,7 +99,7 @@
                   placeholder="Upstream Username" 
                   name="upstream_username"
                   type="text"
-                  [(ngModel)]="object.upstream_username"
+                  [(ngModel)]="endPoint.upstream_username"
                 />
               </md-input-container>
               <md-input-container class="full-width" fxFlex="25">
@@ -108,7 +108,7 @@
                   placeholder="Upstream Password" 
                   name="upstream_password"
                   type="password"
-                  [(ngModel)]="object.upstream_password"
+                  [(ngModel)]="endPoint.upstream_password"
                 />
               </md-input-container>
             </div>

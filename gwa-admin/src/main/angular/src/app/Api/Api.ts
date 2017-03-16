@@ -15,6 +15,17 @@ export class Api {
     "DELETE"
   ];
 
+
+  static uri(object : any): string {
+    if (object.uri_template) {
+      if (object.name) {
+        object.uri_template.replace('{name}', object.name);
+      } else {
+        return object.uri_template;
+      }
+    }
+  }
+
   constructor() {
     this.methods = null;
   }
@@ -47,6 +58,7 @@ export class Api {
   // Custom but this needs to be moved
   method_flags: Array<HttpMethodState> = [];
   _plugins: Array<Plugin> = [];
+  _pluginsByName : { [name: string] : Plugin };
 
   get methods(): Array<string> {
     let methods: Array<string> = [];
@@ -89,6 +101,7 @@ export class Api {
         Object.assign(plugin, pluginJson);
         plugin.api = api;
         plugins.push(plugin);
+        this._pluginsByName.set(plugin.name, plugin);
       });
     } else {
       this._plugins.length = 0;
@@ -96,10 +109,12 @@ export class Api {
   }
 
   pluginAdd(plugin: Plugin) {
+    const name = plugin.name;
     plugin.api = this;
+    this._pluginsByName.set(name, plugin);
     for (let i = 0; i < this._plugins.length; i++) {
       let currentPlugin = this._plugins[i];
-      if (plugin.name < currentPlugin.name) {
+      if (name < currentPlugin.name) {
         this._plugins.splice(i, 0, plugin);
         return;
       }
@@ -108,9 +123,15 @@ export class Api {
   }
 
   pluginRemove(plugin: Plugin) {
-    this._plugins = this._plugins.filter(currentPlugin => currentPlugin.name != plugin.name);
+    const name = plugin.name;
+    this._plugins = this._plugins.filter(currentPlugin => currentPlugin.name != name);
+    this._pluginsByName.delete(name);
   }
-  
+
+  plugin(name: string) {
+    return this._pluginsByName.get(name);
+  }
+
   getAllMethods(): Array<string> {
     return Api.ALL_METHODS;
   }

@@ -7,14 +7,14 @@ import {
 
 import { BaseListComponent } from '../Component/BaseListComponent';
 
-import { Endpoint } from './Endpoint';
+import { Api } from '../Api/Api';
 import { EndpointService } from './EndpointService';
 
 @Component({
   selector: 'endpoint-list',
   templateUrl: 'app/Endpoint/EndpointList.html'
 })
-export class EndpointListComponent extends BaseListComponent<Endpoint> {
+export class EndpointListComponent extends BaseListComponent<Api> {
 
   @ViewChild('urlT') urlTemplate: TemplateRef<any>;
 
@@ -46,6 +46,6 @@ export class EndpointListComponent extends BaseListComponent<Endpoint> {
   }
 
   uri(object : any) : string {
-    return Endpoint.uri(object);
+    return Api.uri(object);
   }
 }

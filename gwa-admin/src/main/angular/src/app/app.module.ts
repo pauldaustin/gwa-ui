@@ -40,7 +40,6 @@ import { ConsumerService }           from './Consumer/ConsumerService';
 import { EndpointAddComponent }  from './Endpoint/EndpointAddComponent';
 import { EndpointDetailComponent }  from './Endpoint/EndpointDetailComponent';
 import { EndpointListComponent }    from './Endpoint/EndpointListComponent';
-import { EndpointListMyComponent }  from './Endpoint/EndpointListMyComponent';
 import { EndpointService }          from './Endpoint/EndpointService';
 
 import { NodeListComponent }     from './Node/NodeListComponent';
@@ -109,7 +108,6 @@ import { AppRoutingModule }        from './app-routing.module';
     EndpointAddComponent,
     EndpointDetailComponent,
     EndpointListComponent,
-    EndpointListMyComponent,
     NodeListComponent,
     StatusDetailComponent
   ],
