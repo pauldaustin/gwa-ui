@@ -398,11 +398,6 @@ public class ApiService implements ServletContextListener {
 
   public String getConfig(final String name, final String defaultValue) {
     String value = null;
-    // try {
-    // final InitialContext context = new InitialContext();
-    // value = (String)context.lookup("java:comp/env/" + name);
-    // } catch (final NamingException e) {
-    // }
     value = System.getProperty(name);
     if (value == null) {
       value = (String)this.config.get(name);
