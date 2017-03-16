@@ -31,6 +31,7 @@ export abstract class BaseService<T> implements Service<T> {
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
+  
   private jsonHeaders = {
     headers: new Headers({ 'Content-Type': 'application/json' })
   };
@@ -39,7 +40,8 @@ export abstract class BaseService<T> implements Service<T> {
     protected injector : Injector,
     protected path? : string,
     protected typeTitle? : string,
-    protected labelFieldName? : string
+    protected labelFieldName? : string,
+    protected idFieldName : string = "id"
   ) {
   }
 
@@ -74,6 +76,16 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
 
+  addOrUpdateObject(object: T): Promise<T> {
+    if (object == null) {
+      return Promise.resolve(object);
+    } else if (object[this.idFieldName]) {
+      return this.updateObject(object);
+    } else {  
+      return this.addObject(object);
+    }
+  }
+
   protected handleError(error: any): Promise<any> {
     this.showError(error.message || error);
     return Promise.reject(error.message || error);
@@ -90,30 +102,6 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected getUrl(path: string): string {
     return this.location.prepareExternalUrl('/rest' + path);
-  }
-
-  protected updateObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
-    const url = this.getUrl(path);
-    const jsonText = JSON.stringify(object);
-    return this.http.put(
-      url,
-      jsonText,
-      this.jsonHeaders
-    ).toPromise()
-      .then(response => {
-        const json = response.json();
-        if (json.error) {
-          this.showError(json.error);
-          return null;
-        } else {
-          Object.assign(object, json);
-          if (callback) {
-            callback();
-          }
-          return object;
-        }
-      })
-      .catch(this.handleError.bind(this));
   }
 
   deleteObject(object: T): Promise<boolean> {
@@ -274,5 +262,29 @@ export abstract class BaseService<T> implements Service<T> {
 
   updateObject(object: T): Promise<T> {
     return null;
+  }
+
+  protected updateObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
+    const url = this.getUrl(path);
+    const jsonText = JSON.stringify(object);
+    return this.http.put(
+      url,
+      jsonText,
+      this.jsonHeaders
+    ).toPromise()
+      .then(response => {
+        const json = response.json();
+        if (json.error) {
+          this.showError(json.error);
+          return null;
+        } else {
+          Object.assign(object, json);
+          if (callback) {
+            callback();
+          }
+          return object;
+        }
+      })
+      .catch(this.handleError.bind(this));
   }
 }

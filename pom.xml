@@ -216,7 +216,7 @@
               <contextPath>/pub/gwa</contextPath>
             </contextHandler>
           </contextHandlers>
-          <systemPropertiesFile>${project.basedir}/../gwa-config/gwa.properties</systemPropertiesFile>
+          <systemPropertiesFile>${project.basedir}/../../gwa-config/gwa.properties</systemPropertiesFile>
         </configuration>
       </plugin>
     </plugins>

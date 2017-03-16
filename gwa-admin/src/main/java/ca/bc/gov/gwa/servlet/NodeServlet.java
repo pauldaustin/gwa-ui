@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = "/rest/nodes/*", loadOnStartup = 1)
-public class NodeServlet extends BaseServlet {
+public class NodeServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -28,7 +28,7 @@ public class NodeServlet extends BaseServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       this.apiService.handleList(request, response, "/cluster");
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);

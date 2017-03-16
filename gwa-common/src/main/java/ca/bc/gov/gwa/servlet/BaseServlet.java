@@ -1,6 +1,7 @@
 package ca.bc.gov.gwa.servlet;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,23 @@ public abstract class BaseServlet extends HttpServlet {
   public void destroy() {
     super.destroy();
     this.apiService = ApiService.release();
+  }
+
+  public boolean hasPath(final String pathInfo) {
+    return pathInfo == null || "/".equals(pathInfo);
+  }
+
+  protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
+    final String roleName) throws IOException {
+    final Principal userPrincipal = request.getUserPrincipal();
+    if (userPrincipal instanceof BasePrincipal) {
+      final BasePrincipal principal = (BasePrincipal)userPrincipal;
+      if (principal.isUserInRole("GWA_ADMIN")) {
+        return true;
+      }
+    }
+    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+    return false;
   }
 
   @Override

@@ -36,7 +36,7 @@ export class BaseComponent<T> implements OnInit {
   ngOnInit(): void {
   }
 
-  goBack(): void {
+  routeList(): void {
     this.router.navigate(['/ui' +this.service.getPath()]);
   }
 

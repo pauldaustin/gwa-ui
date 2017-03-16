@@ -20,8 +20,8 @@ export class EndpointService extends BaseService<Api> {
     super(
       injector,
       '/endpoints',
-      'API',
-      'name'
+      'Endpoint',
+      'config.name'
     );
   }
 
@@ -31,28 +31,24 @@ export class EndpointService extends BaseService<Api> {
     );
   }
 
-  getMyEndpoints(): Promise<Endpoint[]> {
-    return this.getObjectsDo('/endpoints/my');
-  }
-
   updateObject(api : Api): Promise<Api> {
     return this.updateObjectDo(
       `/endpoints/${api.id}`,
-      endpoint
+      api
     );
   }
 
   newObject(): Api {
-    const plugin = new Plugin();
-    plugin.name = 'bcgov-gwa-endpoint';
-    plugin.config = {
-      uri_template: endPointUriTemplates[0],
+    const endPoint = new Plugin();
+    endPoint.name = 'bcgov-gwa-endpoint';
+    endPoint.config = {
+      uri_template: this.endPointUriTemplates[0],
       upstream_username: null,
       upstream_password: null
     }
-
+    
     const api = new Api();
-    api.pluginAdd(api);
+    api.pluginAdd(endPoint);
 
     return api;
   }

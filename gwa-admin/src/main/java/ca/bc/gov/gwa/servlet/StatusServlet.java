@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = "/rest/status", loadOnStartup = 1)
-public class StatusServlet extends BaseServlet {
+public class StatusServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   @Override

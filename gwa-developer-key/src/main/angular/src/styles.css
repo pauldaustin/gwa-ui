@@ -29,16 +29,22 @@
   width:100%;
 }
 .ngx-datatable.scroll-vertical {
-  height: 480px;
+  height: 450px;
   flex: 1 1 auto;
 }
 .ngx-datatable.fixed-height {
-  height: 480px;
+  height: 450px;
 }
 
 .ngx-datatable .datatable-footer .datatable-pager,
 .ngx-datatable .datatable-footer .datatable-pager ul.pager {
   display: none;
+}
+.datatable-body-cell-label .mat-icon-button {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  margin-top: -5px;
 }
 .btn-toolbar {
   margin-top: 1em;

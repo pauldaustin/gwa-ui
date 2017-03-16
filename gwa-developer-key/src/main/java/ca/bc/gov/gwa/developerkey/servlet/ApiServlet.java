@@ -19,7 +19,7 @@ public class ApiServlet extends BaseServlet {
     throws ServletException, IOException {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       final String deletePath = "/consumers/" + userId + "/acls" + pathInfo;
@@ -32,7 +32,7 @@ public class ApiServlet extends BaseServlet {
     throws ServletException, IOException {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       final String listPath = "/consumers/" + userId + "/acls";
       this.apiService.handleList(request, response, listPath);
     } else {
@@ -45,7 +45,7 @@ public class ApiServlet extends BaseServlet {
     throws ServletException, IOException {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       final String insertPath = "/consumers/" + userId + "/acls";
       this.apiService.handleAdd(request, response, insertPath, Collections.emptyList());
     } else {

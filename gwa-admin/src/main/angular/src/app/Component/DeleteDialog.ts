@@ -13,8 +13,8 @@ import {
   <p><b>{{objectLabel}}</b>?</p>
 </div>
 <div md-dialog-actions>
-  <button md-button (click)="dialogRef.close('Cancel')">Cancel</button>
-  <button md-button (click)="dialogRef.close('Delete')" color="alert">Delete</button>
+  <button md-raised-button (click)="dialogRef.close('Cancel')">Cancel</button>
+  <button md-raised-button (click)="dialogRef.close('Delete')" color="warn" style="margin-left: 10px;">Delete</button>
 </div>
   `,
 })

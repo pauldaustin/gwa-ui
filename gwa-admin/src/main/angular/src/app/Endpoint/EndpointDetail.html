@@ -23,7 +23,7 @@
               <input
                 mdInput
                 placeholder="Created By"
-                value="{{object.created_by}}"
+                value="{{endpoint.config.created_by}}"
                 disabled
               />
             </md-input-container>
@@ -36,12 +36,13 @@
               />
             </md-input-container>
           </div>
+
           <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <md-select
               fxFlex
               placeholder="URI Template"
               name="uri_template"
-              [(ngModel)]="endPoint.uri_template"
+              [(ngModel)]="endPoint.config.uri_template"
               required="true"
             >
               <md-option *ngFor="let value of endPointUriTemplates" [value]="value">{{value}}</md-option>
@@ -50,11 +51,43 @@
               <input
                 mdInput
                 placeholder="URI" 
-                value="{{Endpoint.uri(endPoint)}}"
+                value="{{endpointUri()}}"
                 disabled="true"
               />
             </md-input-container>
           </div>
+
+          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign=" end" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+            <md-input-container class="full-width" fxFlex="50">
+              <input
+                mdInput
+                placeholder="Upstream URL" 
+                name="upstream_url"
+                type="url"
+                required="true"
+                [(ngModel)]="object.upstream_url"
+              />
+            </md-input-container>
+            <md-input-container class="full-width" fxFlex="25">
+              <input
+                mdInput
+                placeholder="Upstream Username" 
+                name="upstream_username"
+                type="text"
+                [(ngModel)]="endPoint.config.upstream_username"
+              />
+            </md-input-container>
+            <md-input-container class="full-width" fxFlex="25">
+              <input
+                mdInput
+                placeholder="Upstream Password" 
+                name="upstream_password"
+                type="password"
+                [(ngModel)]="endPoint.config.upstream_password"
+              />
+            </md-input-container>
+          </div>
+
           <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <md-slide-toggle
               name="https_only"
@@ -79,93 +112,126 @@
               style="display: inline-block"
             >{{methodFlag.name}}</md-slide-toggle>
           </div>
-
-          <fieldset fxLayoutGap="2px">
-            <legend>Upstream Service</legend>
-  
-            <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign=" end" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-              <md-input-container class="full-width" fxFlex="50">
-                <input
-                  mdInput
-                  placeholder="Upstream URL" 
-                  name="upstream_url"
-                  type="url"
-                  [(ngModel)]="object.upstream_url"
-                />
-              </md-input-container>
-              <md-input-container class="full-width" fxFlex="25">
-                <input
-                  mdInput
-                  placeholder="Upstream Username" 
-                  name="upstream_username"
-                  type="text"
-                  [(ngModel)]="endPoint.upstream_username"
-                />
-              </md-input-container>
-              <md-input-container class="full-width" fxFlex="25">
-                <input
-                  mdInput
-                  placeholder="Upstream Password" 
-                  name="upstream_password"
-                  type="password"
-                  [(ngModel)]="endPoint.upstream_password"
-                />
-              </md-input-container>
-            </div>
-            <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-              <md-slide-toggle
-                fxFlex
-                name="preserve_host"
-                [(ngModel)]="object.preserve_host"
-                color="primary"
-                style="display: inline-block"
-              >Preserve Host</md-slide-toggle>
-              <md-slide-toggle
-                fxFlex
-                name="strip_uri"
-                [(ngModel)]="object.strip_uri"
-                color="primary"
+          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+            <md-slide-toggle
+              fxFlex
+              name="preserve_host"
+              [(ngModel)]="object.preserve_host"
+              color="primary"
               style="display: inline-block"
-              >Strip URI</md-slide-toggle>
+            >Preserve Host</md-slide-toggle>
+            <md-slide-toggle
+              fxFlex
+              name="strip_uri"
+              [(ngModel)]="object.strip_uri"
+              color="primary"
+            style="display: inline-block"
+            >Strip URI</md-slide-toggle>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Retries" 
+                name="retries"
+                type="number"
+                min="0"
+                max="32767"
+                [(ngModel)]="object.retries"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Connect Timeout" 
+                name="upstream_connect_timeout"
+                type="number"
+                min="0"
+                [(ngModel)]="object.upstream_connect_timeout"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Send Timeout" 
+                name="upstream_send_timeout"
+                type="number"
+                min="0"
+                [(ngModel)]="object.upstream_send_timeout"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Read Timeout" 
+                name="upstream_read_timeout"
+                type="number"
+                min="0"
+                [(ngModel)]="object.upstream_read_timeout"
+              />
+            </md-input-container>
+          </div>
+
+          <fieldset>
+             <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+              <label>Rate Limits:</label>
               <md-input-container fxFlex>
                 <input
                   mdInput
-                  placeholder="Retries" 
-                  name="retries"
+                  placeholder="Second" 
+                  name="rateLimit_second"
                   type="number"
                   min="0"
-                  max="32767"
-                  [(ngModel)]="object.retries"
+                  [(ngModel)]="rateLimit.config.second"
                 />
               </md-input-container>
               <md-input-container fxFlex>
                 <input
                   mdInput
-                  placeholder="Connect Timeout" 
-                  name="upstream_connect_timeout"
+                  placeholder="Minute" 
+                  name="rateLimit_minute"
                   type="number"
                   min="0"
-                  [(ngModel)]="object.upstream_connect_timeout"
+                  required="true"
+                  [(ngModel)]="rateLimit.config.minute"
                 />
               </md-input-container>
               <md-input-container fxFlex>
                 <input
                   mdInput
-                  placeholder="Send Timeout" 
-                  name="upstream_send_timeout"
+                  placeholder="Hour" 
+                  name="rateLimit_hour"
                   type="number"
                   min="0"
-                  [(ngModel)]="object.upstream_send_timeout"
+                  [(ngModel)]="rateLimit.config.hour"
                 />
               </md-input-container>
               <md-input-container fxFlex>
                 <input
                   mdInput
-                  placeholder="Read Timeout" 
-                  name="upstream_read_timeout"
+                  placeholder="Day" 
+                  name="rateLimit_day"
                   type="number"
                   min="0"
-                  [(ngModel)]="object.upstream_read_timeout"
+                  [(ngModel)]="rateLimit.config.day"
+                />
+              </md-input-container>
+              <md-input-container fxFlex>
+                <input
+                  mdInput
+                  placeholder="Month" 
+                  name="rateLimit_month"
+                  type="number"
+                  min="0"
+                  [(ngModel)]="rateLimit.config.month"
+                />
+              </md-input-container>
+              <md-input-container fxFlex>
+                <input
+                  mdInput
+                  placeholder="Year" 
+                  name="rateLimit_year"
+                  type="number"
+                  min="0"
+                  [(ngModel)]="rateLimit.config.year"
                 />
               </md-input-container>
             </div>
@@ -173,8 +239,9 @@
         </md-card-content>
 
         <md-card-actions>
-          <button (click)="goBack()" md-button>Cancel</button>
-          <button (click)="save()" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save</button>
+          <button (click)="routeList()" md-button>Close</button>
+          <button (click)="save(false)" md-raised-button color="accent" [disabled]="!endpointForm.form.valid">Save</button>
+          <button (click)="save(true)" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save &amp; Close</button>
         </md-card-actions>
       </md-card>
     </form>

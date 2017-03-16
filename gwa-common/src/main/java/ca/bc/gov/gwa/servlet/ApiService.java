@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
@@ -35,6 +36,8 @@ import ca.bc.gov.gwa.util.Json;
 @WebListener
 public class ApiService implements ServletContextListener {
 
+  private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
+
   private static final List<String> APIS_FIELD_NAMES_OLD = Arrays.asList("id", "name",
     "request_host", "request_path", "strip_request_path", "preserve_host", "created_at",
     "upstream_url");
@@ -46,6 +49,9 @@ public class ApiService implements ServletContextListener {
 
   private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("name", "uri_template",
     "created_by", "upstream_url", "upstream_username", "upstream_password");
+
+  private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
+    "hour", "minute", "day", "month", "year");
 
   public static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config");
 
@@ -131,9 +137,13 @@ public class ApiService implements ServletContextListener {
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
     for (final String key : fieldNames) {
-      final Object value = requestData.get(key);
-      if (value != null) {
-        data.put(key, value);
+      if (requestData.containsKey(key)) {
+        final Object value = requestData.get(key);
+        if (value == null) {
+          data.remove(key);
+        } else {
+          data.put(key, value);
+        }
       }
     }
   }
@@ -219,24 +229,58 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse, final String userId) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
       final Map<String, Object> apiRequest = new LinkedHashMap<>();
-      final Map<String, Object> endPointRequest = new LinkedHashMap<>();
+      final List<Map<String, Object>> pluginRequests = new ArrayList<>();
 
       if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
-        endPointRequest)) {
+        pluginRequests)) {
         final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
         final String id = (String)apiResponse.get("id");
         if (id != null) {
           final String pluginPath = "/apis/" + id + "/plugins";
-          httpClient.post(pluginPath, endPointRequest);
+          for (final Map<String, Object> pluginRequest : pluginRequests) {
+            pluginRequest.remove("id");
+            httpClient.post(pluginPath, pluginRequest);
+            // TODO error handling
+          }
         }
         Json.writeJson(httpResponse, apiResponse);
       }
     });
   }
 
+  @SuppressWarnings("unchecked")
+  public void endpointDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String endpointId) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final String endpointPath = "/plugins" + endpointId;
+      try {
+        final Map<String, Object> endpoint = httpClient.get(endpointPath);
+        final String apiId = (String)endpoint.get("api_id");
+        final Map<String, Object> endpointConfig = (Map<String, Object>)endpoint.get("config");
+        final BasePrincipal principal = (BasePrincipal)httpRequest.getUserPrincipal();
+        final String userId = principal.getName();
+        final String endpointUserId = (String)endpointConfig.get("created_by");
+        if (principal.isUserInRole("GWA_ADMIN") || userId.equals(endpointUserId)) {
+          final String apiDeletePath = "/apis/" + apiId;
+          httpClient.delete(apiDeletePath);
+          writeJsonResponse(httpResponse, DELETED);
+        } else {
+          writeJsonError(httpResponse, "You do not have permission to delete endpoint");
+        }
+      } catch (final HttpStatusException e) {
+        if (e.getCode() == 404) {
+          writeJsonResponse(httpResponse, DELETED);
+        } else {
+          throw e;
+        }
+      }
+    });
+  }
+
+  @SuppressWarnings("unchecked")
   private boolean endPointSetKongParameters(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String userId,
-    final Map<String, Object> apiRequest, final Map<String, Object> endPointRequest)
+    final Map<String, Object> apiRequest, final List<Map<String, Object>> pluginRequests)
     throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
     if (requestData == null) {
@@ -245,47 +289,94 @@ public class ApiService implements ServletContextListener {
     } else {
       final List<String> apiFieldNames = getApiFieldNames();
       addData(apiRequest, requestData, apiFieldNames);
-      final Map<String, Object> endPoint = (Map<String, Object>)requestData.get("endPoint");
-      endPoint.put("created_by", userId);
-      addData(endPoint, requestData, ENDPOINT_FIELD_NAMES);
 
-      final String uriTemplate = (String)endPoint.get("uri_template");
-      final String name = (String)apiRequest.get("name");
-      final String uri = uriTemplate.replace("{name}", name);
-      final int index1 = uri.indexOf("//");
-      final int index2 = uri.indexOf("/", index1 + 2);
-      String host;
-      if (index2 == -1) {
-        host = uri.substring(index1 + 2);
-      } else {
-        host = uri.substring(index1 + 2, index2);
-        final String uriPrefix = uri.substring(index2);
-        if (uriPrefix.length() > 1) {
-          final List<String> uris = Arrays.asList(uriPrefix);
-          apiRequest.put("uris", uris);
+      final List<Map<String, Object>> plugins = (List<Map<String, Object>>)requestData
+        .get("plugins");
+      for (final Map<String, Object> plugin : plugins) {
+        final String pluginName = (String)plugin.get("name");
+        Map<String, Object> pluginConfig = null;
+        if (pluginName.equals(BCGOV_GWA_ENDPOINT)) {
+          pluginConfig = endPointSetPluginEndpoint(plugin, apiRequest, userId);
+        } else if (pluginName.equals("rate-limiting")) {
+          pluginConfig = endPointSetPluginRateLimiting(plugin);
+        }
+        if (pluginConfig != null) {
+          final Map<String, Object> pluginRequest = new LinkedHashMap<>();
+          final String id = (String)plugin.get("id");
+          pluginRequest.put("id", id);
+          pluginRequest.put("name", pluginName);
+          pluginRequest.put("config", pluginConfig);
+          pluginRequests.add(pluginRequest);
         }
       }
-      final List<String> hosts = Arrays.asList(host);
-      apiRequest.put("hosts", hosts);
-      endPointRequest.put("name", "bcgov-gwa-endpoint");
-      endPointRequest.put("config", endPoint);
       return true;
     }
+  }
+
+  protected Map<String, Object> endPointSetPluginEndpoint(final Map<String, Object> plugin,
+    final Map<String, Object> apiRequest, final String userId) {
+    Map<String, Object> pluginConfig;
+    pluginConfig = new LinkedHashMap<>();
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
+    addData(pluginConfig, config, ENDPOINT_FIELD_NAMES);
+    addData(pluginConfig, apiRequest, ENDPOINT_FIELD_NAMES);
+    pluginConfig.put("created_by", userId);
+
+    final String uriTemplate = (String)pluginConfig.get("uri_template");
+    final String endpointName = (String)apiRequest.get("name");
+    final String uri = uriTemplate.replace("{name}", endpointName);
+    final int index1 = uri.indexOf("//");
+    final int index2 = uri.indexOf("/", index1 + 2);
+    String host;
+    if (index2 == -1) {
+      host = uri.substring(index1 + 2);
+    } else {
+      host = uri.substring(index1 + 2, index2);
+      final String uriPrefix = uri.substring(index2);
+      if (uriPrefix.length() > 1) {
+        final List<String> uris = Arrays.asList(uriPrefix);
+        apiRequest.put("uris", uris);
+      }
+    }
+    final List<String> hosts = Arrays.asList(host);
+    apiRequest.put("hosts", hosts);
+    return pluginConfig;
+  }
+
+  protected Map<String, Object> endPointSetPluginRateLimiting(final Map<String, Object> plugin) {
+    Map<String, Object> pluginConfig;
+    pluginConfig = new LinkedHashMap<>();
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
+    addData(pluginConfig, config, ENDPOINT_RATE_LIMIT_FIELD_NAMES);
+    pluginConfig.put("limit_by", "consumer");
+    return pluginConfig;
   }
 
   public void endpointUpdate(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String userId) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
       final Map<String, Object> apiRequest = new LinkedHashMap<>();
-      final Map<String, Object> endPointRequest = new LinkedHashMap<>();
+      final List<Map<String, Object>> pluginRequests = new ArrayList<>();
 
       if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
-        endPointRequest)) {
-        final Map<String, Object> apiResponse = httpClient.patch("/apis", apiRequest);
-        final String id = (String)apiResponse.get("id");
-        if (id != null) {
-          final String pluginPath = "/apis/" + id + "/plugins";
-          httpClient.patch(pluginPath, endPointRequest);
+        pluginRequests)) {
+        final String apiId = (String)apiRequest.remove("id");
+        final String apiPath = "/apis/" + apiId;
+        final Map<String, Object> apiResponse = httpClient.patch(apiPath, apiRequest);
+        if (apiId != null) {
+          for (final Map<String, Object> pluginRequest : pluginRequests) {
+            final String pluginId = (String)pluginRequest.remove("id");
+            if (pluginId == null) {
+              final String pluginPath = apiPath + "/plugins";
+              httpClient.post(pluginPath, pluginRequest);
+            } else {
+              final String pluginPath = apiPath + "/plugins/" + pluginId;
+              httpClient.patch(pluginPath, pluginRequest);
+            }
+            // TODO error handling
+          }
         }
         Json.writeJson(httpResponse, apiResponse);
       }
@@ -546,9 +637,9 @@ public class ApiService implements ServletContextListener {
     httpResponse.setContentType("application/json");
     try (
       PrintWriter writer = httpResponse.getWriter()) {
-      writer.print("{\"data\":{\"");
+      writer.print("{\"");
       writer.print(field);
-      writer.println("\": true}}");
+      writer.println("\": true}");
     }
   }
 }

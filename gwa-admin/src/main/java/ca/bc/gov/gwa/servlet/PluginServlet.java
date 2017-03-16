@@ -8,17 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = "/rest/plugins/*", loadOnStartup = 1)
-public class PluginServlet extends BaseServlet {
+public class PluginServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       this.apiService.pluginList(response);
     } else {
-      String schemaPath = "/plugins/schema" + pathInfo;
+      final String schemaPath = "/plugins/schema" + pathInfo;
       this.apiService.handleGet(request, response, schemaPath);
     }
   }

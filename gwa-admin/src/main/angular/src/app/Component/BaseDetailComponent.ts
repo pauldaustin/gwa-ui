@@ -53,7 +53,6 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
   }
   
   postSave(savedObject: T): void {
-    this.goBack();
   }
 
   protected saveDo(): Promise<T> {
@@ -67,11 +66,14 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
     }
   }
 
-  save(): void {
+  save(close : boolean = true): void {
    this.saveDo()
      .then((savedObject) => {
        if (savedObject != null) {
          this.postSave(savedObject);
+         if (close) {
+           this.routeList();
+         }
        }
      });
   }

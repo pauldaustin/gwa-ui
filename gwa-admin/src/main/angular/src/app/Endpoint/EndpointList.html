@@ -10,7 +10,7 @@
     [columnMode]="'force'"
     [headerHeight]="30"
     [footerHeight]="30"
-    [rowHeight]="42"
+    [rowHeight]="30"
     [externalPaging]="true"
     [count]="count"
     [offset]="offset"
@@ -25,12 +25,12 @@
   
   <template #urlT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
   
-  <template #uriT let-row="row" let-value="value"><a href="{{uri(value)}}">{{uri(value)}}</a></template>
+  <template #endpointUriT let-row="row" let-value="value"><a href="{{endpointUri(value)}}">{{endpointUri(value)}}</a></template>
   
   <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
   
   <template #actionsT let-row="row">
-    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+    <button (click)="deleteObject(row)" md-icon-button  style="color: red" *ngIf="hasRole('GWA_ADMIN') || row.config['created_by'] == userName">
       <md-icon>delete</md-icon>
     </button>
   </template>

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = "/rest/consumers/*", loadOnStartup = 1)
-public class ConsumerServlet extends BaseServlet {
+public class ConsumerServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   private static final List<String> CONSUMERS_FIELD_NAMES = Arrays.asList("id", "username",
@@ -20,7 +20,7 @@ public class ConsumerServlet extends BaseServlet {
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       if (pathInfo.lastIndexOf('/') == 0) {
@@ -35,7 +35,7 @@ public class ConsumerServlet extends BaseServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       this.apiService.handleList(request, response, "/consumers");
     } else {
       if (pathInfo.lastIndexOf('/') == 0) {
@@ -50,7 +50,7 @@ public class ConsumerServlet extends BaseServlet {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       this.apiService.handleAdd(request, response, "/consumers/", CONSUMERS_FIELD_NAMES);
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -61,7 +61,7 @@ public class ConsumerServlet extends BaseServlet {
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       if (pathInfo.lastIndexOf('/') == 0) {

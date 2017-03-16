@@ -141,11 +141,21 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getLabel(object: T): string {
-    if (object) {
-      return object[this.labelFieldName];
+    let fieldNames : string[];
+    if (this.labelFieldName) {
+      fieldNames = this.labelFieldName.split('.');
     } else {
-      return null;
+      fieldNames = [ this.idFieldName ];
     }
+    let value : any = object;
+    for (const fieldName of fieldNames) {
+      if (value == null) {
+        return null;
+      } else {
+        value = value[fieldName]
+      }
+    }
+    return value;
   }
   
   getObject(id: string): Promise<T> {

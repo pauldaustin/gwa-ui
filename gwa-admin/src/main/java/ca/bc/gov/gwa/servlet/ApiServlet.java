@@ -9,14 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = "/rest/apis/*", loadOnStartup = 1)
-public class ApiServlet extends BaseServlet {
+public class ApiServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       final String apiIdString = pathInfo.substring(1);
@@ -37,7 +37,7 @@ public class ApiServlet extends BaseServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       this.apiService.handleList(request, response, "/apis");
     } else {
       final String apiId = pathInfo.substring(1);
@@ -49,7 +49,7 @@ public class ApiServlet extends BaseServlet {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       final List<String> fieldNames = this.apiService.getApiFieldNames();
       this.apiService.handleAdd(request, response, "/apis", fieldNames);
     } else {
@@ -74,7 +74,7 @@ public class ApiServlet extends BaseServlet {
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (pathInfo == null || "/".equals(pathInfo)) {
+    if (hasPath(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       final String apiIdString = pathInfo.substring(1);

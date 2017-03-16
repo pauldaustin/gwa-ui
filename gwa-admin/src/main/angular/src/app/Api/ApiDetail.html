@@ -188,8 +188,9 @@
         </md-card-content>
 
         <md-card-actions>
-          <button (click)="goBack()" md-button>Cancel</button>
-          <button (click)="save()" md-raised-button color="primary" [disabled]="!apiForm.form.valid">Save</button>
+          <button (click)="routeList()" md-button>Close</button>
+          <button (click)="save(false)" md-raised-button color="accent" [disabled]="!apiForm.form.valid">Save</button>
+          <button (click)="save(true)" md-raised-button color="primary" [disabled]="!apiForm.form.valid">Save &amp; Close</button>
         </md-card-actions>
       </md-card>
     </form>

@@ -7,10 +7,10 @@ import {
 @Component({
   selector: 'message-dialog',
   template: `
-<h1 md-dialog-title>{{title}}?</h1>
+<h1 md-dialog-title>{{title}}</h1>
 <div md-dialog-content>{{message}}</div>
 <div md-dialog-actions>
-  <button md-button md-dialog-close>Close</button>
+  <button md-raised-button md-dialog-close color="primary">Close</button>
 </div>
   `,
 })
