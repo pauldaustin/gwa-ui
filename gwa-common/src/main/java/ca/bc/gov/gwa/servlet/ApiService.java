@@ -528,14 +528,14 @@ public class ApiService implements ServletContextListener {
       action.accept(httpClient);
     } catch (final HttpStatusException e) {
       if (e.getCode() == 503) {
-        writeJsonError(httpResponse, "Kong server not available");
+        writeJsonError(httpResponse, "Kong server not available", e);
       } else {
         writeJsonError(httpResponse, "Kong server returned an error");
       }
     } catch (final HttpHostConnectException e) {
       writeJsonError(httpResponse, "Kong server not available");
     } catch (final Throwable e) {
-      writeJsonError(httpResponse, "Kong server returned an error");
+      writeJsonError(httpResponse, "Unknown application error", e);
     }
   }
 
@@ -623,6 +623,18 @@ public class ApiService implements ServletContextListener {
 
   public void writeJsonError(final HttpServletResponse httpResponse, final String message)
     throws IOException {
+    httpResponse.setContentType("application/json");
+    try (
+      PrintWriter writer = httpResponse.getWriter()) {
+      writer.print("{\"error\":\"");
+      writer.print(message);
+      writer.println("\"}");
+    }
+  }
+
+  public void writeJsonError(final HttpServletResponse httpResponse, final String message,
+    final Throwable e) throws IOException {
+    LoggerFactory.getLogger(getClass()).error(message, e);
     httpResponse.setContentType("application/json");
     try (
       PrintWriter writer = httpResponse.getWriter()) {
