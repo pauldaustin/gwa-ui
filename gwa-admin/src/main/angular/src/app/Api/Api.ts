@@ -34,7 +34,7 @@ export class Api {
   // 0.10.x
   hosts : string[];
   uris : string[];
-//  methods : string;
+//  methods : string; getter function
   strip_uri : boolean = true;
   retries : number = 5;
   upstream_connect_timeout : number = 60000;
@@ -45,11 +45,6 @@ export class Api {
   
 
   // Custom but this needs to be moved
-  title : string;
-  created_by: string = "Unknown";
-  upstream_username: string;
-  upstream_password: string;
-  enabled: boolean = true;
   method_flags: Array<HttpMethodState> = [];
   _plugins: Array<Plugin> = [];
 
@@ -144,12 +139,6 @@ export class Api {
       http_if_terminated: this.http_if_terminated,
       
       plugins : this.plugins,
-      
-      title : this.title,
-      created_by: this.created_by,
-      upstream_username: this.upstream_username,
-      upstream_password: this.upstream_password,
-      enabled: this.enabled,
     };
   }
 }

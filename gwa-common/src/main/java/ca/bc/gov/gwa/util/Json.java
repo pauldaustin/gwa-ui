@@ -13,10 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import ca.bc.gov.gwa.util.JsonParser.EventType;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-
 public interface Json {
   static final String FILE_EXTENSION = "json";
 
@@ -44,6 +40,19 @@ public interface Json {
   static <V> V read(final String string) throws IOException {
     final StringReader reader = new StringReader(string);
     return (V)read(reader);
+  }
+
+  @SuppressWarnings("unchecked")
+  static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest) throws IOException {
+    try (
+      BufferedReader reader = httpRequest.getReader()) {
+      final Object data = read(reader);
+      if (data instanceof Map) {
+        return (Map<String, Object>)data;
+      } else {
+        return null;
+      }
+    }
   }
 
   static String toString(final Map<String, ? extends Object> values) {
@@ -76,67 +85,13 @@ public interface Json {
     return stringWriter.toString();
   }
 
-  static void writeJsonList(final Session session, final String query,
-    final HttpServletResponse response) throws IOException {
-    response.setContentType("application/json");
-    try (
-      PrintWriter writer = response.getWriter()) {
-      final ResultSet resultSet = session.execute(query);
-      writer.println("{\"data\":[");
-      boolean first = true;
-      for (final Row row : resultSet) {
-        if (first) {
-          first = false;
-        } else {
-          writer.println(',');
-        }
-        final String json = row.getString(0);
-        writer.print(json);
-      }
-      writer.println();
-      writer.println("]}");
-    }
-  }
-
-  static void writeJsonObject(final Session session, final String query,
-    final HttpServletResponse response) throws IOException {
-    final ResultSet resultSet = session.execute(query);
-    final Row row = resultSet.one();
-    if (row == null) {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    } else {
-      response.setContentType("application/json");
-      try (
-        PrintWriter writer = response.getWriter()) {
-        writer.println("{\"data\":");
-        final String json = row.getString(0);
-        writer.print(json);
-        writer.println("}");
-      }
-    }
-  }
-
-  static void writeJson(final HttpServletResponse httpResponse,
-    final Map<String, Object> data) throws IOException {
+  static void writeJson(final HttpServletResponse httpResponse, final Map<String, Object> data)
+    throws IOException {
     httpResponse.setContentType("application/json");
     try (
       PrintWriter writer = httpResponse.getWriter();
       JsonWriter jsonWriter = new JsonWriter(writer, false)) {
       jsonWriter.write(data);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest)
-    throws IOException {
-    try (
-      BufferedReader reader = httpRequest.getReader()) {
-      final Object data = read(reader);
-      if (data instanceof Map) {
-        return (Map<String, Object>)data;
-      } else {
-        return null;
-      }
     }
   }
 

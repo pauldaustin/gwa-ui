@@ -8,7 +8,7 @@ local responses = require "kong.tools.responses"
 local BcGovGwaHandler = BasePlugin:extend()
 
 function BcGovGwaHandler:new()
-  BcGovGwaHandler.super.new(self, "bcgov-gwa")
+  BcGovGwaHandler.super.new(self, "bcgov-gwa-endpoint")
 end
 
 function BcGovGwaHandler:access(conf)

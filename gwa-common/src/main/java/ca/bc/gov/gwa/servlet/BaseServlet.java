@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseServlet extends HttpServlet {
+  private static final long serialVersionUID = 1L;
 
   protected ApiService apiService;
 
@@ -31,7 +32,8 @@ public abstract class BaseServlet extends HttpServlet {
   }
 
   @Override
-  protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+  protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+    throws ServletException, IOException {
     try {
       super.service(req, resp);
     } catch (final Throwable e) {

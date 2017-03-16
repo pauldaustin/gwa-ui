@@ -1,9 +1,10 @@
 export class Field {
   name : string;
-  type : string;
+  fieldType : string;
   required : boolean = false;
-  default : any;
+  defaultValue : any;
   immutable : boolean = false;
   values : any[] = [];
   created_at : string;
+  disabled: boolean;
 }

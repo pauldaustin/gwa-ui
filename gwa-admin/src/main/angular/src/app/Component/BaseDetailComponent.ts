@@ -5,13 +5,18 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  FormBuilder
+  AbstractControl,
+  FormBuilder,
+  FormGroup
 } from '@angular/forms';
 import { Params } from '@angular/router';
 import { BaseComponent } from './BaseComponent';
 import { Service } from '../Service/Service';
 
 export class BaseDetailComponent<T> extends BaseComponent<T> {
+
+  form : FormGroup;
+
   id: string;
   
   idParamName : string = "id";
@@ -47,18 +52,23 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
     this.goBack();
   }
 
-  saveDo(): Promise<T> {
-    if (this.id) {
-      return this.service.updateObject(this.object);
-    } else {
-      return this.service.addObject(this.object);
+  protected saveDo(): Promise<T> {
+    return this.service.addOrUpdateObject(this.object);
+  }
+
+  protected saveValues(object : any, form : AbstractControl) {
+    for (const key in form.value) {
+      const value = form.value[key];
+      object[key] = value;
     }
   }
 
   save(): void {
    this.saveDo()
      .then((savedObject) => {
-       this.postSave(savedObject);
+       if (savedObject != null) {
+         this.postSave(savedObject);
+       }
      });
   }
   

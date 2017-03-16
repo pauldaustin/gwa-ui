@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.apache.http.client.methods.HttpUriRequest;
 
 public class HttpStatusException extends IOException {
+  private static final long serialVersionUID = 1L;
+
   private final int code;
 
   private final String body;

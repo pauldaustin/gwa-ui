@@ -1,13 +1,13 @@
 <md-tab-group *ngIf="object" [selectedIndex]=[tabIndex]>
   <md-tab>
     <template md-tab-label>
-      <span *ngIf="object.id" class="active">Api: {{object.name}}</span>
-      <span *ngIf="!object.id" class="active">Add API</span>
+      <span *ngIf="object.id" class="active">Endpoint: {{object.name}}</span>
+      <span *ngIf="!object.id" class="active">Add Endpoint</span>
     </template>
 
-    <form #apiForm="ngForm" class="form-horizontal" role="form">
+    <form #endpointForm="ngForm" class="form-horizontal" role="form">
       <md-card>
-        <md-card-content>
+        <md-card-content fxLayoutGap="2px">
           <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <md-input-container fxFlex>
               <input
@@ -19,7 +19,15 @@
                 pattern="[a-zA-Z][a-zA-Z0-9_\-]*"
               />
             </md-input-container>
-            <md-input-container fxFlex>
+            <md-input-container fxFlex *ngIf="object.created_by">
+              <input
+                mdInput
+                placeholder="Created By"
+                value="{{object.created_by}}"
+                disabled
+              />
+            </md-input-container>
+            <md-input-container fxFlex *ngIf="object.created_at">
               <input
                 mdInput
                 placeholder="Created At"
@@ -28,49 +36,26 @@
               />
             </md-input-container>
           </div>
-          <div *ngIf="oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <md-input-container class="full-width">
-              <input
-                fxFlex
-                mdInput
-                placeholder="Request Host" 
-                name="request_host"
-                [(ngModel)]="object.request_host"
-              />
-            </md-input-container>
-            <md-input-container class="full-width">
-              <input
-                fxFlex
-                mdInput
-                placeholder="Request Path" 
-                name="request_path"
-                [(ngModel)]="object.request_path"
-              />
-            </md-input-container>
-          </div>
-          <div fxLayout="row" *ngIf="!oldVersion">
-            <md-input-container class="full-width" fxFlex>
-              <input
-                mdInput
-                placeholder="Hosts" 
-                name="hosts"
-                [(ngModel)]="object.hosts"
-              />
-            </md-input-container>
-          </div>
-          <div fxLayout="row" *ngIf="!oldVersion">
+          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+            <md-select
+              fxFlex
+              placeholder="URI Template"
+              name="uri_template"
+              [(ngModel)]="object.uri_template"
+              required="true"
+            >
+              <md-option *ngFor="let value of endPointUriTemplates" [value]="value">{{value}}</md-option>
+            </md-select>
             <md-input-container fxFlex>
               <input
                 mdInput
-                placeholder="URIs" 
-                name="uris"
-                type="url"
-                [(ngModel)]="object.uris"
+                placeholder="URI" 
+                value="{{object.uri_template}}"
+                disabled="true"
               />
             </md-input-container>
           </div>
-
-          <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <md-slide-toggle
               name="https_only"
               [(ngModel)]="object.https_only"
@@ -84,7 +69,7 @@
               style="display: inline-block"
             >Http if Terminated</md-slide-toggle>
           </div>
-          <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <label>Methods:</label>
             <md-slide-toggle
               *ngFor="let methodFlag of object.method_flags"
@@ -95,20 +80,39 @@
             >{{methodFlag.name}}</md-slide-toggle>
           </div>
 
-          <fieldset>
+          <fieldset fxLayoutGap="2px">
             <legend>Upstream Service</legend>
-
-            <md-input-container class="full-width">
-              <input
-                mdInput
-                placeholder="Upstream URL" 
-                name="upstream_url"
-                type="url"
-                [(ngModel)]="object.upstream_url"
-              />
-            </md-input-container>
-
-            <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+  
+            <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign=" end" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+              <md-input-container class="full-width" fxFlex="50">
+                <input
+                  mdInput
+                  placeholder="Upstream URL" 
+                  name="upstream_url"
+                  type="url"
+                  [(ngModel)]="object.upstream_url"
+                />
+              </md-input-container>
+              <md-input-container class="full-width" fxFlex="25">
+                <input
+                  mdInput
+                  placeholder="Upstream Username" 
+                  name="upstream_username"
+                  type="text"
+                  [(ngModel)]="object.upstream_username"
+                />
+              </md-input-container>
+              <md-input-container class="full-width" fxFlex="25">
+                <input
+                  mdInput
+                  placeholder="Upstream Password" 
+                  name="upstream_password"
+                  type="password"
+                  [(ngModel)]="object.upstream_password"
+                />
+              </md-input-container>
+            </div>
+            <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
               <md-slide-toggle
                 fxFlex
                 name="preserve_host"
@@ -165,38 +169,15 @@
                 />
               </md-input-container>
             </div>
-
-
-            <div *ngIf="oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-              <md-slide-toggle
-                fxFlex
-                name="preserve_host"
-                [(ngModel)]="object.preserve_host"
-                color="primary"
-                style="display: inline-block"
-              >Preserve Host</md-slide-toggle>
-              <md-slide-toggle
-                fxFlex
-                name="strip_request_path"
-                [(ngModel)]="object.strip_request_path"
-                color="primary"
-              style="display: inline-block"
-              >Strip URI</md-slide-toggle>
-            </div>
           </fieldset>
-
         </md-card-content>
 
         <md-card-actions>
           <button (click)="goBack()" md-button>Cancel</button>
-          <button (click)="save()" md-raised-button color="primary" [disabled]="!apiForm.form.valid">Save</button>
+          <button (click)="save()" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save</button>
         </md-card-actions>
       </md-card>
     </form>
-  </md-tab>
-
-  <md-tab *ngIf="object.id" label="Plugins">
-    <api-plugin-list [api]="object"></api-plugin-list>
   </md-tab>
 
 </md-tab-group>

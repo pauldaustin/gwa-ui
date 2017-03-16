@@ -62,7 +62,7 @@ export class PluginService extends BaseService<Plugin> {
 
   updateObject(plugin: Plugin): Promise<Plugin> {
     return this.updateObjectDo(
-      `apis/${plugin.api.id}/plugins/${plugin.id}`,
+      `/apis/${plugin.api.name}/plugins/${plugin.id}`,
       plugin
     );
   }

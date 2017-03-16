@@ -8,7 +8,6 @@ import {
 
 import {
   FormControl,
-  FormGroup,
   Validators
 } from '@angular/forms';
 
@@ -30,16 +29,12 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   protected apiService: ApiService = this.injector.get(ApiService);
 
   api : Api;
-
-  form : FormGroup;
-  
-  formGroupConfig : FormGroup;
   
   groups = [
     {
       formGroupName: 'core',
       fields: [
-        {name: 'enabled', title: 'Enabled', type: 'checkbox'},
+        {name: 'enabled', title: 'Enabled', fieldType: 'checkbox'},
       ],
     }, {
       formGroupName: 'config',
@@ -58,11 +53,14 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
 
   setPluginName(name: string) {
     this.service.getPluginSchema(name).then((schema: any) => {
+      const formGroupConfig = this.formBuilder.group({});;
+      const config = this.object.config;
       let schemaFields : any = schema.fields;
       let fields : any[] = [];
+      this.groups[1].fields = fields;
       for (let name in schemaFields) {
         let schemaField = schemaFields[name];
-        let defaultValue = schemaField.default;
+        let defaultValue = schemaField['default'];
         if (defaultValue == null) {
           defaultValue = '';
         }
@@ -71,48 +69,56 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
           title: name,
           placeholder: name,
           required: schemaField.required,
-          type: schemaField.type,
-          default: schemaField.default 
+          fieldType: schemaField.type,
+          defaultValue: defaultValue,
         };
+        if (!(name in config)) {
+          config[name] = defaultValue;
+        }
         var formControl: FormControl;
         if (schemaField.required) {
           formControl = new FormControl(defaultValue, Validators.required);
         } else {
           formControl = new FormControl(defaultValue);
         }
-        this.formGroupConfig.addControl(name, formControl);
+        if (schemaField.readOnly) {
+          formControl.disabled = true;
+        }
+        formGroupConfig.addControl(name, formControl);
         if (schemaField.type == 'boolean') {
-          field['type'] = 'checkbox';
+          field.fieldType = 'checkbox';
         }
         if (schemaField.enum) {
-          field['type'] = 'select';
+          field.fieldType = 'select';
           field['values'] = schemaField.enum;
         }
         fields.push(field);
       }
-      this.groups[1].fields = fields;
-      this.form.patchValue({
+      
+      const form = this.formBuilder.group({
+        core: this.formBuilder.group({
+          enabled: true
+        }),
+        config: formGroupConfig
+      });
+
+      form.patchValue({
         core: {
           enabled: this.object.enabled
         },
-        config: this.object.config
+        config: config
       });
-     });
+      this.form = form;
+    });
+
   }
   
   ngOnInit(): void {
-    this.formGroupConfig = this.formBuilder.group({});
-    
-    this.form = this.formBuilder.group({
-      core: this.formBuilder.group({
-        enabled: true
-      }),
-      config: this.formGroupConfig
-    });
 
     this.route.params
       .switchMap((params: Params) => {
         this.name = params['name'];
+        this.id = this.name;
         return this.apiService.getObject(params['apiName']);
       })
       .subscribe((api : Api) => {
@@ -128,11 +134,18 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
           this.object.api = api;
           this.object.name = this.name;
         }
+        console.log(this.object);
         this.setPluginName(this.name);
      });
   }
 
   postSave(savedObject: Plugin): void {
     this.router.navigate(['/ui/apis', savedObject.api.name, {tabIndex: 1}]);
+  }
+  
+  protected saveDo(): Promise<Plugin> {
+    this.saveValues(this.object, this.form.controls['core']);
+    this.saveValues(this.object.config, this.form.controls['config']);
+    return super.saveDo();
   }
 }

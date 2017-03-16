@@ -25,7 +25,6 @@ import { RoleGuard } from './Authentication/RoleGuard';
 import { ApiAddComponent }  from './Api/ApiAddComponent';
 import { ApiDetailComponent }  from './Api/ApiDetailComponent';
 import { ApiListComponent }    from './Api/ApiListComponent';
-import { ApiListMyComponent }  from './Api/ApiListMyComponent';
 import { ApiService }          from './Api/ApiService';
 
 import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
@@ -37,6 +36,12 @@ import { ConsumerListComponent }     from './Consumer/ConsumerListComponent';
 import { ConsumerAddComponent }   from './Consumer/ConsumerAddComponent';
 import { ConsumerDetailComponent }   from './Consumer/ConsumerDetailComponent';
 import { ConsumerService }           from './Consumer/ConsumerService';
+
+import { EndpointAddComponent }  from './Endpoint/EndpointAddComponent';
+import { EndpointDetailComponent }  from './Endpoint/EndpointDetailComponent';
+import { EndpointListComponent }    from './Endpoint/EndpointListComponent';
+import { EndpointListMyComponent }  from './Endpoint/EndpointListMyComponent';
+import { EndpointService }          from './Endpoint/EndpointService';
 
 import { NodeListComponent }     from './Node/NodeListComponent';
 import { NodeService }           from './Node/NodeService';
@@ -58,6 +63,10 @@ import { AppRoutingModule }        from './app-routing.module';
     BcGovTemplateModule.forRoot({
         title: 'Gateway Admin',
         headerMenuItems: [
+          {
+            title: 'Endpoints',
+            routerLink: 'ui/endpoints'
+          },
           {
             title: 'APIs',
             routerLink: 'ui/apis'
@@ -84,29 +93,35 @@ import { AppRoutingModule }        from './app-routing.module';
     DeleteDialog
   ],
   declarations: [
+    DeleteDialog,
+    MessageDialog,
+    PageNotFoundComponent,
+
     ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,
-    ApiListMyComponent,
     ApiPluginListComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
     ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
-    DeleteDialog,
-    MessageDialog,
+    EndpointAddComponent,
+    EndpointDetailComponent,
+    EndpointListComponent,
+    EndpointListMyComponent,
     NodeListComponent,
-    PageNotFoundComponent,
     StatusDetailComponent
   ],
   providers: [
     AuthService,
     RoleGuard,
+
     ApiService,
-    PluginService,
     ConsumerService,
+    EndpointService,
     NodeService,
+    PluginService,
     StatusService
   ],
   bootstrap: [ BcGovTemplate ]

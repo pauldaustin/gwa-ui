@@ -3,6 +3,8 @@ export interface Service<T> {
 
   addObject(object: T): Promise<T>;
 
+  addOrUpdateObject(object: T): Promise<T>;
+
   deleteObject(object: T): Promise<boolean>;
 
   newObject(): T;

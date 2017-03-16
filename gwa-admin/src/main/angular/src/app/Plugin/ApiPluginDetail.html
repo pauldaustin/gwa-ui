@@ -1,4 +1,4 @@
-<md-tab-group *ngIf="object">
+<md-tab-group *ngIf="form">
   <md-tab>
     <template md-tab-label>Plugin: {{object.name}}</template>
  
@@ -8,36 +8,33 @@
         <md-card-content>
           <div *ngFor="let group of groups">
             <h2 *ngIf="group.title">{{group.title}}</h2>
-            <div [formGroupName]="group.formGroupName">
+            <fieldset [formGroupName]="group.formGroupName">
               <div *ngFor="let field of group.fields">
-                <div [ngSwitch]="field.type">
+                <div [ngSwitch]="field.fieldType">
                   <md-slide-toggle
                     *ngSwitchCase="'checkbox'"
                     [formControlName]="field.name"
-                    [disabled]="field.readOnly"
                     color="primary"
                   >{{field.name}}</md-slide-toggle>
                   <md-select *ngSwitchCase="'select'"
                     [placeholder]="field.name"
                     [formControlName]="field.name"
-                    [disabled]="field.readOnly"
                   >
-                    <option *ngFor="let value of field.values" [value]="value">{{value}}</option>
+                    <md-option *ngFor="let value of field.values" [value]="value">{{value}}</md-option>
                   </md-select>
                   <md-input-container *ngSwitchDefault class="full-width">
                     <input
                       mdInput
                       [placeholder]="field.name"
                       [name]="field.name"
-                      [type]="field.type"
+                      [type]="field.fieldType"
                       [required]="field.required"
                       [formControlName]="field.name"
-                      [disabled]="field.readOnly"
                     />
                   </md-input-container>
                 </div>
               </div>
-            </div>
+            </fieldset>
           </div>
         </md-card-content>
 

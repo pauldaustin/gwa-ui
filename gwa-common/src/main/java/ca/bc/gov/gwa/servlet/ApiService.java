@@ -6,19 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.ServletContextEvent;
@@ -35,16 +32,6 @@ import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.util.Json;
 
-import com.datastax.driver.core.ColumnDefinitions.Definition;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.querybuilder.Assignment;
-import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Update;
-
 @WebListener
 public class ApiService implements ServletContextListener {
 
@@ -56,6 +43,11 @@ public class ApiService implements ServletContextListener {
     "upstream_url", "preserve_host", "name", "hosts", "uris", "methods", "strip_uri", "retries",
     "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
     "http_if_terminated");
+
+  private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("name", "uri_template",
+    "created_by", "upstream_url", "upstream_username", "upstream_password");
+
+  public static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config");
 
   private static ApiService instance;
 
@@ -87,8 +79,6 @@ public class ApiService implements ServletContextListener {
   private String apisSuffix = ".apis.revolsys.com";
 
   private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
-
-  private final List<String> apiFieldNames = new ArrayList<>();
 
   private Map<String, Object> config = Collections.emptyMap();
 
@@ -138,94 +128,13 @@ public class ApiService implements ServletContextListener {
     return roles;
   }
 
-  public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-    final String userId) throws IOException {
-    // final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
-    // if (dataMap != null) {
-    // final String name = (String)dataMap.get("name");
-    // final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
-    // dataMap.put("hosts", hosts);
-    //
-    // final String apiId = apiCreateKong(httpResponse, dataMap);
-    // if (apiId == null) {
-    //
-    // } else {
-    // apiCreateCassandra(userId, dataMap, apiId);
-    // writeInserted(httpResponse, apiId);
-    // }
-    // }
-    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
-      handleRequest(httpRequest, httpResponse, (httpClient) -> {
-        final Map<String, Object> data = new LinkedHashMap<>();
-        for (final String key : getApiFieldNames()) {
-          final Object value = requestData.get(key);
-          if (value != null) {
-            data.put(key, value);
-          }
-        }
-        final String name = (String)data.get("name");
-        if (getVersion().startsWith("0.9")) {
-        } else {
-          @SuppressWarnings("unchecked")
-          List<String> hosts = (List<String>)data.get("hosts");
-          if (hosts == null || hosts.isEmpty()) {
-            hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
-            data.put("hosts", hosts);
-          }
-        }
-        final Map<String, Object> apiResponse = httpClient.post("/apis", data);
-        Json.writeJson(httpResponse, apiResponse);
-      });
-    }
-  }
-
-  private void apiCreateCassandra(final String userId, final Map<String, Object> dataMap,
-    final String apiId) {
-    final Insert insert = QueryBuilder.insertInto("gwa", "api");
-    insert.value("id", UUID.fromString(apiId));
-    insert.value("created_by", userId);
-    for (final String fieldName : this.apiFieldNames) {
-      if (!"created_by".equals(fieldName)) {
-        final Object value = dataMap.get(fieldName);
-        if (value != null) {
-          insert.value(fieldName, value);
-        }
+  private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
+    final List<String> fieldNames) {
+    for (final String key : fieldNames) {
+      final Object value = requestData.get(key);
+      if (value != null) {
+        data.put(key, value);
       }
-    }
-    // this.session.execute(insert);
-  }
-
-  private String apiCreateKong(final HttpServletResponse httpResponse,
-    final Map<String, Object> data) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, Object> apiData = new LinkedHashMap<>();
-      for (final String key : getApiFieldNames()) {
-        final Object value = data.get(key);
-        if (value != null) {
-          apiData.put(key, value);
-        }
-      }
-      final Map<String, Object> apiResponse = httpClient.post("/apis/", apiData);
-      return (String)apiResponse.get("id");
-    } catch (final IOException | RuntimeException e) {
-      logError("Error updating Api", e);
-    }
-    return null;
-  }
-
-  public void apiDelete(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String userId, final UUID apiId)
-    throws IOException {
-    handleDelete(httpRequest, httpResponse, userId);
-
-  }
-
-  public void apiDeleteKong(final UUID apiId) throws IOException {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      httpClient.delete("/apis/" + apiId);
     }
   }
 
@@ -245,216 +154,6 @@ public class ApiService implements ServletContextListener {
         Json.writeJson(httpResponse, apiResponse);
       }
     });
-  }
-
-  public void apiGetOld(final HttpServletResponse httpResponse, final String apiName)
-    throws IOException {
-    // final Map<String, Object> api = apiGet(httpResponse, apiName);
-    // if (api == null) {
-    // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-    // } else {
-    // final String apiId = (String)api.get("id");
-    // final ResultSet resultSet = this.session.execute("SELECT * FROM gwa.api WHERE id = " +
-    // apiId);
-    // final Row row = resultSet.one();
-    // setValues(api, row);
-    // writeJson(httpResponse, api);
-    // }
-  }
-
-  @SuppressWarnings("unchecked")
-  public void apiKeyCreate(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String userId, final String pathInfo) {
-    try {
-      final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
-      if (dataMap != null) {
-        final Map<String, Object> apiKeyData = (Map<String, Object>)dataMap.get("apiKey");
-        final String apiId = pathInfo.substring(1);
-        final Update update = QueryBuilder.update("gwa", "api");
-
-        // final UserType apiKeyType = this.node.getMetadata()
-        // .getKeyspace("gwa")
-        // .getUserType("api_key");
-        // final String userTitle = (String)apiKeyData.get("user_title");
-        // final UUID apiKeyId = UUIDs.random();
-        // final UDTValue apiKey = apiKeyType.newValue()
-        // .setUUID("id", apiKeyId)
-        // .setString("user_title", userTitle)
-        // .setBool("developer_key", false)
-        // .setBool("enabled", true);
-        //
-        // final Assignment append = QueryBuilder.append("api_keys", apiKey);
-        // update.with(append);
-        // final Clause equalId = QueryBuilder.eq("id", UUID.fromString(apiId));
-        // update.where(equalId);
-        // final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-        // update.onlyIf(equalCreatedBy);
-        // // this.session.execute(update);
-
-        httpResponse.setContentType("application/json");
-        try (
-          PrintWriter writer = httpResponse.getWriter()) {
-          writer.print("{\"data\":");
-          final Map<String, Object> apiKeyMap = new LinkedHashMap<>();
-          // apiKeyMap.put("id", apiKeyId);
-          // apiKeyMap.put("user_title", userTitle);
-          apiKeyMap.put("developer_key", false);
-          apiKeyMap.put("enabled", true);
-
-          final String string = Json.toString(apiKeyMap);
-          writer.print(string);
-          writer.println("}");
-        }
-      }
-    } catch (final Throwable e) {
-      logError("Error", e);
-    }
-  }
-
-  public void apiKeyDelete(final HttpServletResponse httpResponse, final String userId,
-    final UUID apiId, final UUID apiKeyId) throws IOException {
-    final Clause equalEndpointId = QueryBuilder.eq("id", apiId);
-    final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-    final UDTValue apiKey = null;
-    try {
-      // final Select select = QueryBuilder.select() //
-      // .from(this.apiTable);
-      // select.where()//
-      // .and(equalEndpointId)//
-      // .and(equalCreatedBy);
-      // final ResultSet resultSet = this.session.execute(select);
-      // final Row row = resultSet.one();
-      // if (row == null) {
-      // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-      // return;
-      // } else {
-      // final List<UDTValue> apiKeys = row.getList("api_keys", UDTValue.class);
-      // for (final UDTValue currentApiKey : apiKeys) {
-      // final UUID currentApiKeyId = currentApiKey.getUUID(0);
-      // if (currentApiKeyId.equals(apiKeyId)) {
-      // apiKey = currentApiKey;
-      // }
-      // }
-      // if (apiKey == null) {
-      // httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-      // return;
-      // }
-      // }
-    } catch (final Throwable e) {
-      final String message = "Error selecting Api key apiID=" + apiId + " apiKeyId=" + apiKeyId;
-      logError(message, e);
-      httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      return;
-    }
-    // final Update update = QueryBuilder.update(this.apiTable);
-    // update.with(QueryBuilder.discard("api_keys", apiKey));
-    // update.where(equalEndpointId);
-
-    try {
-      // this.session.execute(update);
-      writeJsonResponse(httpResponse, DELETED);
-    } catch (final DriverException e) {
-      final String message = "Error deleting Api key apiID=" + apiId + " apiKeyId=" + apiKeyId;
-      logError(message, e);
-      httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      return;
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  public void apiList(final HttpServletResponse httpResponse, final String userId,
-    final boolean all) throws IOException {
-    final Map<String, Row> rowsById = new HashMap<>();
-    // final ResultSet resultSet;
-    // if (all) {
-    // resultSet = this.session.execute("SELECT * FROM gwa.api");
-    // } else {
-    // resultSet = this.session.execute("SELECT * FROM gwa.api where created_by = ?", userId);
-    // }
-    //
-    // for (final Row row : resultSet) {
-    // final UUID apiId = row.getUUID("id");
-    // rowsById.put(apiId.toString(), row);
-    // }
-
-    final Map<String, Object> apiResponse = apiListKong(httpResponse);
-    final List<Map<String, Object>> apis = (List<Map<String, Object>>)apiResponse.get("data");
-    if (apis != null) {
-      for (final Iterator<Map<String, Object>> iterator = apis.iterator(); iterator.hasNext();) {
-        final Map<String, Object> api = iterator.next();
-        final String apiId = (String)api.get("id");
-        final Row row = rowsById.get(apiId);
-        if (row == null) {
-          if (!all) {
-            iterator.remove();
-          }
-        } else {
-          setValues(api, row);
-        }
-      }
-    }
-    Json.writeJson(httpResponse, apiResponse);
-  }
-
-  public Map<String, Object> apiListKong(final HttpServletResponse httpResponse) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, Object> apiData = httpClient.get("/apis");
-      return apiData;
-    } catch (final IOException | RuntimeException e) {
-      logError("Error querying APIs", e);
-    }
-    return Collections.emptyMap();
-  }
-
-  public void apiUpdate(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String userId, final String pathInfo)
-    throws IOException {
-    final Map<String, Object> dataMap = Json.readJsonMap(httpRequest);
-    if (dataMap != null) {
-      final String apiId = pathInfo.substring(1);
-      apiUpdateCassandra(apiId, userId, dataMap);
-
-      apiUpdateKong(httpResponse, apiId, dataMap);
-    }
-  }
-
-  private UUID apiUpdateCassandra(final String apiIdString, final String userId,
-    final Map<String, Object> dataMap) {
-    final Update update = QueryBuilder.update("gwa", "api");
-    for (final String fieldName : this.apiFieldNames) {
-      final Object value = dataMap.get(fieldName);
-      final Assignment set = QueryBuilder.set(fieldName, value);
-      update.with(set);
-    }
-
-    final UUID apiId = UUID.fromString(apiIdString);
-    final Clause equalId = QueryBuilder.eq("id", apiId);
-    update.where(equalId);
-    final Clause equalCreatedBy = QueryBuilder.eq("created_by", userId);
-    update.onlyIf(equalCreatedBy);
-    // this.session.execute(update);
-    return apiId;
-  }
-
-  private void apiUpdateKong(final HttpServletResponse httpResponse, final String apiId,
-    final Map<String, Object> data) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, Object> apiData = new LinkedHashMap<>();
-      for (final String key : getApiFieldNames()) {
-        final Object value = data.get(key);
-        if (value != null) {
-          apiData.put(key, value);
-        }
-      }
-      final String name = (String)data.get("name");
-      final List<String> hosts = Arrays.asList(name + this.apisSuffix, name + this.appsSuffix);
-      apiData.put("hosts", hosts);
-      final Map<String, Object> apiResponse = httpClient.patch("/apis/" + apiId, apiData);
-    } catch (final IOException | RuntimeException e) {
-      logError("Error updating Api", e);
-    }
   }
 
   public void close() {
@@ -516,6 +215,52 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public void endpointAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String userId) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+      if (requestData != null) {
+        final List<String> apiFieldNames = getApiFieldNames();
+        final Map<String, Object> apiRequest = getMap(requestData, apiFieldNames);
+        final Map<String, Object> endPoint = (Map<String, Object>)requestData.get("endPoint");
+        addData(endPoint, requestData, ENDPOINT_FIELD_NAMES);
+
+        final String uriTemplate = (String)endPoint.get("uri_template");
+        final String name = (String)apiRequest.get("name");
+        final String uri = uriTemplate.replace("{name}", name);
+        final int index1 = uri.indexOf("//");
+        final int index2 = uri.indexOf("/", index1 + 2);
+        String host;
+        if (index2 == -1) {
+          host = uri.substring(index1 + 2);
+        } else {
+          host = uri.substring(index1 + 2, index2);
+          final String uriPrefix = uri.substring(index2);
+          if (uriPrefix.length() > 1) {
+            final List<String> uris = Arrays.asList(uriPrefix);
+            apiRequest.put("uris", uris);
+          }
+        }
+        final List<String> hosts = Arrays.asList(host);
+        apiRequest.put("hosts", hosts);
+
+        final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
+        final String id = (String)apiResponse.get("id");
+        if (id != null) {
+          final Map<String, Object> pluginConfig = getMap(requestData, ENDPOINT_FIELD_NAMES);
+          pluginConfig.put("created_by", userId);
+          final Map<String, Object> endPointRequest = new LinkedHashMap<>();
+          endPointRequest.put("name", "bcgov-gwa-endpoint");
+          endPointRequest.put("config", endPoint);
+          final String pluginPath = "/apis/" + id + "/plugins";
+          httpClient.post(pluginPath, endPointRequest);
+
+        }
+        Json.writeJson(httpResponse, apiResponse);
+      }
+    });
+  }
+
   public List<String> getApiFieldNames() {
     final String version = getVersion();
     if (version.startsWith("0.9")) {
@@ -545,6 +290,13 @@ public class ApiService implements ServletContextListener {
     } else {
       return value;
     }
+  }
+
+  private Map<String, Object> getMap(final Map<String, Object> requestData,
+    final List<String> fieldNames) {
+    final Map<String, Object> data = new LinkedHashMap<>();
+    addData(data, requestData, fieldNames);
+    return data;
   }
 
   public String getVersion() {
@@ -585,13 +337,7 @@ public class ApiService implements ServletContextListener {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
     if (requestData != null) {
       handleRequest(httpRequest, httpResponse, (httpClient) -> {
-        final Map<String, Object> insertData = new LinkedHashMap<>();
-        for (final String key : fieldNames) {
-          final Object value = requestData.get(key);
-          if (value != null) {
-            insertData.put(key, value);
-          }
-        }
+        final Map<String, Object> insertData = getMap(requestData, fieldNames);
         final Map<String, Object> apiResponse = httpClient.post(path, insertData);
         Json.writeJson(httpResponse, apiResponse);
       });
@@ -618,7 +364,15 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse, final String path) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
       final String limit = httpRequest.getParameter("limit");
-      String url = this.kongAdminUrl + path + "?size=" + limit;
+      final StringBuilder url = new StringBuilder(this.kongAdminUrl);
+      url.append(path);
+      if (path.indexOf('?') == -1) {
+        url.append('?');
+      } else {
+        url.append('&');
+      }
+      url.append("size=");
+      url.append(limit);
       final String offset = httpRequest.getParameter("offset");
       int offsetPage = 0;
       if (offset != null) {
@@ -630,12 +384,16 @@ public class ApiService implements ServletContextListener {
       final String filterFieldName = httpRequest.getParameter("filterFieldName");
       final String filterValue = httpRequest.getParameter("filterValue");
       if (filterFieldName != null && filterValue != null) {
-        url += "&" + filterFieldName + "=" + filterValue;
+        url.append('&');
+        url.append(filterFieldName);
+        url.append('=');
+        url.append(filterValue);
       }
       Map<String, Object> kongResponse = Collections.emptyMap();
+      String urlString = url.toString();
       do {
-        kongResponse = httpClient.getByUrl(url);
-        url = (String)kongResponse.remove("next");
+        kongResponse = httpClient.getByUrl(urlString);
+        urlString = (String)kongResponse.remove("next");
       } while (url != null && offsetPage-- > 0);
       Json.writeJson(httpResponse, kongResponse);
     });
@@ -668,68 +426,47 @@ public class ApiService implements ServletContextListener {
       if (requestData == null) {
         httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
       } else {
-        final Map<String, Object> updateData = new LinkedHashMap<>();
-        for (final String key : fieldNames) {
-          final Object value = requestData.get(key);
-          if (value != null) {
-            updateData.put(key, value);
-          }
-        }
+        final Map<String, Object> updateData = getMap(requestData, fieldNames);
         httpClient.patch(path, updateData);
         writeJsonResponse(httpResponse, UPDATED);
       }
     });
   }
 
-  public void handleUpdatePut(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String path) throws IOException {
-    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
-      try (
-        JsonHttpClient httpClient = newKongClient()) {
-        @SuppressWarnings("unused")
-        final Map<String, Object> kongResponse = httpClient.put(path, requestData);
-        writeJsonResponse(httpResponse, UPDATED);
-      } catch (final IOException | RuntimeException e) {
-        logError("Error updating: " + path, e);
-      }
-    }
-  }
-
-  private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
-    final String apiId) throws IOException {
-    final Map<String, Object> config = new LinkedHashMap<>();
-    final Map<String, Object> add = new LinkedHashMap<>();
-    final List<String> headers = new ArrayList<>();
-
-    final String upstreamUsername = row.getString("upstream_username");
-    final String upstreamPassword = row.getString("upstream_password");
-    if (upstreamUsername != null) {
-      String userAndPassword;
-      if (upstreamPassword == null) {
-        userAndPassword = upstreamUsername + ":";
-      } else {
-        userAndPassword = upstreamUsername + ":" + upstreamPassword;
-      }
-      final byte[] userAndPasswordBytes = userAndPassword.getBytes();
-      final String authorization = "Authorization:Basic "
-        + BASE_64_ENCODER.encodeToString(userAndPasswordBytes);
-      headers.add(authorization);
-    }
-    if (!headers.isEmpty()) {
-      add.put("headers", headers);
-    }
-    if (!add.isEmpty()) {
-      config.put("add", add);
-    }
-    if (!config.isEmpty()) {
-      final Map<String, Object> requestTransformations = new LinkedHashMap<>();
-      requestTransformations.put("name", "request-transformer");
-      requestTransformations.put("config", config);
-      final String path = "/apis/" + apiId + "/plugins";
-      httpClient.post(path, requestTransformations);
-    }
-  }
+  // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
+  // final String apiId) throws IOException {
+  // final Map<String, Object> config = new LinkedHashMap<>();
+  // final Map<String, Object> add = new LinkedHashMap<>();
+  // final List<String> headers = new ArrayList<>();
+  //
+  // final String upstreamUsername = row.getString("upstream_username");
+  // final String upstreamPassword = row.getString("upstream_password");
+  // if (upstreamUsername != null) {
+  // String userAndPassword;
+  // if (upstreamPassword == null) {
+  // userAndPassword = upstreamUsername + ":";
+  // } else {
+  // userAndPassword = upstreamUsername + ":" + upstreamPassword;
+  // }
+  // final byte[] userAndPasswordBytes = userAndPassword.getBytes();
+  // final String authorization = "Authorization:Basic "
+  // + BASE_64_ENCODER.encodeToString(userAndPasswordBytes);
+  // headers.add(authorization);
+  // }
+  // if (!headers.isEmpty()) {
+  // add.put("headers", headers);
+  // }
+  // if (!add.isEmpty()) {
+  // config.put("add", add);
+  // }
+  // if (!config.isEmpty()) {
+  // final Map<String, Object> requestTransformations = new LinkedHashMap<>();
+  // requestTransformations.put("name", "request-transformer");
+  // requestTransformations.put("config", config);
+  // final String path = "/apis/" + apiId + "/plugins";
+  // httpClient.post(path, requestTransformations);
+  // }
+  // }
 
   public void logError(final String message, final Throwable e) {
     final Class<?> clazz = getClass();
@@ -749,18 +486,6 @@ public class ApiService implements ServletContextListener {
       Collections.sort(pluginNames);
       Json.writeJson(httpResponse, pluginResponse);
     });
-  }
-
-  private void setValues(final Map<String, Object> map, final Row row) {
-    if (row != null) {
-      for (final Definition columnDefinition : row.getColumnDefinitions()) {
-        final String name = columnDefinition.getName();
-        if (!map.containsKey(name) && !row.isNull(name)) {
-          final Object value = row.getObject(name);
-          map.put(name, value);
-        }
-      }
-    }
   }
 
   public void writeInserted(final HttpServletResponse httpResponse, final String id)
