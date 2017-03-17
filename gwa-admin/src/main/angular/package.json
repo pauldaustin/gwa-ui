@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Gateway Admin",
   "scripts": {
-    "build": "cp -r src/ build/; tsc -p build/"
+    "build": "rm -r build ; cp -r src build; tsc -p build/"
   },
   "private": true,
   "keywords": [],
