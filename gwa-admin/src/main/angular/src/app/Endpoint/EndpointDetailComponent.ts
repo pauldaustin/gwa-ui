@@ -12,24 +12,20 @@ import { Plugin } from '../Plugin/Plugin';
   templateUrl: 'app/Endpoint/EndpointDetail.html'
 })
 export class EndpointDetailComponent extends BaseDetailComponent<Api> {
-  endPoint : Plugin;
+  endpoint : Plugin;
 
   rateLimit : Plugin;
  
   constructor(
     protected injector:Injector,
-    public endPointService: EndpointService
+    public endpointService: EndpointService
   ) {
-    super(injector, endPointService);
+    super(injector, endpointService);
     this.idParamName = 'name';
-  }
-  
-  get endPointUriTemplates() : string[] {
-    return this.endPointService.endPointUriTemplates;
   }
 
   protected setObject(object : Api) {
-    this.endPoint = object.plugin('bcgov-gwa-endpoint');
+    this.endpoint = object.plugin('bcgov-gwa-endpoint');
     let rateLimit = object.plugin('rate-limiting');
     if (rateLimit == null) {
       rateLimit = new Plugin();
@@ -50,7 +46,7 @@ export class EndpointDetailComponent extends BaseDetailComponent<Api> {
 
   endpointUri() : string {
     return Api.uri(
-      this.endPoint.config['uri_template'],
+      this.endpoint.config['uri_template'],
       this.object.name
     );
   }

@@ -48,7 +48,7 @@ public class ApiService implements ServletContextListener {
     "http_if_terminated");
 
   private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("name", "uri_template",
-    "created_by", "upstream_url", "upstream_username", "upstream_password");
+    "created_by", "upstream_url");
 
   private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
     "hour", "minute", "day", "month", "year");
@@ -98,16 +98,15 @@ public class ApiService implements ServletContextListener {
     final Set<String> roles = new TreeSet<>();
     try (
       JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, Object> consumerResponse = httpClient
-        .get("/consumers/?custom_id=" + userId);
-      final List<Map<String, Object>> consumers = (List<Map<String, Object>>)consumerResponse
-        .get("data");
       String id = null;
-      if (consumers != null && consumers.size() > 0) {
-        final Map<String, Object> consumer = consumers.get(0);
-        id = (String)consumer.get("id");
+      {
+        final String customIdFilter = "/consumers/?custom_id=" + userId;
+        id = consumerGet(httpClient, customIdFilter);
       }
-
+      if (id == null) {
+        final String usernameFilter = "/consumers/?username=" + name;
+        id = consumerGet(httpClient, usernameFilter);
+      }
       {
         final Map<String, Object> consumerRequest = new HashMap<>();
         consumerRequest.put("custom_id", userId);
@@ -168,6 +167,21 @@ public class ApiService implements ServletContextListener {
 
   public void close() {
 
+  }
+
+  protected String consumerGet(final JsonHttpClient httpClient, final String filter)
+    throws IOException {
+    String id;
+    final Map<String, Object> consumerResponse = httpClient.get(filter);
+    final List<Map<String, Object>> consumers = (List<Map<String, Object>>)consumerResponse
+      .get("data");
+    if (consumers != null && consumers.size() > 0) {
+      final Map<String, Object> consumer = consumers.get(0);
+      id = (String)consumer.get("id");
+    } else {
+      id = null;
+    }
+    return id;
   }
 
   @Override

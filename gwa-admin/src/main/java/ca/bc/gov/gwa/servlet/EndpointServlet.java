@@ -14,14 +14,7 @@ public class EndpointServlet extends BaseServlet {
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else if (pathInfo.indexOf('/', 1) == -1) {
-      this.apiService.endpointDelete(request, response, pathInfo);
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
+    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
   }
 
   @Override
@@ -30,22 +23,18 @@ public class EndpointServlet extends BaseServlet {
     final String pathInfo = request.getPathInfo();
     if (hasPath(pathInfo)) {
       this.apiService.handleList(request, response, "/plugins?name=bcgov-gwa-endpoint");
-    } else {
+    } else if (pathInfo.indexOf('/', 1) == -1) {
       final String apiId = pathInfo.substring(1);
       this.apiService.apiGet(request, response, apiId);
+    } else {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      this.apiService.endpointAdd(request, response, userId);
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
+    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
   }
 
   @Override
@@ -55,9 +44,10 @@ public class EndpointServlet extends BaseServlet {
     final String pathInfo = request.getPathInfo();
     if (hasPath(pathInfo)) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
+    } else if (pathInfo.indexOf('/', 1) == -1) {
       this.apiService.endpointUpdate(request, response, userId);
-
+    } else {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 }

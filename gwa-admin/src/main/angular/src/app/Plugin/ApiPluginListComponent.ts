@@ -7,9 +7,7 @@ import {
 import { BaseListComponent }  from '../Component/BaseListComponent';
 
 import { Api } from '../Api/Api';
-
 import { Plugin } from './Plugin';
-
 import { PluginService }  from './PluginService';
 
 @Component({
@@ -17,7 +15,7 @@ import { PluginService }  from './PluginService';
   templateUrl: 'app/Plugin/ApiPluginList.html'
 })
 export class ApiPluginListComponent extends BaseListComponent<Plugin> {
-  @Input() api: Api;
+  api: Api;
     
   pluginNames: string[];
     
@@ -37,6 +35,12 @@ export class ApiPluginListComponent extends BaseListComponent<Plugin> {
   }
 
   ngOnInit(): void {
+    this.route.parent.data
+      .subscribe((data: { api: Api }) => {
+        this.api = data.api;
+        this.refresh();
+      }
+    );
     this.columns = [
       { name: 'Name', cellTemplate: this.idTemplate },
       { name: 'Enabled', cellTemplate: this.flagTemplate },
@@ -46,6 +50,8 @@ export class ApiPluginListComponent extends BaseListComponent<Plugin> {
   }
 
   refresh() {
-    this.rows = this.api.plugins;
+    if (this.api) {
+      this.rows = this.api.plugins;
+    }
   }
 }

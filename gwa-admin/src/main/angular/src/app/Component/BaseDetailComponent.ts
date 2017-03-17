@@ -1,6 +1,7 @@
 import 'rxjs/add/operator/toPromise';
 import {
   Injector,
+  Input,
   TemplateRef,
   ViewChild
 } from '@angular/core';
@@ -14,6 +15,8 @@ import { BaseComponent } from './BaseComponent';
 import { Service } from '../Service/Service';
 
 export class BaseDetailComponent<T> extends BaseComponent<T> {
+  @Input()
+  addPage : boolean = false;
 
   form : FormGroup;
 
@@ -22,8 +25,6 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
   idParamName : string = "id";
   
   object: T;
-
-  tabIndex : number = 0;
 
   protected formBuilder: FormBuilder = this.injector.get(FormBuilder);
 
@@ -34,9 +35,6 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
   ngOnInit() {
     this.route.params
       .switchMap((params: Params) => {
-        if (params['tabIndex']) {
-          this.tabIndex = params['tabIndex'];
-        }
         this.id = params[this.idParamName];
         if (this.id) {
           return this.service.getObject(this.id);

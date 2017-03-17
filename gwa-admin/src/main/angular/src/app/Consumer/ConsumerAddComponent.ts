@@ -1,26 +1,14 @@
-import {
-  Component, 
-  Injector
-} from '@angular/core';
-import { Consumer } from './Consumer';
-import { ConsumerService } from './ConsumerService';
-import { ConsumerDetailComponent } from './ConsumerDetailComponent';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'consumer-add',
-  templateUrl: 'app/Consumer/ConsumerDetail.html'
+  template: `
+<md-tab-group>
+  <md-tab label="Add Consumer">
+    <consumer-view addPage="true"></consumer-view>
+  </md-tab>
+</md-tab-group>
+  `
 })
-export class ConsumerAddComponent extends ConsumerDetailComponent {
-
-  constructor(
-    protected injector:Injector,
-    protected service: ConsumerService
-  ) {
-    super(injector, service);
-  }
-
-  postSave(savedConsumer: Consumer): void {
-    this.router.navigate(['/ui/consumers', savedConsumer.username]);
-  }
-
+export class ConsumerAddComponent  {
 }

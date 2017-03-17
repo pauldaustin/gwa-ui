@@ -29,20 +29,23 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected location: Location = this.injector.get(Location);
 
+  protected path : string;
+
+  protected typeTitle : string;
+
+  protected labelFieldName : string;
+
+  protected idFieldName : string = "id";
+
   dialog: MdDialog = this.injector.get(MdDialog);
 
-  
   private jsonHeaders = {
     headers: new Headers({ 'Content-Type': 'application/json' })
   };
 
   constructor(
     protected injector : Injector,
-    protected path? : string,
-    protected typeTitle? : string,
-    protected labelFieldName? : string,
-    protected idFieldName : string = "id"
-  ) {
+   ) {
   }
 
   addObject(object: T): Promise<T> {
@@ -141,11 +144,21 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getLabel(object: T): string {
-    if (object) {
-      return object[this.labelFieldName];
+    let fieldNames : string[];
+    if (this.labelFieldName) {
+      fieldNames = this.labelFieldName.split('.');
     } else {
-      return null;
+      fieldNames = [ this.idFieldName ];
     }
+    let value : any = object;
+    for (const fieldName of fieldNames) {
+      if (value == null) {
+        return null;
+      } else {
+        value = value[fieldName]
+      }
+    }
+    return value;
   }
   
   getObject(id: string): Promise<T> {

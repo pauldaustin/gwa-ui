@@ -1,26 +1,14 @@
-import {
-  Component, 
-  Injector
-} from '@angular/core';
-import { Api } from './Api';
-import { ApiService } from './ApiService';
-import { ApiDetailComponent } from './ApiDetailComponent';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'api-add',
-  templateUrl: 'app/Api/ApiDetail.html'
+  template: `
+<md-tab-group>
+  <md-tab label="Add API">
+    <api-view addPage="true"></api-view>
+  </md-tab>
+</md-tab-group>
+  `
 })
-export class ApiAddComponent extends ApiDetailComponent {
-
-  constructor(
-    protected injector:Injector,
-    protected service: ApiService
-  ) {
-    super(injector, service);
-  }
-
-  postSave(savedApi: Api): void {
-    this.router.navigate(['/ui/apis', savedApi.name]);
-  }
-
+export class ApiAddComponent  {
 }

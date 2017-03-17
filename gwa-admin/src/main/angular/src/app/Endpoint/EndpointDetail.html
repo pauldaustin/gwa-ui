@@ -19,7 +19,7 @@
                 pattern="[a-zA-Z][a-zA-Z0-9_\-]*"
               />
             </md-input-container>
-            <md-input-container fxFlex *ngIf="object.created_by">
+            <md-input-container fxFlex *ngIf="endpoint.config.created_by">
               <input
                 mdInput
                 placeholder="Created By"
@@ -38,134 +38,12 @@
           </div>
 
           <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <md-select
-              fxFlex
-              placeholder="URI Template"
-              name="uri_template"
-              [(ngModel)]="endPoint.config.uri_template"
-              required="true"
-            >
-              <md-option *ngFor="let value of endPointUriTemplates" [value]="value">{{value}}</md-option>
-            </md-select>
             <md-input-container fxFlex>
               <input
                 mdInput
                 placeholder="URI" 
                 value="{{endpointUri()}}"
                 disabled="true"
-              />
-            </md-input-container>
-          </div>
-
-          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign=" end" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <md-input-container class="full-width" fxFlex="50">
-              <input
-                mdInput
-                placeholder="Upstream URL" 
-                name="upstream_url"
-                type="url"
-                required="true"
-                [(ngModel)]="object.upstream_url"
-              />
-            </md-input-container>
-            <md-input-container class="full-width" fxFlex="25">
-              <input
-                mdInput
-                placeholder="Upstream Username" 
-                name="upstream_username"
-                type="text"
-                [(ngModel)]="endPoint.config.upstream_username"
-              />
-            </md-input-container>
-            <md-input-container class="full-width" fxFlex="25">
-              <input
-                mdInput
-                placeholder="Upstream Password" 
-                name="upstream_password"
-                type="password"
-                [(ngModel)]="endPoint.config.upstream_password"
-              />
-            </md-input-container>
-          </div>
-
-          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <md-slide-toggle
-              name="https_only"
-              [(ngModel)]="object.https_only"
-              color="primary"
-              style="display: inline-block"
-            >Https Only</md-slide-toggle>
-            <md-slide-toggle
-              name="http_if_terminated"
-              [(ngModel)]="object.http_if_terminated"
-              color="primary"
-              style="display: inline-block"
-            >Http if Terminated</md-slide-toggle>
-          </div>
-          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <label>Methods:</label>
-            <md-slide-toggle
-              *ngFor="let methodFlag of object.method_flags"
-              [checked]="methodFlag.enabled"
-              (change)="methodFlag.enabled = $event.checked"
-              color="primary"
-              style="display: inline-block"
-            >{{methodFlag.name}}</md-slide-toggle>
-          </div>
-          <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-            <md-slide-toggle
-              fxFlex
-              name="preserve_host"
-              [(ngModel)]="object.preserve_host"
-              color="primary"
-              style="display: inline-block"
-            >Preserve Host</md-slide-toggle>
-            <md-slide-toggle
-              fxFlex
-              name="strip_uri"
-              [(ngModel)]="object.strip_uri"
-              color="primary"
-            style="display: inline-block"
-            >Strip URI</md-slide-toggle>
-            <md-input-container fxFlex>
-              <input
-                mdInput
-                placeholder="Retries" 
-                name="retries"
-                type="number"
-                min="0"
-                max="32767"
-                [(ngModel)]="object.retries"
-              />
-            </md-input-container>
-            <md-input-container fxFlex>
-              <input
-                mdInput
-                placeholder="Connect Timeout" 
-                name="upstream_connect_timeout"
-                type="number"
-                min="0"
-                [(ngModel)]="object.upstream_connect_timeout"
-              />
-            </md-input-container>
-            <md-input-container fxFlex>
-              <input
-                mdInput
-                placeholder="Send Timeout" 
-                name="upstream_send_timeout"
-                type="number"
-                min="0"
-                [(ngModel)]="object.upstream_send_timeout"
-              />
-            </md-input-container>
-            <md-input-container fxFlex>
-              <input
-                mdInput
-                placeholder="Read Timeout" 
-                name="upstream_read_timeout"
-                type="number"
-                min="0"
-                [(ngModel)]="object.upstream_read_timeout"
               />
             </md-input-container>
           </div>

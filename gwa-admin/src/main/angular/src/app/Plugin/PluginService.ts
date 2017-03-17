@@ -12,6 +12,7 @@ export class PluginService extends BaseService<Plugin> {
 
   constructor(injector:Injector) {
     super(injector);
+    this.path = '/apis/${apiName}/plugins'
   }
 
   getPluginNames(): Promise<string[]> {

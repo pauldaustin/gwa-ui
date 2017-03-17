@@ -11,12 +11,10 @@ import { ApiKey } from './ApiKey';
 export class ApiKeyService extends BaseService<ApiKey> {
  
   constructor(injector:Injector) {
-    super(
-      injector,
-      '/apiKeys',
-      'Api Key',
-      'key'
-    );
+    super(injector);
+    this.path = `/apiKeys`;
+    this.typeTitle = 'API Key';
+    this.labelFieldName = 'key';
   }
 
   

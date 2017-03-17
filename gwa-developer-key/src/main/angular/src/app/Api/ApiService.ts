@@ -11,12 +11,10 @@ import { Api } from './Api';
 export class ApiService extends BaseService<Api> {
  
   constructor(injector:Injector) {
-    super(
-      injector,
-      '/apis',
-      'API',
-      'group'
-    );
+    super(injector);
+    this.path = `/apis`;
+    this.typeTitle = 'API';
+    this.labelFieldName = 'group';
   }
 
   addObject(application: Api): Promise<Api> {

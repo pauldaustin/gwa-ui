@@ -22,10 +22,12 @@ import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { AuthService } from './Authentication/AuthService';
 import { RoleGuard } from './Authentication/RoleGuard';
 
-import { ApiAddComponent }  from './Api/ApiAddComponent';
-import { ApiDetailComponent }  from './Api/ApiDetailComponent';
-import { ApiListComponent }    from './Api/ApiListComponent';
-import { ApiService }          from './Api/ApiService';
+import { ApiListComponent } from './Api/ApiListComponent';
+import { ApiAddComponent } from './Api/ApiAddComponent';
+import { ApiDetailComponent } from './Api/ApiDetailComponent';
+import { ApiViewComponent } from './Api/ApiViewComponent';
+import { ApiService } from './Api/ApiService';
+import { ApiResolver } from './Api/ApiResolver';
 
 import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent }   from './Plugin/ApiPluginDetailComponent';
@@ -35,9 +37,10 @@ import { PluginService }           from './Plugin/PluginService';
 import { ConsumerListComponent }     from './Consumer/ConsumerListComponent';
 import { ConsumerAddComponent }   from './Consumer/ConsumerAddComponent';
 import { ConsumerDetailComponent }   from './Consumer/ConsumerDetailComponent';
+import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
 import { ConsumerService }           from './Consumer/ConsumerService';
+import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
-import { EndpointAddComponent }  from './Endpoint/EndpointAddComponent';
 import { EndpointDetailComponent }  from './Endpoint/EndpointDetailComponent';
 import { EndpointListComponent }    from './Endpoint/EndpointListComponent';
 import { EndpointService }          from './Endpoint/EndpointService';
@@ -99,13 +102,14 @@ import { AppRoutingModule }        from './app-routing.module';
     ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,
+    ApiViewComponent,
     ApiPluginListComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
     ConsumerAddComponent,
     ConsumerListComponent,
     ConsumerDetailComponent,
-    EndpointAddComponent,
+    ConsumerViewComponent,
     EndpointDetailComponent,
     EndpointListComponent,
     NodeListComponent,
@@ -116,7 +120,9 @@ import { AppRoutingModule }        from './app-routing.module';
     RoleGuard,
 
     ApiService,
+    ApiResolver,
     ConsumerService,
+    ConsumerResolver,
     EndpointService,
     NodeService,
     PluginService,

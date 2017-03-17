@@ -14,10 +14,13 @@ import {
   Router
 } from '@angular/router';
 
+import { AuthService } from '../Authentication/AuthService';
 import { Service } from '../Service/Service';
 import { MessageDialog } from '../Component/MessageDialog';
 
 export class BaseComponent<T> implements OnInit {
+
+  protected authService: AuthService = this.injector.get(AuthService);
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
@@ -31,6 +34,7 @@ export class BaseComponent<T> implements OnInit {
     protected injector:Injector,
     protected service: Service<T>
   ) {
+    
   }
     
   ngOnInit(): void {
@@ -47,5 +51,13 @@ export class BaseComponent<T> implements OnInit {
         message: message,
       }
     });
+  }
+
+  hasRole(role : string) : boolean {
+    return this.authService.hasRole(role);
+  }
+
+  get userName() : string {
+    return this.authService.userName;
   }
 }

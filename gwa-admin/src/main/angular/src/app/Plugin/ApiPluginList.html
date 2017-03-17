@@ -1,7 +1,7 @@
-<div>
+<div *ngIf="api">
   <md-toolbar *ngIf="pluginNames">
     <md-select
-      placeholder="Filter Field"
+      placeholder="Plugin Name"
       [(ngModel)]="pluginName"
       (ngModelChange)="refresh()"
     >

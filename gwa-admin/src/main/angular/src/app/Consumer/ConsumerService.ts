@@ -9,12 +9,11 @@ import { Consumer } from './Consumer';
 @Injectable()
 export class ConsumerService extends BaseService<Consumer> {
   constructor(injector:Injector) {
-    super(
-      injector, 
-      '/consumers',
-      'Consumer',
-      'username'
-    );
+    super(injector);
+    this.path = `/consumers`;
+    this.typeTitle = 'Consumer';
+    this.labelFieldName = 'username';
+    this.pathParamName = 'username';
   }
 
   deleteObject(consumer: Consumer): Promise<boolean> {

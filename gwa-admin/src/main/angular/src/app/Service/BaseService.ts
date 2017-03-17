@@ -29,20 +29,25 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected location: Location = this.injector.get(Location);
 
+  protected path : string;
+
+  protected typeTitle : string;
+
+  protected labelFieldName : string;
+
+  protected idFieldName : string = "id";
+
+  pathParamName : string = "id";
+
   dialog: MdDialog = this.injector.get(MdDialog);
 
-  
   private jsonHeaders = {
     headers: new Headers({ 'Content-Type': 'application/json' })
   };
 
   constructor(
     protected injector : Injector,
-    protected path? : string,
-    protected typeTitle? : string,
-    protected labelFieldName? : string,
-    protected idFieldName : string = "id"
-  ) {
+   ) {
   }
 
   addObject(object: T): Promise<T> {

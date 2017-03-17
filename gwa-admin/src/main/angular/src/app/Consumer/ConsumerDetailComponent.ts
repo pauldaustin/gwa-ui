@@ -1,21 +1,34 @@
-import {
-  Component, 
-  Injector
-} from '@angular/core';
-import { BaseDetailComponent } from '../Component/BaseDetailComponent';
-import { Consumer }         from './Consumer';
-import { ConsumerService }  from './ConsumerService';
+import { Component} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Consumer } from './Consumer';
 
 @Component({
   selector: 'consumer-detail',
-  templateUrl: 'app/Consumer/ConsumerDetail.html'
+  template: `
+<nav md-tab-nav-bar *ngIf="consumer">
+  <a md-tab-link
+     [routerLink]="['.']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Consumer: {{consumer.name}}</a>
+</nav>
+<router-outlet></router-outlet>
+  `
 })
-export class ConsumerDetailComponent extends BaseDetailComponent<Consumer> {
+export class ConsumerDetailComponent  {
+  consumer : Consumer;
+ 
   constructor(
-    protected injector:Injector,
-    protected service: ConsumerService
+    protected route: ActivatedRoute,
   ) {
-    super(injector, service);
-    this.idParamName = 'username';
+  }
+  
+  ngOnInit() {
+    this.route.data
+      .subscribe((data: { consumer: Consumer }) => {
+        this.consumer = data.consumer;
+      }
+    );
   }
 }

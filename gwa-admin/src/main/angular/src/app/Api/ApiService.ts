@@ -11,12 +11,11 @@ export class ApiService extends BaseService<Api> {
   oldVersion : boolean = true;
 
   constructor(injector:Injector) {
-    super(
-      injector,
-      '/apis',
-      'API',
-      'name'
-    );
+    super(injector);
+    this.path = '/apis';
+    this.pathParamName = 'apiName';
+    this.typeTitle = 'API';
+    this.labelFieldName = 'name';
     const url = this.getUrl('/version');
     this.http.get(url)
       .toPromise()

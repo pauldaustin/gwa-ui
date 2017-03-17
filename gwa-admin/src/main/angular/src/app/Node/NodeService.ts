@@ -10,7 +10,8 @@ import { Node } from './Node';
 @Injectable()
 export class NodeService extends BaseService<Node> {
   constructor(injector:Injector) {
-    super(injector, '/nodes');
+    super(injector);
+    this.path = `/nodes`;
   }
 
   deleteObject(node: Node): Promise<boolean> {

@@ -26,11 +26,6 @@ export class EndpointListComponent extends BaseListComponent<Api> {
   ) {
     super(injector, endpointService);
     this.paging = true;
-    this.filterFields = [
-      { prop: "name", name: "Name"},
-      { prop: "upstream_url", name: "Upstream URL"},
-    ];
-    this.filterFieldName = "name";
   }
 
   ngOnInit(): void {
@@ -39,8 +34,7 @@ export class EndpointListComponent extends BaseListComponent<Api> {
       { prop: 'config', name: 'URI', cellTemplate: this.endpointUriTemplate, sortable: false },
       { prop: 'config.upstream_url', name: 'Upstream URL', cellTemplate: this.urlTemplate, sortable: false },
       { prop: 'config.created_by', name: 'Created By', sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
-      { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
+      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false }
     ];
     super.ngOnInit();
   }
