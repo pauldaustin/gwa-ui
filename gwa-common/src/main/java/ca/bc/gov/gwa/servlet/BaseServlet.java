@@ -81,10 +81,19 @@ public abstract class BaseServlet extends HttpServlet {
   }
 
   @Override
-  protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+  protected void service(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     try {
-      super.service(req, resp);
+      final String methodOverride = request.getHeader("X-HTTP-Method-Override");
+      if (methodOverride == null || !"POST".equals(request.getMethod())) {
+        super.service(request, response);
+      } else if ("DELETE".equals(methodOverride)) {
+        doDelete(request, response);
+      } else if ("PUT".equals(methodOverride)) {
+        doPut(request, response);
+      } else {
+        super.service(request, response);
+      }
     } catch (final Throwable e) {
       final Class<?> clazz = getClass();
       final Logger logger = LoggerFactory.getLogger(clazz);

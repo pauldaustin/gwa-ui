@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
@@ -11,6 +12,7 @@ import {
 import {
   Headers, 
   Http,
+  Response,
   URLSearchParams
 } from '@angular/http';
 
@@ -41,9 +43,14 @@ export abstract class BaseService<T> implements Service<T> {
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
-  private jsonHeaders = {
-    headers: new Headers({ 'Content-Type': 'application/json' })
-  };
+  usePostForDelete : boolean = true;
+  
+  private jsonHeaders =  new Headers({ 'Content-Type': 'application/json' });
+
+  private deletePostHeaders = new Headers({
+    'Content-Type': 'application/json',
+    'X-HTTP-Method-Override': 'DELETE'
+  });
 
   constructor(
     protected injector : Injector,
@@ -66,7 +73,7 @@ export abstract class BaseService<T> implements Service<T> {
     return this.http.post(
       url,
       jsonText,
-      this.jsonHeaders
+      { headers: this.jsonHeaders }
     ).toPromise()
       .then(response => {
         const json = response.json();
@@ -125,13 +132,26 @@ export abstract class BaseService<T> implements Service<T> {
     }
 
     const url = this.getUrl(path);
-    return this.http.delete(
-      url,
-      {
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-        search: params
-      }
-    ).toPromise()
+    var response : Observable<Response>;
+    if (this.usePostForDelete) {
+      response = this.http.post(
+        url,
+        '',
+        {
+          headers: this.deletePostHeaders,
+          search: params
+        }
+      );
+    } else {
+      response = this.http.delete(
+        url,
+        {
+          headers: this.jsonHeaders,
+          search: params
+        }
+      );
+    }
+    return response.toPromise()
       .then(response => {
         const json = response.json();
         if (json.error) {
@@ -292,7 +312,7 @@ export abstract class BaseService<T> implements Service<T> {
     return this.http.put(
       url,
       jsonText,
-      this.jsonHeaders
+      { headers: this.jsonHeaders }
     ).toPromise()
       .then(response => {
         const json = response.json();
