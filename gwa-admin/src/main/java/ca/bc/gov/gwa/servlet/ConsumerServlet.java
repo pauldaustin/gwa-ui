@@ -16,9 +16,6 @@ public class ConsumerServlet extends BaseAdminServlet {
   private static final List<String> CONSUMER_FIELD_NAMES = Arrays.asList("id", "username",
     "custom_id", "created_at");
 
-  private static final List<String> CONSUMER_GROUP_ADD_FIELD_NAMES = Arrays.asList("consumer_id",
-    "group");
-
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
@@ -103,7 +100,7 @@ public class ConsumerServlet extends BaseAdminServlet {
         final String username = paths.get(0);
         if ("groups".equals(paths.get(1))) {
           final String groupsPath = "/consumers/" + username + "/acls";
-          this.apiService.handleAdd(request, response, groupsPath, CONSUMER_GROUP_ADD_FIELD_NAMES);
+          this.apiService.consumerGroupAdd(request, response, groupsPath);
         } else {
           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }

@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.util.Json;
+import ca.bc.gov.gwa.util.LruMap;
 
 @WebListener
 public class ApiService implements ServletContextListener {
@@ -65,6 +67,8 @@ public class ApiService implements ServletContextListener {
 
   private static final AtomicInteger referenceCount = new AtomicInteger();
 
+  private static final List<String> CONSUMER_GROUP_ADD_FIELD_NAMES = Arrays.asList("group");
+
   public static ApiService get() {
     referenceCount.incrementAndGet();
     return instance;
@@ -89,6 +93,8 @@ public class ApiService implements ServletContextListener {
   private Map<String, Object> config = Collections.emptyMap();
 
   private String version;
+
+  private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   public ApiService() {
   }
@@ -143,6 +149,45 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  private String consumerGetUsername(final JsonHttpClient httpClient, final String consumerId) {
+    String username = this.usernameByConsumerId.get(consumerId);
+    if (username == null) {
+      username = consumerId;
+      try {
+        final Map<String, Object> consumerResponse = httpClient.get("/consumers/" + consumerId);
+        username = (String)consumerResponse.get("username");
+        if (username != null) {
+          this.usernameByConsumerId.put(consumerId, username);
+        }
+      } catch (final Throwable e) {
+      }
+    }
+    return username;
+  }
+
+  public void consumerGroupAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path) throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData != null) {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        final Map<String, Object> group = getMap(requestData, CONSUMER_GROUP_ADD_FIELD_NAMES);
+
+        Map<String, Object> apiResponse = Collections.emptyMap();
+        try {
+          apiResponse = httpClient.post(path, group);
+        } catch (final HttpStatusException e) {
+          if (e.getCode() == 404) {
+            final String username = path.substring(11, path.lastIndexOf('/'));
+            final Map<String, Object> consumer = Collections.singletonMap("username", username);
+            httpClient.post("/consumers", consumer);
+            apiResponse = httpClient.post(path, group);
+          }
+        }
+        Json.writeJson(httpResponse, apiResponse);
+      });
+    }
+  }
+
   @SuppressWarnings("unchecked")
   public Set<String> consumerGroups(final String customId, final String username)
     throws IOException {
@@ -180,6 +225,7 @@ public class ApiService implements ServletContextListener {
       }
       final String id = (String)consumer.get("id");
 
+      this.usernameByConsumerId.put(id, username);
       final String groupsPath = "/consumers/" + id + "/acls";
       final Map<String, Object> groupsResponse = httpClient.get(groupsPath);
       final List<Map<String, Object>> groupList = (List<Map<String, Object>>)groupsResponse
@@ -461,6 +507,23 @@ public class ApiService implements ServletContextListener {
     Json.writeJson(httpResponse, response);
   }
 
+  public void groupConsumerList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
+      @SuppressWarnings("unchecked")
+      final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
+      if (data != null) {
+        for (final Map<String, Object> acl : data) {
+          final String consumerId = (String)acl.get("consumer_id");
+          final String username = consumerGetUsername(httpClient, consumerId);
+          acl.put("username", username);
+        }
+      }
+      Json.writeJson(httpResponse, kongResponse);
+    });
+  }
+
   public void handleAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
@@ -504,38 +567,7 @@ public class ApiService implements ServletContextListener {
   public void handleList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
-      final String limit = httpRequest.getParameter("limit");
-      final StringBuilder url = new StringBuilder(this.kongAdminUrl);
-      url.append(path);
-      if (path.indexOf('?') == -1) {
-        url.append('?');
-      } else {
-        url.append('&');
-      }
-      url.append("size=");
-      url.append(limit);
-      final String offset = httpRequest.getParameter("offset");
-      int offsetPage = 0;
-      if (offset != null) {
-        try {
-          offsetPage = Integer.parseInt(offset);
-        } catch (final Throwable e) {
-        }
-      }
-      final String filterFieldName = httpRequest.getParameter("filterFieldName");
-      final String filterValue = httpRequest.getParameter("filterValue");
-      if (filterFieldName != null && filterValue != null) {
-        url.append('&');
-        url.append(filterFieldName);
-        url.append('=');
-        url.append(filterValue);
-      }
-      Map<String, Object> kongResponse = Collections.emptyMap();
-      String urlString = url.toString();
-      do {
-        kongResponse = httpClient.getByUrl(urlString);
-        urlString = (String)kongResponse.remove("next");
-      } while (url != null && offsetPage-- > 0);
+      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
       Json.writeJson(httpResponse, kongResponse);
     });
   }
@@ -572,6 +604,44 @@ public class ApiService implements ServletContextListener {
         writeJsonResponse(httpResponse, UPDATED);
       }
     });
+  }
+
+  protected Map<String, Object> kongPage(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient, final String path)
+    throws IOException, ClientProtocolException {
+    final String limit = httpRequest.getParameter("limit");
+    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
+    url.append(path);
+    if (path.indexOf('?') == -1) {
+      url.append('?');
+    } else {
+      url.append('&');
+    }
+    url.append("size=");
+    url.append(limit);
+    final String offset = httpRequest.getParameter("offset");
+    int offsetPage = 0;
+    if (offset != null) {
+      try {
+        offsetPage = Integer.parseInt(offset);
+      } catch (final Throwable e) {
+      }
+    }
+    final String filterFieldName = httpRequest.getParameter("filterFieldName");
+    final String filterValue = httpRequest.getParameter("filterValue");
+    if (filterFieldName != null && filterValue != null) {
+      url.append('&');
+      url.append(filterFieldName);
+      url.append('=');
+      url.append(filterValue);
+    }
+    Map<String, Object> kongResponse = Collections.emptyMap();
+    String urlString = url.toString();
+    do {
+      kongResponse = httpClient.getByUrl(urlString);
+      urlString = (String)kongResponse.remove("next");
+    } while (urlString != null && offsetPage-- > 0);
+    return kongResponse;
   }
 
   // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,

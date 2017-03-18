@@ -24,6 +24,10 @@ import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListCo
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
 
+import { GroupConsumerListComponent } from './Group/GroupConsumerListComponent';
+
+import { GroupListComponent } from './Group/GroupListComponent';
+
 import { NodeListComponent } from './Node/NodeListComponent';
 
 import { StatusDetailComponent } from './Status/StatusDetailComponent';
@@ -60,6 +64,8 @@ const routes: Routes = [
       { path: 'groups', component: ConsumerGroupListComponent, pathMatch: 'full' },
     ]
   },
+  { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: '**', component: PageNotFoundComponent }

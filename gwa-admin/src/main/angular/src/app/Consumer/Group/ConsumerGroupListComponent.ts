@@ -6,14 +6,14 @@ import {
 import { BaseListComponent } from '../../Component/BaseListComponent';
 
 import { Consumer } from '../Consumer';
-import { ConsumerGroup } from './ConsumerGroup';
+import { Group } from '../../Group/Group';
 import { ConsumerGroupService } from './ConsumerGroupService';
 
 @Component({
   selector: 'consumer-group-list',
   templateUrl: 'app/Consumer/Group/ConsumerGroupList.html'
 })
-export class ConsumerGroupListComponent extends BaseListComponent<ConsumerGroup> {
+export class ConsumerGroupListComponent extends BaseListComponent<Group> {
   consumer: Consumer;
 
   addGroupName: string;

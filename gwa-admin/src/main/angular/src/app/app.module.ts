@@ -1,11 +1,11 @@
-import { NgModule }       from '@angular/core';
-import { BrowserModule }  from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { HttpModule }    from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -29,32 +29,38 @@ import { ApiViewComponent } from './Api/ApiViewComponent';
 import { ApiService } from './Api/ApiService';
 import { ApiResolver } from './Api/ApiResolver';
 
-import { ApiPluginListComponent }     from './Plugin/ApiPluginListComponent';
-import { ApiPluginDetailComponent }   from './Plugin/ApiPluginDetailComponent';
-import { ApiPluginAddComponent }      from './Plugin/ApiPluginAddComponent';
-import { PluginService }           from './Plugin/PluginService';
+import { ApiPluginListComponent } from './Plugin/ApiPluginListComponent';
+import { ApiPluginDetailComponent } from './Plugin/ApiPluginDetailComponent';
+import { ApiPluginAddComponent } from './Plugin/ApiPluginAddComponent';
+import { PluginService } from './Plugin/PluginService';
 
-import { ConsumerListComponent }     from './Consumer/ConsumerListComponent';
-import { ConsumerAddComponent }   from './Consumer/ConsumerAddComponent';
-import { ConsumerDetailComponent }   from './Consumer/ConsumerDetailComponent';
+import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
+import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
+import { ConsumerDetailComponent } from './Consumer/ConsumerDetailComponent';
 import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
-import { ConsumerService }           from './Consumer/ConsumerService';
+import { ConsumerService } from './Consumer/ConsumerService';
 import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
 import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
-import { ConsumerGroupService }           from './Consumer/Group/ConsumerGroupService';
+import { ConsumerGroupService } from './Consumer/Group/ConsumerGroupService';
 
-import { EndpointDetailComponent }  from './Endpoint/EndpointDetailComponent';
-import { EndpointListComponent }    from './Endpoint/EndpointListComponent';
-import { EndpointService }          from './Endpoint/EndpointService';
+import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
+import { EndpointListComponent } from './Endpoint/EndpointListComponent';
+import { EndpointService } from './Endpoint/EndpointService';
 
-import { NodeListComponent }     from './Node/NodeListComponent';
-import { NodeService }           from './Node/NodeService';
+import { GroupConsumerListComponent } from './Group/GroupConsumerListComponent';
+import { GroupConsumerService } from './Group/GroupConsumerService';
 
-import { StatusDetailComponent }   from './Status/StatusDetailComponent';
-import { StatusService }           from './Status/StatusService';
+import { GroupListComponent } from './Group/GroupListComponent';
+import { GroupService } from './Group/GroupService';
 
-import { AppRoutingModule }        from './app-routing.module';
+import { NodeListComponent } from './Node/NodeListComponent';
+import { NodeService } from './Node/NodeService';
+
+import { StatusDetailComponent } from './Status/StatusDetailComponent';
+import { StatusService } from './Status/StatusService';
+
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   imports: [
@@ -78,7 +84,13 @@ import { AppRoutingModule }        from './app-routing.module';
           },
           {
             title: 'Consumers',
+            icon: 'person',
             routerLink: 'ui/consumers'
+          },
+          {
+            title: 'Groups',
+            icon: 'people',
+            routerLink: 'ui/groups'
           },
           {
             title: 'Nodes',
@@ -116,6 +128,8 @@ import { AppRoutingModule }        from './app-routing.module';
     ConsumerGroupListComponent,
     EndpointDetailComponent,
     EndpointListComponent,
+    GroupListComponent,
+    GroupConsumerListComponent,
     NodeListComponent,
     StatusDetailComponent
   ],
@@ -129,6 +143,8 @@ import { AppRoutingModule }        from './app-routing.module';
     ConsumerResolver,
     ConsumerGroupService,
     EndpointService,
+    GroupService,
+    GroupConsumerService,
     NodeService,
     PluginService,
     StatusService

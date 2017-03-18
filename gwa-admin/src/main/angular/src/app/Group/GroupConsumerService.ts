@@ -3,12 +3,11 @@ import {
   Injectable,
   Injector
 } from '@angular/core';
-import { BaseService } from '../../Service/BaseService';
-import { Consumer } from '../Consumer';
-import { Group } from '../../Group/Group';
+import { BaseService } from '../Service/BaseService';
+import { Group } from './Group';
 
 @Injectable()
-export class ConsumerGroupService extends BaseService<Group> {
+export class GroupConsumerService extends BaseService<Group> {
   constructor(injector:Injector) {
     super(injector);
     this.typeTitle = 'Group';
@@ -17,7 +16,7 @@ export class ConsumerGroupService extends BaseService<Group> {
 
   deleteObject(group: Group, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
-      `${path}/${group.id}`
+      `/consumers/${group.username}/groups/${group.group}`
     );
   }
   

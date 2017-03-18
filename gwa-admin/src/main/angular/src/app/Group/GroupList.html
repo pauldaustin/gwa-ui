@@ -1,0 +1,33 @@
+<div>
+  <md-toolbar>
+    <md-input-container>
+      <input
+        mdInput
+        placeholder="Add Group Name"
+        [(ngModel)]="addGroupName"
+      />
+    </md-input-container>
+    <a [routerLink]="['/ui','groups', addGroupName]" md-raised-button color="primary">Add Group</a>
+  </md-toolbar>
+
+  <ngx-datatable
+    class="material striped"
+    [rows]="rows"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="30"
+    [footerHeight]="30"
+    [rowHeight]="30"
+    [externalPaging]="true"
+    [count]="count"
+    [offset]="offset"
+    [limit]="limit"
+    [cssClasses]="cssClasses"
+    [scrollbarV]="true"
+    (page)='onPage($event)'
+  >
+  </ngx-datatable>
+  
+  <template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','groups', value]">{{value}}</a></template>
+
+</div>
