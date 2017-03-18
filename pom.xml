@@ -198,11 +198,20 @@
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.4.2.v20170220</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-io</artifactId>
+            <version>9.4.2.v20170220</version>
+          </dependency>
+        </dependencies>
         <configuration>
+          <skip>${jettySkip}</skip>
           <reload>manual</reload>
           <httpConnector>
             <port>${httpPort}</port>
           </httpConnector>
+          <daemon>true</daemon>
           <stopPort>${stopPort}</stopPort>
           <stopKey>${stopKey}</stopKey>
           <stopWait>10</stopWait>
@@ -217,7 +226,7 @@
             </contextHandler>
           </contextHandlers>
           <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
-        </configuration>
+         </configuration>
       </plugin>
     </plugins>
   </build>
@@ -277,5 +286,9 @@
     <org.slf4j.version>1.7.21</org.slf4j.version>
     <skip.grunt>true</skip.grunt>
     <skipWebDeploy>true</skipWebDeploy>
+    <jettySkip>false</jettySkip>
+    <httpPort>8010</httpPort>
+    <stopPort>7010</stopPort>
+    <stopKey>GWA</stopKey>
   </properties>
 </project>

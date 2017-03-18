@@ -16,6 +16,8 @@ public class BasePrincipal implements Principal {
 
   private final Set<String> roles;
 
+  private long timestamp = System.currentTimeMillis();
+
   protected BasePrincipal(final String id, final String name, final Set<String> roles) {
     this.id = id;
     this.name = name;
@@ -43,9 +45,29 @@ public class BasePrincipal implements Principal {
     return this.name;
   }
 
+  public long getTimestamp() {
+    return this.timestamp;
+  }
+
   @Override
   public int hashCode() {
     return this.id.hashCode();
+  }
+
+  public boolean isExpired(final long timeInMillis) {
+    if (this.timestamp + timeInMillis < System.currentTimeMillis()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isInvalid(final String id, final long timeInMillis) {
+    if (this.id.equals(id)) {
+      return isExpired(timeInMillis);
+    } else {
+      return true;
+    }
   }
 
   public boolean isUserInRole(final String role) {
@@ -70,6 +92,10 @@ public class BasePrincipal implements Principal {
         return BasePrincipal.this.roles.contains(role);
       }
     };
+  }
+
+  public void refreshTimestamp() {
+    this.timestamp = System.currentTimeMillis();
   }
 
   public Map<String, Object> toMap() {

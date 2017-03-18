@@ -89,8 +89,6 @@ public abstract class BaseServlet extends HttpServlet {
         super.service(request, response);
       } else if ("DELETE".equals(methodOverride)) {
         doDelete(request, response);
-      } else if ("PUT".equals(methodOverride)) {
-        doPut(request, response);
       } else {
         super.service(request, response);
       }

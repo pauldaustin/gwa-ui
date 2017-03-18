@@ -47,11 +47,6 @@ export abstract class BaseService<T> implements Service<T> {
   
   private jsonHeaders =  new Headers({ 'Content-Type': 'application/json' });
 
-  private deletePostHeaders = new Headers({
-    'Content-Type': 'application/json',
-    'X-HTTP-Method-Override': 'DELETE'
-  });
-
   constructor(
     protected injector : Injector,
    ) {
@@ -138,7 +133,10 @@ export abstract class BaseService<T> implements Service<T> {
         url,
         '',
         {
-          headers: this.deletePostHeaders,
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'X-HTTP-Method-Override': 'DELETE'
+          }),
           search: params
         }
       );

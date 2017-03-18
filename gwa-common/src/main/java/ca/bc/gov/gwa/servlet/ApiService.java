@@ -93,46 +93,6 @@ public class ApiService implements ServletContextListener {
   public ApiService() {
   }
 
-  @SuppressWarnings("unchecked")
-  public Set<String> aclGet(final String userId, final String name) throws IOException {
-    final Set<String> roles = new TreeSet<>();
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      String id = null;
-      {
-        final String customIdFilter = "/consumers/?custom_id=" + userId;
-        id = consumerGet(httpClient, customIdFilter);
-      }
-      if (id == null) {
-        final String usernameFilter = "/consumers/?username=" + name;
-        id = consumerGet(httpClient, usernameFilter);
-      }
-      {
-        final Map<String, Object> consumerRequest = new HashMap<>();
-        consumerRequest.put("custom_id", userId);
-        consumerRequest.put("username", name);
-        if (id == null) {
-          final Map<String, Object> consumerUpdateResponse = httpClient.put("/consumers",
-            consumerRequest);
-          id = (String)consumerUpdateResponse.get("id");
-        } else {
-          httpClient.patch("/consumers/" + id, consumerRequest);
-        }
-      }
-
-      final Map<String, Object> aclsResponse = httpClient.get("/consumers/" + id + "/acls");
-      final List<Map<String, Object>> roleList = (List<Map<String, Object>>)aclsResponse
-        .get("data");
-      if (roleList != null) {
-        for (final Map<String, Object> roleMap : roleList) {
-          final String role = (String)roleMap.get("group");
-          roles.add(role);
-        }
-      }
-    }
-    return roles;
-  }
-
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
     for (final String key : fieldNames) {
@@ -169,19 +129,69 @@ public class ApiService implements ServletContextListener {
 
   }
 
-  protected String consumerGet(final JsonHttpClient httpClient, final String filter)
+  protected Map<String, Object> consumerGet(final JsonHttpClient httpClient, final String filter)
     throws IOException {
-    String id;
     final Map<String, Object> consumerResponse = httpClient.get(filter);
+    @SuppressWarnings("unchecked")
     final List<Map<String, Object>> consumers = (List<Map<String, Object>>)consumerResponse
       .get("data");
     if (consumers != null && consumers.size() > 0) {
       final Map<String, Object> consumer = consumers.get(0);
-      id = (String)consumer.get("id");
+      return consumer;
     } else {
-      id = null;
+      return Collections.emptyMap();
     }
-    return id;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Set<String> consumerGroups(final String customId, final String username)
+    throws IOException {
+    final Set<String> roles = new TreeSet<>();
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      Map<String, Object> consumer = Collections.emptyMap();
+      {
+        final String customIdFilter = "/consumers/?custom_id=" + customId;
+        consumer = consumerGet(httpClient, customIdFilter);
+      }
+      if (consumer.isEmpty()) {
+        final String usernameFilter = "/consumers/?username=" + username;
+        consumer = consumerGet(httpClient, usernameFilter);
+      } else {
+        // Update if username changed
+        if (!username.equals(consumer.get("username"))) {
+          consumer.put("username", username);
+          httpClient.patch("/consumers", consumer);
+        }
+      }
+      if (consumer.isEmpty()) {
+        // Create if consumer doesn't exist
+        consumer = new HashMap<>();
+        consumer.put("custom_id", customId);
+        consumer.put("username", username);
+        consumer = httpClient.put("/consumers", consumer);
+      } else {
+        // Update if custom_id changed
+        if (!customId.equals(consumer.get("custom_id"))) {
+          final String id = (String)consumer.get("id");
+          consumer.put("custom_id", customId);
+          httpClient.patch("/consumers/" + id, consumer);
+        }
+      }
+      final String id = (String)consumer.get("id");
+
+      final String groupsPath = "/consumers/" + id + "/acls";
+      final Map<String, Object> groupsResponse = httpClient.get(groupsPath);
+      final List<Map<String, Object>> groupList = (List<Map<String, Object>>)groupsResponse
+        .get("data");
+      if (groupList != null) {
+        for (final Map<String, Object> groupRecord : groupList) {
+          final String group = (String)groupRecord.get("group");
+          roles.add(group);
+        }
+      }
+    }
+    return roles;
   }
 
   @Override

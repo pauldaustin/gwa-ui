@@ -39,5 +39,6 @@
   <properties>
     <skip.grunt>false</skip.grunt>
     <skipWebDeploy>false</skipWebDeploy>
+    <jettySkip>true</jettySkip>
   </properties>
 </project>

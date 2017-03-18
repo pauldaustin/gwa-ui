@@ -39,42 +39,43 @@ public class SiteminderAuthenticationFilter implements Filter {
     try {
       if (request.getAttribute("siteminderFiltered") == null) {
         request.setAttribute("siteminderFiltered", Boolean.TRUE);
-        final HttpSession session = httpRequest.getSession();
 
         String userId = httpRequest.getHeader("smgov_userguid");
-        if (userId == null) {
+        String universalid = httpRequest.getHeader("sm_universalid");
+        final String type = httpRequest.getHeader("smgov_usertype");
+        String userDir = httpRequest.getHeader("sm_authdirname");
+        if (userId == null || universalid == null) {
           httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
+          final HttpSession session = httpRequest.getSession();
           SiteminderPrincipal principal = (SiteminderPrincipal)session
             .getAttribute(SITEMINDER_PRINCIPAL);
-          if (principal == null || !principal.getId().equals(userId)) {
-
-            final String type = httpRequest.getHeader("smgov_usertype");
-            String userDir = httpRequest.getHeader("sm_authdirname");
-            final String userName = httpRequest.getHeader("sm_universalid");
-            final String name;
-            if (userDir == null) {
-              name = userName.replace('\\', ':');
-              userDir = userName.substring(0, name.indexOf(':'));
-              if (userId.indexOf('\\') != -1) {
-                userId = userDir + ":" + Uuid.md5(userDir, name).toString();
-              }
-            } else {
-              name = userDir + ":" + userName;
+          if (userDir == null) {
+            // For development environment
+            final int separatorIndex = universalid.indexOf('\\');
+            userDir = universalid.substring(0, separatorIndex);
+            universalid = universalid.substring(separatorIndex + 1);
+            if (userId.indexOf('\\') != -1) {
+              userId = userDir + ":" + Uuid.md5(userDir, universalid).toString();
             }
-            final Set<String> roles;
+          }
+          if (principal == null || principal.isInvalid(userId, 120000)) {
+            final String username = userDir + ":" + universalid;
+
+            final Set<String> groups;
             try {
-              roles = this.apiService.aclGet(userId, name);
+              groups = this.apiService.consumerGroups(userId, username);
             } catch (final HttpHostConnectException e) {
-              LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
+              LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
               httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
               return;
             } catch (final Throwable e) {
-              LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
+              LoggerFactory.getLogger(getClass()).error("Error getting user's roles", e);
               httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
               return;
             }
-            principal = new SiteminderPrincipal(userId, type, name, roles);
+            principal = new SiteminderPrincipal(userId, type, username, groups);
+            session.setAttribute(SITEMINDER_PRINCIPAL, principal);
           }
           if (principal.isUserInRole("GWA_ADMIN") || principal.isUserInRole("GWA_API_OWNER")) {
             final HttpServletRequestWrapper requestWrapper = principal

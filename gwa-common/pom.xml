@@ -68,5 +68,6 @@
   <properties>
     <skip.grunt>true</skip.grunt>
     <skipWebDeploy>true</skipWebDeploy>
+    <jettySkip>true</jettySkip>
   </properties>
 </project>

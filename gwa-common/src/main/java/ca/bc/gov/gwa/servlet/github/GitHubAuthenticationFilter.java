@@ -105,9 +105,9 @@ public class GitHubAuthenticationFilter implements Filter {
           if (id != null && login != null) {
             final String userId = "GitHub:" + id;
             final String userName = "GitHub:" + login;
-            final Set<String> roles;
+            final Set<String> groups;
             try {
-              roles = this.apiService.aclGet(userId, userName);
+              groups = this.apiService.consumerGroups(userId, userName);
             } catch (final HttpHostConnectException e) {
               httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
               return;
@@ -122,11 +122,11 @@ public class GitHubAuthenticationFilter implements Filter {
               for (final Map<String, Object> organization : orgList) {
                 final String role = (String)organization.get("login");
                 if (role != null) {
-                  roles.add("GitHub:" + role);
+                  groups.add("GitHub:" + role);
                 }
               }
             }
-            final GitHubPrincipal principal = new GitHubPrincipal(userId, userName, roles);
+            final GitHubPrincipal principal = new GitHubPrincipal(userId, userName, groups);
             session.setAttribute(GIT_HUB_PRINCIPAL, principal);
             httpResponse.sendRedirect(redirectUrl);
             return;
