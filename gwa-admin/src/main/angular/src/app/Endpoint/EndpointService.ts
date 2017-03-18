@@ -9,8 +9,6 @@ import { Plugin } from '../Plugin/Plugin';
 
 @Injectable()
 export class EndpointService extends BaseService<Api> {
-  oldVersion : boolean = true;
-
   constructor(injector:Injector) {
     super(injector);
     this.path = `/endpoints`;
@@ -18,7 +16,7 @@ export class EndpointService extends BaseService<Api> {
     this.labelFieldName = 'config.name';
   }
 
-  deleteObject(api : Api): Promise<boolean> {
+  deleteObject(api : Api, path?: string): Promise<boolean> {
     return Promise.resolve(false);
   }
 

@@ -16,7 +16,7 @@ export class ConsumerService extends BaseService<Consumer> {
     this.pathParamName = 'username';
   }
 
-  deleteObject(consumer: Consumer): Promise<boolean> {
+  deleteObject(consumer: Consumer, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
       `/consumers/${consumer.id}`
     );

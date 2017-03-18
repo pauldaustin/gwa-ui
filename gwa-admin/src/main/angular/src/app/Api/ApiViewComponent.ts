@@ -33,8 +33,4 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
       );
     }
   }
-    
-  get oldVersion() : boolean {
-    return this.service.oldVersion;
-  }
 }

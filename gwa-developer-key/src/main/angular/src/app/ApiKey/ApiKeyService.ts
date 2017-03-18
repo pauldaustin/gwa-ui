@@ -25,7 +25,7 @@ export class ApiKeyService extends BaseService<ApiKey> {
     );
   }
  
-  deleteObject(apiKey: ApiKey): Promise<boolean> {
+  deleteObject(apiKey: ApiKey, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
       `/apiKeys/${apiKey.id}`
     );

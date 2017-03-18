@@ -14,7 +14,7 @@ export class NodeService extends BaseService<Node> {
     this.path = `/nodes`;
   }
 
-  deleteObject(node: Node): Promise<boolean> {
+  deleteObject(node: Node, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
       '/nodes',
       null, {

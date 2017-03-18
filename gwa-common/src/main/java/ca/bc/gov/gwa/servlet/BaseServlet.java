@@ -2,6 +2,9 @@ package ca.bc.gov.gwa.servlet;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +16,34 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
+
+  protected static List<String> splitPath(final String path) {
+    if (path == null || path.length() == 1) {
+      return Collections.emptyList();
+    } else {
+      final List<String> paths = new ArrayList<>();
+      int startIndex = 1;
+      for (int endIndex = path.indexOf('/', startIndex); endIndex != -1; endIndex = path
+        .indexOf('/', startIndex)) {
+        if (endIndex - startIndex > 0) {
+          final String part = path.substring(startIndex, endIndex);
+          paths.add(part);
+        }
+        startIndex = endIndex + 1;
+      }
+      if (startIndex < path.length()) {
+        final String part = path.substring(startIndex);
+        paths.add(part);
+      }
+      return paths;
+    }
+  }
+
+  protected static List<String> splitPathInfo(final HttpServletRequest request) {
+    final String path = request.getPathInfo();
+    final List<String> paths = splitPath(path);
+    return paths;
+  }
 
   protected ApiService apiService;
 

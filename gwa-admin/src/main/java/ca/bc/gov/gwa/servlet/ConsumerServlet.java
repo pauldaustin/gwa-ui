@@ -13,63 +13,128 @@ import javax.servlet.http.HttpServletResponse;
 public class ConsumerServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final List<String> CONSUMERS_FIELD_NAMES = Arrays.asList("id", "username",
+  private static final List<String> CONSUMER_FIELD_NAMES = Arrays.asList("id", "username",
     "custom_id", "created_at");
+
+  private static final List<String> CONSUMER_GROUP_ADD_FIELD_NAMES = Arrays.asList("consumer_id",
+    "group");
 
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
-      if (pathInfo.lastIndexOf('/') == 0) {
-        this.apiService.handleDelete(request, response, "/consumers" + pathInfo);
-      } else {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 1: { // Consumer
+        final String username = paths.get(0);
+        final String consumerPath = "/consumers/" + username;
+        this.apiService.handleDelete(request, response, consumerPath);
       }
+      break;
+
+      case 0:
+      case 2:
+        response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 3: { // Group
+        final String username = paths.get(0);
+        if ("groups".equals(paths.get(1))) {
+          final String groupId = paths.get(2);
+          final String groupPath = "/consumers/" + username + "/acls/" + groupId;
+          this.apiService.handleDelete(request, response, groupPath);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
+
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      this.apiService.handleList(request, response, "/consumers");
-    } else {
-      if (pathInfo.lastIndexOf('/') == 0) {
-        this.apiService.handleGet(request, response, "/consumers" + pathInfo);
-      } else {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0:
+        this.apiService.handleList(request, response, "/consumers");
+      break;
+
+      case 1: { // Consumer
+        final String username = paths.get(0);
+        final String consumerPath = "/consumers/" + username;
+        this.apiService.handleGet(request, response, consumerPath);
       }
+      break;
+
+      case 2:
+        final String username = paths.get(0);
+        if ("groups".equals(paths.get(1))) {
+          final String groupsPath = "/consumers/" + username + "/acls";
+          this.apiService.handleList(request, response, groupsPath);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      break;
+
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      this.apiService.handleAdd(request, response, "/consumers/", CONSUMERS_FIELD_NAMES);
-    } else {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: // Consumer
+        this.apiService.handleAdd(request, response, "/consumers/", CONSUMER_FIELD_NAMES);
+      break;
+
+      case 1:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 2: // Groups
+        final String username = paths.get(0);
+        if ("groups".equals(paths.get(1))) {
+          final String groupsPath = "/consumers/" + username + "/acls";
+          this.apiService.handleAdd(request, response, groupsPath, CONSUMER_GROUP_ADD_FIELD_NAMES);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      break;
+
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
   @Override
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
-      if (pathInfo.lastIndexOf('/') == 0) {
-        final String path = "/consumers" + pathInfo;
-        this.apiService.handleUpdatePatch(request, response, path, CONSUMERS_FIELD_NAMES);
-      } else {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 1: { // Consumer
+        final String username = paths.get(0);
+        this.apiService.handleUpdatePatch(request, response, "/consumers/" + username,
+          CONSUMER_FIELD_NAMES);
       }
+      break;
+
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
+
 }

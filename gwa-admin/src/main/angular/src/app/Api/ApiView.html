@@ -22,27 +22,7 @@
             />
           </md-input-container>
         </div>
-        <div *ngIf="oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-          <md-input-container fxFlex>
-            <input
-              fxFlex
-              mdInput
-              placeholder="Request Host" 
-              name="request_host"
-              [(ngModel)]="object.request_host"
-            />
-          </md-input-container>
-          <md-input-container fxFlex>
-            <input
-              fxFlex
-              mdInput
-              placeholder="Request Path" 
-              name="request_path"
-              [(ngModel)]="object.request_path"
-            />
-          </md-input-container>
-        </div>
-        <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-input-container fxFlex>
             <input
               mdInput
@@ -72,7 +52,7 @@
           />
         </md-input-container>
 
-        <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="https_only"
             [(ngModel)]="object.https_only"
@@ -87,7 +67,7 @@
           >Http if Terminated</md-slide-toggle>
         </div>
 
-        <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <label>Methods:</label>
           <md-slide-toggle
             *ngFor="let methodFlag of object.method_flags"
@@ -98,7 +78,7 @@
           >{{methodFlag.name}}</md-slide-toggle>
         </div>
         
-        <div *ngIf="!oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             fxFlex
             name="preserve_host"
@@ -154,23 +134,6 @@
               [(ngModel)]="object.upstream_read_timeout"
             />
           </md-input-container>
-        </div>
-
-        <div *ngIf="oldVersion" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-          <md-slide-toggle
-            fxFlex
-            name="preserve_host"
-            [(ngModel)]="object.preserve_host"
-            color="primary"
-            style="display: inline-block"
-          >Preserve Host</md-slide-toggle>
-          <md-slide-toggle
-            fxFlex
-            name="strip_request_path"
-            [(ngModel)]="object.strip_request_path"
-            color="primary"
-          style="display: inline-block"
-          >Strip URI</md-slide-toggle>
         </div>
 
       </md-card-content>

@@ -19,6 +19,8 @@ import { ConsumerDetailComponent } from './Consumer/ConsumerDetailComponent';
 import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
 import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
+import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
+
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
 
@@ -55,6 +57,7 @@ const routes: Routes = [
     resolve: { consumer: ConsumerResolver },
     children: [
       { path: '', component: ConsumerViewComponent, pathMatch: 'full' },
+      { path: 'groups', component: ConsumerGroupListComponent, pathMatch: 'full' },
     ]
   },
   { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },

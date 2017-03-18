@@ -8,7 +8,6 @@ import { Api } from './Api';
 
 @Injectable()
 export class ApiService extends BaseService<Api> {
-  oldVersion : boolean = true;
 
   constructor(injector:Injector) {
     super(injector);
@@ -16,20 +15,9 @@ export class ApiService extends BaseService<Api> {
     this.pathParamName = 'apiName';
     this.typeTitle = 'API';
     this.labelFieldName = 'name';
-    const url = this.getUrl('/version');
-    this.http.get(url)
-      .toPromise()
-      .then(response => {
-        const json = response.json();
-        if (!json.error) {
-          if (json.version) {
-            this.oldVersion = json.version.indexOf('0.9') == 0;
-          }
-        }
-      });
   }
 
-  deleteObject(api: Api): Promise<boolean> {
+  deleteObject(api: Api, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
       `/apis/${api.id}`
     );

@@ -50,9 +50,12 @@ export abstract class BaseService<T> implements Service<T> {
    ) {
   }
 
-  addObject(object: T): Promise<T> {
+  addObject(object: T, path?: string): Promise<T> {
+    if (!path) {
+      path = this.path;
+    }
     return this.addObjectDo(
-      this.path,
+      path,
       object
     );
   }
@@ -109,7 +112,7 @@ export abstract class BaseService<T> implements Service<T> {
     return this.location.prepareExternalUrl('/rest' + path);
   }
 
-  deleteObject(object: T): Promise<boolean> {
+  deleteObject(object: T, path?: string): Promise<boolean> {
     return null;
   }
 
@@ -220,7 +223,8 @@ export abstract class BaseService<T> implements Service<T> {
     offset: number,
     limit: number,
     filterFieldName : string,
-    filterValue : string
+    filterValue : string,
+    path: string
   ): Promise<any> {
     let params = new URLSearchParams();
     params.set('offset', offset.toString()); 
@@ -229,7 +233,10 @@ export abstract class BaseService<T> implements Service<T> {
       params.set("filterFieldName", filterFieldName);
       params.set("filterValue", filterValue);
     }
-    const url = this.getUrl(this.path);
+    if (!path) {
+      path = this.path;
+    }
+    const url = this.getUrl(path);
     return this.http.get(
       url,
       {

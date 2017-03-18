@@ -41,7 +41,7 @@ export class BaseComponent<T> implements OnInit {
   }
 
   routeList(): void {
-    this.router.navigate(['/ui' +this.service.getPath()]);
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
 
   protected showError(message: string) {

@@ -1,11 +1,11 @@
 
 export interface Service<T> {
 
-  addObject(object: T): Promise<T>;
+  addObject(object: T, path?: string): Promise<T>;
 
   addOrUpdateObject(object: T): Promise<T>;
 
-  deleteObject(object: T): Promise<boolean>;
+  deleteObject(object: T, path?: string): Promise<boolean>;
 
   newObject(): T;
   
@@ -21,7 +21,7 @@ export interface Service<T> {
 
   getPath() : string;
 
-  getRowsPage(offset : number, limit : number, filterFieldName : string, filterValue : string): Promise<any>;
+  getRowsPage(offset : number, limit : number, filterFieldName : string, filterValue : string, path?: string): Promise<any>;
 
   getTypeTitle() : string;
 }

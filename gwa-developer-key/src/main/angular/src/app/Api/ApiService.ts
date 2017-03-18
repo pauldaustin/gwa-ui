@@ -24,7 +24,7 @@ export class ApiService extends BaseService<Api> {
     );
   }
  
-  deleteObject(application: Api): Promise<boolean> {
+  deleteObject(application: Api, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
       `/apis/${application.id}`
     );

@@ -11,7 +11,13 @@ import { Consumer } from './Consumer';
      routerLinkActive
      #rla="routerLinkActive"
      [active]="rla.isActive"
-  >Consumer: {{consumer.name}}</a>
+  >Consumer: {{consumer.username}}</a>
+  <a md-tab-link
+     [routerLink]="['groups']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Groups</a>
 </nav>
 <router-outlet></router-outlet>
   `

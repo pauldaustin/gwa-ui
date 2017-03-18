@@ -45,7 +45,7 @@ export class PluginService extends BaseService<Plugin> {
   }
 
 
-  deleteObject(plugin: Plugin): Promise<boolean> {
+  deleteObject(plugin: Plugin, path?: string): Promise<boolean> {
     const api = plugin.api;
     return this.deleteObjectDo(
       `/apis/${api.id}/plugins/${plugin.id}`,

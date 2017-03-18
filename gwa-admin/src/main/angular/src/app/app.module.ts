@@ -41,6 +41,9 @@ import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
 import { ConsumerService }           from './Consumer/ConsumerService';
 import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
+import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
+import { ConsumerGroupService }           from './Consumer/Group/ConsumerGroupService';
+
 import { EndpointDetailComponent }  from './Endpoint/EndpointDetailComponent';
 import { EndpointListComponent }    from './Endpoint/EndpointListComponent';
 import { EndpointService }          from './Endpoint/EndpointService';
@@ -110,6 +113,7 @@ import { AppRoutingModule }        from './app-routing.module';
     ConsumerListComponent,
     ConsumerDetailComponent,
     ConsumerViewComponent,
+    ConsumerGroupListComponent,
     EndpointDetailComponent,
     EndpointListComponent,
     NodeListComponent,
@@ -123,6 +127,7 @@ import { AppRoutingModule }        from './app-routing.module';
     ApiResolver,
     ConsumerService,
     ConsumerResolver,
+    ConsumerGroupService,
     EndpointService,
     NodeService,
     PluginService,

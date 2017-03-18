@@ -9,6 +9,10 @@
   padding: 1em;
 }
 /* To Fix bugs*/
+.mat-toolbar .mat-input-container,
+.mat-toolbar .mat-select {
+  font-size: 14px;
+  }
 .mat-slide-toggle {
   display:inline-block;
 }

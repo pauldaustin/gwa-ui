@@ -42,6 +42,8 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   filterValue : string;
  
   paging: boolean = false;
+  
+  path: string;
 
   cssClasses= {
     sortAscending: 'fa fa-chevron-down',
@@ -67,7 +69,7 @@ export class BaseListComponent<T> extends BaseComponent<T> {
     }
   }
 
-  deleteObject(object: T): void {
+  deleteObject(object: T, path?: string): void {
     let dialogRef = this.dialog.open(DeleteDialog, {
       data: {
         typeTitle: this.service.getTypeTitle(),
@@ -82,7 +84,7 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   }
 
   protected deleteObjectDo(object: T): void {
-    this.service.deleteObject(object)
+    this.service.deleteObject(object, this.path)
       .then((deleted) => {
         if (deleted) {
           this.onDeleted(object);
@@ -111,7 +113,13 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   }
   
   fetch(offset: number, limit: number, callback: any) {
-    this.service.getRowsPage(offset, limit, this.filterFieldName, this.filterValue).then(callback);
+    this.service.getRowsPage(
+      offset, 
+      limit, 
+      this.filterFieldName, 
+      this.filterValue,
+      this.path
+    ).then(callback);
   }
 
   onPage(event: any) {
