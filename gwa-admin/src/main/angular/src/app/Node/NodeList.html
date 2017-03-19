@@ -17,10 +17,10 @@
     (page)='onPage($event)'
   >
   </ngx-datatable>
-  
-  <template #actionsT let-row="row">
-    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
-      <md-icon>delete</md-icon>
-    </button>
-  </template>
 </div>
+
+<template #actionsT let-row="row">
+  <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+    <md-icon>delete</md-icon>
+  </button>
+</template>

@@ -32,7 +32,6 @@ import { ApiResolver } from './Api/ApiResolver';
 import { ApiPluginListComponent } from './Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent } from './Plugin/ApiPluginDetailComponent';
 import { ApiPluginAddComponent } from './Plugin/ApiPluginAddComponent';
-import { PluginService } from './Plugin/PluginService';
 
 import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
 import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
@@ -43,6 +42,8 @@ import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
 import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
 import { ConsumerGroupService } from './Consumer/Group/ConsumerGroupService';
+
+import { ConsumerPluginListComponent } from './Consumer/Plugin/ConsumerPluginListComponent';
 
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
@@ -56,6 +57,9 @@ import { GroupService } from './Group/GroupService';
 
 import { NodeListComponent } from './Node/NodeListComponent';
 import { NodeService } from './Node/NodeService';
+
+import { PluginListComponent } from './Plugin/PluginListComponent';
+import { PluginService } from './Plugin/PluginService';
 
 import { StatusDetailComponent } from './Status/StatusDetailComponent';
 import { StatusService } from './Status/StatusService';
@@ -81,6 +85,10 @@ import { AppRoutingModule } from './app-routing.module';
           {
             title: 'APIs',
             routerLink: 'ui/apis'
+          },
+          {
+            title: 'Plugins',
+            routerLink: 'ui/plugins'
           },
           {
             title: 'Consumers',
@@ -118,7 +126,6 @@ import { AppRoutingModule } from './app-routing.module';
     ApiDetailComponent,
     ApiListComponent,
     ApiViewComponent,
-    ApiPluginListComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
     ConsumerAddComponent,
@@ -131,6 +138,9 @@ import { AppRoutingModule } from './app-routing.module';
     GroupListComponent,
     GroupConsumerListComponent,
     NodeListComponent,
+    PluginListComponent,
+    ApiPluginListComponent,
+    ConsumerPluginListComponent,
     StatusDetailComponent
   ],
   providers: [

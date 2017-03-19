@@ -13,10 +13,13 @@ export class PluginService extends BaseService<Plugin> {
   constructor(injector:Injector) {
     super(injector);
     this.path = '/apis/${apiName}/plugins'
+    this.path = '/plugins';
+    this.typeTitle = 'Plugins';
+    this.labelFieldName = 'name';
   }
 
   getPluginNames(): Promise<string[]> {
-    const url = this.getUrl('/plugins');
+    const url = this.getUrl('/plugins/_names');
     return this.http.get(url)
       .toPromise()
       .then(response => {
@@ -26,7 +29,7 @@ export class PluginService extends BaseService<Plugin> {
   }
 
   getPluginSchema(pluginName: String): Promise<any> {
-    const url = this.getUrl('/plugins/'+ pluginName);
+    const url = this.getUrl(`/plugins/${pluginName}/schema`);
     return this.http.get(url)
       .toPromise()
       .then(response => {
@@ -46,14 +49,8 @@ export class PluginService extends BaseService<Plugin> {
 
 
   deleteObject(plugin: Plugin, path?: string): Promise<boolean> {
-    const api = plugin.api;
     return this.deleteObjectDo(
-      `/apis/${api.id}/plugins/${plugin.id}`,
-      deleted => {
-        if (deleted) {
-          api.pluginRemove(plugin);
-        }
-      }
+      `/apis/${plugin.api_id}/plugins/${plugin.id}`
     );
   }
 

@@ -8,8 +8,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,8 +57,6 @@ public class ApiService implements ServletContextListener {
 
   private static ApiService instance;
 
-  private static final Encoder BASE_64_ENCODER = Base64.getEncoder();
-
   private static final String DELETED = "deleted";
 
   private static final String UPDATED = "updated";
@@ -96,6 +92,8 @@ public class ApiService implements ServletContextListener {
 
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
+  private final Map<String, String> apiNameById = new LruMap<>(1000);
+
   public ApiService() {
   }
 
@@ -129,6 +127,22 @@ public class ApiService implements ServletContextListener {
         Json.writeJson(httpResponse, apiResponse);
       }
     });
+  }
+
+  private String apiGetName(final JsonHttpClient httpClient, final String apiId) {
+    String apiName = this.apiNameById.get(apiId);
+    if (apiName == null) {
+      apiName = apiId;
+      try {
+        final Map<String, Object> api = httpClient.get("/apis/" + apiId);
+        apiName = (String)api.get("name");
+        if (apiName != null) {
+          this.apiNameById.put(apiId, apiName);
+        }
+      } catch (final Throwable e) {
+      }
+    }
+    return apiName;
   }
 
   public void close() {
@@ -644,6 +658,12 @@ public class ApiService implements ServletContextListener {
     return kongResponse;
   }
 
+  public void logError(final String message, final Throwable e) {
+    final Class<?> clazz = getClass();
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(message, e);
+  }
+
   // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
   // final String apiId) throws IOException {
   // final Map<String, Object> config = new LinkedHashMap<>();
@@ -679,18 +699,34 @@ public class ApiService implements ServletContextListener {
   // }
   // }
 
-  public void logError(final String message, final Throwable e) {
-    final Class<?> clazz = getClass();
-    final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.error(message, e);
-  }
-
   public JsonHttpClient newKongClient() {
     return new JsonHttpClient(this.kongAdminUrl);
   }
 
+  public void pluginList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final String path = "/plugins";
+      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
+      @SuppressWarnings("unchecked")
+      final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
+      if (data != null) {
+        for (final Map<String, Object> acl : data) {
+          final String apiId = (String)acl.get("api_id");
+          final String apiName = apiGetName(httpClient, apiId);
+          acl.put("api_name", apiName);
+
+          final String consumerId = (String)acl.get("consumer_id");
+          final String username = consumerGetUsername(httpClient, consumerId);
+          acl.put("consumer_username", username);
+        }
+      }
+      Json.writeJson(httpResponse, kongResponse);
+    });
+  }
+
   @SuppressWarnings("unchecked")
-  public void pluginList(final HttpServletResponse httpResponse) throws IOException {
+  public void pluginNameList(final HttpServletResponse httpResponse) throws IOException {
     handleRequest(null, httpResponse, (httpClient) -> {
       final Map<String, Object> pluginResponse = httpClient.get("/plugins/enabled");
       final List<String> pluginNames = (List<String>)pluginResponse.get("enabled_plugins");

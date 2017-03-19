@@ -21,6 +21,8 @@ import { ConsumerResolver } from './Consumer/ConsumerResolver';
 
 import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
 
+import { ConsumerPluginListComponent } from './Consumer/Plugin/ConsumerPluginListComponent';
+
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
 
@@ -29,6 +31,8 @@ import { GroupConsumerListComponent } from './Group/GroupConsumerListComponent';
 import { GroupListComponent } from './Group/GroupListComponent';
 
 import { NodeListComponent } from './Node/NodeListComponent';
+
+import { PluginListComponent } from './Plugin/PluginListComponent';
 
 import { StatusDetailComponent } from './Status/StatusDetailComponent';
 
@@ -62,11 +66,13 @@ const routes: Routes = [
     children: [
       { path: '', component: ConsumerViewComponent, pathMatch: 'full' },
       { path: 'groups', component: ConsumerGroupListComponent, pathMatch: 'full' },
+      { path: 'plugins', component: ConsumerPluginListComponent, pathMatch: 'full' },
     ]
   },
   { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/plugins',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: '**', component: PageNotFoundComponent }
 ]; 

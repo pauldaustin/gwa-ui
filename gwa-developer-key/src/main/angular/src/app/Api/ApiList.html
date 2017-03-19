@@ -25,12 +25,12 @@ developer access to an application by clicking the Add Api button.</p>
   >
   </ngx-datatable>
 
-  <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
-
-  <template #actionsT let-row="row">
-    <button (click)="deleteObject(row)" md-icon-button  style="color: red">
-      <md-icon>delete</md-icon>
-    </button>
-  </template>
-
 </div>
+
+<template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
+
+<template #actionsT let-row="row">
+  <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+    <md-icon>delete</md-icon>
+  </button>
+</template>

@@ -72,6 +72,8 @@ public class ConsumerServlet extends BaseAdminServlet {
         if ("groups".equals(paths.get(1))) {
           final String groupsPath = "/consumers/" + username + "/acls";
           this.apiService.handleList(request, response, groupsPath);
+        } else if ("plugins".equals(paths.get(1))) {
+          this.apiService.pluginList(request, response);
         } else {
           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }

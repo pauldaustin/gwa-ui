@@ -18,6 +18,12 @@ import { Consumer } from './Consumer';
      #rla="routerLinkActive"
      [active]="rla.isActive"
   >Groups</a>
+  <a md-tab-link
+     [routerLink]="['plugins']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Plugins</a>
 </nav>
 <router-outlet></router-outlet>
   `

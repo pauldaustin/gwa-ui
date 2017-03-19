@@ -1,27 +1,4 @@
 <div>
-  <md-toolbar>
-    <a routerLink="/ui/apis/_add_" md-raised-button>Add API</a>
-    <md-select
-      placeholder="Filter Field"
-      [(ngModel)]="filterFieldName"
-      (ngModelChange)="refresh()"
-    >
-      <md-option
-        *ngFor="let field of filterFields"
-        [value]="field.prop"
-      >{{field.name}}</md-option>
-    </md-select>
-    <span>=</span>
-    <md-input-container>
-      <input
-        mdInput
-        placeholder="Filter Value"
-        [(ngModel)]="filterValue"
-        (ngModelChange)="refresh()"
-      />
-    </md-input-container>
-  </md-toolbar>
-
   <ngx-datatable
     class="material striped"
     [rows]="rows"
@@ -41,9 +18,11 @@
   </ngx-datatable>
 </div>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.name]">{{value}}</a></template>
+<template #apiT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', value]">{{value}}</a></template>
 
-<template #upstreamT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
+<template #consumerT let-row="row" let-value="value"><a [routerLink]="['/ui','consumers', value]">{{value}}</a></template>
+
+<template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.api_name, 'plugins', value]">{{value}}</a></template>
 
 <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
 

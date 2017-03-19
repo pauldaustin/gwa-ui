@@ -1,20 +1,22 @@
 import {
   Component,
   Injector,
-  Input 
+  Input,
+  TemplateRef,
+  ViewChild
 } from '@angular/core';
 
-import { BaseListComponent }  from '../Component/BaseListComponent';
+import { BaseListComponent } from '../Component/BaseListComponent';
 
 import { Api } from '../Api/Api';
-import { Plugin } from './Plugin';
-import { PluginService }  from './PluginService';
+import { PluginListComponent } from './PluginListComponent';
+import { PluginService } from './PluginService';
 
 @Component({
   selector: 'api-plugin-list',
   templateUrl: 'app/Plugin/ApiPluginList.html'
 })
-export class ApiPluginListComponent extends BaseListComponent<Plugin> {
+export class ApiPluginListComponent extends PluginListComponent {
   api: Api;
     
   pluginNames: string[];
@@ -38,20 +40,10 @@ export class ApiPluginListComponent extends BaseListComponent<Plugin> {
     this.route.parent.data
       .subscribe((data: { api: Api }) => {
         this.api = data.api;
-        this.refresh();
+        this.filterFieldName = 'api_id';
+        this.filterValue = data.api.id;
       }
     );
-    this.columns = [
-      { name: 'Name', cellTemplate: this.idTemplate },
-      { name: 'Enabled', cellTemplate: this.flagTemplate },
-      { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
-    ];
     super.ngOnInit();
-  }
-
-  refresh() {
-    if (this.api) {
-      this.rows = this.api.plugins;
-    }
   }
 }
