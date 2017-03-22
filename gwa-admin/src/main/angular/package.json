@@ -4,7 +4,7 @@
   "description": "Gateway Admin",
   "scripts": {
     "build-jit": "rm -r build ; cp -r src build; tsc -p build/",
-    "build": "webpack -p"
+    "build": "webpack"
   },
   "private": true,
   "keywords": [],
