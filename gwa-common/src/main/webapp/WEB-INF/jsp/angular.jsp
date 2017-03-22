@@ -27,7 +27,7 @@
     <bcgov-template>
     </bcgov-template>
     <script type="text/javascript" src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script type="text/javascript" src="js/zone.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
     <script type="text/javascript" src="js/system.js"></script>
     <script type="text/javascript" src="systemjs.config.server.js"></script>
     <script type="text/javascript">
