@@ -43,15 +43,15 @@ public class SiteminderAuthenticationFilter implements Filter {
         final String universalid = httpRequest.getHeader("sm_universalid");
         final String type = httpRequest.getHeader("smgov_usertype");
         final String userDir = httpRequest.getHeader("sm_authdirname");
-        if (userGuid == null || universalid == null) {
+        if (userGuid == null || universalid == null || userDir == null) {
           httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
           final HttpSession session = httpRequest.getSession();
           SiteminderPrincipal principal = (SiteminderPrincipal)session
             .getAttribute(SITEMINDER_PRINCIPAL);
-          final String userId = userDir + ":" + userGuid;
+          final String userId = (userDir + "_" + userGuid).toLowerCase();
           if (principal == null || principal.isInvalid(userId, 120000)) {
-            final String username = userDir + ":" + universalid;
+            final String username = (userDir + "_" + universalid).toLowerCase();
 
             final Set<String> groups;
             try {

@@ -37,7 +37,7 @@ public class GitHubAuthenticationFilter implements Filter {
   private String clientSecret;
 
   private final Set<String> organizationRoles = new TreeSet<>(
-    Arrays.asList("GitHub:revolsys", "GitHub:gwa-qa"));
+    Arrays.asList("github_revolsys", "github_gwa-qa"));
 
   private ApiService apiService;
 
@@ -103,8 +103,8 @@ public class GitHubAuthenticationFilter implements Filter {
           final Number id = (Number)userResponse.get("id");
           final String login = (String)userResponse.get("login");
           if (id != null && login != null) {
-            final String userId = "GitHub:" + id;
-            final String userName = "GitHub:" + login;
+            final String userId = "github_" + id;
+            final String userName = "github_" + login.toLowerCase();
             final Set<String> groups;
             try {
               groups = this.apiService.consumerGroups(userId, userName);
@@ -122,7 +122,7 @@ public class GitHubAuthenticationFilter implements Filter {
               for (final Map<String, Object> organization : orgList) {
                 final String role = (String)organization.get("login");
                 if (role != null) {
-                  groups.add("GitHub:" + role);
+                  groups.add("github_" + role.toLowerCase());
                 }
               }
             }

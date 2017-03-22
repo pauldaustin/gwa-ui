@@ -46,12 +46,14 @@ export class ConsumerGroupListComponent extends BaseListComponent<Group> {
   }
   
   addGroup() {
-    const group = this.service.newObject();
-    group.consumer_id = this.consumer.id;
-    group.group = this.addGroupName;
-    this.service.addObject(group, this.path)
-      .then((savedGroup) => {
-        this.refresh();
-      });
+    if (this.addGroupName) {
+      const group = this.service.newObject();
+      group.consumer_id = this.consumer.id;
+      group.group = this.addGroupName.toLowerCase();
+      this.service.addObject(group, this.path)
+        .then((savedGroup) => {
+          this.refresh();
+        });
+    }
   }
 }

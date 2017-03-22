@@ -39,30 +39,30 @@ import { StatusDetailComponent } from './Status/StatusDetailComponent';
 
 const routes: Routes = [
   { path: 'ui', redirectTo: 'ui/endpoints', pathMatch: 'full' },
-  { path: 'ui/apis',  component: ApiListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/apis',  component: ApiListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   {
     path: 'ui/apis/:apiName',
     component: ApiDetailComponent,
     canActivate: [RoleGuard],
-    data: {roles: ['GWA_ADMIN']},
+    data: {roles: ['gwa_admin']},
     resolve: { api: ApiResolver },
     children: [
       { path: '', component: ApiViewComponent, pathMatch: 'full' },
       { path: 'plugins', component: ApiPluginListComponent, pathMatch: 'full' },
     ]
   },
-  { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: 'ui/endpoints',  component: EndpointListComponent },
   { path: 'ui/endpoints/:name', component: EndpointDetailComponent },
-  { path: 'ui/consumers',  component: ConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/consumers/_add_',  component: ConsumerAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/consumers',  component: ConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/consumers/_add_',  component: ConsumerAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   {
     path: 'ui/consumers/:username', 
     component: ConsumerDetailComponent, 
     canActivate: [RoleGuard], 
-    data: {roles: ['GWA_ADMIN']},
+    data: {roles: ['gwa_admin']},
     resolve: { consumer: ConsumerResolver },
     children: [
       { path: '', component: ConsumerViewComponent, pathMatch: 'full' },
@@ -70,12 +70,12 @@ const routes: Routes = [
       { path: 'plugins', component: ConsumerPluginListComponent, pathMatch: 'full' },
     ]
   },
-  { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/plugins',  component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/plugins/:pluginName',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/plugins',  component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/plugins/:pluginName',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: '**', component: PageNotFoundComponent }
 ]; 
 

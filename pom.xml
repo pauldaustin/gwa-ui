@@ -151,7 +151,6 @@
                   <directory>${project.basedir}/src/main/angular/node_modules/systemjs/dist/</directory>
                   <includes>
                     <include>system.js</include>
-                    <include>system.src.js</include>
                   </includes>
                 </resource>
               </resources>
