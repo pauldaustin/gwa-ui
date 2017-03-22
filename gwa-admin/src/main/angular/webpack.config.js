@@ -70,8 +70,7 @@ module.exports = {
     'rxjs/Observable': 'rxjs/Observable',
     'rxjs/Subscription': 'rxjs/Subscription',
     'zone.js/dist/zone': 'zone.js/dist/zone',
-    '@swimlane/ngx-datatable': '@swimlane/ngx-datatable',
-    'shim': 'shim'
+    '@swimlane/ngx-datatable': '@swimlane/ngx-datatable'
   },
   "module": {
     "rules": [

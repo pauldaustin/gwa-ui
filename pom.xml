@@ -131,28 +131,6 @@
         <version>2.4.2</version>
         <executions>
           <execution>
-            <id>angular-copy</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/main/angular/build</directory>
-                  <includes>
-                    <include>app/**</include>
-                    <include>main.*</include>
-                    <include>systemjs.config.server.js</include>
-                    <include>styles.css</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
             <id>angular-copy-js</id>
             <phase>process-resources</phase>
             <goals>
@@ -167,6 +145,18 @@
                   <includes>
                     <include>*.js</include>
                     <include>*.js.map</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/node_modules/zone.js/dist/</directory>
+                  <includes>
+                    <include>zone.min.js</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/node_modules/systemjs/dist/</directory>
+                  <includes>
+                    <include>system.js</include>
                   </includes>
                 </resource>
               </resources>

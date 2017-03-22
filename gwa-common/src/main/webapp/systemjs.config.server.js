@@ -1,11 +1,10 @@
 (function (global) {
-  System.config({
+  SystemJS.config({
     paths: {
       'npm:': 'https://unpkg.com/'
     },
     map: {
       app: 'app',
-
       '@angular/core': 'npm:@angular/core@2.4.10/bundles/core.umd.min.js',
       '@angular/common': 'npm:@angular/common@2.4.10/bundles/common.umd.min.js',
       '@angular/compiler': 'npm:@angular/compiler@2.4.10/bundles/compiler.umd.min.js',
@@ -21,7 +20,7 @@
     },
     packages: {
       app: {
-        main: './main.js',
+        main: './main.bundle.js',
         defaultExtension: 'js'
       },
       rxjs: {
