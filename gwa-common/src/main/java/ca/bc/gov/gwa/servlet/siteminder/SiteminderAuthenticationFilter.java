@@ -68,7 +68,7 @@ public class SiteminderAuthenticationFilter implements Filter {
             principal = new SiteminderPrincipal(userId, type, username, groups);
             session.setAttribute(SITEMINDER_PRINCIPAL, principal);
           }
-          if (principal.isUserInRole("GWA_ADMIN") || principal.isUserInRole("GWA_API_OWNER")) {
+          if (principal.isUserInRole("gwa_admin") || principal.isUserInRole("gwa_api_owner")) {
             final HttpServletRequestWrapper requestWrapper = principal
               .newHttpServletRequestWrapper(httpRequest);
             chain.doFilter(requestWrapper, response);

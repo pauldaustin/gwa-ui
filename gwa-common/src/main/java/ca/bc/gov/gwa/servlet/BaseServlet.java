@@ -66,7 +66,7 @@ public abstract class BaseServlet extends HttpServlet {
     final Principal userPrincipal = request.getUserPrincipal();
     if (userPrincipal instanceof BasePrincipal) {
       final BasePrincipal principal = (BasePrincipal)userPrincipal;
-      if (principal.isUserInRole("GWA_ADMIN")) {
+      if (principal.isUserInRole(roleName)) {
         return true;
       }
     }

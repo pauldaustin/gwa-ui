@@ -12,7 +12,7 @@ public abstract class BaseAdminServlet extends BaseServlet {
   @Override
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    if (hasRole(request, response, "GWA_ADMIN")) {
+    if (hasRole(request, response, "gwa_admin")) {
       super.service(request, response);
     }
   }

@@ -372,7 +372,7 @@ public class ApiService implements ServletContextListener {
         final BasePrincipal principal = (BasePrincipal)httpRequest.getUserPrincipal();
         final String userId = principal.getName();
         final String endpointUserId = (String)endpointConfig.get("created_by");
-        if (principal.isUserInRole("GWA_ADMIN") || userId.equals(endpointUserId)) {
+        if (principal.isUserInRole("gwa_admin") || userId.equals(endpointUserId)) {
           final String apiDeletePath = "/apis/" + apiId;
           httpClient.delete(apiDeletePath);
           writeJsonResponse(httpResponse, DELETED);
