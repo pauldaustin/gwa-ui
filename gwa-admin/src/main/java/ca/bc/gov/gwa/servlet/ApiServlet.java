@@ -36,12 +36,30 @@ public class ApiServlet extends BaseAdminServlet {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      this.apiService.handleList(request, response, "/apis");
-    } else {
-      final String apiId = pathInfo.substring(1);
-      this.apiService.apiGet(request, response, apiId);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: { // Api List
+        this.apiService.handleList(request, response, "/apis");
+      }
+      break;// Api Get
+      case 1: {
+        final String apiId = paths.get(0);
+        this.apiService.apiGet(request, response, apiId);
+
+      }
+      break;
+
+      case 2: {
+        final String apiId = paths.get(0);
+        if ("plugins".equals(paths.get(1))) { // Plugin list
+          this.apiService.pluginList(request, response, "/plugins?api_id=" + apiId, (row) -> {
+            return row.get("consumer_id") == null;
+          });
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
     }
   }
 

@@ -12,7 +12,6 @@ export class PluginService extends BaseService<Plugin> {
 
   constructor(injector:Injector) {
     super(injector);
-    this.path = '/apis/${apiName}/plugins'
     this.path = '/plugins';
     this.typeTitle = 'Plugins';
     this.labelFieldName = 'name';

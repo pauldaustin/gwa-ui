@@ -29,9 +29,9 @@ import { ApiViewComponent } from './Api/ApiViewComponent';
 import { ApiService } from './Api/ApiService';
 import { ApiResolver } from './Api/ApiResolver';
 
-import { ApiPluginListComponent } from './Plugin/ApiPluginListComponent';
-import { ApiPluginDetailComponent } from './Plugin/ApiPluginDetailComponent';
-import { ApiPluginAddComponent } from './Plugin/ApiPluginAddComponent';
+import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
+import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
+import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 
 import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
 import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
@@ -58,6 +58,7 @@ import { GroupService } from './Group/GroupService';
 import { NodeListComponent } from './Node/NodeListComponent';
 import { NodeService } from './Node/NodeService';
 
+import { PluginNameListComponent } from './Plugin/PluginNameListComponent';
 import { PluginListComponent } from './Plugin/PluginListComponent';
 import { PluginService } from './Plugin/PluginService';
 
@@ -138,6 +139,7 @@ import { AppRoutingModule } from './app-routing.module';
     GroupListComponent,
     GroupConsumerListComponent,
     NodeListComponent,
+    PluginNameListComponent,
     PluginListComponent,
     ApiPluginListComponent,
     ConsumerPluginListComponent,

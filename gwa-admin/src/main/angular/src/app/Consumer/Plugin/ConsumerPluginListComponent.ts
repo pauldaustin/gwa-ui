@@ -13,26 +13,24 @@ import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'consumer-plugin-list',
-  templateUrl: 'app/Plugin/PluginList.html'
+  templateUrl: 'app/Consumer/Plugin/ConsumerPluginList.html'
 })
 export class ConsumerPluginListComponent extends PluginListComponent {
-  consumer: Consumer;
-
   constructor(
     injector: Injector,
     service: PluginService
   ) {
     super(injector, service);
+    this.showConsumer = false;
+    this.showPlugin = true;
   }
 
-  ngOnInit(): void {
-    this.route.parent.data
-      .subscribe((data: { consumer: Consumer }) => {
-        this.consumer = data.consumer;
-        this.filterFieldName = 'consumer_id';
-        this.filterValue = data.consumer.id;
+  initParams(): void {
+    this.route.parent.data.subscribe((data: { consumer: Consumer }) => {
+        const consumer = data.consumer;
+        this.path = `/consumers/${consumer.id}/plugins`;
+        this.refresh()
       }
     );
-    super.ngOnInit();
   }
 }

@@ -40,7 +40,9 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   filterFieldName : string;
    
   filterValue : string;
- 
+  
+  filter : { [fieldName: string] : string} = {};
+  
   paging: boolean = false;
   
   path: string;
@@ -113,12 +115,20 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   }
   
   fetch(offset: number, limit: number, callback: any) {
+    const filter : { [fieldName: string] : string} = {};
+    if (this.filter) {
+      for (const fieldName in this.filter) {
+        filter[fieldName] = this.filter[fieldName];
+      }
+    }
+    if (this.filterFieldName) {
+      filter[this.filterFieldName] = this.filterValue;
+    }
     this.service.getRowsPage(
       offset, 
       limit, 
-      this.filterFieldName, 
-      this.filterValue,
-      this.path
+      this.path,
+      this.filter
     ).then(callback);
   }
 

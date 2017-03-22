@@ -9,9 +9,9 @@ import { ApiDetailComponent } from './Api/ApiDetailComponent';
 import { ApiViewComponent } from './Api/ApiViewComponent';
 import { ApiResolver } from './Api/ApiResolver';
 
-import { ApiPluginListComponent } from './Plugin/ApiPluginListComponent';
-import { ApiPluginAddComponent } from './Plugin/ApiPluginAddComponent';
-import { ApiPluginDetailComponent } from './Plugin/ApiPluginDetailComponent';
+import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
+import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
+import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
 
 import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
 import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
@@ -32,6 +32,7 @@ import { GroupListComponent } from './Group/GroupListComponent';
 
 import { NodeListComponent } from './Node/NodeListComponent';
 
+import { PluginNameListComponent } from './Plugin/PluginNameListComponent';
 import { PluginListComponent } from './Plugin/PluginListComponent';
 
 import { StatusDetailComponent } from './Status/StatusDetailComponent';
@@ -72,7 +73,8 @@ const routes: Routes = [
   { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
-  { path: 'ui/plugins',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/plugins',  component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
+  { path: 'ui/plugins/:pluginName',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['GWA_ADMIN']} },
   { path: '**', component: PageNotFoundComponent }
 ]; 

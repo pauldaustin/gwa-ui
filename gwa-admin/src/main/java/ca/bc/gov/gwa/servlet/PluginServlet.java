@@ -18,22 +18,22 @@ public class PluginServlet extends BaseAdminServlet {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
       case 0:
-        this.apiService.pluginList(request, response);
+        this.apiService.pluginNameList(response);
       break;
       case 1: {
-        final String apiName = paths.get(0);
-        if ("_names".equals(apiName)) {
-          this.apiService.pluginNameList(response);
+        final String pluginName = paths.get(0);
+        if ("_names".equals(pluginName)) {
+          this.apiService.pluginNames(response);
         } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+          this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
         }
       }
       break;
       case 2: {
-        final String apiName = paths.get(0);
+        final String pluginName = paths.get(0);
         final String type = paths.get(1);
         if ("schema".equals(type)) {
-          final String schemaPath = "/plugins/" + apiName;
+          final String schemaPath = "/plugins/schema/" + pluginName;
           this.apiService.handleGet(request, response, schemaPath);
         }
       }

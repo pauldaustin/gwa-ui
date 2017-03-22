@@ -240,16 +240,18 @@ export abstract class BaseService<T> implements Service<T> {
   getRowsPage(
     offset: number,
     limit: number,
-    filterFieldName : string,
-    filterValue : string,
-    path: string
+    path: string,
+    filter : { [fieldName: string] : string}
   ): Promise<any> {
     let params = new URLSearchParams();
     params.set('offset', offset.toString()); 
     params.set('limit', limit.toString());
-    if (filterFieldName && filterValue) {
-      params.set("filterFieldName", filterFieldName);
-      params.set("filterValue", filterValue);
+    if (filter) {
+      for (const fieldName in filter) {
+        const value = filter[fieldName];
+        params.append("filterFieldName", fieldName);
+        params.append("filterValue", value);
+      }
     }
     if (!path) {
       path = this.path;

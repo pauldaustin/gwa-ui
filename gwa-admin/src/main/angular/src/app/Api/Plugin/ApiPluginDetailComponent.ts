@@ -13,13 +13,13 @@ import {
 
 import { Params } from '@angular/router';
 
-import { BaseDetailComponent } from '../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../Component/BaseDetailComponent';
 
-import { Api } from '../Api/Api';
-import { ApiService } from '../Api/ApiService';
+import { Api } from '../Api';
+import { ApiService } from '../ApiService';
 
-import { Plugin } from './Plugin';
-import { PluginService } from './PluginService';
+import { Plugin } from '../../Plugin/Plugin';
+import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'api-plugin-detail',
@@ -134,7 +134,6 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
           this.object.api = api;
           this.object.name = this.name;
         }
-        console.log(this.object);
         this.setPluginName(this.name);
      });
   }

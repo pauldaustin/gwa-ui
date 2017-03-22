@@ -56,11 +56,11 @@ public class ConsumerServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
-      case 0:
+      case 0: // Consumer list
         this.apiService.handleList(request, response, "/consumers");
       break;
 
-      case 1: { // Consumer
+      case 1: { // Consumer get
         final String username = paths.get(0);
         final String consumerPath = "/consumers/" + username;
         this.apiService.handleGet(request, response, consumerPath);
@@ -68,12 +68,13 @@ public class ConsumerServlet extends BaseAdminServlet {
       break;
 
       case 2:
-        final String username = paths.get(0);
-        if ("groups".equals(paths.get(1))) {
-          final String groupsPath = "/consumers/" + username + "/acls";
+        final String consumerIdOrUsername = paths.get(0);
+        if ("groups".equals(paths.get(1))) { // Group list
+          final String groupsPath = "/consumers/" + consumerIdOrUsername + "/acls";
           this.apiService.handleList(request, response, groupsPath);
-        } else if ("plugins".equals(paths.get(1))) {
-          this.apiService.pluginList(request, response);
+        } else if ("plugins".equals(paths.get(1))) { // Plugin list
+          this.apiService.pluginList(request, response,
+            "/plugins?consumer_id=" + consumerIdOrUsername, null);
         } else {
           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }

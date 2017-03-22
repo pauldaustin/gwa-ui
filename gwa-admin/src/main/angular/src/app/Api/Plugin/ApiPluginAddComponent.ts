@@ -12,9 +12,9 @@ import {
 
 import { Router } from '@angular/router';
 
-import { Api } from '../Api/Api';
-import { Plugin } from './Plugin';
-import { PluginService } from './PluginService';
+import { Api } from '../Api';
+import { Plugin } from '../../Plugin/Plugin';
+import { PluginService } from '../../Plugin/PluginService';
 import { ApiPluginDetailComponent } from './ApiPluginDetailComponent';
 
 @Component({

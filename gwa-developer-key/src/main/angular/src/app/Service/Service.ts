@@ -21,7 +21,12 @@ export interface Service<T> {
 
   getPath() : string;
 
-  getRowsPage(offset : number, limit : number, filterFieldName : string, filterValue : string, path?: string): Promise<any>;
+  getRowsPage(
+    offset : number, 
+    limit : number, 
+    path?: string,
+    filter? : { [fieldName: string] : string}
+  ): Promise<any>;
 
   getTypeTitle() : string;
 }

@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -35,6 +37,9 @@ import ca.bc.gov.gwa.util.LruMap;
 
 @WebListener
 public class ApiService implements ServletContextListener {
+
+  private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", "name",
+    "consumer_username");
 
   private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
@@ -64,6 +69,29 @@ public class ApiService implements ServletContextListener {
   private static final AtomicInteger referenceCount = new AtomicInteger();
 
   private static final List<String> CONSUMER_GROUP_ADD_FIELD_NAMES = Arrays.asList("group");
+
+  private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
+    for (final String fieldName : API_SORT_FIELDS) {
+      @SuppressWarnings("unchecked")
+      final Comparable<Object> value1 = (Comparable<Object>)row1.get(fieldName);
+      final Object value2 = row2.get(fieldName);
+      if (value1 == null) {
+        if (value2 != null) {
+          return 1;
+        }
+      } else {
+        if (value2 == null) {
+          return -1;
+        } else {
+          final int compare = value1.compareTo(value2);
+          if (compare != 0) {
+            return compare;
+          }
+        }
+      }
+    }
+    return 0;
+  };
 
   public static ApiService get() {
     referenceCount.incrementAndGet();
@@ -493,11 +521,52 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  private String getKongPageUrl(final HttpServletRequest httpRequest, final String path) {
+    final String limit = httpRequest.getParameter("limit");
+    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
+    url.append(path);
+    if (path.indexOf('?') == -1) {
+      url.append('?');
+    } else {
+      url.append('&');
+    }
+    url.append("size=");
+    url.append(limit);
+
+    final String[] filterFieldNames = httpRequest.getParameterValues("filterFieldName");
+    final String[] filterValues = httpRequest.getParameterValues("filterValue");
+    if (filterFieldNames != null && filterValues != null) {
+      for (int i = 0; i < filterFieldNames.length; i++) {
+        final String filterFieldName = filterFieldNames[i];
+        final String filterValue = filterValues[i];
+        url.append('&');
+        url.append(filterFieldName);
+        url.append('=');
+        url.append(filterValue);
+
+      }
+    }
+    final String urlString = url.toString();
+    return urlString;
+  }
+
   private Map<String, Object> getMap(final Map<String, Object> requestData,
     final List<String> fieldNames) {
     final Map<String, Object> data = new LinkedHashMap<>();
     addData(data, requestData, fieldNames);
     return data;
+  }
+
+  private int getPageOffset(final HttpServletRequest httpRequest) {
+    final String offset = httpRequest.getParameter("offset");
+    int offsetPage = 0;
+    if (offset != null) {
+      try {
+        offsetPage = Integer.parseInt(offset);
+      } catch (final Throwable e) {
+      }
+    }
+    return offsetPage;
   }
 
   public String getVersion() {
@@ -623,34 +692,9 @@ public class ApiService implements ServletContextListener {
   protected Map<String, Object> kongPage(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient, final String path)
     throws IOException, ClientProtocolException {
-    final String limit = httpRequest.getParameter("limit");
-    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
-    url.append(path);
-    if (path.indexOf('?') == -1) {
-      url.append('?');
-    } else {
-      url.append('&');
-    }
-    url.append("size=");
-    url.append(limit);
-    final String offset = httpRequest.getParameter("offset");
-    int offsetPage = 0;
-    if (offset != null) {
-      try {
-        offsetPage = Integer.parseInt(offset);
-      } catch (final Throwable e) {
-      }
-    }
-    final String filterFieldName = httpRequest.getParameter("filterFieldName");
-    final String filterValue = httpRequest.getParameter("filterValue");
-    if (filterFieldName != null && filterValue != null) {
-      url.append('&');
-      url.append(filterFieldName);
-      url.append('=');
-      url.append(filterValue);
-    }
+    int offsetPage = getPageOffset(httpRequest);
+    String urlString = getKongPageUrl(httpRequest, path);
     Map<String, Object> kongResponse = Collections.emptyMap();
-    String urlString = url.toString();
     do {
       kongResponse = httpClient.getByUrl(urlString);
       urlString = (String)kongResponse.remove("next");
@@ -658,10 +702,28 @@ public class ApiService implements ServletContextListener {
     return kongResponse;
   }
 
-  public void logError(final String message, final Throwable e) {
-    final Class<?> clazz = getClass();
-    final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.error(message, e);
+  protected Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient, final String path, final Predicate<Map<String, Object>> filter)
+    throws IOException, ClientProtocolException {
+    String urlString = getKongPageUrl(httpRequest, path);
+    final List<Map<String, Object>> allRows = new ArrayList<>();
+    do {
+      final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
+      @SuppressWarnings("unchecked")
+      final List<Map<String, Object>> rows = (List<Map<String, Object>>)kongResponse.get("data");
+      if (rows != null) {
+        for (final Map<String, Object> row : rows) {
+          if (filter == null || filter.test(row)) {
+            allRows.add(row);
+          }
+        }
+      }
+      urlString = (String)kongResponse.get("next");
+    } while (urlString != null);
+    final Map<String, Object> response = new LinkedHashMap<>();
+    response.put("data", allRows);
+    response.put("total", allRows.size());
+    return response;
   }
 
   // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
@@ -699,6 +761,12 @@ public class ApiService implements ServletContextListener {
   // }
   // }
 
+  public void logError(final String message, final Throwable e) {
+    final Class<?> clazz = getClass();
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(message, e);
+  }
+
   public JsonHttpClient newKongClient() {
     return new JsonHttpClient(this.kongAdminUrl);
   }
@@ -708,30 +776,67 @@ public class ApiService implements ServletContextListener {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
       final String path = "/plugins";
       final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
-      if (data != null) {
-        for (final Map<String, Object> acl : data) {
-          final String apiId = (String)acl.get("api_id");
-          final String apiName = apiGetName(httpClient, apiId);
-          acl.put("api_name", apiName);
-
-          final String consumerId = (String)acl.get("consumer_id");
-          final String username = consumerGetUsername(httpClient, consumerId);
-          acl.put("consumer_username", username);
-        }
-      }
-      Json.writeJson(httpResponse, kongResponse);
+      pluginListAddData(httpResponse, httpClient, kongResponse);
     });
+  }
+
+  public void pluginList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path,
+    final Predicate<Map<String, Object>> filter) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> kongResponse = kongPageAll(httpRequest, httpClient, path, filter);
+      pluginListAddData(httpResponse, httpClient, kongResponse);
+      @SuppressWarnings("unchecked")
+      final List<Map<String, Object>> rows = (List<Map<String, Object>>)kongResponse.get("data");
+      if (rows != null) {
+        rows.sort(PLUGIN_COMPARATOR);
+      }
+    });
+  }
+
+  private void pluginListAddData(final HttpServletResponse httpResponse,
+    final JsonHttpClient httpClient, final Map<String, Object> kongResponse) throws IOException {
+    @SuppressWarnings("unchecked")
+    final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
+    if (data != null) {
+      for (final Map<String, Object> acl : data) {
+        final String apiId = (String)acl.get("api_id");
+        final String apiName = apiGetName(httpClient, apiId);
+        acl.put("api_name", apiName);
+
+        final String consumerId = (String)acl.get("consumer_id");
+        final String username = consumerGetUsername(httpClient, consumerId);
+        acl.put("consumer_username", username);
+      }
+    }
+    Json.writeJson(httpResponse, kongResponse);
   }
 
   @SuppressWarnings("unchecked")
   public void pluginNameList(final HttpServletResponse httpResponse) throws IOException {
     handleRequest(null, httpResponse, (httpClient) -> {
-      final Map<String, Object> pluginResponse = httpClient.get("/plugins/enabled");
-      final List<String> pluginNames = (List<String>)pluginResponse.get("enabled_plugins");
+      final Map<String, Object> enabledResponse = httpClient.get("/plugins/enabled");
+      final List<String> pluginNames = (List<String>)enabledResponse.get("enabled_plugins");
       Collections.sort(pluginNames);
-      Json.writeJson(httpResponse, pluginResponse);
+      final List<Map<String, Object>> rows = new ArrayList<>();
+      for (final String pluginName : pluginNames) {
+        final Map<String, Object> row = Collections.singletonMap("name", pluginName);
+        rows.add(row);
+      }
+      final Map<String, Object> response = new LinkedHashMap<>();
+      response.put("data", rows);
+      response.put("total", rows.size());
+      Json.writeJson(httpResponse, response);
+    });
+  }
+
+  @SuppressWarnings("unchecked")
+  public void pluginNames(final HttpServletResponse httpResponse) throws IOException {
+    handleRequest(null, httpResponse, (httpClient) -> {
+      final Map<String, Object> enabledResponse = httpClient.get("/plugins/enabled");
+      final List<String> pluginNames = (List<String>)enabledResponse.get("enabled_plugins");
+      Collections.sort(pluginNames);
+      Json.writeJson(httpResponse, enabledResponse);
     });
   }
 

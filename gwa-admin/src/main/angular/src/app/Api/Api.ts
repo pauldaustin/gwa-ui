@@ -30,22 +30,14 @@ export class Api {
     this.methods = null;
   }
 
-  // All versions
   id : string;
   created_at : string;
   upstream_url : string;
   preserve_host : string;
   name : string;
-  
-  // 0.9.x
-  strip_request_path : boolean = true;
-  request_host : string;
-  request_path : string;
-  
-  // 0.10.x
   hosts : string[];
   uris : string[];
-//  methods : string; getter function
+  //  methods : string; getter function
   strip_uri : boolean = true;
   retries : number = 5;
   upstream_connect_timeout : number = 60000;
@@ -55,7 +47,6 @@ export class Api {
   http_if_terminated : boolean = true;
   
 
-  // Custom but this needs to be moved
   method_flags: Array<HttpMethodState> = [];
   _pluginsByName : { [name: string] : Plugin } = {};
 
@@ -139,11 +130,6 @@ export class Api {
       upstream_url: this.upstream_url,
       preserve_host: this.preserve_host,
       name: this.name,
-      
-      strip_request_path: this.strip_request_path,
-      request_host: this.request_host,
-      request_path: this.request_path,
-      
       hosts: this.hosts,
       uris: this.uris,
       methods: this.methods,

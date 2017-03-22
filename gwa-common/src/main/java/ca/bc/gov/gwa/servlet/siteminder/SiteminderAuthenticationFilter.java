@@ -18,7 +18,6 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.servlet.ApiService;
-import ca.bc.gov.gwa.util.Uuid;
 
 public class SiteminderAuthenticationFilter implements Filter {
 
@@ -40,25 +39,17 @@ public class SiteminderAuthenticationFilter implements Filter {
       if (request.getAttribute("siteminderFiltered") == null) {
         request.setAttribute("siteminderFiltered", Boolean.TRUE);
 
-        String userId = httpRequest.getHeader("smgov_userguid");
-        String universalid = httpRequest.getHeader("sm_universalid");
+        final String userGuid = httpRequest.getHeader("smgov_userguid");
+        final String universalid = httpRequest.getHeader("sm_universalid");
         final String type = httpRequest.getHeader("smgov_usertype");
-        String userDir = httpRequest.getHeader("sm_authdirname");
-        if (userId == null || universalid == null) {
+        final String userDir = httpRequest.getHeader("sm_authdirname");
+        if (userGuid == null || universalid == null) {
           httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
           final HttpSession session = httpRequest.getSession();
           SiteminderPrincipal principal = (SiteminderPrincipal)session
             .getAttribute(SITEMINDER_PRINCIPAL);
-          if (userDir == null) {
-            // For development environment
-            final int separatorIndex = universalid.indexOf('\\');
-            userDir = universalid.substring(0, separatorIndex);
-            universalid = universalid.substring(separatorIndex + 1);
-            if (userId.indexOf('\\') != -1) {
-              userId = userDir + ":" + Uuid.md5(userDir, universalid).toString();
-            }
-          }
+          final String userId = userDir + ":" + userGuid;
           if (principal == null || principal.isInvalid(userId, 120000)) {
             final String username = userDir + ":" + universalid;
 

@@ -6,11 +6,11 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { BaseListComponent } from '../Component/BaseListComponent';
+import { BaseListComponent } from '../../Component/BaseListComponent';
 
-import { Api } from '../Api/Api';
-import { PluginListComponent } from './PluginListComponent';
-import { PluginService } from './PluginService';
+import { Api } from '../Api';
+import { PluginListComponent } from '../../Plugin/PluginListComponent';
+import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'api-plugin-list',
@@ -34,16 +34,16 @@ export class ApiPluginListComponent extends PluginListComponent {
         this.pluginName = this.pluginNames[0];
       }
     });
+    this.showApi = false;
+    this.showPlugin = true;
   }
 
-  ngOnInit(): void {
-    this.route.parent.data
-      .subscribe((data: { api: Api }) => {
+  initParams(): void {
+    this.route.parent.data.subscribe((data: { api: Api }) => {
         this.api = data.api;
-        this.filterFieldName = 'api_id';
-        this.filterValue = data.api.id;
+        this.path = `/apis/${this.api.id}/plugins`;
+        this.refresh();
       }
     );
-    super.ngOnInit();
   }
 }
