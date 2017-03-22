@@ -11,7 +11,7 @@ import { ApiService }  from './ApiService';
 
 @Component({
   selector: 'api-list',
-  templateUrl: 'app/Api/ApiList.html'
+  templateUrl: 'ApiList.html'
 })
 export class ApiListComponent extends BaseListComponent<Api>{
   constructor(

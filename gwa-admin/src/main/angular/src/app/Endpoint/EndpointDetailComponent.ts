@@ -9,7 +9,7 @@ import { Plugin } from '../Plugin/Plugin';
 
 @Component({
   selector: 'endpoint-detail',
-  templateUrl: 'app/Endpoint/EndpointDetail.html'
+  templateUrl: 'EndpointDetail.html'
 })
 export class EndpointDetailComponent extends BaseDetailComponent<Api> {
   endpoint : Plugin;

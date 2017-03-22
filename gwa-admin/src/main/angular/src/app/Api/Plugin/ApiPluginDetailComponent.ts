@@ -23,7 +23,7 @@ import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'api-plugin-detail',
-  templateUrl: 'app/Plugin/ApiPluginDetail.html'
+  templateUrl: 'ApiPluginDetail.html'
 })
 export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
   protected apiService: ApiService = this.injector.get(ApiService);

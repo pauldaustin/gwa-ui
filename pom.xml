@@ -153,6 +153,26 @@
             </configuration>
           </execution>
           <execution>
+            <id>angular-copy-js</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>target/${project.artifactId}-${project.version}/js</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/angular/dist</directory>
+                  <includes>
+                    <include>*.js</include>
+                    <include>*.js.map</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
             <id>angular-copy-css</id>
             <phase>process-resources</phase>
             <goals>

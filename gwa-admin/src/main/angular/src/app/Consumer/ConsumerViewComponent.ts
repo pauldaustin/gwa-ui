@@ -8,7 +8,7 @@ import { ConsumerService }  from './ConsumerService';
 
 @Component({
   selector: 'consumer-view',
-  templateUrl: 'app/Consumer/ConsumerView.html'
+  templateUrl: 'ConsumerView.html'
 })
 export class ConsumerViewComponent extends BaseDetailComponent<Consumer> {
   constructor(

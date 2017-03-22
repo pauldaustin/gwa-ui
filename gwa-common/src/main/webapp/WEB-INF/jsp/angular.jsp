@@ -37,13 +37,12 @@
   <body>
     <bcgov-template>
     </bcgov-template>
-    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
-    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-    <script src="systemjs.config.server.js"></script>
-    <script>
-    System.import('main.js')
-    .catch(function(err){ console.error(err); });
+    <script type="text/javascript" src="https://unpkg.com/core-js/client/shim.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
+    <script type="text/javascript" src="https://unpkg.com/systemjs@0.20.10/dist/system.js"></script>
+    <script type="text/javascript" src="js/systemjs.config.server.js"></script>
+    <script type="text/javascript">
+      SystemJS.import('js/main.bundle.js');
     </script>
     
   </body>

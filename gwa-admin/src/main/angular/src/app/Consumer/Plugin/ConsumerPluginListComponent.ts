@@ -13,7 +13,7 @@ import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'consumer-plugin-list',
-  templateUrl: 'app/Consumer/Plugin/ConsumerPluginList.html'
+  templateUrl: 'ConsumerPluginList.html'
 })
 export class ConsumerPluginListComponent extends PluginListComponent {
   constructor(

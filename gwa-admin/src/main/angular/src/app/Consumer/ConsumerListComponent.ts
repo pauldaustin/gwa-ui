@@ -10,7 +10,7 @@ import { ConsumerService } from './ConsumerService';
 
 @Component({
   selector: 'consumer-list',
-  templateUrl: 'app/Consumer/ConsumerList.html'
+  templateUrl: 'ConsumerList.html'
 })
 export class ConsumerListComponent extends BaseListComponent<Consumer> {
 

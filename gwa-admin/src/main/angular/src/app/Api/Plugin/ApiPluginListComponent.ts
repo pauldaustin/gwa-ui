@@ -14,7 +14,7 @@ import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
   selector: 'api-plugin-list',
-  templateUrl: 'app/Plugin/ApiPluginList.html'
+  templateUrl: 'ApiPluginList.html'
 })
 export class ApiPluginListComponent extends PluginListComponent {
   api: Api;

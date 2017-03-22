@@ -16,8 +16,8 @@ import {MenuItem} from './MenuItem';
 
 @Component({
   selector: 'bcgov-template',
-  templateUrl: 'app/bcgov-template/BcGovTemplate.html',
-  styleUrls: ['app/bcgov-template/BcGovTemplate.css']
+  templateUrl: 'BcGovTemplate.html',
+  styleUrls: ['BcGovTemplate.css']
 })
 export class BcGovTemplate {
 

@@ -1,5 +1,3 @@
-import 'rxjs/add/operator/switchMap';
-
 import {
   Component,
   Input,
@@ -19,7 +17,7 @@ import { ApiPluginDetailComponent } from './ApiPluginDetailComponent';
 
 @Component({
   selector: 'api-plugin-add',
-  templateUrl: 'app/Plugin/ApiPluginDetail.html'
+  templateUrl: 'ApiPluginDetail.html'
 })
 export class ApiPluginAddComponent extends ApiPluginDetailComponent {
 }

@@ -12,7 +12,7 @@ import { PluginService } from './PluginService';
 
 @Component({
   selector: 'plugin-list',
-  templateUrl: 'app/Plugin/PluginList.html'
+  templateUrl: 'PluginList.html'
 })
 export class PluginListComponent extends BaseListComponent<Plugin> {
 

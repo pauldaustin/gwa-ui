@@ -11,7 +11,7 @@ import { GroupConsumerService } from './GroupConsumerService';
 
 @Component({
   selector: 'consumer-group-list',
-  templateUrl: 'app/Group/GroupConsumerList.html'
+  templateUrl: 'GroupConsumerList.html'
 })
 export class GroupConsumerListComponent extends BaseListComponent<Group> {
 

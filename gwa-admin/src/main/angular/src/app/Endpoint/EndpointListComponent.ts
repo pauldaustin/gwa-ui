@@ -12,7 +12,7 @@ import { EndpointService } from './EndpointService';
 
 @Component({
   selector: 'endpoint-list',
-  templateUrl: 'app/Endpoint/EndpointList.html'
+  templateUrl: 'EndpointList.html'
 })
 export class EndpointListComponent extends BaseListComponent<Api> {
 

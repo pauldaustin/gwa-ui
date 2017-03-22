@@ -10,7 +10,7 @@ import { GroupService } from './GroupService';
 
 @Component({
   selector: 'group-list',
-  templateUrl: 'app/Group/GroupList.html'
+  templateUrl: 'GroupList.html'
 })
 export class GroupListComponent extends BaseListComponent<Group> {
 

@@ -11,7 +11,7 @@ import { ApiService } from './ApiService';
 
 @Component({
   selector: 'api-view',
-  templateUrl: 'app/Api/ApiView.html'
+  templateUrl: 'ApiView.html'
 })
 export class ApiViewComponent extends BaseDetailComponent<Api> {
   constructor(
