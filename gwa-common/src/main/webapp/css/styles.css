@@ -1,3 +1,13 @@
+@import 'deeppurple-amber.css';
+@import 'ngx-datatable/index.css';
+@import 'ngx-datatable/themes/material.css';
+@import 'ngx-datatable/assets/icons.css';
+
+@font-face {
+  font-family: 'Myriad-Web-Pro';
+  src: url('../fonts/MyriadWebPro.ttf');
+}
+
 .full-width {
   width: 100%;
 }
