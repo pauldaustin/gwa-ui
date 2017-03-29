@@ -7,28 +7,27 @@ import {
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
 
-import { Consumer } from '../Consumer';
+import { User } from '../User';
 import { PluginListComponent } from '../../Plugin/PluginListComponent';
 import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
-  selector: 'consumer-plugin-list',
-  templateUrl: 'ConsumerPluginList.html'
+  selector: 'user-plugin-list',
+  templateUrl: 'UserPluginList.html'
 })
-export class ConsumerPluginListComponent extends PluginListComponent {
+export class UserPluginListComponent extends PluginListComponent {
   constructor(
     injector: Injector,
     service: PluginService
   ) {
     super(injector, service);
-    this.showConsumer = false;
-    this.showPlugin = true;
+    this.showUser = false;
   }
 
   initParams(): void {
-    this.route.parent.data.subscribe((data: { consumer: Consumer }) => {
-        const consumer = data.consumer;
-        this.path = `/consumers/${consumer.id}/plugins`;
+    this.route.parent.data.subscribe((data: { user: User }) => {
+        const user = data.user;
+        this.path = `/users/${user.id}/plugins`;
         this.refresh()
       }
     );

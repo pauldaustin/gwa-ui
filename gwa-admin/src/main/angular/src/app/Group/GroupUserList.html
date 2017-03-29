@@ -1,6 +1,6 @@
 <md-tab-group>
   <md-tab>
-    <template md-tab-label>Group: {{groupName}}</template>
+    <ng-template md-tab-label>Group: {{groupName}}</ng-template>
 
     <md-toolbar>
       <md-input-container>
@@ -10,7 +10,7 @@
           [(ngModel)]="addUsername"
         />
       </md-input-container>
-      <a (click)="addConsumer()" md-raised-button color="primary">Add Consumer</a>
+      <a (click)="addUser()" md-raised-button color="primary">Add User</a>
     </md-toolbar>
     
     <ngx-datatable
@@ -33,13 +33,13 @@
   </md-tab>
 </md-tab-group>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','consumers', value]">{{value}}</a></template>
+<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','users', value]">{{value}}</a></ng-template>
 
-<template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
+<ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
 
-<template #actionsT let-row="row">
+<ng-template #actionsT let-row="row">
   <button (click)="deleteObject(row)" md-icon-button  style="color: red">
     <md-icon>delete</md-icon>
   </button>
-</template>
+</ng-template>
 

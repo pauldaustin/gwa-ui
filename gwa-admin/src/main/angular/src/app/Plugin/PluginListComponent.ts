@@ -20,13 +20,13 @@ export class PluginListComponent extends BaseListComponent<Plugin> {
 
   @ViewChild('apiT') apiTemplate: TemplateRef<any>;
 
-  @ViewChild('consumerT') consumerTemplate: TemplateRef<any>;
+  @ViewChild('userT') userTemplate: TemplateRef<any>;
 
-  showConsumer : boolean = true;
+  showUser : boolean = true;
 
   showApi : boolean = true;
 
-  showPlugin : boolean = false;
+  showPlugin : boolean = true;
   
   constructor(
     injector: Injector,
@@ -52,8 +52,8 @@ export class PluginListComponent extends BaseListComponent<Plugin> {
     if (this.showPlugin) {
       this.columns.push({ prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate,  sortable: false }); 
     }
-    if (this.showConsumer) {
-      this.columns.push({ prop: 'consumer_username', name: 'Consumer', cellTemplate: this.consumerTemplate,  sortable: false });
+    if (this.showUser) {
+      this.columns.push({ prop: 'user_username', name: 'User', cellTemplate: this.userTemplate,  sortable: false });
     }
     this.columns.push({ prop: 'enabled', name: 'Enabled', cellTemplate: this.flagTemplate, sortable: false });
     this.columns.push({ prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false });

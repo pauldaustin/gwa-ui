@@ -1,6 +1,7 @@
 package ca.bc.gov.gwa.servlet;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,40 +15,95 @@ public class EndpointServlet extends BaseServlet {
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 5: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          final String userName = paths.get(4);
+          this.apiService.endpointGroupUserDelete(request, response, apiName, groupName, userName);
+        } else {
+          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+      }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+    }
   }
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      this.apiService.handleList(request, response, "/plugins?name=bcgov-gwa-endpoint");
-    } else if (pathInfo.indexOf('/', 1) == -1) {
-      final String apiId = pathInfo.substring(1);
-      this.apiService.apiGet(request, response, apiId);
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: { // Endpoint List
+        this.apiService.endpointList(request, response);
+      }
+      break;
+      case 1: { // Endpoint Get
+        final String apiName = paths.get(0);
+        this.apiService.apiGet(request, response, apiName);
+      }
+      break;
+
+      case 4: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          this.apiService.endpointGroupUserList(request, response, apiName, groupName);
+        } else {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 5: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          final String userName = paths.get(4);
+          this.apiService.endpointGroupUserAdd(request, response, apiName, groupName, userName);
+        } else {
+          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+      }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+    }
   }
 
   @Override
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else if (pathInfo.indexOf('/', 1) == -1) {
-      this.apiService.endpointUpdate(request, response, userId);
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 1: {
+        final String userId = request.getRemoteUser();
+        this.apiService.endpointUpdate(request, response, userId);
+      }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
     }
   }
 }

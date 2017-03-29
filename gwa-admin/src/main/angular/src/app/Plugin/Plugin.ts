@@ -5,8 +5,8 @@ export class Plugin {
   api_id : string;
   api_name : string;
   api? : Api;
-  consumer_id? : string;
-  consumer_username? : string;
+  user_id? : string;
+  user_username? : string;
   name : string;
   config : {[key: string]: any} = {};
   enabled : boolean = true;

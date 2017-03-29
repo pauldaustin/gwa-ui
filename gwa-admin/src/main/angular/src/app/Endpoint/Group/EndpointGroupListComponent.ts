@@ -1,0 +1,57 @@
+import { 
+  Component, 
+  Injector
+} from '@angular/core';
+
+import { BaseListComponent } from '../../Component/BaseListComponent';
+
+import { Api } from '../../Api/Api';
+import { Group } from '../../Group/Group';
+
+@Component({
+  selector: 'endpoint-group-list',
+  template: `
+<ngx-datatable
+  class="material striped"
+  [rows]="rows"
+  [columns]="columns"
+  [columnMode]="'force'"
+  [headerHeight]="30"
+  [footerHeight]="30"
+  [rowHeight]="30"
+  [cssClasses]="cssClasses"
+  [scrollbarV]="true"
+>
+</ngx-datatable>
+
+<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','endpoints', api.name, 'groups', value]">{{value}}</a></ng-template>
+`
+})
+export class EndpointGroupListComponent extends BaseListComponent<Group> {
+  api: Api;
+
+  constructor(
+    injector: Injector,
+  ) {
+    super(injector, null);
+  }
+
+  ngOnInit(): void {
+    this.route.parent.data
+      .subscribe((data: { api: Api }) => {
+        this.api = data.api;
+        const endpoint = this.api.plugin('bcgov-gwa-endpoint');
+        for (const groupName of endpoint.config.api_groups) {
+          if (groupName.indexOf('github_') == 0) {
+          } else if (groupName.indexOf('idir_') == 0) {
+          } else {
+            this.rows.push({ group: groupName });
+          }
+        }
+      }
+    );
+    this.columns = [
+      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: false },
+    ];
+  }
+}

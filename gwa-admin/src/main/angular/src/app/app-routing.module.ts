@@ -13,20 +13,25 @@ import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
 import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
 
-import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
-import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
-import { ConsumerDetailComponent } from './Consumer/ConsumerDetailComponent';
-import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
-import { ConsumerResolver } from './Consumer/ConsumerResolver';
+import { UserAddComponent } from './User/UserAddComponent';
+import { UserListComponent } from './User/UserListComponent';
+import { UserDetailComponent } from './User/UserDetailComponent';
+import { UserViewComponent } from './User/UserViewComponent';
+import { UserResolver } from './User/UserResolver';
 
-import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
+import { UserGroupListComponent } from './User/Group/UserGroupListComponent';
 
-import { ConsumerPluginListComponent } from './Consumer/Plugin/ConsumerPluginListComponent';
+import { UserPluginListComponent } from './User/Plugin/UserPluginListComponent';
 
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
+import { EndpointResolver } from './Endpoint/EndpointResolver';
+import { EndpointViewComponent } from './Endpoint/EndpointViewComponent';
 
-import { GroupConsumerListComponent } from './Group/GroupConsumerListComponent';
+import { EndpointGroupListComponent } from './Endpoint/Group/EndpointGroupListComponent';
+import { EndpointGroupUserListComponent } from './Endpoint/Group/EndpointGroupUserListComponent';
+
+import { GroupUserListComponent } from './Group/GroupUserListComponent';
 
 import { GroupListComponent } from './Group/GroupListComponent';
 
@@ -39,6 +44,7 @@ import { StatusDetailComponent } from './Status/StatusDetailComponent';
 
 const routes: Routes = [
   { path: 'ui', redirectTo: 'ui/endpoints', pathMatch: 'full' },
+
   { path: 'ui/apis',  component: ApiListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   {
@@ -54,27 +60,43 @@ const routes: Routes = [
   },
   { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/endpoints',  component: EndpointListComponent },
-  { path: 'ui/endpoints/:name', component: EndpointDetailComponent },
-  { path: 'ui/consumers',  component: ConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/consumers/_add_',  component: ConsumerAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+
+  
+  { path: 'ui/users',  component: UserListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/users/_add_',  component: UserAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   {
-    path: 'ui/consumers/:username', 
-    component: ConsumerDetailComponent, 
+    path: 'ui/users/:username', 
+    component: UserDetailComponent, 
     canActivate: [RoleGuard], 
     data: {roles: ['gwa_admin']},
-    resolve: { consumer: ConsumerResolver },
+    resolve: { user: UserResolver },
     children: [
-      { path: '', component: ConsumerViewComponent, pathMatch: 'full' },
-      { path: 'groups', component: ConsumerGroupListComponent, pathMatch: 'full' },
-      { path: 'plugins', component: ConsumerPluginListComponent, pathMatch: 'full' },
+      { path: '', component: UserViewComponent, pathMatch: 'full' },
+      { path: 'groups', component: UserGroupListComponent, pathMatch: 'full' },
+      { path: 'plugins', component: UserPluginListComponent, pathMatch: 'full' },
     ]
   },
+
+  { path: 'ui/endpoints',  component: EndpointListComponent },
+  {
+    path: 'ui/endpoints/:apiName', 
+    component: EndpointDetailComponent, 
+    resolve: { api: EndpointResolver },
+    children: [
+      { path: '', component: EndpointViewComponent, pathMatch: 'full' },
+      { path: 'groups', component: EndpointGroupListComponent, pathMatch: 'full' },
+    ]
+  },
+  { path: 'ui/endpoints/:apiName/groups/:groupName',  component: EndpointGroupUserListComponent },
+
   { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/groups/:groupName',  component: GroupConsumerListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/groups/:groupName',  component: GroupUserListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+
   { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+
   { path: 'ui/plugins',  component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: 'ui/plugins/:pluginName',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+
   { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: '**', component: PageNotFoundComponent }
 ]; 

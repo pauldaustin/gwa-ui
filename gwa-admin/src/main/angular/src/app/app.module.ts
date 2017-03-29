@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
   FormsModule,
   ReactiveFormsModule
@@ -33,24 +34,31 @@ import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
 import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 
-import { ConsumerListComponent } from './Consumer/ConsumerListComponent';
-import { ConsumerAddComponent } from './Consumer/ConsumerAddComponent';
-import { ConsumerDetailComponent } from './Consumer/ConsumerDetailComponent';
-import { ConsumerViewComponent } from './Consumer/ConsumerViewComponent';
-import { ConsumerService } from './Consumer/ConsumerService';
-import { ConsumerResolver } from './Consumer/ConsumerResolver';
+import { UserListComponent } from './User/UserListComponent';
+import { UserAddComponent } from './User/UserAddComponent';
+import { UserDetailComponent } from './User/UserDetailComponent';
+import { UserViewComponent } from './User/UserViewComponent';
+import { UserService } from './User/UserService';
+import { UserResolver } from './User/UserResolver';
 
-import { ConsumerGroupListComponent } from './Consumer/Group/ConsumerGroupListComponent';
-import { ConsumerGroupService } from './Consumer/Group/ConsumerGroupService';
+import { UserGroupListComponent } from './User/Group/UserGroupListComponent';
+import { UserGroupService } from './User/Group/UserGroupService';
 
-import { ConsumerPluginListComponent } from './Consumer/Plugin/ConsumerPluginListComponent';
+import { UserPluginListComponent } from './User/Plugin/UserPluginListComponent';
 
 import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
+import { EndpointViewComponent } from './Endpoint/EndpointViewComponent';
 import { EndpointListComponent } from './Endpoint/EndpointListComponent';
+import { EndpointResolver } from './Endpoint/EndpointResolver';
 import { EndpointService } from './Endpoint/EndpointService';
 
-import { GroupConsumerListComponent } from './Group/GroupConsumerListComponent';
-import { GroupConsumerService } from './Group/GroupConsumerService';
+import { EndpointGroupListComponent } from './Endpoint/Group/EndpointGroupListComponent';
+
+import { EndpointGroupUserListComponent } from './Endpoint/Group/EndpointGroupUserListComponent';
+import { EndpointGroupUserService } from './Endpoint/Group/EndpointGroupUserService';
+
+import { GroupUserListComponent } from './Group/GroupUserListComponent';
+import { GroupUserService } from './Group/GroupUserService';
 
 import { GroupListComponent } from './Group/GroupListComponent';
 import { GroupService } from './Group/GroupService';
@@ -70,6 +78,7 @@ import { AppRoutingModule } from './app-routing.module';
 @NgModule({
   imports: [
     BrowserModule,
+    NoopAnimationsModule,
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
@@ -92,9 +101,9 @@ import { AppRoutingModule } from './app-routing.module';
             routerLink: 'ui/plugins'
           },
           {
-            title: 'Consumers',
+            title: 'Users',
             icon: 'person',
-            routerLink: 'ui/consumers'
+            routerLink: 'ui/users'
           },
           {
             title: 'Groups',
@@ -129,20 +138,23 @@ import { AppRoutingModule } from './app-routing.module';
     ApiViewComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
-    ConsumerAddComponent,
-    ConsumerListComponent,
-    ConsumerDetailComponent,
-    ConsumerViewComponent,
-    ConsumerGroupListComponent,
+    UserAddComponent,
+    UserListComponent,
+    UserDetailComponent,
+    UserViewComponent,
+    UserGroupListComponent,
     EndpointDetailComponent,
     EndpointListComponent,
+    EndpointViewComponent,
+    EndpointGroupListComponent,
+    EndpointGroupUserListComponent,
     GroupListComponent,
-    GroupConsumerListComponent,
+    GroupUserListComponent,
     NodeListComponent,
     PluginNameListComponent,
     PluginListComponent,
     ApiPluginListComponent,
-    ConsumerPluginListComponent,
+    UserPluginListComponent,
     StatusDetailComponent
   ],
   providers: [
@@ -151,12 +163,14 @@ import { AppRoutingModule } from './app-routing.module';
 
     ApiService,
     ApiResolver,
-    ConsumerService,
-    ConsumerResolver,
-    ConsumerGroupService,
+    UserService,
+    UserResolver,
+    UserGroupService,
     EndpointService,
+    EndpointResolver,
+    EndpointGroupUserService,
     GroupService,
-    GroupConsumerService,
+    GroupUserService,
     NodeService,
     PluginService,
     StatusService

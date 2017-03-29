@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  Inject
+} from '@angular/core';
 import {
   MdDialog, 
-  MdDialogRef 
+  MdDialogRef,
+  MD_DIALOG_DATA
 } from '@angular/material';
 
 @Component({
@@ -15,12 +19,13 @@ import {
   `,
 })
 export class MessageDialog {
-  title : string = this.dialogRef.config.data['title'];
+  title : string = this.data['title'];
   
-  message : string = this.dialogRef.config.data['message'];
+  message : string = this.data['message'];
   
   constructor(
     public dialogRef : MdDialogRef<MessageDialog>,
+    @Inject(MD_DIALOG_DATA) public data: any,
    ) {
   }
 }

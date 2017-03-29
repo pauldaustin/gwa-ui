@@ -1,45 +1,22 @@
 import { 
   Component,
-  Injector,
-  TemplateRef,
-  ViewChild
+  Injector
 } from '@angular/core';
 
-import { BaseListComponent } from '../Component/BaseListComponent';
-
-import { Api } from '../Api/Api';
-import { EndpointService } from './EndpointService';
+import { ApiListComponent } from '../Api/ApiListComponent';
+import { ApiService } from '../Api/ApiService';
 
 @Component({
   selector: 'endpoint-list',
   templateUrl: 'EndpointList.html'
 })
-export class EndpointListComponent extends BaseListComponent<Api> {
-
-  @ViewChild('urlT') urlTemplate: TemplateRef<any>;
-
-  @ViewChild('endpointUriT') endpointUriTemplate: TemplateRef<any>;
+export class EndpointListComponent extends ApiListComponent {
 
   constructor(
     injector: Injector,
-    protected endpointService: EndpointService
+    protected apiService: ApiService
   ) {
-    super(injector, endpointService);
-    this.paging = true;
-  }
-
-  ngOnInit(): void {
-    this.columns = [
-      { prop: 'config.name', name: 'Name', cellTemplate: this.idTemplate, sortable: false },
-      { prop: 'config', name: 'URI', cellTemplate: this.endpointUriTemplate, sortable: false },
-      { prop: 'config.upstream_url', name: 'Upstream URL', cellTemplate: this.urlTemplate, sortable: false },
-      { prop: 'config.created_by', name: 'Created By', sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false }
-    ];
-    super.ngOnInit();
-  }
-
-  endpointUri(object : any) : string {
-    return Api.uri(object['uri_template'], object['name']);
+    super(injector, apiService);
+    this.path = '/endpoints';
   }
 }

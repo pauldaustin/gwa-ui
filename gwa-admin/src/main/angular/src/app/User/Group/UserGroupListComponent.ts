@@ -5,22 +5,22 @@ import {
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
 
-import { Consumer } from '../Consumer';
+import { User } from '../User';
 import { Group } from '../../Group/Group';
-import { ConsumerGroupService } from './ConsumerGroupService';
+import { UserGroupService } from './UserGroupService';
 
 @Component({
-  selector: 'consumer-group-list',
-  templateUrl: 'ConsumerGroupList.html'
+  selector: 'user-group-list',
+  templateUrl: 'UserGroupList.html'
 })
-export class ConsumerGroupListComponent extends BaseListComponent<Group> {
-  consumer: Consumer;
+export class UserGroupListComponent extends BaseListComponent<Group> {
+  user: User;
 
   addGroupName: string;
 
   constructor(
     injector: Injector,
-    service: ConsumerGroupService
+    service: UserGroupService
   ) {
     super(injector, service);
     this.paging = true;
@@ -32,9 +32,9 @@ export class ConsumerGroupListComponent extends BaseListComponent<Group> {
 
   ngOnInit(): void {
     this.route.parent.data
-      .subscribe((data: { consumer: Consumer }) => {
-        this.consumer = data.consumer;
-        this.path = '/consumers/' + data.consumer.username + '/groups';
+      .subscribe((data: { user: User }) => {
+        this.user = data.user;
+        this.path = '/users/' + data.user.username + '/groups';
       }
     );
     this.columns = [
@@ -48,7 +48,7 @@ export class ConsumerGroupListComponent extends BaseListComponent<Group> {
   addGroup() {
     if (this.addGroupName) {
       const group = this.service.newObject();
-      group.consumer_id = this.consumer.id;
+      group.user_id = this.user.id;
       group.group = this.addGroupName.toLowerCase();
       this.service.addObject(group, this.path)
         .then((savedGroup) => {

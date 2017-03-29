@@ -1,7 +1,4 @@
 <div>
-  <md-toolbar>
-    <a routerLink="/ui/endpoints/_add_" md-raised-button>Add Endpoint</a>
-  </md-toolbar>
 
   <ngx-datatable
     class="material striped"
@@ -20,13 +17,14 @@
     (page)='onPage($event)'
   >
   </ngx-datatable>
-
 </div>
 
-<template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','endpoints', value]">{{value}}</a></template>
+<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','endpoints', row.name]">{{value}}</a></ng-template>
 
-<template #urlT let-row="row" let-value="value"><a href="{{value}}">{{value}}</a></template>
+<ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
 
-<template #endpointUriT let-row="row" let-value="value"><a href="{{endpointUri(value)}}">{{endpointUri(value)}}</a></template>
-
-<template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>
+<ng-template #actionsT let-row="row">
+  <button (click)="deleteObject(row)" md-icon-button  style="color: red">
+    <md-icon>delete</md-icon>
+  </button>
+</ng-template>

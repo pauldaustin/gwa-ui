@@ -26,12 +26,12 @@
   <body>
     <bcgov-template>
     </bcgov-template>
-    <script type="text/javascript" src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
+    <script type="text/javascript" src="https://unpkg.com/core-js@2.4.1/client/shim.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/zone.js@0.8.5?main=browser"></script>
     <script type="text/javascript" src="js/system.js"></script>
     <script type="text/javascript" src="systemjs.config.server.js"></script>
     <script type="text/javascript">
-    SystemJS.import('js/main.bundle.js');
+    SystemJS.import('app');
     </script>
     
   </body>

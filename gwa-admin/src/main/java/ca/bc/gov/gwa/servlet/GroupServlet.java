@@ -25,7 +25,7 @@ public class GroupServlet extends BaseServlet {
       this.apiService.handleList(request, response, "/groups");
     } else if (pathInfo.indexOf('/', 1) == -1) {
       final String groupPath = "/groups" + pathInfo;
-      this.apiService.groupConsumerList(request, response, groupPath);
+      this.apiService.groupUserList(request, response, groupPath);
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }

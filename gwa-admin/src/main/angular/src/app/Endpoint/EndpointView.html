@@ -1,0 +1,133 @@
+<div *ngIf="object">
+  <form #endpointForm="ngForm" class="form-horizontal" role="form">
+    <md-card>
+      <md-card-content fxLayoutGap="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+          <md-input-container fxFlex>
+            <input
+              mdInput
+              placeholder="Name" 
+              name="name"
+              [(ngModel)]="object.name"
+              required="true"
+              pattern="[a-zA-Z][a-zA-Z0-9_\-]*"
+            />
+          </md-input-container>
+          <md-input-container fxFlex *ngIf="object.created_at">
+            <input
+              mdInput
+              placeholder="Created At"
+              value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}"
+              disabled
+            />
+          </md-input-container>
+          <md-input-container fxFlex *ngIf="endpoint.config.api_owners" fxLayout="column" fxLayoutGap="2px">
+            <input
+              *ngFor="let owner of endpoint.config.api_owners"
+              mdInput
+              placeholder="Owners"
+              value="{{owner}}"
+              disabled
+            />
+          </md-input-container>
+        </div>
+
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+          <md-input-container fxFlex *ngIf="object.hosts" fxLayout="column" fxLayoutGap="2px">
+            <input
+              *ngFor="let host of object.hosts"
+              mdInput
+              placeholder="Hosts"
+              value="{{host}}"
+              disabled
+            />
+          </md-input-container>
+
+          <md-input-container fxFlex *ngIf="object.uris" fxLayout="column" fxLayoutGap="2px">
+            <input
+              *ngFor="let path of object.uris"
+              mdInput
+              placeholder="Paths"
+              value="{{path}}"
+              disabled
+            />
+          </md-input-container>
+        </div>
+
+        <fieldset>
+           <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+            <label>Rate Limits:</label>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Second" 
+                name="rateLimit_second"
+                type="number"
+                min="0"
+                [(ngModel)]="rateLimit.config.second"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Minute" 
+                name="rateLimit_minute"
+                type="number"
+                min="0"
+                required="true"
+                [(ngModel)]="rateLimit.config.minute"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Hour" 
+                name="rateLimit_hour"
+                type="number"
+                min="0"
+                [(ngModel)]="rateLimit.config.hour"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Day" 
+                name="rateLimit_day"
+                type="number"
+                min="0"
+                [(ngModel)]="rateLimit.config.day"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Month" 
+                name="rateLimit_month"
+                type="number"
+                min="0"
+                [(ngModel)]="rateLimit.config.month"
+              />
+            </md-input-container>
+            <md-input-container fxFlex>
+              <input
+                mdInput
+                placeholder="Year" 
+                name="rateLimit_year"
+                type="number"
+                min="0"
+                [(ngModel)]="rateLimit.config.year"
+              />
+            </md-input-container>
+          </div>
+        </fieldset>
+
+      </md-card-content>
+
+      <md-card-actions>
+        <button (click)="routeList()" md-button>Close</button>
+        <button (click)="save(false)" md-raised-button color="accent" [disabled]="!endpointForm.form.valid">Save</button>
+        <button (click)="save(true)" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save &amp; Close</button>
+      </md-card-actions>
+    </md-card>
+  </form>
+</div>

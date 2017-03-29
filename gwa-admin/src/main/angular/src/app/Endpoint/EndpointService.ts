@@ -5,15 +5,15 @@ import {
 } from '@angular/core';
 import { BaseService } from '../Service/BaseService';
 import { Api } from '../Api/Api';
-import { Plugin } from '../Plugin/Plugin';
 
 @Injectable()
 export class EndpointService extends BaseService<Api> {
   constructor(injector:Injector) {
     super(injector);
-    this.path = `/endpoints`;
+    this.path = '/endpoints';
+    this.pathParamName = 'apiName';
     this.typeTitle = 'Endpoint';
-    this.labelFieldName = 'config.name';
+    this.labelFieldName = 'name';
   }
 
   deleteObject(api : Api, path?: string): Promise<boolean> {
@@ -28,6 +28,6 @@ export class EndpointService extends BaseService<Api> {
   }
 
   newObject(): Api {
-    return null;
+    return new Api();
   }
 }

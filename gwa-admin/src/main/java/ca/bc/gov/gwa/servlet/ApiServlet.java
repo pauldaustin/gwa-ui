@@ -15,21 +15,43 @@ public class ApiServlet extends BaseAdminServlet {
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
-      final String apiIdString = pathInfo.substring(1);
-      final int slashIndex = apiIdString.indexOf('/');
-      if (slashIndex > -1) {
-        if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
-          this.apiService.handleDelete(request, response, "/apis" + pathInfo);
-        } else {
-          response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        }
-      } else {
-        this.apiService.handleDelete(request, response, pathInfo);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 1: { // API
+        final String apiName = paths.get(0);
+        final String path = "/apis/" + apiName;
+        this.apiService.handleDelete(request, response, path);
+        this.apiService.clearCachedObject("api", apiName);
       }
+      break;
+
+      case 2:
+        if ("plugins".equals(paths.get(1))) { // Plugin
+          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      break;
+
+      case 3:
+        final String apiName = paths.get(0);
+        if ("plugins".equals(paths.get(1))) {
+          final String pluginName = paths.get(2);
+          final String path = "/apis/" + apiName + "/plugins/" + pluginName;
+          this.apiService.handleDelete(request, response, path);
+          this.apiService.clearCachedObject("api", apiName);
+        } else {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
@@ -38,11 +60,12 @@ public class ApiServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
-      case 0: { // Api List
+      case 0: { // API List
         this.apiService.handleList(request, response, "/apis");
       }
-      break;// Api Get
-      case 1: {
+      break;
+
+      case 1: { // API Get
         final String apiId = paths.get(0);
         this.apiService.apiGet(request, response, apiId);
 
@@ -66,51 +89,83 @@ public class ApiServlet extends BaseAdminServlet {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      final List<String> fieldNames = this.apiService.getApiFieldNames();
-      this.apiService.handleAdd(request, response, "/apis", fieldNames);
-    } else {
-      final String apiIdString = pathInfo.substring(1);
-      final int slashIndex = apiIdString.indexOf('/');
-      if (slashIndex > -1) {
-        if (apiIdString.startsWith("plugins", slashIndex + 1)) {
-          if (apiIdString.indexOf('/', slashIndex + 2) == -1) {
-            final String pluginAddPath = "/apis" + pathInfo;
-            this.apiService.handleAdd(request, response, pluginAddPath);
-          } else {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-          }
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: // API
+        this.apiService.handleAdd(request, response, "/apis", ApiService.APIS_FIELD_NAMES);
+      break;
+
+      case 1:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 2: {
+        final String apiName = paths.get(0);
+        if ("plugins".equals(paths.get(1))) { // Plugin
+          final String pluginAddPath = "/apis/" + apiName + "/plugins";
+          this.apiService.handleAdd(request, response, pluginAddPath);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
+
+      case 3:
+        if ("plugins".equals(paths.get(1))) {
+          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         } else {
           response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-      }
+      break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
   @Override
   protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
-      final String apiIdString = pathInfo.substring(1);
-      final int slashIndex = apiIdString.indexOf('/');
-      if (slashIndex > -1) {
-        if (apiIdString.startsWith("plugins/", slashIndex + 1)) {
-          final String updatePath = "/apis" + pathInfo;
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0:
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+
+      case 1: { // API
+        final String apiName = paths.get(0);
+        final String path = "/apis/" + apiName;
+        this.apiService.handleUpdatePatch(request, response, path, ApiService.APIS_FIELD_NAMES);
+        this.apiService.clearCachedObject("api", apiName);
+      }
+      break;
+
+      case 2: {
+        if ("plugins".equals(paths.get(1))) { // Plugin
+          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        } else {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
+
+      case 3: {
+        final String apiName = paths.get(0);
+        if ("plugins".equals(paths.get(1))) { // Plugin
+          final String pluginName = paths.get(2);
+          final String updatePath = "/apis/" + apiName + "/plugins/" + pluginName;
           this.apiService.handleUpdatePatch(request, response, updatePath,
             ApiService.PLUGIN_FIELD_NAMES);
+          this.apiService.clearCachedObject("api", apiName);
         } else {
-          response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-      } else {
-        final String path = "/apis" + pathInfo;
-        final List<String> fieldNames = this.apiService.getApiFieldNames();
-        this.apiService.handleUpdatePatch(request, response, path, fieldNames);
-        // this.apiService.apiUpdate(request, response, userId, pathInfo);
       }
+      break;
+      default:
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 }

@@ -26,7 +26,8 @@ export class ApiListComponent extends BaseListComponent<Api> {
     this.paging = true;
     this.filterFields = [
       { prop: "name", name: "Name"},
-      { prop: "upstream_url", name: "Upstream URL"},
+      { prop: "hosts", name: "Host"},
+      { prop: "uris", name: "Path"},
     ];
     this.filterFieldName = "name";
   }
@@ -34,7 +35,8 @@ export class ApiListComponent extends BaseListComponent<Api> {
   ngOnInit(): void {
     this.columns = [
       { name: 'Name', cellTemplate: this.idTemplate, sortable: false },
-      { prop: 'upstream_url', name: 'Upstream URL', cellTemplate: this.upstreamTemplate, sortable: false },
+      { prop: 'hosts', name: 'Hosts',  sortable: false },
+      { prop: 'uris', name: 'Paths',  sortable: false },
       { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
       { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];

@@ -5,18 +5,18 @@ import {
 
 import { BaseListComponent } from '../Component/BaseListComponent';
 
-import { Consumer } from './Consumer';
-import { ConsumerService } from './ConsumerService';
+import { User } from './User';
+import { UserService } from './UserService';
 
 @Component({
-  selector: 'consumer-list',
-  templateUrl: 'ConsumerList.html'
+  selector: 'user-list',
+  templateUrl: 'UserList.html'
 })
-export class ConsumerListComponent extends BaseListComponent<Consumer> {
+export class UserListComponent extends BaseListComponent<User> {
 
   constructor(
     injector: Injector,
-    service: ConsumerService
+    service: UserService
   ) {
     super(injector, service);
     this.paging = true;

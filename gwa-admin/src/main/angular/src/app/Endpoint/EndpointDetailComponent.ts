@@ -1,54 +1,40 @@
-import {
-  Component, 
-  Injector
-} from '@angular/core';
-import { BaseDetailComponent } from '../Component/BaseDetailComponent';
+import { Component} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Api } from '../Api/Api';
-import { EndpointService } from './EndpointService';
-import { Plugin } from '../Plugin/Plugin';
 
 @Component({
   selector: 'endpoint-detail',
-  templateUrl: 'EndpointDetail.html'
+  template: `
+<nav md-tab-nav-bar *ngIf="api">
+  <a md-tab-link
+     [routerLink]="['.']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Endpoint: {{api.name}}</a>
+  <a md-tab-link
+     [routerLink]="['groups']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Groups</a>
+</nav>
+<router-outlet></router-outlet>
+  `
 })
-export class EndpointDetailComponent extends BaseDetailComponent<Api> {
-  endpoint : Plugin;
-
-  rateLimit : Plugin;
+export class EndpointDetailComponent  {
+  api : Api;
  
   constructor(
-    protected injector:Injector,
-    public endpointService: EndpointService
+    protected route: ActivatedRoute,
   ) {
-    super(injector, endpointService);
-    this.idParamName = 'name';
   }
-
-  protected setObject(object : Api) {
-    this.endpoint = object.plugin('bcgov-gwa-endpoint');
-    let rateLimit = object.plugin('rate-limiting');
-    if (rateLimit == null) {
-      rateLimit = new Plugin();
-      rateLimit.name = 'rate-limiting';
-      rateLimit.config = {
-        second: null,
-        minute: 60,
-        hour: null,
-        day: null,
-        month: null,
-        year: null
+  
+  ngOnInit() {
+    this.route.data
+      .subscribe((data: { api: Api }) => {
+        this.api = data.api;
       }
-      object.pluginAdd(rateLimit);
-    }
-    this.rateLimit = rateLimit;
-    super.setObject(object);
-  }
-
-  endpointUri() : string {
-    return Api.uri(
-      this.endpoint.config['uri_template'],
-      this.object.name
     );
   }
-
 }

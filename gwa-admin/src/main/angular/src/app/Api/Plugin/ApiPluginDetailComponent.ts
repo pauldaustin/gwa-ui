@@ -82,7 +82,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
           formControl = new FormControl(defaultValue);
         }
         if (schemaField.readOnly) {
-          formControl.disabled = true;
+          formControl.disable();
         }
         formGroupConfig.addControl(name, formControl);
         if (schemaField.type == 'boolean') {

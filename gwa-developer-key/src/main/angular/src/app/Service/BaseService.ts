@@ -249,8 +249,8 @@ export abstract class BaseService<T> implements Service<T> {
     if (filter) {
       for (const fieldName in filter) {
         const value = filter[fieldName];
-        params.set("filterFieldName", fieldName);
-        params.set("filterValue", value);
+        params.append("filterFieldName", fieldName);
+        params.append("filterValue", value);
       }
     }
     if (!path) {

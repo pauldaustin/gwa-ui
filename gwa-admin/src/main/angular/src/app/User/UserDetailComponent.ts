@@ -1,17 +1,17 @@
 import { Component} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Consumer } from './Consumer';
+import { User } from './User';
 
 @Component({
-  selector: 'consumer-detail',
+  selector: 'user-detail',
   template: `
-<nav md-tab-nav-bar *ngIf="consumer">
+<nav md-tab-nav-bar *ngIf="user">
   <a md-tab-link
      [routerLink]="['.']"
      routerLinkActive
      #rla="routerLinkActive"
      [active]="rla.isActive"
-  >Consumer: {{consumer.username}}</a>
+  >User: {{user.username}}</a>
   <a md-tab-link
      [routerLink]="['groups']"
      routerLinkActive
@@ -28,8 +28,8 @@ import { Consumer } from './Consumer';
 <router-outlet></router-outlet>
   `
 })
-export class ConsumerDetailComponent  {
-  consumer : Consumer;
+export class UserDetailComponent  {
+  user : User;
  
   constructor(
     protected route: ActivatedRoute,
@@ -38,8 +38,8 @@ export class ConsumerDetailComponent  {
   
   ngOnInit() {
     this.route.data
-      .subscribe((data: { consumer: Consumer }) => {
-        this.consumer = data.consumer;
+      .subscribe((data: { user: User }) => {
+        this.user = data.user;
       }
     );
   }

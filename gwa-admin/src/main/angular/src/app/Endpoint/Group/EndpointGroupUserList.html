@@ -1,7 +1,18 @@
 <md-tab-group>
   <md-tab>
-    <ng-template md-tab-label>Plugin: {{pluginName}}</ng-template>
+    <ng-template md-tab-label><a [routerLink]="Endpoint: ['/ui', 'endpoints', apiName]">{{apiName}}</a> Group: {{groupName}}</ng-template>
 
+    <md-toolbar>
+      <md-input-container>
+        <input
+          mdInput
+          placeholder="Add Username"
+          [(ngModel)]="addUsername"
+        />
+      </md-input-container>
+      <a (click)="addUser()" md-raised-button color="primary">Add User</a>
+    </md-toolbar>
+    
     <ngx-datatable
       class="material striped"
       [rows]="rows"
@@ -19,25 +30,14 @@
       (page)='onPage($event)'
     >
     </ngx-datatable>
-
   </md-tab>
 </md-tab-group>
 
-<ng-template #apiT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', value]">{{value}}</a></ng-template>
-
-<ng-template #userT let-row="row" let-value="value"><a [routerLink]="['/ui','users', value]">{{value}}</a></ng-template>
-
-<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.api_name, 'plugins', value]">{{value}}</a></ng-template>
-
 <ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
-
-<ng-template #flagT let-row="row" let-value="value"><span [ngSwitch]="value">
-  <span *ngSwitchCase="true" class="fa fa-check" style="color:green" title="Yes"></span>
-  <span *ngSwitchDefault class="fa fa-times" style="color:red" title="No"></span>
-</span></ng-template>
 
 <ng-template #actionsT let-row="row">
   <button (click)="deleteObject(row)" md-icon-button  style="color: red">
     <md-icon>delete</md-icon>
   </button>
 </ng-template>
+

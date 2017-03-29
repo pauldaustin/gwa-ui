@@ -6,6 +6,7 @@ import {
 import { HttpModule }    from '@angular/http';
 import { MaterialModule } from '@angular/material';
 import { BrowserModule }  from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
 @NgModule({
   imports: [
     BrowserModule,
+    NoopAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,

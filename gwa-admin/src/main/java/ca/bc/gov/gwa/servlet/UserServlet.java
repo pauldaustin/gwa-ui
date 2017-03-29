@@ -9,8 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(urlPatterns = "/rest/consumers/*", loadOnStartup = 1)
-public class ConsumerServlet extends BaseAdminServlet {
+@WebServlet(urlPatterns = "/rest/users/*", loadOnStartup = 1)
+public class UserServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
 
   private static final List<String> CONSUMER_FIELD_NAMES = Arrays.asList("id", "username",
@@ -21,7 +21,7 @@ public class ConsumerServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
-      case 1: { // Consumer
+      case 1: { // User
         final String username = paths.get(0);
         final String consumerPath = "/consumers/" + username;
         this.apiService.handleDelete(request, response, consumerPath);
@@ -56,11 +56,11 @@ public class ConsumerServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
-      case 0: // Consumer list
+      case 0: // User list
         this.apiService.handleList(request, response, "/consumers");
       break;
 
-      case 1: { // Consumer get
+      case 1: { // User get
         final String username = paths.get(0);
         final String consumerPath = "/consumers/" + username;
         this.apiService.handleGet(request, response, consumerPath);
@@ -91,7 +91,7 @@ public class ConsumerServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
-      case 0: // Consumer
+      case 0: // User
         this.apiService.handleAdd(request, response, "/consumers/", CONSUMER_FIELD_NAMES);
       break;
 
@@ -102,8 +102,7 @@ public class ConsumerServlet extends BaseAdminServlet {
       case 2: // Groups
         final String username = paths.get(0);
         if ("groups".equals(paths.get(1))) {
-          final String groupsPath = "/consumers/" + username + "/acls";
-          this.apiService.consumerGroupAdd(request, response, groupsPath);
+          this.apiService.consumerGroupAdd(request, response, username);
         } else {
           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -124,7 +123,7 @@ public class ConsumerServlet extends BaseAdminServlet {
         response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
 
-      case 1: { // Consumer
+      case 1: { // User
         final String username = paths.get(0);
         this.apiService.handleUpdatePatch(request, response, "/consumers/" + username,
           CONSUMER_FIELD_NAMES);
