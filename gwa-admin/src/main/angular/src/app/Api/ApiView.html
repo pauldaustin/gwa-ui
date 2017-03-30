@@ -52,6 +52,24 @@
           />
         </md-input-container>
 
+        <div *ngIf="endpoint" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+          <label class="margin-top-1em">Endpoint:</label>
+          <md-input-container fxFlex *ngIf="endpoint.config.api_owners" fxLayout="column" fxLayoutGap="2px">
+            <input
+              *ngFor="let owner of endpoint.config.api_owners"
+              mdInput
+              placeholder="Owner Usernames"
+              value="{{owner}}"
+            />
+          </md-input-container>
+          <md-slide-toggle
+            name="allow_developer_keys"
+            [(ngModel)]="object.allow_developer_keys"
+            color="primary"
+            style="display: inline-block"
+          >Allow Developer Keys</md-slide-toggle>
+        </div>
+
         <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="https_only"

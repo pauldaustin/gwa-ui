@@ -35,6 +35,7 @@ export class ApiPluginListComponent extends PluginListComponent {
       }
     });
     this.showApi = false;
+    this.showUser = false;
   }
 
   initParams(): void {

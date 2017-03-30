@@ -54,7 +54,7 @@
           </md-input-container>
         </div>
 
-        <fieldset>
+        <fieldset *ngIf="rateLimit">
            <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
             <label>Rate Limits:</label>
             <md-input-container fxFlex>

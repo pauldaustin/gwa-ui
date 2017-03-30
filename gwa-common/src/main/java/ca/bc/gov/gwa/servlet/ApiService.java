@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -135,23 +136,48 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
+    throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData != null) {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
+        final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
+        Json.writeJson(httpResponse, apiResponse);
+      });
+    }
+
+    // handleRequest(httpRequest, httpResponse, (httpClient) -> {
+    // final Map<String, Object> apiRequest = new LinkedHashMap<>();
+    // final List<Map<String, Object>> pluginRequests = new ArrayList<>();
+    //
+    // if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
+    // pluginRequests)) {
+    // final Map<String, Object> insertData = getMap(requestData, fieldNames);
+    // "/apis", ApiService.APIS_FIELD_NAMES
+    // final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
+    // final String id = (String)apiResponse.get("id");
+    // if (id != null) {
+    // final String pluginPath = "/apis/" + id + "/plugins";
+    // for (final Map<String, Object> pluginRequest : pluginRequests) {
+    // pluginRequest.remove("id");
+    // httpClient.post(pluginPath, pluginRequest);
+    // // TODO error handling
+    // }
+    // }
+    // Json.writeJson(httpResponse, apiResponse);
+    // }
+    // });
+  }
+
   public void apiGet(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
     final String apiName) throws IOException {
-    handleCachedObject(httpRequest, httpResponse, "api", apiName, (httpClient) -> {
-      final Map<String, Object> apiResponse = httpClient.get("/apis/" + apiName);
-      final String apiId = (String)apiResponse.get("id");
-      if (apiId == null) {
-        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-        return null;
-      } else {
-        final Map<String, Object> pluginsResponse = httpClient.get("/apis/" + apiId + "/plugins");
-        @SuppressWarnings("unchecked")
-        final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
-          .get("data");
-        apiResponse.put("plugins", plugins);
-        return apiResponse;
-      }
-    });
+    final Map<String, Object> api = apiGet(apiName);
+    if (api == null) {
+      httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+    } else {
+      Json.writeJson(httpResponse, api);
+    }
   }
 
   public Map<String, Object> apiGet(final String apiName) throws IOException {
@@ -165,7 +191,14 @@ public class ApiService implements ServletContextListener {
         @SuppressWarnings("unchecked")
         final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
           .get("data");
-        apiResponse.put("plugins", plugins);
+        final Map<String, Map<String, Object>> pluginByName = new TreeMap<>();
+        for (final Map<String, Object> plugin : plugins) {
+          if (plugin.get("consumer_id") == null) {
+            final String name = (String)plugin.get("name");
+            pluginByName.put(name, plugin);
+          }
+        }
+        apiResponse.put("plugins", pluginByName);
         return apiResponse;
       }
     });
@@ -344,29 +377,6 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  public void endpointAdd(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String userId) throws IOException {
-    handleRequest(httpRequest, httpResponse, (httpClient) -> {
-      final Map<String, Object> apiRequest = new LinkedHashMap<>();
-      final List<Map<String, Object>> pluginRequests = new ArrayList<>();
-
-      if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
-        pluginRequests)) {
-        final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
-        final String id = (String)apiResponse.get("id");
-        if (id != null) {
-          final String pluginPath = "/apis/" + id + "/plugins";
-          for (final Map<String, Object> pluginRequest : pluginRequests) {
-            pluginRequest.remove("id");
-            httpClient.post(pluginPath, pluginRequest);
-            // TODO error handling
-          }
-        }
-        Json.writeJson(httpResponse, apiResponse);
-      }
-    });
-  }
-
   @SuppressWarnings("unchecked")
   public void endpointDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String endpointId) throws IOException {
@@ -446,15 +456,10 @@ public class ApiService implements ServletContextListener {
     } else {
       try {
         final Map<String, Object> api = apiGet(apiName);
-        final List<Map<String, Object>> plugins = (List<Map<String, Object>>)api.get("plugins");
-        for (final Map<String, Object> plugin : plugins) {
-          final String name = (String)plugin.get("name");
-          if ("acls".equals(name)) {
-            final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
-            final List<String> apiGroups = (List<String>)config.get("whitelist");
-            return apiGroups.contains(groupName);
-          }
-        }
+        final Map<String, Object> aclPlugin = pluginGet(api, "acl");
+        final Map<String, Object> config = (Map<String, Object>)aclPlugin.get("config");
+        final List<String> apiGroups = (List<String>)config.get("whitelist");
+        return apiGroups.contains(groupName);
       } catch (final Throwable e) {
       }
     }
@@ -510,7 +515,7 @@ public class ApiService implements ServletContextListener {
         if (pluginName.equals(BCGOV_GWA_ENDPOINT)) {
           pluginConfig = endPointSetPluginEndpoint(plugin, apiRequest, userId);
         } else if (pluginName.equals("rate-limiting")) {
-          pluginConfig = endPointSetPluginRateLimiting(plugin);
+          // pluginConfig = endPointSetPluginRateLimiting(plugin);
         }
         if (pluginConfig != null) {
           final Map<String, Object> pluginRequest = new LinkedHashMap<>();
@@ -556,12 +561,15 @@ public class ApiService implements ServletContextListener {
     return pluginConfig;
   }
 
-  protected Map<String, Object> endPointSetPluginRateLimiting(final Map<String, Object> plugin) {
-    Map<String, Object> pluginConfig;
-    pluginConfig = new LinkedHashMap<>();
+  protected Map<String, Object> endPointSetPluginRateLimiting(final String apiId,
+    final String pluginName, final Map<String, Object> apiUpdate) {
+    final Map<String, Object> pluginUpdate = pluginGet(apiUpdate, pluginName);
+
     @SuppressWarnings("unchecked")
-    final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
-    addData(pluginConfig, config, ENDPOINT_RATE_LIMIT_FIELD_NAMES);
+    final Map<String, Object> configUpdate = (Map<String, Object>)pluginUpdate.get("config");
+
+    final Map<String, Object> pluginConfig = new LinkedHashMap<>();
+    addData(pluginConfig, configUpdate, ENDPOINT_RATE_LIMIT_FIELD_NAMES);
     pluginConfig.put("limit_by", "consumer");
     return pluginConfig;
   }
@@ -849,6 +857,22 @@ public class ApiService implements ServletContextListener {
     return null;
   }
 
+  public void handleUpdatePatch(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
+    throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+
+      final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+      if (requestData == null) {
+        httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      } else {
+        final Map<String, Object> updateData = getMap(requestData, fieldNames);
+        httpClient.patch(path, updateData);
+        writeJsonResponse(httpResponse, UPDATED);
+      }
+    });
+  }
+
   // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
   // final String apiId) throws IOException {
   // final Map<String, Object> config = new LinkedHashMap<>();
@@ -883,22 +907,6 @@ public class ApiService implements ServletContextListener {
   // httpClient.post(path, requestTransformations);
   // }
   // }
-
-  public void handleUpdatePatch(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
-    throws IOException {
-    handleRequest(httpRequest, httpResponse, (httpClient) -> {
-
-      final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-      if (requestData == null) {
-        httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
-      } else {
-        final Map<String, Object> updateData = getMap(requestData, fieldNames);
-        httpClient.patch(path, updateData);
-        writeJsonResponse(httpResponse, UPDATED);
-      }
-    });
-  }
 
   protected Map<String, Object> kongPage(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient, final String path)
@@ -945,6 +953,17 @@ public class ApiService implements ServletContextListener {
 
   public JsonHttpClient newKongClient() {
     return new JsonHttpClient(this.kongAdminUrl);
+  }
+
+  @SuppressWarnings("unchecked")
+  private Map<String, Object> pluginGet(final Map<String, Object> api, final String pluginName) {
+    final Map<String, Map<String, Object>> plugins = (Map<String, Map<String, Object>>)api
+      .get("plugins");
+    if (plugins == null) {
+      return null;
+    } else {
+      return plugins.get(pluginName);
+    }
   }
 
   public void pluginList(final HttpServletRequest httpRequest,

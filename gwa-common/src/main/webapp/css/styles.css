@@ -19,6 +19,9 @@
   padding: 1em;
 }
 /* To Fix bugs*/
+.margin-top-1em {
+  margin-top: 1em;
+}
 .mat-toolbar .mat-input-container,
 .mat-toolbar .mat-select {
   font-size: 14px;

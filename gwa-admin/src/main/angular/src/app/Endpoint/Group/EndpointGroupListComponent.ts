@@ -40,12 +40,17 @@ export class EndpointGroupListComponent extends BaseListComponent<Group> {
     this.route.parent.data
       .subscribe((data: { api: Api }) => {
         this.api = data.api;
-        const endpoint = this.api.plugin('bcgov-gwa-endpoint');
-        for (const groupName of endpoint.config.api_groups) {
-          if (groupName.indexOf('github_') == 0) {
-          } else if (groupName.indexOf('idir_') == 0) {
-          } else {
-            this.rows.push({ group: groupName });
+        const endpoint = this.api.plugin('acl');
+        if (endpoint) {
+          const groupNames = endpoint.config.whitelist;
+          if (groupNames) {
+            for (const groupName of groupNames) {
+              if (groupName.indexOf('github_') == 0) {
+              } else if (groupName.indexOf('idir_') == 0) {
+              } else {
+                this.rows.push({ group: groupName });
+              }
+            }
           }
         }
       }

@@ -48,7 +48,7 @@ export class Api {
   
 
   method_flags: Array<HttpMethodState> = [];
-  _pluginsByName : { [name: string] : Plugin } = {};
+  _pluginByName : { [name: string] : Plugin } = {};
 
   get methods(): Array<string> {
     let methods: Array<string> = [];
@@ -79,44 +79,44 @@ export class Api {
 /* Plugin Methods */
 
   get plugins(): Array<Plugin> {
-    const names: string[] = Object.keys(this._pluginsByName);
+    const names: string[] = Object.keys(this._pluginByName);
     names.sort();
     const plugins: Array<Plugin> = [];
     for (const name of names) {
-      const plugin = this._pluginsByName[name];
+      const plugin = this._pluginByName[name];
       plugins.push(plugin);
     }
     return plugins;
   }
   
   set plugins(pluginsJson) {
-    const pluginsByName = this._pluginsByName;
+    const pluginsByName = this._pluginByName;
     for (const name in pluginsByName) {
       delete pluginsByName[name]
     }
     if (pluginsJson) {
       let api = this;
-      pluginsJson.forEach((pluginJson: any) => {
+      for (const pluginJson of pluginsJson) {
         let plugin = new Plugin();
         Object.assign(plugin, pluginJson);
         plugin.api = api;
         pluginsByName[plugin.name] = plugin;
-      });
+      }
     }
   }
 
   pluginAdd(plugin: Plugin) {
     plugin.api = this;
-    this._pluginsByName[plugin.name] = plugin;
+    this._pluginByName[plugin.name] = plugin;
   }
 
   pluginRemove(plugin: Plugin) {
     const name = plugin.name;
-    delete this._pluginsByName[name];
+    delete this._pluginByName[name];
   }
 
   plugin(name: string) {
-    return this._pluginsByName[name];
+    return this._pluginByName[name];
   }
 
   getAllMethods(): Array<string> {
