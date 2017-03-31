@@ -5,6 +5,7 @@ import { Api } from '../Api/Api';
 @Component({
   selector: 'endpoint-detail',
   template: `
+<page-not-found *ngIf="!api"></page-not-found>
 <nav md-tab-nav-bar *ngIf="api">
   <a md-tab-link
      [routerLink]="['.']"

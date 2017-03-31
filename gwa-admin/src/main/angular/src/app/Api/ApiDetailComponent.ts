@@ -18,6 +18,12 @@ import { Api } from './Api';
      #rla="routerLinkActive"
      [active]="rla.isActive"
   >Plugins</a>
+  <a md-tab-link
+     [routerLink]="['groups']"
+     routerLinkActive
+     #rla="routerLinkActive"
+     [active]="rla.isActive"
+  >Groups</a>
 </nav>
 <router-outlet></router-outlet>
   `

@@ -37,7 +37,7 @@ public class ApiServlet extends BaseAdminServlet {
         }
       break;
 
-      case 3:
+      case 3: {
         final String apiName = paths.get(0);
         if ("plugins".equals(paths.get(1))) {
           final String pluginName = paths.get(2);
@@ -47,6 +47,18 @@ public class ApiServlet extends BaseAdminServlet {
         } else {
           response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+      }
+      break;
+      case 5: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          final String userName = paths.get(4);
+          this.apiService.apiGroupUserDelete(request, response, apiName, groupName, userName);
+        } else {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
       break;
 
       default:
@@ -83,6 +95,20 @@ public class ApiServlet extends BaseAdminServlet {
         }
       }
       break;
+
+      case 4: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          this.apiService.endpointGroupUserList(request, response, apiName, groupName);
+        } else {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
+      break;
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 
@@ -116,6 +142,17 @@ public class ApiServlet extends BaseAdminServlet {
         } else {
           response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+      break;
+      case 5: {
+        final String apiName = paths.get(0);
+        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
+          final String groupName = paths.get(2);
+          final String userName = paths.get(4);
+          this.apiService.apiGroupUserAdd(request, response, apiName, groupName, userName);
+        } else {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+      }
       break;
 
       default:

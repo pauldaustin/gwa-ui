@@ -9,6 +9,9 @@ import { ApiDetailComponent } from './Api/ApiDetailComponent';
 import { ApiViewComponent } from './Api/ApiViewComponent';
 import { ApiResolver } from './Api/ApiResolver';
 
+import { ApiGroupListComponent } from './Api/Group/ApiGroupListComponent';
+import { ApiGroupUserListComponent } from './Api/Group/ApiGroupUserListComponent';
+
 import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
 import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
@@ -56,8 +59,10 @@ const routes: Routes = [
     children: [
       { path: '', component: ApiViewComponent, pathMatch: 'full' },
       { path: 'plugins', component: ApiPluginListComponent, pathMatch: 'full' },
+      { path: 'groups', component: ApiGroupListComponent, pathMatch: 'full' },
     ]
   },
+  { path: 'ui/apis/:apiName/groups/:groupName',  component: ApiGroupUserListComponent },
   { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
   { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
 

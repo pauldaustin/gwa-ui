@@ -8,9 +8,10 @@
           mdInput
           placeholder="Add Username"
           [(ngModel)]="addUsername"
+          pattern="[a-z][a-z0-9_]*"
         />
       </md-input-container>
-      <a (click)="addUser()" md-raised-button color="primary">Add User</a>
+      <a (click)="addUser()" md-raised-button color="primary" [disabled]="!addUsername">Add User</a>
     </md-toolbar>
     
     <ngx-datatable

@@ -5,9 +5,10 @@
         mdInput
         placeholder="Add Group Name"
         [(ngModel)]="addGroupName"
+        pattern="[a-z][a-z0-9_]*"
       />
     </md-input-container>
-    <a (click)="addGroup()" md-raised-button color="primary">Add Group</a>
+    <a (click)="addGroup()" md-raised-button color="primary" [disabled]="!addGroupName">Add Group</a>
     <md-select
       placeholder="Filter Field"
       [(ngModel)]="filterFieldName"

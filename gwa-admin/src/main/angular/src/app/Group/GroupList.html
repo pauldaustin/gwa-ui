@@ -5,9 +5,10 @@
         mdInput
         placeholder="Add Group Name"
         [(ngModel)]="addGroupName"
+        pattern="[a-z][a-z0-9_]*"
       />
     </md-input-container>
-    <a [routerLink]="['/ui','groups', addGroupName]" md-raised-button color="primary">Add Group</a>
+    <a [routerLink]="['/ui','groups', addGroupName]" md-raised-button color="primary" [disabled]="!addGroupName">Add Group</a>
   </md-toolbar>
 
   <ngx-datatable

@@ -7,13 +7,13 @@ import { Params } from '@angular/router';
 import { BaseListComponent } from '../../Component/BaseListComponent';
 
 import { Group } from '../../Group/Group';
-import { EndpointGroupUserService } from './EndpointGroupUserService';
+import { ApiGroupUserService } from './ApiGroupUserService';
 
 @Component({
-  selector: 'endpoint-group-user-list',
-  templateUrl: 'EndpointGroupUserList.html'
+  selector: 'api-group-user-list',
+  templateUrl: 'ApiGroupUserList.html'
 })
-export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
+export class ApiGroupUserListComponent extends BaseListComponent<Group> {
   apiName : string;
 
   groupName : string;
@@ -22,7 +22,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
 
   constructor(
     injector: Injector,
-    service: EndpointGroupUserService
+    service: ApiGroupUserService
   ) {
     super(injector, service);
     this.paging = true;
@@ -42,7 +42,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
       .subscribe(params => {
         this.apiName = params['apiName'];
         this.groupName = params['groupName'];
-        this.path = `/endpoints/${this.apiName}/groups/${this.groupName}/users`;
+        this.path = `/apis/${this.apiName}/groups/${this.groupName}/users`;
         this.refresh();
       });
   }
@@ -50,7 +50,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
   addUser() {
     const group = this.service.newObject();
     group.group = this.groupName;
-    this.service.addObject(group, `/endpoints/${this.apiName}/groups/${this.groupName}/users/${this.addUsername}`)
+    this.service.addObject(group, `/apis/${this.apiName}/groups/${this.groupName}/users/${this.addUsername}`)
       .then((savedGroup) => {
         this.refresh();
       });

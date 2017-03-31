@@ -34,33 +34,31 @@ import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
+import ca.bc.gov.gwa.servlet.siteminder.SiteminderPrincipal;
 import ca.bc.gov.gwa.util.Json;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebListener
 public class ApiService implements ServletContextListener {
 
-  private static final List<String> ACL_FIELD_NAMES = Arrays.asList("whitelist");
-
   private static final String ACL = "acl";
 
-  private static final List<String> KEY_AUTH_FIELD_NAMES = Arrays.asList("key_names",
-    "hide_credentials", "anonymous");
-
-  private static final String KEY_AUTH = "key-auth";
-
-  private static final Map<String, Object> ENDPOINT_DEFAULT_CONFIG = Collections
-    .singletonMap("allow_developer_keys", false);
+  private static final List<String> ACL_FIELD_NAMES = Arrays.asList("whitelist");
 
   private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", "name",
     "consumer_username");
-
-  private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
   public static final List<String> APIS_FIELD_NAMES = Arrays.asList("id", "created_at",
     "upstream_url", "preserve_host", "name", "hosts", "uris", "methods", "strip_uri", "retries",
     "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
     "http_if_terminated");
+
+  private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
+
+  private static final String DELETED = "deleted";
+
+  private static final Map<String, Object> ENDPOINT_DEFAULT_CONFIG = Collections
+    .singletonMap("allow_developer_keys", false);
 
   private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("api_owners",
     "developer_key_group");
@@ -68,15 +66,12 @@ public class ApiService implements ServletContextListener {
   private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
     "hour", "minute", "day", "month", "year");
 
-  public static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config");
-
   private static ApiService instance;
 
-  private static final String DELETED = "deleted";
+  private static final String KEY_AUTH = "key-auth";
 
-  private static final String UPDATED = "updated";
-
-  private static final AtomicInteger referenceCount = new AtomicInteger();
+  private static final List<String> KEY_AUTH_FIELD_NAMES = Arrays.asList("key_names",
+    "hide_credentials", "anonymous");
 
   private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
     for (final String fieldName : API_SORT_FIELDS) {
@@ -102,6 +97,16 @@ public class ApiService implements ServletContextListener {
     return 0;
   };
 
+  public static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config");
+
+  private static final AtomicInteger referenceCount = new AtomicInteger();
+
+  public static final String ROLE_GWA_ADMIN = "gwa_admin";
+
+  public static final String ROLE_GWA_API_OWNER = "gwa_api_owner";
+
+  private static final String UPDATED = "updated";
+
   public static ApiService get() {
     referenceCount.incrementAndGet();
     return instance;
@@ -115,23 +120,23 @@ public class ApiService implements ServletContextListener {
     return null;
   }
 
-  private String kongAdminUrl = "http://localhost:8001";
-
-  private String appsSuffix = ".apps.revolsys.com";
+  private final Map<String, String> apiNameById = new LruMap<>(1000);
 
   private String apisSuffix = ".apis.revolsys.com";
 
-  private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
+  private String appsSuffix = ".apps.revolsys.com";
 
   private Map<String, Object> config = Collections.emptyMap();
 
-  private String version;
+  private String kongAdminUrl = "http://localhost:8001";
+
+  private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
+
+  private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
 
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
-  private final Map<String, String> apiNameById = new LruMap<>(1000);
-
-  private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
+  private String version;
 
   public ApiService() {
   }
@@ -163,8 +168,8 @@ public class ApiService implements ServletContextListener {
         if (apiId != null) {
           apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
             ENDPOINT_DEFAULT_CONFIG, false);
-          apiAddPlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES, null, false);
-          apiAddPlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES, null, false);
+          apiAddPlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES, null, true);
+          apiAddPlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES, null, true);
         }
         Json.writeJson(httpResponse, apiResponse);
       });
@@ -176,28 +181,32 @@ public class ApiService implements ServletContextListener {
     final String apiId, final String pluginName, final List<String> fieldNames,
     final Map<String, Object> defaultConfig, final boolean ignoreDisabled) throws IOException {
     final Map<String, Object> pluginAdd = pluginGet(requestData, pluginName);
-    Map<String, Object> config;
-    if (pluginAdd == null) {
-      if (ignoreDisabled || defaultConfig == null) {
-        return;
+    try {
+      Map<String, Object> config;
+      if (pluginAdd == null) {
+        if (ignoreDisabled || defaultConfig == null) {
+          return;
+        } else {
+          config = defaultConfig;
+        }
       } else {
-        config = defaultConfig;
+        if (ignoreDisabled && Boolean.TRUE != pluginAdd.get("enabled")) {
+          return;
+        } else {
+          final Map<String, Object> configAdd = (Map<String, Object>)pluginAdd.get("config");
+          config = new LinkedHashMap<>();
+          addData(config, configAdd, fieldNames);
+        }
       }
-    } else {
-      if (ignoreDisabled && Boolean.TRUE != pluginAdd.get("enabled")) {
-        return;
-      } else {
-        final Map<String, Object> configAdd = (Map<String, Object>)pluginAdd.get("config");
-        config = new LinkedHashMap<>();
-        addData(config, configAdd, fieldNames);
-      }
-    }
 
-    final String path = "/apis/" + apiId + "/plugins";
-    final Map<String, Object> plugin = new LinkedHashMap<>();
-    plugin.put("name", pluginName);
-    plugin.put("config", config);
-    client.post(path, plugin);
+      final String path = "/apis/" + apiId + "/plugins";
+      final Map<String, Object> plugin = new LinkedHashMap<>();
+      plugin.put("name", pluginName);
+      plugin.put("config", config);
+      client.post(path, plugin);
+    } catch (final Throwable e) {
+      logError("Error adding api " + apiId + " plugin " + pluginName + ":\n" + pluginAdd, e);
+    }
   }
 
   public void apiGet(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
@@ -267,6 +276,28 @@ public class ApiService implements ServletContextListener {
       }
     }
     return apiName;
+  }
+
+  public void apiGroupUserAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiName, final String groupName,
+    final String userName) throws IOException {
+    final boolean hasGroup = endpointHasGroupEdit(apiName, groupName);
+    if (hasGroup) {
+      groupUserAdd(httpRequest, httpResponse, userName, groupName);
+    } else {
+      httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+  }
+
+  public void apiGroupUserDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiName, final String groupName,
+    final String userName) throws IOException {
+    final boolean hasGroup = endpointHasGroupEdit(apiName, groupName);
+    if (hasGroup) {
+      groupUserDelete(httpRequest, httpResponse, userName, groupName);
+    } else {
+      writeJsonResponse(httpResponse, DELETED);
+    }
   }
 
   public void apiUpdate(final HttpServletRequest httpRequest,
@@ -408,8 +439,9 @@ public class ApiService implements ServletContextListener {
       } else {
         // Update if username changed
         if (!username.equals(consumer.get("username"))) {
+          final String id = (String)consumer.get("id");
           consumer.put("username", username);
-          httpClient.patch("/consumers", consumer);
+          httpClient.patch("/consumers/" + id, consumer);
         }
       }
       if (consumer.isEmpty()) {
@@ -499,6 +531,39 @@ public class ApiService implements ServletContextListener {
   }
 
   @SuppressWarnings("unchecked")
+  public boolean endpointAccessAllowed(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final List<String> paths) throws IOException {
+    if (paths.isEmpty()) {
+      return true;
+    } else {
+      final SiteminderPrincipal principal = (SiteminderPrincipal)httpRequest.getUserPrincipal();
+      if (principal.isUserInRole(ROLE_GWA_ADMIN)) {
+        return true;
+      } else {
+        final String endpointName = paths.get(0);
+        final Map<String, Object> api = apiGet(endpointName);
+        if (api != null) {
+          final String username = principal.getName();
+          final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
+          if (endPoint != null) {
+            final Map<String, Object> config = (Map<String, Object>)endPoint.get("config");
+            final Object owners = config.get("api_owners");
+            if (owners instanceof List) {
+              final List<String> apiOwners = (List<String>)owners;
+              if (apiOwners.contains(username)) {
+                return true;
+              }
+            }
+          }
+        }
+        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return false;
+      }
+
+    }
+  }
+
+  @SuppressWarnings("unchecked")
   public void endpointDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String endpointId) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
@@ -510,7 +575,7 @@ public class ApiService implements ServletContextListener {
         final BasePrincipal principal = (BasePrincipal)httpRequest.getUserPrincipal();
         final String userId = principal.getName();
         final String endpointUserId = (String)endpointConfig.get("created_by");
-        if (principal.isUserInRole("gwa_admin") || userId.equals(endpointUserId)) {
+        if (principal.isUserInRole(ROLE_GWA_ADMIN) || userId.equals(endpointUserId)) {
           final String apiDeletePath = "/apis/" + apiId;
           httpClient.delete(apiDeletePath);
           writeJsonResponse(httpResponse, DELETED);
@@ -525,28 +590,6 @@ public class ApiService implements ServletContextListener {
         }
       }
     });
-  }
-
-  public void endpointGroupUserAdd(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String apiName, final String groupName,
-    final String userName) throws IOException {
-    final boolean hasGroup = endpointHasGroup(apiName, groupName);
-    if (hasGroup) {
-      groupUserAdd(httpRequest, httpResponse, userName, groupName);
-    } else {
-      httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-  }
-
-  public void endpointGroupUserDelete(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String apiName, final String groupName,
-    final String userName) throws IOException {
-    final boolean hasGroup = endpointHasGroup(apiName, groupName);
-    if (hasGroup) {
-      groupUserDelete(httpRequest, httpResponse, userName, groupName);
-    } else {
-      writeJsonResponse(httpResponse, DELETED);
-    }
   }
 
   public void endpointGroupUserList(final HttpServletRequest httpRequest,
@@ -572,48 +615,90 @@ public class ApiService implements ServletContextListener {
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName)
     throws IOException {
-    if (groupName.startsWith("github_")) {
-    } else if (groupName.startsWith("idir_")) {
-    } else {
-      try {
-        final Map<String, Object> api = apiGet(apiName);
-        final Map<String, Object> aclPlugin = pluginGet(api, ACL);
-        final Map<String, Object> config = (Map<String, Object>)aclPlugin.get("config");
-        final List<String> apiGroups = (List<String>)config.get("whitelist");
-        return apiGroups.contains(groupName);
-      } catch (final Throwable e) {
+    try {
+      final Map<String, Object> api = apiGet(apiName);
+      final Map<String, Object> aclPlugin = pluginGet(api, ACL);
+      final Map<String, Object> config = (Map<String, Object>)aclPlugin.get("config");
+      final List<String> apiGroups = (List<String>)config.get("whitelist");
+      return apiGroups.contains(groupName);
+    } catch (final Throwable e) {
+    }
+    return false;
+  }
+
+  /**
+   * Check if the endpoint has the group in the api_groups. Ignore groups that start with github_ or idir_.
+   *
+   * @param apiName
+   * @param groupName
+   * @return
+   * @throws IOException
+   */
+  private boolean endpointHasGroupEdit(final String apiName, final String groupName)
+    throws IOException {
+    if (endpointHasGroup(apiName, groupName)) {
+      if (groupName.startsWith("github")) {
+      } else if (groupName.startsWith("idir")) {
+      } else {
+        return true;
       }
     }
     return false;
   }
 
+  @SuppressWarnings("unchecked")
   public void endpointList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final SiteminderPrincipal principal = (SiteminderPrincipal)httpRequest.getUserPrincipal();
       final String path = "/plugins?name=bcgov-gwa-endpoint";
-      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
-      if (data != null) {
-        final List<Map<String, Object>> apiRows = new ArrayList<>();
-        for (final Map<String, Object> endpoint : data) {
-          final String apiId = (String)endpoint.get("api_id");
-          final String apiName = apiGetName(httpClient, apiId);
-          final Map<String, Object> api = apiGet(apiName);
-          if (api != null) {
-            final Map<String, Object> apiRow = new LinkedHashMap<>();
-            for (final String fieldName : Arrays.asList("id", "name", "created_at", "hosts",
-              "uris")) {
-              final Object values = api.get(fieldName);
-              apiRow.put(fieldName, values);
+      final Map<String, Object> kongResponse;
+      if (principal.isUserInRole(ROLE_GWA_ADMIN)) {
+        kongResponse = kongPage(httpRequest, httpClient, path);
+      } else {
+        final String username = principal.getName();
+        kongResponse = kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
+          final Map<String, Object> config = (Map<String, Object>)endpoint.get("config");
+          final Object owners = config.get("api_owners");
+          if (owners instanceof List) {
+            final List<String> apiOwners = (List<String>)owners;
+            if (apiOwners.contains(username)) {
+              return true;
+            } else {
+              return false;
             }
-            apiRows.add(apiRow);
+          } else {
+            return false;
           }
-        }
-        kongResponse.put("data", apiRows);
+        });
       }
+      endpointListFromApiList(httpClient, kongResponse);
       Json.writeJson(httpResponse, kongResponse);
     });
+  }
+
+  private void endpointListFromApiList(final JsonHttpClient httpClient,
+    final Map<String, Object> kongResponse) throws IOException {
+    @SuppressWarnings("unchecked")
+    final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
+    if (data != null) {
+      final List<Map<String, Object>> apiRows = new ArrayList<>();
+      for (final Map<String, Object> endpoint : data) {
+        final String apiId = (String)endpoint.get("api_id");
+        final String apiName = apiGetName(httpClient, apiId);
+        final Map<String, Object> api = apiGet(apiName);
+        if (api != null) {
+          final Map<String, Object> apiRow = new LinkedHashMap<>();
+          for (final String fieldName : Arrays.asList("id", "name", "created_at", "hosts",
+            "uris")) {
+            final Object values = api.get(fieldName);
+            apiRow.put(fieldName, values);
+          }
+          apiRows.add(apiRow);
+        }
+      }
+      kongResponse.put("data", apiRows);
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -876,20 +961,6 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  private void handleCachedObject(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String type, final String id,
-    final JsonHttpFunction action) throws IOException {
-    final Map<String, Map<String, Object>> objectById = getObjectById(type);
-    Map<String, Object> object = objectById.get(id);
-    if (object == null) {
-      object = handleRequest(httpRequest, httpResponse, action);
-      objectById.put(id, object);
-    }
-    if (object != null) {
-      Json.writeJson(httpResponse, object);
-    }
-  }
-
   public void handleDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
@@ -969,41 +1040,6 @@ public class ApiService implements ServletContextListener {
     });
   }
 
-  // private void kongPluginRequestTransformer(final JsonHttpClient httpClient, final Row row,
-  // final String apiId) throws IOException {
-  // final Map<String, Object> config = new LinkedHashMap<>();
-  // final Map<String, Object> add = new LinkedHashMap<>();
-  // final List<String> headers = new ArrayList<>();
-  //
-  // final String upstreamUsername = row.getString("upstream_username");
-  // final String upstreamPassword = row.getString("upstream_password");
-  // if (upstreamUsername != null) {
-  // String userAndPassword;
-  // if (upstreamPassword == null) {
-  // userAndPassword = upstreamUsername + ":";
-  // } else {
-  // userAndPassword = upstreamUsername + ":" + upstreamPassword;
-  // }
-  // final byte[] userAndPasswordBytes = userAndPassword.getBytes();
-  // final String authorization = "Authorization:Basic "
-  // + BASE_64_ENCODER.encodeToString(userAndPasswordBytes);
-  // headers.add(authorization);
-  // }
-  // if (!headers.isEmpty()) {
-  // add.put("headers", headers);
-  // }
-  // if (!add.isEmpty()) {
-  // config.put("add", add);
-  // }
-  // if (!config.isEmpty()) {
-  // final Map<String, Object> requestTransformations = new LinkedHashMap<>();
-  // requestTransformations.put("name", "request-transformer");
-  // requestTransformations.put("config", config);
-  // final String path = "/apis/" + apiId + "/plugins";
-  // httpClient.post(path, requestTransformations);
-  // }
-  // }
-
   protected Map<String, Object> kongPage(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient, final String path)
     throws IOException, ClientProtocolException {
@@ -1036,15 +1072,32 @@ public class ApiService implements ServletContextListener {
       urlString = (String)kongResponse.get("next");
     } while (urlString != null);
     final Map<String, Object> response = new LinkedHashMap<>();
-    response.put("data", allRows);
+    final int offsetPage = getPageOffset(httpRequest);
+    if (offsetPage > 0) {
+      final List<Map<String, Object>> rows = allRows.subList(offsetPage, allRows.size());
+      response.put("data", rows);
+    } else {
+      response.put("data", allRows);
+    }
     response.put("total", allRows.size());
     return response;
   }
 
-  public void logError(final String message, final Throwable e) {
-    final Class<?> clazz = getClass();
+  private void logError(final String message, final Throwable e) {
+    final Class<? extends ApiService> clazz = getClass();
     final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.error(message, e);
+    if (e instanceof HttpStatusException) {
+      final HttpStatusException statusE = (HttpStatusException)e;
+      if (statusE.getCode() == 503) {
+        logger.error(message + "\nKong not available");
+      } else {
+        logger.error(message + "\n" + e.toString() + "\n" + statusE.getBody(), statusE);
+      }
+    } else if (e instanceof HttpHostConnectException) {
+      logger.error(message + "\nKong not available");
+    } else {
+      logger.error(message + "\n" + e.getMessage(), e);
+    }
   }
 
   public JsonHttpClient newKongClient() {

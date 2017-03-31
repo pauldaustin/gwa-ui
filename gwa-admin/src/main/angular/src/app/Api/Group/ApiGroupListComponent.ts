@@ -5,11 +5,11 @@ import {
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
 
-import { Api } from '../../Api/Api';
+import { Api } from '../Api';
 import { Group } from '../../Group/Group';
 
 @Component({
-  selector: 'endpoint-group-list',
+  selector: 'api-group-list',
   template: `
 <ngx-datatable
   class="material striped"
@@ -24,10 +24,10 @@ import { Group } from '../../Group/Group';
 >
 </ngx-datatable>
 
-<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','endpoints', api.name, 'groups', value]">{{value}}</a></ng-template>
+<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', api.name, 'groups', value]">{{value}}</a></ng-template>
 `
 })
-export class EndpointGroupListComponent extends BaseListComponent<Group> {
+export class ApiGroupListComponent extends BaseListComponent<Group> {
   api: Api;
 
   constructor(
