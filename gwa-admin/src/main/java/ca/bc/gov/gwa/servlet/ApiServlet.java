@@ -92,7 +92,7 @@ public class ApiServlet extends BaseAdminServlet {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
       case 0: // API
-        this.apiService.handleAdd(request, response, "/apis", ApiService.APIS_FIELD_NAMES);
+        this.apiService.apiAdd(request, response);
       break;
 
       case 1:
@@ -135,9 +135,7 @@ public class ApiServlet extends BaseAdminServlet {
 
       case 1: { // API
         final String apiName = paths.get(0);
-        final String path = "/apis/" + apiName;
-        this.apiService.handleUpdatePatch(request, response, path, ApiService.APIS_FIELD_NAMES);
-        this.apiService.clearCachedObject("api", apiName);
+        this.apiService.apiUpdate(request, response, apiName);
       }
       break;
 

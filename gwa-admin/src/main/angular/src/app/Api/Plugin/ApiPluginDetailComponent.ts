@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 
 import {
+  AbstractControl,
+  FormArray,
   FormControl,
   Validators
 } from '@angular/forms';
@@ -62,7 +64,11 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
         let schemaField = schemaFields[name];
         let defaultValue = schemaField['default'];
         if (defaultValue == null) {
-          defaultValue = '';
+          if (schemaField.type == 'array') {
+            defaultValue = [];
+          } else {
+            defaultValue = '';
+          }
         }
         let field = {
           name: name,
@@ -72,11 +78,17 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
           fieldType: schemaField.type,
           defaultValue: defaultValue,
         };
-        if (!(name in config)) {
+        if (!(name in config) || !config[name]) {
           config[name] = defaultValue;
         }
-        var formControl: FormControl;
-        if (schemaField.required) {
+        var formControl: AbstractControl;
+        if (schemaField.type == 'array') {
+          let formArray = this.formBuilder.array([]);
+          for (let value of config[name]) {
+            formArray.push(new FormControl(value, Validators.required));
+          }
+          formControl = formArray;
+        } else if (schemaField.required) {
           formControl = new FormControl(defaultValue, Validators.required);
         } else {
           formControl = new FormControl(defaultValue);
@@ -146,5 +158,14 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> {
     this.saveValues(this.object, this.form.controls['core']);
     this.saveValues(this.object.config, this.form.controls['config']);
     return super.saveDo();
+  }
+
+  
+  addFieldValue(formArray : FormArray) {
+    formArray.push(new FormControl(null, Validators.required));
+  }
+ 
+  deleteFieldValue(formArray : FormArray, index : number) {
+    formArray.removeAt(index);
   }
 }

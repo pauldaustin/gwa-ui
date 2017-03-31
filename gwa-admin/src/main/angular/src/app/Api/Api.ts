@@ -35,8 +35,8 @@ export class Api {
   upstream_url : string;
   preserve_host : string;
   name : string;
-  hosts : string[];
-  uris : string[];
+  _hosts : string[] = [];
+  _uris : string[] = [];
   //  methods : string; getter function
   strip_uri : boolean = true;
   retries : number = 5;
@@ -76,6 +76,40 @@ export class Api {
     }
   }
 
+  get uris() : string[] {
+    return this._uris;
+  }
+
+  set uris(uris) {
+    this._uris.length = 0;
+    if (typeof uris === "string") {
+      this._uris.push(uris);
+    } else if (Array.isArray(uris)) {
+      for (const uri of uris) {
+        if (uri && uri.trim().length > 0) {
+          this._uris.push(uri);
+        }
+      }
+    }
+  }
+
+  get hosts() : string[] {
+    return this._hosts;
+  }
+
+  set hosts(hosts) {
+    this._hosts.length = 0;
+    if (typeof hosts === "string") {
+      this._hosts.push(hosts);
+    } else if (Array.isArray(hosts)) {
+      for (const host of hosts) {
+        if (host && host.trim().length > 0) {
+          this._hosts.push(host);
+        }
+      }
+    }
+  }
+
 /* Plugin Methods */
 
   get plugins(): Array<Plugin> {
@@ -96,7 +130,8 @@ export class Api {
     }
     if (pluginsJson) {
       let api = this;
-      for (const pluginJson of pluginsJson) {
+      for (const pluginName of Object.keys(pluginsJson)) {
+        const pluginJson = pluginsJson[pluginName];
         let plugin = new Plugin();
         Object.assign(plugin, pluginJson);
         plugin.api = api;
@@ -123,6 +158,19 @@ export class Api {
     return Api.ALL_METHODS;
   }
 
+  private cleanArray(values : string[]) : string[] {
+    let newValues : string[] = [];
+    for (let value of values) {
+      if (value) {
+        value = value.trim();
+        if (value.length > 0) {
+          newValues.push(value);
+        }
+      }
+    }
+    return newValues;
+  }
+
   toJSON(): any {
     return {
       id: this.id,
@@ -130,8 +178,8 @@ export class Api {
       upstream_url: this.upstream_url,
       preserve_host: this.preserve_host,
       name: this.name,
-      hosts: this.hosts,
-      uris: this.uris,
+      hosts: this.cleanArray(this._hosts),
+      uris: this.cleanArray(this._uris),
       methods: this.methods,
       strip_uri: this.strip_uri,
       retries: this.retries,
@@ -141,7 +189,7 @@ export class Api {
       https_only: this.https_only,
       http_if_terminated: this.http_if_terminated,
       
-      plugins : this.plugins,
+      plugins : this._pluginByName,
     };
   }
 }

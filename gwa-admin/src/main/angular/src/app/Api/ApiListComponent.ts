@@ -35,8 +35,8 @@ export class ApiListComponent extends BaseListComponent<Api> {
   ngOnInit(): void {
     this.columns = [
       { name: 'Name', cellTemplate: this.idTemplate, sortable: false },
-      { prop: 'hosts', name: 'Hosts',  sortable: false },
-      { prop: 'uris', name: 'Paths',  sortable: false },
+      { prop: 'hosts', name: 'Hosts', cellTemplate: this.arrayTemplate, sortable: false },
+      { prop: 'uris', name: 'Paths',  cellTemplate: this.arrayTemplate, sortable: false },
       { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
       { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];

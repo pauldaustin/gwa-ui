@@ -22,6 +22,12 @@
 .margin-top-1em {
   margin-top: 1em;
 }
+.mat-card-content .mat-divider {
+  display: block;
+  border-top-style: solid;
+  border-top-width: 1px;
+  margin: 10px -24px 10px -24px;
+}
 .mat-toolbar .mat-input-container,
 .mat-toolbar .mat-select {
   font-size: 14px;
@@ -41,6 +47,9 @@
 }
 .mat-select-value-text {
   font-size: 14px;
+}
+.mat-input-table .mat-icon-button {
+  margin: -10px 0px -10px 0px;
 }
 /* End To Fix bugs*/
 

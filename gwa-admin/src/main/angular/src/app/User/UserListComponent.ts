@@ -29,6 +29,7 @@ export class UserListComponent extends BaseListComponent<User> {
 
   ngOnInit(): void {
     this.columns = [
+      { prop: 'id', name: 'ID', cellTemplate: this.idTemplate, sortable: false },
       { prop: 'username', name: 'Username', cellTemplate: this.idTemplate, sortable: false },
       { prop: 'custom_id', name: 'Custom Id', cellTemplate: this.idTemplate, sortable: false },
       { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },

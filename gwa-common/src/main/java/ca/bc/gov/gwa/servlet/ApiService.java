@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -39,6 +40,18 @@ import ca.bc.gov.gwa.util.LruMap;
 @WebListener
 public class ApiService implements ServletContextListener {
 
+  private static final List<String> ACL_FIELD_NAMES = Arrays.asList("whitelist");
+
+  private static final String ACL = "acl";
+
+  private static final List<String> KEY_AUTH_FIELD_NAMES = Arrays.asList("key_names",
+    "hide_credentials", "anonymous");
+
+  private static final String KEY_AUTH = "key-auth";
+
+  private static final Map<String, Object> ENDPOINT_DEFAULT_CONFIG = Collections
+    .singletonMap("allow_developer_keys", false);
+
   private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", "name",
     "consumer_username");
 
@@ -49,8 +62,8 @@ public class ApiService implements ServletContextListener {
     "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
     "http_if_terminated");
 
-  private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("name", "uri_template",
-    "created_by", "upstream_url");
+  private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("api_owners",
+    "developer_key_group");
 
   private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
     "hour", "minute", "day", "month", "year");
@@ -78,6 +91,7 @@ public class ApiService implements ServletContextListener {
         if (value2 == null) {
           return -1;
         } else {
+
           final int compare = value1.compareTo(value2);
           if (compare != 0) {
             return compare;
@@ -139,35 +153,51 @@ public class ApiService implements ServletContextListener {
   public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
     throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
+    if (requestData == null) {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    } else {
       handleRequest(httpRequest, httpResponse, (httpClient) -> {
         final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
         final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
+        final String apiId = (String)apiResponse.get("id");
+        if (apiId != null) {
+          apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
+            ENDPOINT_DEFAULT_CONFIG, false);
+          apiAddPlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES, null, false);
+          apiAddPlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES, null, false);
+        }
         Json.writeJson(httpResponse, apiResponse);
       });
     }
+  }
 
-    // handleRequest(httpRequest, httpResponse, (httpClient) -> {
-    // final Map<String, Object> apiRequest = new LinkedHashMap<>();
-    // final List<Map<String, Object>> pluginRequests = new ArrayList<>();
-    //
-    // if (endPointSetKongParameters(httpRequest, httpResponse, userId, apiRequest,
-    // pluginRequests)) {
-    // final Map<String, Object> insertData = getMap(requestData, fieldNames);
-    // "/apis", ApiService.APIS_FIELD_NAMES
-    // final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
-    // final String id = (String)apiResponse.get("id");
-    // if (id != null) {
-    // final String pluginPath = "/apis/" + id + "/plugins";
-    // for (final Map<String, Object> pluginRequest : pluginRequests) {
-    // pluginRequest.remove("id");
-    // httpClient.post(pluginPath, pluginRequest);
-    // // TODO error handling
-    // }
-    // }
-    // Json.writeJson(httpResponse, apiResponse);
-    // }
-    // });
+  @SuppressWarnings("unchecked")
+  private void apiAddPlugin(final JsonHttpClient client, final Map<String, Object> requestData,
+    final String apiId, final String pluginName, final List<String> fieldNames,
+    final Map<String, Object> defaultConfig, final boolean ignoreDisabled) throws IOException {
+    final Map<String, Object> pluginAdd = pluginGet(requestData, pluginName);
+    Map<String, Object> config;
+    if (pluginAdd == null) {
+      if (ignoreDisabled || defaultConfig == null) {
+        return;
+      } else {
+        config = defaultConfig;
+      }
+    } else {
+      if (ignoreDisabled && Boolean.TRUE != pluginAdd.get("enabled")) {
+        return;
+      } else {
+        final Map<String, Object> configAdd = (Map<String, Object>)pluginAdd.get("config");
+        config = new LinkedHashMap<>();
+        addData(config, configAdd, fieldNames);
+      }
+    }
+
+    final String path = "/apis/" + apiId + "/plugins";
+    final Map<String, Object> plugin = new LinkedHashMap<>();
+    plugin.put("name", pluginName);
+    plugin.put("config", config);
+    client.post(path, plugin);
   }
 
   public void apiGet(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
@@ -180,6 +210,7 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public Map<String, Object> apiGet(final String apiName) throws IOException {
     return getCachedObject("api", apiName, (httpClient) -> {
       final Map<String, Object> apiResponse = httpClient.get("/apis/" + apiName);
@@ -187,14 +218,32 @@ public class ApiService implements ServletContextListener {
       if (apiId == null) {
         return null;
       } else {
+        for (final String fieldName : Arrays.asList("uris", "hosts")) {
+          final Object value = apiResponse.get(fieldName);
+          if (value instanceof Map) {
+            final Map<?, ?> mapValue = (Map<?, ?>)value;
+            if (mapValue.isEmpty()) {
+              apiResponse.put(fieldName, new ArrayList<>());
+            }
+          }
+        }
         final Map<String, Object> pluginsResponse = httpClient.get("/apis/" + apiId + "/plugins");
-        @SuppressWarnings("unchecked")
         final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
           .get("data");
         final Map<String, Map<String, Object>> pluginByName = new TreeMap<>();
         for (final Map<String, Object> plugin : plugins) {
           if (plugin.get("consumer_id") == null) {
             final String name = (String)plugin.get("name");
+            final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
+            for (final Entry<String, Object> entry : config.entrySet()) {
+              final Object value = entry.getValue();
+              if (value instanceof Map) {
+                final Map<?, ?> mapValue = (Map<?, ?>)value;
+                if (mapValue.isEmpty()) {
+                  entry.setValue(new ArrayList<>());
+                }
+              }
+            }
             pluginByName.put(name, plugin);
           }
         }
@@ -218,6 +267,76 @@ public class ApiService implements ServletContextListener {
       }
     }
     return apiName;
+  }
+
+  public void apiUpdate(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiId) throws IOException {
+    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
+    if (requestData == null) {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    } else {
+      handleRequest(httpRequest, httpResponse, (httpClient) -> {
+        String oldApiName = this.apiNameById.get(apiId);
+        if (oldApiName == null) {
+          oldApiName = (String)requestData.get("name");
+        }
+        try {
+          final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
+          final Map<String, Object> apiResponse = httpClient.patch("/apis/" + apiId, apiRequest);
+          if (apiId != null) {
+            if (pluginGet(requestData, BCGOV_GWA_ENDPOINT) == null) {
+              apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
+                ENDPOINT_DEFAULT_CONFIG, false);
+            } else {
+              apiUpdatePlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT,
+                ENDPOINT_FIELD_NAMES);
+            }
+            apiUpdatePlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES);
+            apiUpdatePlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES);
+          }
+          Json.writeJson(httpResponse, apiResponse);
+        } finally {
+          clearCachedObject("api", oldApiName);
+        }
+      });
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void apiUpdatePlugin(final JsonHttpClient client, final Map<String, Object> requestData,
+    final String apiId, final String pluginName, final List<String> fieldNames) throws IOException {
+    final Map<String, Object> pluginUpdate = pluginGet(requestData, pluginName);
+    if (pluginUpdate != null) {
+
+      final Map<String, Object> plugin = new LinkedHashMap<>();
+      final String pluginId = (String)pluginUpdate.get("id");
+
+      final boolean enabled = Boolean.TRUE == pluginUpdate.get("enabled");
+      plugin.put("enabled", enabled);
+
+      plugin.put("name", pluginName);
+
+      final Map<String, Object> configAdd = (Map<String, Object>)pluginUpdate.get("config");
+      final Map<String, Object> config = new LinkedHashMap<>();
+      addData(config, configAdd, fieldNames);
+      plugin.put("config", config);
+
+      if (pluginId == null) {
+        if (enabled) {
+          final String path = "/apis/" + apiId + "/plugins";
+          client.post(path, plugin);
+        }
+      } else {
+        if (enabled) {
+          final String path = "/apis/" + apiId + "/plugins/" + pluginId;
+          client.patch(path, plugin);
+        } else {
+          final String path = "/apis/" + apiId + "/plugins/" + pluginId;
+          client.delete(path);
+        }
+      }
+    }
+
   }
 
   public void clearCachedObject(final String type, final String id) throws IOException {
@@ -264,7 +383,9 @@ public class ApiService implements ServletContextListener {
   public void consumerGroupAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String username) throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
+    if (requestData == null) {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    } else {
       final String groupName = (String)requestData.get("group");
       groupUserAdd(httpRequest, httpResponse, username, groupName);
     }
@@ -456,7 +577,7 @@ public class ApiService implements ServletContextListener {
     } else {
       try {
         final Map<String, Object> api = apiGet(apiName);
-        final Map<String, Object> aclPlugin = pluginGet(api, "acl");
+        final Map<String, Object> aclPlugin = pluginGet(api, ACL);
         final Map<String, Object> config = (Map<String, Object>)aclPlugin.get("config");
         final List<String> apiGroups = (List<String>)config.get("whitelist");
         return apiGroups.contains(groupName);
@@ -511,9 +632,9 @@ public class ApiService implements ServletContextListener {
         .get("plugins");
       for (final Map<String, Object> plugin : plugins) {
         final String pluginName = (String)plugin.get("name");
-        Map<String, Object> pluginConfig = null;
+        final Map<String, Object> pluginConfig = null;
         if (pluginName.equals(BCGOV_GWA_ENDPOINT)) {
-          pluginConfig = endPointSetPluginEndpoint(plugin, apiRequest, userId);
+          // pluginConfig = apiSetPluginEndpoint(plugin, apiRequest, userId);
         } else if (pluginName.equals("rate-limiting")) {
           // pluginConfig = endPointSetPluginRateLimiting(plugin);
         }
@@ -528,37 +649,6 @@ public class ApiService implements ServletContextListener {
       }
       return true;
     }
-  }
-
-  protected Map<String, Object> endPointSetPluginEndpoint(final Map<String, Object> plugin,
-    final Map<String, Object> apiRequest, final String userId) {
-    Map<String, Object> pluginConfig;
-    pluginConfig = new LinkedHashMap<>();
-    @SuppressWarnings("unchecked")
-    final Map<String, Object> config = (Map<String, Object>)plugin.get("config");
-    addData(pluginConfig, config, ENDPOINT_FIELD_NAMES);
-    addData(pluginConfig, apiRequest, ENDPOINT_FIELD_NAMES);
-    pluginConfig.put("created_by", userId);
-
-    final String uriTemplate = (String)pluginConfig.get("uri_template");
-    final String endpointName = (String)apiRequest.get("name");
-    final String uri = uriTemplate.replace("{name}", endpointName);
-    final int index1 = uri.indexOf("//");
-    final int index2 = uri.indexOf("/", index1 + 2);
-    String host;
-    if (index2 == -1) {
-      host = uri.substring(index1 + 2);
-    } else {
-      host = uri.substring(index1 + 2, index2);
-      final String uriPrefix = uri.substring(index2);
-      if (uriPrefix.length() > 1) {
-        final List<String> uris = Arrays.asList(uriPrefix);
-        apiRequest.put("uris", uris);
-      }
-    }
-    final List<String> hosts = Arrays.asList(host);
-    apiRequest.put("hosts", hosts);
-    return pluginConfig;
   }
 
   protected Map<String, Object> endPointSetPluginRateLimiting(final String apiId,
@@ -761,7 +851,9 @@ public class ApiService implements ServletContextListener {
   public void handleAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
+    if (requestData == null) {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    } else {
       handleRequest(httpRequest, httpResponse, (httpClient) -> {
         final Map<String, Object> apiResponse = httpClient.post(path, requestData);
         Json.writeJson(httpResponse, apiResponse);
@@ -773,7 +865,9 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse, final String path, final List<String> fieldNames)
     throws IOException {
     final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData != null) {
+    if (requestData == null) {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    } else {
       handleRequest(httpRequest, httpResponse, (httpClient) -> {
         final Map<String, Object> insertData = getMap(requestData, fieldNames);
         final Map<String, Object> apiResponse = httpClient.post(path, insertData);
@@ -829,6 +923,7 @@ public class ApiService implements ServletContextListener {
       if (e.getCode() == 503) {
         writeJsonError(httpResponse, "Kong server not available", e);
       } else {
+        LoggerFactory.getLogger(getClass()).error(e.toString() + "\n" + e.getBody(), e);
         writeJsonError(httpResponse, "Kong server returned an error");
       }
     } catch (final HttpHostConnectException e) {
@@ -847,6 +942,7 @@ public class ApiService implements ServletContextListener {
       if (e.getCode() == 503) {
         writeJsonError(httpResponse, "Kong server not available", e);
       } else {
+        LoggerFactory.getLogger(getClass()).error(e.toString() + "\n" + e.getBody(), e);
         writeJsonError(httpResponse, "Kong server returned an error");
       }
     } catch (final HttpHostConnectException e) {

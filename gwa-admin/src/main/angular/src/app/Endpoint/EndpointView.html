@@ -21,7 +21,7 @@
               disabled
             />
           </md-input-container>
-          <md-input-container fxFlex *ngIf="endpoint.config.api_owners" fxLayout="column" fxLayoutGap="2px">
+          <md-input-container fxFlex *ngIf="endpoint.config.api_owners.length > 0" fxLayout="column" fxLayoutGap="2px">
             <input
               *ngFor="let owner of endpoint.config.api_owners"
               mdInput
@@ -33,7 +33,7 @@
         </div>
 
         <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
-          <md-input-container fxFlex *ngIf="object.hosts" fxLayout="column" fxLayoutGap="2px">
+          <md-input-container fxFlex *ngIf="object.hosts.length > 0" fxLayout="column" fxLayoutGap="2px">
             <input
               *ngFor="let host of object.hosts"
               mdInput
@@ -43,7 +43,7 @@
             />
           </md-input-container>
 
-          <md-input-container fxFlex *ngIf="object.uris" fxLayout="column" fxLayoutGap="2px">
+          <md-input-container fxFlex *ngIf="object.uris.length > 0" fxLayout="column" fxLayoutGap="2px">
             <input
               *ngFor="let path of object.uris"
               mdInput

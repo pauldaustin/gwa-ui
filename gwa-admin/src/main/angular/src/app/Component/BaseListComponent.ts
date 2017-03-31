@@ -23,6 +23,8 @@ export class BaseListComponent<T> extends BaseComponent<T> {
 
   @ViewChild('flagT') flagTemplate: TemplateRef<any>;
 
+  @ViewChild('arrayT') arrayTemplate: TemplateRef<any>;
+
   columns : any[];
 
   dialog: MdDialog = this.injector.get(MdDialog);
