@@ -35,7 +35,7 @@ export class BaseListComponent<T> extends BaseComponent<T> {
 
   offset: number = 0;
 
-  limit: number = 20;
+  limit: number = 100;
 
   filterFields : any[];
   

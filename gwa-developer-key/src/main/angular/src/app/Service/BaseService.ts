@@ -97,8 +97,12 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected handleError(error: any): Promise<any> {
-    this.showError(error.message || error);
-    return Promise.reject(error.message || error);
+    if (error.status == 404) {
+      return Promise.resolve(null);
+    } else {
+      this.showError(error.message || error);
+      return Promise.reject(error.message || error);
+    }
   }
 
   protected showError(message: string) {

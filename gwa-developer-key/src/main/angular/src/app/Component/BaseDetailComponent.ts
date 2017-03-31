@@ -71,9 +71,13 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
          this.postSave(savedObject);
          if (close) {
            this.routeList();
+         } else if (this.addPage){
+           this.routeDetail()
          }
        }
      });
   }
-  
+
+  routeDetail() : void {
+  }
 }

@@ -60,4 +60,21 @@ export class BaseComponent<T> implements OnInit {
   get userName() : string {
     return this.authService.userName;
   }
+  
+  trackByIndex(index : number) : number { 
+    return index;
+  }
+  
+  stringValue(object : any) : string {
+    if (object) {
+      if (Array.isArray(object)) {
+        if (object.length > 0) {
+          return object.join();
+        }
+      } else {
+        return object.toString();
+      }
+    }
+    return '-';
+  }
 }
