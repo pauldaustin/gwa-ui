@@ -42,6 +42,9 @@
                     </md-input-container>
                   </div>
                   
+                  <div *ngSwitchCase="'table'">
+                    <label>{{field.name}}</label> <span style="color:red">Table fields not supported</span>
+                  </div>
                   <md-input-container *ngSwitchDefault class="full-width">
                     <input
                       mdInput
