@@ -34,7 +34,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     MaterialModule,
     NgxDatatableModule,
     BcGovTemplateModule.forRoot({
-        title: 'GW Dev Keys',
+        title: 'API Keys',
         headerMenuItems: [
           {
             title: 'API Keys',

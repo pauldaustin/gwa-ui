@@ -1,12 +1,4 @@
 <div>
-<!-- 
-  <div class="collapse" id="helpText">
-    <div class="alert alert-info">
-<p>Rate limited access can be requested to an application using one of your API keys. Request
-developer access to an application by clicking the Add Api button.</p>
-    </div>
-  </div>
- -->
   <ngx-datatable
     class="material striped"
     [rows]="rows"
@@ -24,7 +16,6 @@ developer access to an application by clicking the Add Api button.</p>
     (page)='onPage($event)'
   >
   </ngx-datatable>
-
 </div>
 
 <template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</template>

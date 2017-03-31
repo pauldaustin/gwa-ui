@@ -14,7 +14,7 @@ export class ApiService extends BaseService<Api> {
     super(injector);
     this.path = `/apis`;
     this.typeTitle = 'API';
-    this.labelFieldName = 'group';
+    this.labelFieldName = 'name';
   }
 
   addObject(application: Api): Promise<Api> {
@@ -24,9 +24,9 @@ export class ApiService extends BaseService<Api> {
     );
   }
  
-  deleteObject(application: Api, path?: string): Promise<boolean> {
+  deleteObject(api: Api, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
-      `/apis/${application.id}`
+      `/apis/${api.name}`
     );
   }
 

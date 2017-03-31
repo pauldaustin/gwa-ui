@@ -2,6 +2,7 @@ package ca.bc.gov.gwa.developerkey.servlet;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,26 +18,32 @@ public class ApiServlet extends BaseServlet {
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    } else {
-      final String deletePath = "/consumers/" + userId + "/acls" + pathInfo;
-      this.apiService.handleDelete(request, response, deletePath);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0:
+        response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      break;
+      case 1: { // API Delete
+        final String apiName = paths.get(0);
+        this.apiService.developerApiDelete(request, response, apiName);
+      }
+      break;
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      final String listPath = "/consumers/" + userId + "/acls";
-      this.apiService.handleList(request, response, listPath);
-    } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: { // API List
+        this.apiService.developerApiList(request, response);
+      }
+      break;
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 
@@ -51,5 +58,11 @@ public class ApiServlet extends BaseServlet {
     } else {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
+  }
+
+  @Override
+  public void init() throws ServletException {
+    super.init();
+    this.apiService.setCaching(false);
   }
 }

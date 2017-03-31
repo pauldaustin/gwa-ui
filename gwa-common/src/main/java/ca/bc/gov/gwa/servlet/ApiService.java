@@ -138,6 +138,8 @@ public class ApiService implements ServletContextListener {
 
   private String version;
 
+  private boolean caching;
+
   public ApiService() {
   }
 
@@ -269,7 +271,7 @@ public class ApiService implements ServletContextListener {
       try {
         final Map<String, Object> api = httpClient.get("/apis/" + apiId);
         apiName = (String)api.get("name");
-        if (apiName != null) {
+        if (apiName != null && this.caching) {
           this.apiNameById.put(apiId, apiName);
         }
       } catch (final Throwable e) {
@@ -531,6 +533,74 @@ public class ApiService implements ServletContextListener {
   }
 
   @SuppressWarnings("unchecked")
+  public void developerApiDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiName) throws IOException {
+    final String path = "/plugins?name=bcgov-gwa-endpoint";
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final String username = httpRequest.getRemoteUser();
+      kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
+        final Map<String, Object> config = (Map<String, Object>)endpoint.get("config");
+        final String groupName = (String)config.get("developer_key_group");
+        if (groupName != null) {
+          final String apiId = (String)endpoint.get("api_id");
+          final String endpointName = apiGetName(httpClient, apiId);
+          if (apiName.equals(endpointName)) {
+            try {
+              httpClient.delete("/consumers/" + username + "/acls/" + groupName);
+            } catch (final IOException e) {
+            }
+          }
+        }
+        return false;
+      });
+    });
+    writeJsonResponse(httpResponse, DELETED);
+  }
+
+  @SuppressWarnings("unchecked")
+  public void developerApiList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, List<String>> apiNamesByGroupName = new HashMap<>();
+      final String path = "/plugins?name=bcgov-gwa-endpoint";
+      kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
+        final Map<String, Object> config = (Map<String, Object>)endpoint.get("config");
+        final String groupName = (String)config.get("developer_key_group");
+        if (groupName != null) {
+          final String apiId = (String)endpoint.get("api_id");
+          final String apiName = apiGetName(httpClient, apiId);
+          List<String> apiNames = apiNamesByGroupName.get(groupName);
+          if (apiNames == null) {
+            apiNames = new ArrayList<>();
+            apiNamesByGroupName.put(groupName, apiNames);
+          }
+          apiNames.add(apiName);
+        }
+        return false;
+      });
+
+      final String username = httpRequest.getRemoteUser();
+      final Map<String, Map<String, Object>> authorizedApis = new TreeMap<>();
+      kongPageAll(httpRequest, httpClient, "/consumers/" + username + "/acls", (acl) -> {
+        final String groupName = (String)acl.get("group");
+        final Object createdAt = acl.get("created_at");
+        for (final String apiName : apiNamesByGroupName.getOrDefault(groupName,
+          Collections.emptyList())) {
+          final Map<String, Object> api = new LinkedHashMap<>();
+          api.put("name", apiName);
+          api.put("created_at", createdAt);
+          authorizedApis.put(apiName, api);
+        }
+        return false;
+      });
+      final Map<String, Object> kongResponse = new LinkedHashMap<>();
+      kongResponse.put("data", authorizedApis.values());
+      kongResponse.put("total", authorizedApis.size());
+      Json.writeJson(httpResponse, kongResponse);
+    });
+  }
+
+  @SuppressWarnings("unchecked")
   public boolean endpointAccessAllowed(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final List<String> paths) throws IOException {
     if (paths.isEmpty()) {
@@ -787,7 +857,9 @@ public class ApiService implements ServletContextListener {
         JsonHttpClient httpClient = newKongClient()) {
         object = action.apply(httpClient);
       }
-      objectById.put(id, object);
+      if (this.caching) {
+        objectById.put(id, object);
+      }
     }
     return object;
   }
@@ -1182,6 +1254,10 @@ public class ApiService implements ServletContextListener {
       Collections.sort(pluginNames);
       Json.writeJson(httpResponse, enabledResponse);
     });
+  }
+
+  public void setCaching(final boolean caching) {
+    this.caching = caching;
   }
 
   public void writeInserted(final HttpServletResponse httpResponse, final String id)

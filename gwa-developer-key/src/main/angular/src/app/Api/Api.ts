@@ -1,6 +1,4 @@
 export class Api {
-  id : string;
-  consumer_id: string;
-  group: string;
+  name: string;
   created_at: string;
 }
