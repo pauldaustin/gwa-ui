@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.servlet.ServletContextEvent;
@@ -555,6 +556,32 @@ public class ApiService implements ServletContextListener {
       });
     });
     writeJsonResponse(httpResponse, DELETED);
+  }
+
+  /**
+   * Delete all existing API keys and create a new one.
+   *
+   * @param httpRequest
+   * @param httpResponse
+   * @throws IOException
+   */
+  public void developerApiKeyAdd(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final String userId = httpRequest.getRemoteUser();
+      final String keyAuthPath = "/consumers/" + userId + "/key-auth";
+      kongPageAll(httpRequest, httpClient, keyAuthPath, (apiKey) -> {
+        final String id = (String)apiKey.get("id");
+        try {
+          httpClient.delete(keyAuthPath + "/" + id);
+        } catch (final Throwable e) {
+        }
+      });
+      final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
+        Collections.emptyMap());
+      Json.writeJson(httpResponse, apiKeyResponse);
+    });
+
   }
 
   @SuppressWarnings("unchecked")
@@ -1125,24 +1152,32 @@ public class ApiService implements ServletContextListener {
     return kongResponse;
   }
 
-  protected Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
-    final JsonHttpClient httpClient, final String path, final Predicate<Map<String, Object>> filter)
+  protected void kongPageAll(final HttpServletRequest httpRequest, final JsonHttpClient httpClient,
+    final String path, final Consumer<Map<String, Object>> action)
     throws IOException, ClientProtocolException {
     String urlString = getKongPageUrl(httpRequest, path);
-    final List<Map<String, Object>> allRows = new ArrayList<>();
     do {
       final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
       @SuppressWarnings("unchecked")
       final List<Map<String, Object>> rows = (List<Map<String, Object>>)kongResponse.get("data");
       if (rows != null) {
         for (final Map<String, Object> row : rows) {
-          if (filter == null || filter.test(row)) {
-            allRows.add(row);
-          }
+          action.accept(row);
         }
       }
       urlString = (String)kongResponse.get("next");
     } while (urlString != null);
+  }
+
+  protected Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient, final String path, final Predicate<Map<String, Object>> filter)
+    throws IOException, ClientProtocolException {
+    final List<Map<String, Object>> allRows = new ArrayList<>();
+    kongPageAll(httpRequest, httpClient, path, (row) -> {
+      if (filter.test(row)) {
+        allRows.add(row);
+      }
+    });
     final Map<String, Object> response = new LinkedHashMap<>();
     final int offsetPage = getPageOffset(httpRequest);
     if (offsetPage > 0) {

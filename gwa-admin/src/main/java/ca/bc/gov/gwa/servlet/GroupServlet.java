@@ -21,7 +21,7 @@ public class GroupServlet extends BaseServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
+    if (isPathEmpty(pathInfo)) {
       this.apiService.handleList(request, response, "/groups");
     } else if (pathInfo.indexOf('/', 1) == -1) {
       final String groupPath = "/groups" + pathInfo;

@@ -1,7 +1,7 @@
 package ca.bc.gov.gwa.developerkey.servlet;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +19,7 @@ public class ApiKeyServlet extends BaseServlet {
     throws ServletException, IOException {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
+    if (isPathEmpty(pathInfo)) {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     } else {
       final String deletePath = "/consumers/" + userId + "/key-auth" + pathInfo;
@@ -32,7 +32,7 @@ public class ApiKeyServlet extends BaseServlet {
     throws ServletException, IOException {
     final String userId = request.getRemoteUser();
     final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
+    if (isPathEmpty(pathInfo)) {
       final String listPath = "/consumers/" + userId + "/key-auth";
       this.apiService.handleList(request, response, listPath);
     } else {
@@ -43,13 +43,15 @@ public class ApiKeyServlet extends BaseServlet {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      final String insertPath = "/consumers/" + userId + "/key-auth";
-      this.apiService.handleAdd(request, response, insertPath, Collections.emptyList());
-    } else {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: {
+        this.apiService.developerApiKeyAdd(request, response);
+      }
+      break;
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      break;
     }
   }
 }

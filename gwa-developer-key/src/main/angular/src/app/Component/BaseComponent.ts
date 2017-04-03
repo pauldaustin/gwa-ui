@@ -13,6 +13,7 @@ import {
   ActivatedRoute,
   Router
 } from '@angular/router';
+import { DOCUMENT } from '@angular/platform-browser';
 
 import { AuthService } from '../Authentication/AuthService';
 import { Service } from '../Service/Service';
@@ -23,6 +24,8 @@ export class BaseComponent<T> implements OnInit {
   protected authService: AuthService = this.injector.get(AuthService);
 
   dialog: MdDialog = this.injector.get(MdDialog);
+
+  document: any = this.injector.get(DOCUMENT);
 
   protected location: Location = this.injector.get(Location);
 

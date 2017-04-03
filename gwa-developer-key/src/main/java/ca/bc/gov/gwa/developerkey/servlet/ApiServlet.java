@@ -5,13 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.bc.gov.gwa.servlet.BaseServlet;
 
-@WebServlet(urlPatterns = "/rest/apis/*", loadOnStartup = 1)
+// @WebServlet(urlPatterns = "/rest/apis/*", loadOnStartup = 1)
 public class ApiServlet extends BaseServlet {
   private static final long serialVersionUID = 1L;
 
@@ -50,13 +49,16 @@ public class ApiServlet extends BaseServlet {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String userId = request.getRemoteUser();
-    final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
-      final String insertPath = "/consumers/" + userId + "/acls";
-      this.apiService.handleAdd(request, response, insertPath, Collections.emptyList());
-    } else {
-      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    final List<String> paths = splitPathInfo(request);
+    switch (paths.size()) {
+      case 0: {
+        final String userId = request.getRemoteUser();
+        final String insertPath = "/consumers/" + userId + "/acls";
+        this.apiService.handleAdd(request, response, insertPath, Collections.emptyList());
+      }
+      break;
+      default:
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
   }
 

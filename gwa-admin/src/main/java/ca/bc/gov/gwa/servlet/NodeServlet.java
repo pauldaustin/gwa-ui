@@ -28,7 +28,7 @@ public class NodeServlet extends BaseAdminServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
-    if (hasPath(pathInfo)) {
+    if (isPathEmpty(pathInfo)) {
       this.apiService.handleList(request, response, "/cluster");
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);

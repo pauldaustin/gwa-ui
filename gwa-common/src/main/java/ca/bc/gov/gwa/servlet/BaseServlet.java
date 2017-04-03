@@ -57,7 +57,7 @@ public abstract class BaseServlet extends HttpServlet {
     this.apiService = ApiService.release();
   }
 
-  public boolean hasPath(final String pathInfo) {
+  public boolean isPathEmpty(final String pathInfo) {
     return pathInfo == null || "/".equals(pathInfo);
   }
 

@@ -19,10 +19,10 @@ import { DeleteDialog } from './Component/DeleteDialog';
 import { MessageDialog } from './Component/MessageDialog';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
-import { ApiKeyListComponent } from './ApiKey/ApiKeyListComponent';
-import { ApiService } from './Api/ApiService';
-import { ApiListComponent } from './Api/ApiListComponent';
-import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
+import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
+//import { ApiService } from './Api/ApiService';
+//import { ApiListComponent } from './Api/ApiListComponent';
+//import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
 
 @NgModule({
   imports: [
@@ -40,10 +40,10 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
             title: 'API Keys',
             routerLink: 'ui/apiKeys'
           },
-          {
-            title: 'APIs',
-            routerLink: 'ui/apis'
-          },
+//          {
+//            title: 'APIs',
+//            routerLink: 'ui/apis'
+//          },
         ]
       }
     ),
@@ -54,9 +54,9 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
     MessageDialog
   ],
   declarations: [
-    ApiKeyListComponent,
-    ApiListComponent,
-    ApiAuthorizeComponent,
+    ApiKeyComponent,
+//    ApiListComponent,
+//    ApiAuthorizeComponent,
     PageNotFoundComponent,
     DeleteDialog,
     MessageDialog
@@ -64,7 +64,7 @@ import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
   providers: [
     AuthService,
     ApiKeyService,
-    ApiService,
+//    ApiService,
   ],
   bootstrap: [ BcGovTemplate ]
 })
