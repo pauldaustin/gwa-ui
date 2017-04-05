@@ -4,7 +4,7 @@ import {
   Input 
 } from '@angular/core';
 
-import { BaseListComponent }  from '../Component/BaseListComponent';
+import { BaseComponent }  from '../Component/BaseComponent';
 
 import { ApiKey } from './ApiKey';
 import { ApiKeyService }  from './ApiKeyService';
@@ -13,16 +13,20 @@ import { ApiKeyService }  from './ApiKeyService';
   selector: 'apiKey-list',
   templateUrl: 'ApiKey.html'
 })
-export class ApiKeyComponent extends BaseListComponent<ApiKey>{
+export class ApiKeyComponent extends BaseComponent<ApiKey>{
   acceptTerms: boolean = false;
 
   appName: string;
   
   appRedirectUrl: string;
   
+  apiNames : string[] = [];
+
+  apiKey : string;
+
   constructor(
-     injector: Injector,
-     service: ApiKeyService
+    injector: Injector,
+    service: ApiKeyService
   ) {
     super(injector, service);
   }
@@ -33,9 +37,18 @@ export class ApiKeyComponent extends BaseListComponent<ApiKey>{
       .subscribe(params => {
         this.appName = params['appName'];
         this.appRedirectUrl = params['appRedirectUrl'];
+        this.refresh();
       });
   }
   
+  refresh() : void {
+    this.service.getObject('')
+      .then(apiKey => {
+        this.apiNames = apiKey.apiNames;
+        this.apiKey = apiKey.apiKey;
+      }
+    );
+  }
   addApiKey(): void {
     let apiKey: ApiKey = new ApiKey();
     this.service.addObject(
@@ -46,7 +59,7 @@ export class ApiKeyComponent extends BaseListComponent<ApiKey>{
   }
   
   authorizeAccess(): void {
-    let apiKey = this.rows[0].key;
+    let apiKey = this.apiKey;
     let url = this.appRedirectUrl;
     if (url.indexOf('?') == -1) {
       url += '?';
@@ -58,6 +71,6 @@ export class ApiKeyComponent extends BaseListComponent<ApiKey>{
   }
 
   get hasApiKey() : boolean {
-    return this.rows.length > 0;
+    return this.apiKey != null;
   }
 }

@@ -9,6 +9,7 @@ import {
   MdDialog,
   MdDialogRef
 } from '@angular/material';
+import { DOCUMENT } from '@angular/platform-browser';
 import {
   ActivatedRoute,
   Router
@@ -23,6 +24,8 @@ export class BaseComponent<T> implements OnInit {
   protected authService: AuthService = this.injector.get(AuthService);
 
   dialog: MdDialog = this.injector.get(MdDialog);
+
+  document: any = this.injector.get(DOCUMENT);
 
   protected location: Location = this.injector.get(Location);
 
@@ -57,8 +60,8 @@ export class BaseComponent<T> implements OnInit {
     return this.authService.hasRole(role);
   }
 
-  get userName() : string {
-    return this.authService.userName;
+  get username() : string {
+    return this.authService.username;
   }
   
   trackByIndex(index : number) : number { 

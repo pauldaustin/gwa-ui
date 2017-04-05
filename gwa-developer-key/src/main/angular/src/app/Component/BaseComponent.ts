@@ -9,11 +9,11 @@ import {
   MdDialog,
   MdDialogRef
 } from '@angular/material';
+import { DOCUMENT } from '@angular/platform-browser';
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
-import { DOCUMENT } from '@angular/platform-browser';
 
 import { AuthService } from '../Authentication/AuthService';
 import { Service } from '../Service/Service';
@@ -60,8 +60,8 @@ export class BaseComponent<T> implements OnInit {
     return this.authService.hasRole(role);
   }
 
-  get userName() : string {
-    return this.authService.userName;
+  get username() : string {
+    return this.authService.username;
   }
   
   trackByIndex(index : number) : number { 

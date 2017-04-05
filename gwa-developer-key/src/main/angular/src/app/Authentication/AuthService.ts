@@ -10,7 +10,7 @@ import { BaseService } from '../Service/BaseService';
 
 @Injectable()
 export class AuthService extends BaseService<any>  {
-  userName : string;
+  username : string;
   roles : string[];
   
   constructor(injector:Injector) {
@@ -24,7 +24,7 @@ export class AuthService extends BaseService<any>  {
           this.roles = [];
         } else {
           this.roles = json.roles;
-          this.userName = json.name;
+          this.username = json.name;
         }
       });
   }

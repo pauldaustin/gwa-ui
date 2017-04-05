@@ -15,8 +15,8 @@ export class UserResolver implements Resolve<User> {
     private router: Router
   ) {}
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<User> {
-    let userName = route.params[this.service.pathParamName];
-    return this.service.getObject(userName).then(user => {
+    let username = route.params[this.service.pathParamName];
+    return this.service.getObject(username).then(user => {
       if (user) {
         return user;
       } else {

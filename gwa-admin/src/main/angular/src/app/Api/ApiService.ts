@@ -23,10 +23,6 @@ export class ApiService extends BaseService<Api> {
     );
   }
 
-  getMyApis(): Promise<Api[]> {
-    return this.getObjectsDo('/apis/my');
-  }
-
   updateObject(api: Api): Promise<Api> {
     return this.updateObjectDo(
       `/apis/${api.id}`,

@@ -56,4 +56,8 @@ export class BcGovTemplate {
     }
     return true;
   }
+  
+  get username() : string {
+    return this.authService.username;
+  }
 }

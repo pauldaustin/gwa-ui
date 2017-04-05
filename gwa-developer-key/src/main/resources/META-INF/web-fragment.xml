@@ -24,7 +24,22 @@
 
   <filter-mapping>
     <filter-name>github-auth</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/git/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>github-auth</filter-name>
+    <url-pattern>/logout</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>github-auth</filter-name>
+    <url-pattern>/rest/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>github-auth</filter-name>
+    <url-pattern>/ui/*</url-pattern>
   </filter-mapping>
 
 </web-fragment>

@@ -19,7 +19,6 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
     'bcgov-gwa-endpoint',
     {
       api_owners: [],
-      developer_key_group: null
     }
   );
 

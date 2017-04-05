@@ -53,25 +53,36 @@ public class GitHubAuthenticationFilter implements Filter {
       request.setAttribute("gitFiltered", Boolean.TRUE);
       final HttpServletRequest httpRequest = (HttpServletRequest)request;
       final HttpServletResponse httpResponse = (HttpServletResponse)response;
-      final HttpSession session = httpRequest.getSession();
+      final String servletPath = httpRequest.getServletPath();
+      if ("/logout".equals(servletPath)) {
+        final HttpSession session = httpRequest.getSession(false);
+        if (session != null) {
+          session.invalidate();
+        }
 
-      final String fullPath = httpRequest.getServletPath();
-      if (fullPath.equals("/git/callback")) {
-        handleCallback(httpRequest, httpResponse, session);
+        httpResponse.sendRedirect("https://github.com/logout");
       } else {
-        final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
-        if (principal == null) {
-          handleRedirectToGitHub(httpRequest, httpResponse, session);
+        final HttpSession session = httpRequest.getSession();
+
+        final String fullPath = httpRequest.getServletPath();
+        if (fullPath.equals("/git/callback")) {
+          handleCallback(httpRequest, httpResponse, session);
         } else {
-          for (final String role : this.organizationRoles) {
-            if (principal.isUserInRole(role)) {
-              final HttpServletRequestWrapper requestWrapper = principal
-                .newHttpServletRequestWrapper(httpRequest);
-              chain.doFilter(requestWrapper, response);
-              return;
+          final GitHubPrincipal principal = (GitHubPrincipal)session
+            .getAttribute(GIT_HUB_PRINCIPAL);
+          if (principal == null || principal.isExpired(120000)) {
+            handleRedirectToGitHub(httpRequest, httpResponse, session);
+          } else {
+            for (final String role : this.organizationRoles) {
+              if (principal.isUserInRole(role)) {
+                final HttpServletRequestWrapper requestWrapper = principal
+                  .newHttpServletRequestWrapper(httpRequest);
+                chain.doFilter(requestWrapper, response);
+                return;
+              }
             }
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
           }
-          httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
       }
     } else {
@@ -140,26 +151,30 @@ public class GitHubAuthenticationFilter implements Filter {
   @SuppressWarnings("unchecked")
   public void handleRedirectToGitHub(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final HttpSession session) throws IOException {
-    final String state = UUID.randomUUID().toString();
-    Map<String, String> stateUrlMap = (Map<String, String>)session
-      .getAttribute(GIT_HUB_STATE_URL_MAP);
-    if (stateUrlMap == null) {
-      stateUrlMap = new LruMap<>(10);
-      session.setAttribute(GIT_HUB_STATE_URL_MAP, stateUrlMap);
-    }
+    if (httpRequest.getServletPath().startsWith("/rest")) {
+      httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+    } else {
+      final String state = UUID.randomUUID().toString();
+      Map<String, String> stateUrlMap = (Map<String, String>)session
+        .getAttribute(GIT_HUB_STATE_URL_MAP);
+      if (stateUrlMap == null) {
+        stateUrlMap = new LruMap<>(10);
+        session.setAttribute(GIT_HUB_STATE_URL_MAP, stateUrlMap);
+      }
 
-    final StringBuffer redirectBuilder = httpRequest.getRequestURL();
-    redirectBuilder.indexOf("/pub/gwa");
-    final String queryString = httpRequest.getQueryString();
-    if (queryString != null) {
-      redirectBuilder.append('?');
-      redirectBuilder.append(queryString);
+      final StringBuffer redirectBuilder = httpRequest.getRequestURL();
+      redirectBuilder.indexOf("/pub/gwa");
+      final String queryString = httpRequest.getQueryString();
+      if (queryString != null) {
+        redirectBuilder.append('?');
+        redirectBuilder.append(queryString);
+      }
+      final String redirectUrl = redirectBuilder.toString();
+      stateUrlMap.put(state, redirectUrl);
+      final String authorizeUrl = "https://github.com/login/oauth/authorize?client_id="
+        + this.clientId + "&scope=read:org&state=" + state;
+      httpResponse.sendRedirect(authorizeUrl);
     }
-    final String redirectUrl = redirectBuilder.toString();
-    stateUrlMap.put(state, redirectUrl);
-    final String authorizeUrl = "https://github.com/login/oauth/authorize?client_id="
-      + this.clientId + "&scope=read:org&state=" + state;
-    httpResponse.sendRedirect(authorizeUrl);
   }
 
   @Override

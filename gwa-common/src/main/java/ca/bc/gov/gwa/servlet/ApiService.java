@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +62,7 @@ public class ApiService implements ServletContextListener {
   private static final Map<String, Object> ENDPOINT_DEFAULT_CONFIG = Collections
     .singletonMap("allow_developer_keys", false);
 
-  private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("api_owners",
-    "developer_key_group");
+  private static final List<String> ENDPOINT_FIELD_NAMES = Arrays.asList("api_owners");
 
   private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
     "hour", "minute", "day", "month", "year");
@@ -210,6 +210,29 @@ public class ApiService implements ServletContextListener {
     } catch (final Throwable e) {
       logError("Error adding api " + apiId + " plugin " + pluginName + ":\n" + pluginAdd, e);
     }
+  }
+
+  private Set<String> apiAllIds(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient) throws IOException, ClientProtocolException {
+    final Set<String> apiIds = new HashSet<>();
+    final String path = "/apis";
+    kongPageAll(httpRequest, httpClient, path, (api) -> {
+      final String apiId = (String)api.get("api_id");
+      apiIds.add(apiId);
+    });
+    return apiIds;
+  }
+
+  private Map<String, String> apiAllNamesById(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient) throws IOException, ClientProtocolException {
+    final Map<String, String> namesById = new HashMap<>();
+    final String path = "/apis";
+    kongPageAll(httpRequest, httpClient, path, (api) -> {
+      final String apiId = (String)api.get("id");
+      final String name = (String)api.get("name");
+      namesById.put(apiId, name);
+    });
+    return namesById;
   }
 
   public void apiGet(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
@@ -425,6 +448,18 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  private Set<String> consumerGroups(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient) throws IOException, ClientProtocolException {
+    final String username = httpRequest.getRemoteUser();
+    final Set<String> groups = new HashSet<>();
+    final String path = "/consumers/" + username + "/acls";
+    kongPageAll(httpRequest, httpClient, path, (acl) -> {
+      final String groupName = (String)acl.get("group");
+      groups.add(groupName);
+    });
+    return groups;
+  }
+
   @SuppressWarnings("unchecked")
   public Set<String> consumerGroups(final String customId, final String username)
     throws IOException {
@@ -476,6 +511,24 @@ public class ApiService implements ServletContextListener {
       }
     }
     return roles;
+  }
+
+  /**
+   * True if list2 contains any value from list 1.
+   *
+   * @param list1
+   * @param list2
+   * @return
+   */
+  private boolean containsAny(final List<String> list1, final Set<String> list2) {
+    if (list1 != null) {
+      for (final String value : list1) {
+        if (list2.contains(value)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Override
@@ -533,31 +586,6 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public void developerApiDelete(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String apiName) throws IOException {
-    final String path = "/plugins?name=bcgov-gwa-endpoint";
-    handleRequest(httpRequest, httpResponse, (httpClient) -> {
-      final String username = httpRequest.getRemoteUser();
-      kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
-        final Map<String, Object> config = (Map<String, Object>)endpoint.get("config");
-        final String groupName = (String)config.get("developer_key_group");
-        if (groupName != null) {
-          final String apiId = (String)endpoint.get("api_id");
-          final String endpointName = apiGetName(httpClient, apiId);
-          if (apiName.equals(endpointName)) {
-            try {
-              httpClient.delete("/consumers/" + username + "/acls/" + groupName);
-            } catch (final IOException e) {
-            }
-          }
-        }
-        return false;
-      });
-    });
-    writeJsonResponse(httpResponse, DELETED);
-  }
-
   /**
    * Delete all existing API keys and create a new one.
    *
@@ -585,44 +613,43 @@ public class ApiService implements ServletContextListener {
   }
 
   @SuppressWarnings("unchecked")
-  public void developerApiList(final HttpServletRequest httpRequest,
+  public void developerApiKeyGet(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) throws IOException {
     handleRequest(httpRequest, httpResponse, (httpClient) -> {
-      final Map<String, List<String>> apiNamesByGroupName = new HashMap<>();
-      final String path = "/plugins?name=bcgov-gwa-endpoint";
-      kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
-        final Map<String, Object> config = (Map<String, Object>)endpoint.get("config");
-        final String groupName = (String)config.get("developer_key_group");
-        if (groupName != null) {
-          final String apiId = (String)endpoint.get("api_id");
-          final String apiName = apiGetName(httpClient, apiId);
-          List<String> apiNames = apiNamesByGroupName.get(groupName);
-          if (apiNames == null) {
-            apiNames = new ArrayList<>();
-            apiNamesByGroupName.put(groupName, apiNames);
+      final Map<String, String> apiAllNamesById = apiAllNamesById(httpRequest, httpClient);
+
+      final Set<String> groups = consumerGroups(httpRequest, httpClient);
+
+      final Set<String> apiNames = new TreeSet<>();
+      final String path = "/plugins?name=acl";
+      kongPageAll(httpRequest, httpClient, path, (acl) -> {
+        if (acl.get("consumer_id") == null) {
+          final Map<String, Object> config = (Map<String, Object>)acl.get("config");
+          final List<String> blacklist = (List<String>)config.get("blacklist");
+          final List<String> whitelist = (List<String>)config.get("whitelist");
+          if (containsAny(blacklist, groups)) {
+
+          } else if (whitelist == null || containsAny(whitelist, groups)) {
+            final String apiId = (String)acl.get("api_id");
+            final String apiName = apiAllNamesById.get(apiId);
+            apiNames.add(apiName);
           }
-          apiNames.add(apiName);
         }
-        return false;
       });
 
       final String username = httpRequest.getRemoteUser();
-      final Map<String, Map<String, Object>> authorizedApis = new TreeMap<>();
-      kongPageAll(httpRequest, httpClient, "/consumers/" + username + "/acls", (acl) -> {
-        final String groupName = (String)acl.get("group");
-        final Object createdAt = acl.get("created_at");
-        for (final String apiName : apiNamesByGroupName.getOrDefault(groupName,
-          Collections.emptyList())) {
-          final Map<String, Object> api = new LinkedHashMap<>();
-          api.put("name", apiName);
-          api.put("created_at", createdAt);
-          authorizedApis.put(apiName, api);
-        }
-        return false;
-      });
+      final String keyAuthPath = "/consumers/" + username + "/key-auth";
+      final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
+      final List<Map<String, Object>> keyAuthList = (List<Map<String, Object>>)keyAuthResponse
+        .get("data");
+
       final Map<String, Object> kongResponse = new LinkedHashMap<>();
-      kongResponse.put("data", authorizedApis.values());
-      kongResponse.put("total", authorizedApis.size());
+      kongResponse.put("apiNames", apiNames);
+      if (keyAuthList != null && keyAuthList.size() > 0) {
+        final Map<String, Object> keyAuth = keyAuthList.get(0);
+        final Object key = keyAuth.get("key");
+        kongResponse.put("apiKey", key);
+      }
       Json.writeJson(httpResponse, kongResponse);
     });
   }
@@ -1174,7 +1201,7 @@ public class ApiService implements ServletContextListener {
     throws IOException, ClientProtocolException {
     final List<Map<String, Object>> allRows = new ArrayList<>();
     kongPageAll(httpRequest, httpClient, path, (row) -> {
-      if (filter.test(row)) {
+      if (filter != null && filter.test(row)) {
         allRows.add(row);
       }
     });

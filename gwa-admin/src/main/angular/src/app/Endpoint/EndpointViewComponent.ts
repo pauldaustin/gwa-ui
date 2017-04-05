@@ -13,7 +13,12 @@ import { Plugin } from '../Plugin/Plugin';
   templateUrl: 'EndpointView.html'
 })
 export class EndpointViewComponent extends BaseDetailComponent<Api> {
+  
+  acl : Plugin;
+  
   endpoint : Plugin;
+
+  keyAuth : Plugin;
 
   rateLimit : Plugin;
  
@@ -31,6 +36,8 @@ export class EndpointViewComponent extends BaseDetailComponent<Api> {
         const api = data.api;
         if (api) {
           this.endpoint = api.plugin('bcgov-gwa-endpoint');
+          this.acl = api.plugin('acl');
+          this.keyAuth = api.plugin('key-auth');
           let rateLimit = api.plugin('rate-limiting');
           if (rateLimit == null) {
             rateLimit = new Plugin();

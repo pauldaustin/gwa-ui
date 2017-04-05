@@ -9,6 +9,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -38,43 +39,62 @@ public class SiteminderAuthenticationFilter implements Filter {
     try {
       if (request.getAttribute("siteminderFiltered") == null) {
         request.setAttribute("siteminderFiltered", Boolean.TRUE);
-
-        final String userGuid = httpRequest.getHeader("smgov_userguid");
-        final String universalid = httpRequest.getHeader("sm_universalid");
-        final String type = httpRequest.getHeader("smgov_usertype");
-        final String userDir = httpRequest.getHeader("sm_authdirname");
-        if (userGuid == null || universalid == null || userDir == null) {
-          httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+        final String servletPath = httpRequest.getServletPath();
+        if ("/logout".equals(servletPath)) {
+          final HttpSession session = httpRequest.getSession(false);
+          if (session != null) {
+            session.invalidate();
+          }
+          final Cookie[] cookies = httpRequest.getCookies();
+          if (cookies != null) {
+            for (final Cookie cookie : cookies) {
+              if ("SMSESSION".equals(cookie.getName())) {
+                cookie.setValue("");
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                httpResponse.addCookie(cookie);
+              }
+            }
+          }
+          httpResponse.sendRedirect(httpRequest.getContextPath());
         } else {
           final HttpSession session = httpRequest.getSession();
           SiteminderPrincipal principal = (SiteminderPrincipal)session
             .getAttribute(SITEMINDER_PRINCIPAL);
-          final String userId = (userDir + "_" + userGuid).toLowerCase();
-          if (principal == null || principal.isInvalid(userId, 120000)) {
-            final String username = (userDir + "_" + universalid).toLowerCase();
-
-            final Set<String> groups;
-            try {
-              groups = this.apiService.consumerGroups(userId, username);
-            } catch (final HttpHostConnectException e) {
-              LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
-              httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-              return;
-            } catch (final Throwable e) {
-              LoggerFactory.getLogger(getClass()).error("Error getting user's roles", e);
-              httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-              return;
-            }
-            principal = new SiteminderPrincipal(userId, type, username, groups);
-            session.setAttribute(SITEMINDER_PRINCIPAL, principal);
-          }
-          if (principal.isUserInRole(ApiService.ROLE_GWA_ADMIN)
-            || principal.isUserInRole(ApiService.ROLE_GWA_API_OWNER)) {
-            final HttpServletRequestWrapper requestWrapper = principal
-              .newHttpServletRequestWrapper(httpRequest);
-            chain.doFilter(requestWrapper, response);
-          } else {
+          final String userGuid = httpRequest.getHeader("smgov_userguid");
+          final String universalid = httpRequest.getHeader("sm_universalid");
+          final String type = httpRequest.getHeader("smgov_usertype");
+          final String userDir = httpRequest.getHeader("sm_authdirname");
+          if (userGuid == null || universalid == null || userDir == null) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+          } else {
+            final String userId = (userDir + "_" + userGuid).toLowerCase();
+            if (principal == null || principal.isInvalid(userId, 120000)) {
+              final String username = (userDir + "_" + universalid).toLowerCase();
+
+              final Set<String> groups;
+              try {
+                groups = this.apiService.consumerGroups(userId, username);
+              } catch (final HttpHostConnectException e) {
+                LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
+                httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                return;
+              } catch (final Throwable e) {
+                LoggerFactory.getLogger(getClass()).error("Error getting user's roles", e);
+                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+              }
+              principal = new SiteminderPrincipal(userId, type, username, groups);
+              session.setAttribute(SITEMINDER_PRINCIPAL, principal);
+            }
+            if (principal.isUserInRole(ApiService.ROLE_GWA_ADMIN)
+              || principal.isUserInRole(ApiService.ROLE_GWA_API_OWNER)) {
+              final HttpServletRequestWrapper requestWrapper = principal
+                .newHttpServletRequestWrapper(httpRequest);
+              chain.doFilter(requestWrapper, response);
+            } else {
+              httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }
           }
         }
       } else {

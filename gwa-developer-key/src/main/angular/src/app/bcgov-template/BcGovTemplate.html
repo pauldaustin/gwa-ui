@@ -28,6 +28,7 @@
               <a routerLink="{{menuItem.routerLink}}" title="{{menuItem.title}}" *ngIf="isMenuVisible(menuItem)" routerLinkActive="active-link">{{menuItem.title}}</a>
             </li>
           </ul>
+          <div *ngIf="username" class="navbar-text navbar-right"><span class="navbar-link">{{username}}</span> <a href="logout" class="navbar-link"><md-icon md-font-icon="fa fa-sign-out" alt="Logout" aria-label="Logout">exit_to_app</md-icon></a></div>
         </div>
       </div>
     </nav>

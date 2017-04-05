@@ -12,9 +12,9 @@ export class ApiKeyService extends BaseService<ApiKey> {
  
   constructor(injector:Injector) {
     super(injector);
-    this.path = `/apiKeys`;
-    this.typeTitle = 'API Key';
-    this.labelFieldName = 'key';
+//    this.path = '/apiKeys';
+//    this.typeTitle = 'API Key';
+//    this.labelFieldName = 'key';
   }
 
   
@@ -24,18 +24,23 @@ export class ApiKeyService extends BaseService<ApiKey> {
       apiKey
     );
   }
- 
-  deleteObject(apiKey: ApiKey, path?: string): Promise<boolean> {
-    return this.deleteObjectDo(
-      `/apiKeys/${apiKey.id}`
-    );
+  
+  getObject(id: string): Promise<ApiKey> {
+    return this.getObjectDo('/apiKeys');
   }
 
+// 
+//  deleteObject(apiKey: ApiKey, path?: string): Promise<boolean> {
+//    return this.deleteObjectDo(
+//      `/apiKeys/${apiKey.id}`
+//    );
+//  }
+//
   newObject(): ApiKey {
     return new ApiKey();
   }
-
-  updateObject(apiKey: ApiKey): Promise<ApiKey> {
-    return null;
-  }
+//
+//  updateObject(apiKey: ApiKey): Promise<ApiKey> {
+//    return null;
+//  }
 }

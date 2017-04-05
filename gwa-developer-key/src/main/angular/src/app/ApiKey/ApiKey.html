@@ -1,32 +1,7 @@
 <div>
-  <md-card>
-    <md-card-title>Developer API Key</md-card-title>
-    <md-card-content *ngIf="!hasApiKey">
-      <p>Terms and conditions go here</p>
-      <md-checkbox
-          class="example-margin"
-          [(ngModel)]="acceptTerms">
-        I agree to the terms and conditions
-      </md-checkbox>
-    </md-card-content>
-    <md-card-content *ngIf="hasApiKey">
-      <md-chip-list *ngFor="let row of rows" fxLayout="column">
-        <md-chip color="primary">{{row.key}}</md-chip>
-      </md-chip-list>
-    </md-card-content>
-    <md-card-actions>
-       <button
-         (click)="addApiKey()" 
-         md-raised-button color="primary" 
-         *ngIf="!hasApiKey" 
-         [disabled]="!acceptTerms"
-       >Create API Key</button>
-       <button (click)="addApiKey()" md-raised-button color="primary" *ngIf="hasApiKey">Replace API Key</button>
-    </md-card-actions>
-  </md-card>
 
   <md-card *ngIf="appName && appRedirectUrl">
-    <md-card-title>Authorize Application {{appName}}</md-card-title>
+    <md-card-title>Authorize application {{appName}}</md-card-title>
     <md-card-content>
       <p>Allow application {{appName}} to use your API Key to access web services?</p>
       <p>By allowing access you accept all responsibility for any access to the web service using
@@ -40,8 +15,44 @@
          *ngIf="!hasApiKey" 
          [disabled]="!acceptTerms"
        >Create API Key</button>
-       <button (click)="authorizeAccess()" md-raised-button color="primary" [disabled]="!hasApiKey">Authorize {{appName}}</button>
+       <button (click)="authorizeAccess()" md-raised-button color="primary" [disabled]="!hasApiKey">Authorize application {{appName}}</button>
     </md-card-actions>
+  </md-card>
+
+  <md-card>
+    <md-card-title>Developer API Key</md-card-title>
+    <md-card-content *ngIf="!hasApiKey">
+      <p>Terms and conditions go here</p>
+      <md-checkbox
+          class="example-margin"
+          [(ngModel)]="acceptTerms">
+        I agree to the terms and conditions
+      </md-checkbox>
+    </md-card-content>
+    <md-card-content *ngIf="hasApiKey">
+      <md-chip-list fxLayout="column">
+        <md-chip color="primary">{{apiKey}}</md-chip>
+      </md-chip-list>
+    </md-card-content>
+    <md-card-actions>
+       <button
+         (click)="addApiKey()" 
+         md-raised-button color="primary" 
+         *ngIf="!hasApiKey" 
+         [disabled]="!acceptTerms"
+       >Create API Key</button>
+       <button (click)="addApiKey()" md-raised-button color="primary" *ngIf="hasApiKey">Replace API Key</button>
+    </md-card-actions>
+  </md-card>
+
+  <md-card>
+    <md-card-title>Applications</md-card-title>
+    <md-card-content>
+      <p>You have permission to access the following applications.</p>
+      <md-list *ngFor="let apiName of apiNames">
+        <md-list-item>{{apiName}}</md-list-item>
+      </md-list>
+    </md-card-content>
   </md-card>
 
 </div>

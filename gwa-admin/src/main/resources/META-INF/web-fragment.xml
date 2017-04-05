@@ -31,4 +31,9 @@
     <filter-name>siteminder-auth</filter-name>
     <url-pattern>/rest/*</url-pattern>
   </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>siteminder-auth</filter-name>
+    <url-pattern>/logout</url-pattern>
+  </filter-mapping>
 </web-fragment>

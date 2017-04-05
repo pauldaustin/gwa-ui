@@ -21,12 +21,16 @@ import {
   MdDialogRef
 } from '@angular/material';
 
+import { DOCUMENT } from '@angular/platform-browser';
+
 import { Service } from './Service';
 
 import { MessageDialog } from '../Component/MessageDialog';
 
 @Injectable()
 export abstract class BaseService<T> implements Service<T> {
+  protected document: any = this.injector.get(DOCUMENT);
+
   protected http: Http = this.injector.get(Http);
 
   protected location: Location = this.injector.get(Location);
@@ -97,7 +101,10 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected handleError(error: any): Promise<any> {
-    if (error.status == 404) {
+    if (error.status == 403) {
+      document.location.reload(true);
+      return Promise.resolve(null);
+    } else if (error.status == 404) {
       return Promise.resolve(null);
     } else {
       this.showError(error.message || error);
