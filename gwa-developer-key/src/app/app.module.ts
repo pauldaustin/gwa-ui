@@ -15,14 +15,11 @@ import {
   BcGovTemplate,
   BcGovTemplateModule
 } from './bcgov-template/index';
-import { DeleteDialog } from '.Component/DeleteDialog';
-import { MessageDialog } from '.Component/MessageDialog';
-import { PageNotFoundComponent } from '.Component/PageNotFoundComponent';
+import { DeleteDialog } from './Component/DeleteDialog';
+import { MessageDialog } from './Component/MessageDialog';
+import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
 import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
-//import { ApiService } from './Api/ApiService';
-//import { ApiListComponent } from './Api/ApiListComponent';
-//import { ApiAuthorizeComponent } from './Api/ApiAuthorizeComponent';
 
 @NgModule({
   imports: [
@@ -40,10 +37,6 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
             title: 'API Keys',
             routerLink: 'ui/apiKeys'
           },
-//          {
-//            title: 'APIs',
-//            routerLink: 'ui/apis'
-//          },
         ]
       }
     ),
@@ -55,8 +48,6 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
   ],
   declarations: [
     ApiKeyComponent,
-//    ApiListComponent,
-//    ApiAuthorizeComponent,
     PageNotFoundComponent,
     DeleteDialog,
     MessageDialog
@@ -64,7 +55,6 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
   providers: [
     AuthService,
     ApiKeyService,
-//    ApiService,
   ],
   bootstrap: [ BcGovTemplate ]
 })

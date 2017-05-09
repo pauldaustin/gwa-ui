@@ -3,7 +3,7 @@ import {
   Injector
 } from '@angular/core';
 
-import { BaseService } from '..Service/BaseService';
+import { BaseService } from '../Service/BaseService';
 
 import { ApiKey } from './ApiKey';
 

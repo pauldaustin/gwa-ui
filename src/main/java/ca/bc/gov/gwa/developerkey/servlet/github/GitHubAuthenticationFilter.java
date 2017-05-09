@@ -167,7 +167,6 @@ public class GitHubAuthenticationFilter implements Filter {
       }
 
       final StringBuffer redirectBuilder = httpRequest.getRequestURL();
-      redirectBuilder.indexOf("/pub/gwa");
       final String queryString = httpRequest.getQueryString();
       if (queryString != null) {
         redirectBuilder.append('?');
