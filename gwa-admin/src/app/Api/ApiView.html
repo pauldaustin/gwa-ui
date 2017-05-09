@@ -2,7 +2,7 @@
   <form #apiForm="ngForm" class="form-horizontal" role="form">
     <md-card>
       <md-card-content>
-        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-input-container fxFlex>
             <input
               mdInput
@@ -24,7 +24,7 @@
           </md-input-container>
         </div>
 
-        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-input-container fxFlex>
             <input
               mdInput
@@ -60,11 +60,11 @@
 
         <md-divider class="mat-divider"></md-divider>
 
-        <div *ngIf="endpoint" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div *ngIf="endpoint" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <div>
             <label class="margin-top-1em">Owner Usernames:</label>
             <button (click)="addApiOwner()" md-icon-button style="color: green">
-              <md-icon>add_circle_outline</md-icon>
+              <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-owner [ngForOf]="endpoint.config.api_owners" [ngForTrackBy]="trackByIndex">
@@ -85,7 +85,7 @@
 
         <md-divider class="mat-divider"></md-divider>
 
-        <div *ngIf="keyAuth" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div *ngIf="keyAuth" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="keyAuth_enabled"
             [(ngModel)]="keyAuth.enabled"
@@ -122,7 +122,7 @@
 
         <md-divider class="mat-divider"></md-divider>
 
-        <div *ngIf="acl" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div *ngIf="acl" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="acl_enabled"
             [(ngModel)]="acl.enabled"
@@ -133,7 +133,7 @@
             <label class="margin-top-1em">Group Names:</label>
             <button (click)="addGroupName()" md-icon-button style="color: green" [disabled]="!acl.enabled"
             >
-              <md-icon>add_circle_outline</md-icon>
+              <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config.whitelist" [ngForTrackBy]="trackByIndex">
@@ -155,7 +155,7 @@
 
         <md-divider class="mat-divider"></md-divider>
 
-        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="preserve_host"
             [(ngModel)]="object.preserve_host"
@@ -178,7 +178,7 @@
           >{{methodFlag.name}}</md-slide-toggle>
         </div>
         
-        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="none center" fxLayoutAlign.sm="" fxLayoutAlign.xs="" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
           <md-slide-toggle
             name="https_only"
             [(ngModel)]="object.https_only"

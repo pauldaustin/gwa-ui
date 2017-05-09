@@ -26,7 +26,7 @@
                     <div>
                       <label class="margin-top-1em">{{field.name}}:</label>
                       <button (click)="addFieldValue(form.get(group.formGroupName).get(field.name))" md-icon-button style="color: green">
-                        <md-icon>add_circle_outline</md-icon>
+                        <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
                       </button>
                     </div>
                     <md-input-container *ngFor="let control of form.get(group.formGroupName).get(field.name).controls; index as i" fxFlex>
