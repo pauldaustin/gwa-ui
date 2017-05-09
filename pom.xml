@@ -90,8 +90,8 @@
             <configuration>
               <workingDirectory>gwa-admin</workingDirectory>
               <installDirectory>target/temp/gwa-admin</installDirectory>
-              <nodeVersion>v7.4.0</nodeVersion>
-              <npmVersion>4.0.5</npmVersion>
+              <nodeVersion>v7.10.0</nodeVersion>
+              <npmVersion>4.5.0</npmVersion>
               <arguments>run build-prod</arguments>
             </configuration>
           </execution>
@@ -104,8 +104,8 @@
             <configuration>
               <workingDirectory>gwa-developer-key</workingDirectory>
               <installDirectory>target/temp/gwa-developer-key</installDirectory>
-              <nodeVersion>v7.4.0</nodeVersion>
-              <npmVersion>4.0.5</npmVersion>
+              <nodeVersion>v7.10.0</nodeVersion>
+              <npmVersion>4.5.0</npmVersion>
               <arguments>run build-prod</arguments>
             </configuration>
           </execution>
