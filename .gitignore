@@ -11,3 +11,4 @@ target
 *.ldb
 log/
 config
+node_modules
