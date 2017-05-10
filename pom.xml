@@ -167,7 +167,7 @@
             <zipUrlInstaller>
               <url>http://repo1.maven.org/maven2/org/apache/tomcat/tomcat/8.5.14/tomcat-8.5.14.zip</url>
             </zipUrlInstaller>
-            
+            <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
           </container>
           <configuration>
             <type>standalone</type>
@@ -177,7 +177,6 @@
               <cargo.rmi.port>7010</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
             </properties>
-            <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
           </configuration>
         </configuration>
       </plugin>
