@@ -463,8 +463,8 @@ public class ApiService implements ServletContextListener {
   }
 
   @SuppressWarnings("unchecked")
-  public Set<String> consumerGroups(String userType, final String customId, final String username)
-    throws IOException {
+  public Set<String> consumerGroups(final String userType, final String customId,
+    final String username) throws IOException {
     final Set<String> roles = new TreeSet<>();
     try (
       JsonHttpClient httpClient = newKongClient()) {
