@@ -163,21 +163,25 @@
         <version>1.6.3</version>
         <configuration>
           <container>
-            <containerId>tomcat8x</containerId>
-            <zipUrlInstaller>
-              <url>http://repo1.maven.org/maven2/org/apache/tomcat/tomcat/8.5.14/tomcat-8.5.14.zip</url>
-            </zipUrlInstaller>
+            <containerId>jetty9x</containerId>
             <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
+            <log>logs/jetty.log</log>
           </container>
           <configuration>
             <type>standalone</type>
             <properties>
               <cargo.servlet.port>8010</cargo.servlet.port>
-              <cargo.tomcat.ajp.port>8015</cargo.tomcat.ajp.port>
               <cargo.rmi.port>7010</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
             </properties>
           </configuration>
+          <deployables>
+            <deployable>
+              <properties>
+                <context>/</context>
+              </properties>
+            </deployable>
+          </deployables>
         </configuration>
       </plugin>
     </plugins>

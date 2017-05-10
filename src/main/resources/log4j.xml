@@ -14,7 +14,7 @@
         value="log/gwa-admin.log" />
       <param
         name="FileNamePattern"
-        value="log/gwa-admin.%d.log" />
+        value="logs/gwa-admin.%d.log" />
     </rollingPolicy>
 
     <layout class="org.apache.log4j.PatternLayout">
