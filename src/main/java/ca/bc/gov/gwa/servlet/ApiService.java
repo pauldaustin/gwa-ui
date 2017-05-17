@@ -1,11 +1,7 @@
 package ca.bc.gov.gwa.servlet;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -125,17 +121,13 @@ public class ApiService implements ServletContextListener {
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
-  private String apisSuffix = ".apis.revolsys.com";
-
-  private String appsSuffix = ".apps.revolsys.com";
-
-  private Map<String, Object> config = Collections.emptyMap();
+  private final Map<String, Object> config = Collections.emptyMap();
 
   private String kongAdminUrl = "http://localhost:8001";
 
   private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
 
-  private String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
+  private final String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
 
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
@@ -544,43 +536,7 @@ public class ApiService implements ServletContextListener {
   @Override
   public void contextInitialized(final ServletContextEvent event) {
     try {
-      final File file = new File("/apps/config/gwa/gwa.json");
-      if (file.exists()) {
-        try (
-          Reader configReader = new FileReader(file)) {
-          this.config = Json.read(configReader);
-          // final String databaseHost = (String)this.config.getOrDefault("databaseHost",
-          // "localhost");
-          // final int databasePort = ((Number)this.config.getOrDefault("databasePort", 9042))
-          // .intValue();
-          // this.node = Cluster.builder()//
-          // .addContactPoint(databaseHost)//
-          // .withPort(databasePort)
-          // .build();
-
-        } catch (final FileNotFoundException e) {
-          logError("Unable to find configuration File: " + file, e);
-        } catch (final IOException e) {
-          logError("Error reading configuration File: " + file, e);
-        }
-      } else {
-
-      }
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
-      this.appsSuffix = getConfig("gwaAppsSuffix", this.appsSuffix);
-      this.apisSuffix = getConfig("gwaApisSuffix", this.apisSuffix);
-      this.unavailableUrl = getConfig("gwaUnavailableUrl", this.unavailableUrl);
-
-      // final Metadata nodeMetadata = this.node.getMetadata();
-      // final KeyspaceMetadata gwa = nodeMetadata.getKeyspace("gwa");
-      // this.apiTable = gwa.getTable("api");
-      // for (final ColumnMetadata column : this.apiTable.getColumns()) {
-      // final String fieldName = column.getName();
-      // if (!"id".equals(fieldName)) {
-      // this.apiFieldNames.add(fieldName);
-      // }
-      // }
-      // this.session = this.node.connect();
       instance = this;
     } catch (final RuntimeException e) {
       LoggerFactory.getLogger(getClass()).error("Unable to initialize service", e);
