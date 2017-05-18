@@ -127,8 +127,6 @@ public class ApiService implements ServletContextListener {
 
   private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
 
-  private final String unavailableUrl = "http://major.dev.revolsys.com/gwa/error/503";
-
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;

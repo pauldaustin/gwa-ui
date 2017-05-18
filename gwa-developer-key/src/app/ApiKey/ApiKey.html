@@ -21,27 +21,19 @@
 
   <md-card>
     <md-card-title>Developer API Key</md-card-title>
-    <md-card-content *ngIf="!hasApiKey">
-      <p>Terms and conditions go here</p>
-      <md-checkbox
-          class="example-margin"
-          [(ngModel)]="acceptTerms">
-        I agree to the terms and conditions
-      </md-checkbox>
-    </md-card-content>
-    <md-card-content *ngIf="hasApiKey">
-      <md-chip-list fxLayout="column">
-        <md-chip color="primary">{{apiKey}}</md-chip>
-      </md-chip-list>
+    <md-card-content>
+      <ng-template [ngIf]="hasApiKey">
+        <md-chip-list fxLayout="column">
+          <md-chip color="primary">{{apiKey}}</md-chip>
+        </md-chip-list>
+      </ng-template>
     </md-card-content>
     <md-card-actions>
-       <button
-         (click)="addApiKey()" 
-         md-raised-button color="primary" 
-         *ngIf="!hasApiKey" 
-         [disabled]="!acceptTerms"
-       >Create API Key</button>
-       <button (click)="addApiKey()" md-raised-button color="primary" *ngIf="hasApiKey">Replace API Key</button>
+      <button (click)="addApiKey()" md-raised-button color="primary" [disabled]="!acceptTerms">
+        <span *ngIf="hasApiKey; else createApiKey">Replace API Key</span>
+        <ng-template #createApiKey>Create API Key</ng-template>
+      </button>
+      <md-checkbox [(ngModel)]="acceptTerms">I agree to the <a href="terms" target="_blank">API Key Terms of Use</a></md-checkbox>
     </md-card-actions>
   </md-card>
 

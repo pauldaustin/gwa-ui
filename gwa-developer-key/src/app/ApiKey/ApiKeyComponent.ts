@@ -43,12 +43,16 @@ export class ApiKeyComponent extends BaseComponent<ApiKey>{
   
   refresh() : void {
     this.service.getObject('')
-      .then(apiKey => {
-        this.apiNames = apiKey.apiNames;
-        this.apiKey = apiKey.apiKey;
+      .then(response => {
+        this.apiNames = response.apiNames;
+        this.apiKey = response.apiKey;
+        if (this.apiKey) {
+          this.acceptTerms = true;
+        }
       }
     );
   }
+
   addApiKey(): void {
     let apiKey: ApiKey = new ApiKey();
     this.service.addObject(

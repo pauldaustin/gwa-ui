@@ -1,11 +1,9 @@
 package ca.bc.gov.gwa.developerkey.servlet.github;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -40,8 +38,7 @@ public class GitHubAuthenticationFilter implements Filter {
 
   private String clientSecret;
 
-  private final Set<String> organizationRoles = new TreeSet<>(
-    Arrays.asList("github_revolsys", "github_gwa-qa"));
+  private String organizationRole;
 
   private ApiService apiService;
 
@@ -77,15 +74,13 @@ public class GitHubAuthenticationFilter implements Filter {
           if (principal == null || principal.isExpired(120000)) {
             handleRedirectToGitHub(httpRequest, httpResponse, session);
           } else {
-            for (final String role : this.organizationRoles) {
-              if (principal.isUserInRole(role)) {
-                final HttpServletRequestWrapper requestWrapper = principal
-                  .newHttpServletRequestWrapper(httpRequest);
-                chain.doFilter(requestWrapper, response);
-                return;
-              }
+            if (principal.isUserInRole(this.organizationRole)) {
+              final HttpServletRequestWrapper requestWrapper = principal
+                .newHttpServletRequestWrapper(httpRequest);
+              chain.doFilter(requestWrapper, response);
+            } else {
+              httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
-            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
           }
         }
       }
@@ -183,6 +178,8 @@ public class GitHubAuthenticationFilter implements Filter {
   @Override
   public void init(final FilterConfig filterConfig) throws ServletException {
     this.apiService = ApiService.get();
+    this.organizationRole = "github_"
+      + this.apiService.getConfig("gwaGitHubOrganization", "gwa-qa");
     this.clientId = this.apiService.getConfig("gwaGitHubClientId");
     this.clientSecret = this.apiService.getConfig("gwaGitHubClientSecret");
     if (this.clientId == null || this.clientSecret == null) {

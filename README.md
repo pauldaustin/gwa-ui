@@ -47,11 +47,13 @@ developers must be a member of.
 ### Configuration Properties
 The application supports the following configuration properties.
 
-| Name                  | Description              | Sample Value                             |
-|-----------------------|--------------------------|------------------------------------------|
-| gwaKongAdminUrl       | URL to kong rest API     | http://localhost:8001                    |
-| gwaGitHubClientId     | GitHub Org Client ID     | abcdefgh0123456789123                    |
-| gwaGitHubClientSecret | GitHub Ord Client Secret | abcdefgh01234567890123456789012345678912 |
+| Name                  | Description              | Sample Value                                 |
+|-----------------------|--------------------------|----------------------------------------------|
+| gwaTermsUrl           | URL to terms of us page  | http://www2.gov.bc.ca/gov/content/data/terms |
+| gwaKongAdminUrl       | URL to kong rest API     | http://localhost:8001                        |
+| gwaGitHubOrganization | GitHub Org name          | bcggov or gwa-qa                             |
+| gwaGitHubClientId     | GitHub Org Client ID     | abcdefgh0123456789123                        |
+| gwaGitHubClientSecret | GitHub Ord Client Secret | abcdefgh01234567890123456789012345678912     |
 
 Using cargo a gwa.properties file can be created containing the above properties. This can
 be included using the systemPropertiesFile container configuration.
@@ -71,8 +73,10 @@ be included using the systemPropertiesFile container configuration.
 
 Alternatively the servlet container can be started using with the -D<propertyName>=value parameters.
 ```
-mvn cargo:start \
+... \
+  -DgwaTermsUrl=http://www2.gov.bc.ca/gov/content/data/terms \
   -DgwaKongAdminUrl=http://localhost:8001 \
+  -DgwaGitHubOrganization=bcgov \
   -DgwaGitHubClientId=abcdefgh0123456789123 \
   -DgwaGitHubClientSecret=abcdefgh01234567890123456789012345678912
 ```
