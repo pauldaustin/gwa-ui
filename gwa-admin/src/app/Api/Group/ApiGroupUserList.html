@@ -11,7 +11,7 @@
           pattern="[a-z][a-z0-9_]*"
         />
       </md-input-container>
-      <a (click)="addUser()" md-raised-button color="primary" [disabled]="!addUsername">Add User</a>
+      <button type="button" (click)="addUser()" md-raised-button color="primary" [disabled]="!addUsername">Add User</button>
     </md-toolbar>
     
     <ngx-datatable
