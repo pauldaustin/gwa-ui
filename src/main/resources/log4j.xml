@@ -11,10 +11,10 @@
     <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
       <param
         name="ActiveFileName"
-        value="log/gwa-admin.log" />
+        value="logs/gwa.log" />
       <param
         name="FileNamePattern"
-        value="logs/gwa-admin.%d.log" />
+        value="logs/gwa.%d.log" />
     </rollingPolicy>
 
     <layout class="org.apache.log4j.PatternLayout">

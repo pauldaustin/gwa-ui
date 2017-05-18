@@ -165,8 +165,8 @@
           <container>
             <containerId>jetty9x</containerId>
             <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
-            <log>logs/jetty.log</log>
           </container>
+          
           <configuration>
             <type>standalone</type>
             <properties>
@@ -188,7 +188,7 @@
   </build>
 
   <dependencies>
-   <dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>${org.slf4j.version}</version>
