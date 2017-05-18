@@ -46,7 +46,7 @@ public class SiteminderAuthenticationFilter implements Filter {
       if (request.getAttribute("siteminderFiltered") == null) {
         request.setAttribute("siteminderFiltered", Boolean.TRUE);
         final String servletPath = httpRequest.getServletPath();
-        if ("/logout".equals(servletPath)) {
+        if ("/int/logout".equals(servletPath)) {
           final HttpSession session = httpRequest.getSession(false);
           if (session != null) {
             session.invalidate();
