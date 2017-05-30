@@ -8,8 +8,16 @@ import {
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpModule } from '@angular/http';
 import {
-  MaterialModule,
-  MdIconRegistry
+  MdButtonModule,
+  MdCardModule,
+  MdDialogModule,
+  MdIconModule,
+  MdIconRegistry,
+  MdInputModule,
+  MdSelectModule,
+  MdSlideToggleModule,
+  MdTabsModule,
+  MdToolbarModule
 } from '@angular/material';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -91,7 +99,17 @@ import { AppRoutingModule } from './app-routing.module';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    MaterialModule,
+
+    MdButtonModule,
+    MdCardModule,
+    MdDialogModule,
+    MdIconModule,
+    MdInputModule,
+    MdSelectModule,
+    MdSlideToggleModule,
+    MdTabsModule,
+    MdToolbarModule,
+
     NgxDatatableModule,
     BcGovTemplateModule.forRoot({
         title: 'Gateway Admin',

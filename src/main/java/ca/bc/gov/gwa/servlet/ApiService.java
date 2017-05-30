@@ -1,17 +1,21 @@
 package ca.bc.gov.gwa.servlet;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -121,7 +125,7 @@ public class ApiService implements ServletContextListener {
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
-  private final Map<String, Object> config = Collections.emptyMap();
+  private final Map<String, Object> config = new HashMap<>();
 
   private String kongAdminUrl = "http://localhost:8001";
 
@@ -534,6 +538,25 @@ public class ApiService implements ServletContextListener {
   @Override
   public void contextInitialized(final ServletContextEvent event) {
     try {
+      final File propertiesFile = new File("config/gwa.properties");
+      try {
+        if (propertiesFile.exists()) {
+          final Properties properties = new Properties();
+          try (
+            FileInputStream in = new FileInputStream(propertiesFile)) {
+            properties.load(in);
+            final Enumeration<?> propertyNames = properties.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+              final String propertyName = (String)propertyNames.nextElement();
+              final String value = properties.getProperty(propertyName);
+              this.config.put(propertyName, value);
+            }
+          }
+        }
+      } catch (final Throwable e) {
+        LoggerFactory.getLogger(getClass()).error("Unable to read config from: " + propertiesFile,
+          e);
+      }
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
       instance = this;
     } catch (final RuntimeException e) {

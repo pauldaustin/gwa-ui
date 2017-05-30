@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { RouterModule }   from '@angular/router';
-import { MaterialModule }   from '@angular/material';
+import { MdIconModule }   from '@angular/material';
 
 import { BcGovTemplate } from './BcGovTemplate';
 import { BcGovTemplateConfig } from './BcGovTemplateConfig';
@@ -10,7 +10,7 @@ import { BcGovTemplateConfig } from './BcGovTemplateConfig';
   imports: [
     CommonModule,
     RouterModule,
-    MaterialModule
+    MdIconModule
   ],
   declarations: [BcGovTemplate],
   exports: [BcGovTemplate]

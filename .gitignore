@@ -13,3 +13,4 @@ log/
 config
 node_modules
 /logs/
+/.externalToolBuilders/

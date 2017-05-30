@@ -55,31 +55,8 @@ The application supports the following configuration properties.
 | gwaGitHubClientId     | GitHub Org Client ID     | abcdefgh0123456789123                        |
 | gwaGitHubClientSecret | GitHub Ord Client Secret | abcdefgh01234567890123456789012345678912     |
 
-Using cargo a gwa.properties file can be created containing the above properties. This can
-be included using the systemPropertiesFile container configuration.
-
-```xml
- <plugin>
-    <groupId>org.codehaus.cargo</groupId>
-    <artifactId>cargo-maven2-plugin</artifactId>
-    <version>1.6.3</version>
-    <configuration>
-      <container>
-        :
-        <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
-        :
-      </container>
-```
-
-Alternatively the servlet container can be started using with the -D<propertyName>=value parameters.
-```
-... \
-  -DgwaTermsUrl=http://www2.gov.bc.ca/gov/content/data/terms \
-  -DgwaKongAdminUrl=http://localhost:8001 \
-  -DgwaGitHubOrganization=bcgov \
-  -DgwaGitHubClientId=abcdefgh0123456789123 \
-  -DgwaGitHubClientSecret=abcdefgh01234567890123456789012345678912
-```
+Create the config/gwa.properties file containing the above properties. This directory must be in
+the working directory that the servlet container runs in.
 
 ### Deploy Web Application
 
