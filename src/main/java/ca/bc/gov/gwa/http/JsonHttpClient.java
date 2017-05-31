@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -12,7 +14,11 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -22,7 +28,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
 import ca.bc.gov.gwa.util.Json;
@@ -33,8 +41,35 @@ public class JsonHttpClient implements Closeable {
   private CloseableHttpClient httpClient;
 
   public JsonHttpClient(final String serviceUrl) {
+    this(serviceUrl, null, null);
+  }
+
+  public JsonHttpClient(final String serviceUrl, final String username, final String password) {
     this.serviceUrl = serviceUrl;
-    this.httpClient = HttpClients.createDefault();
+
+    try {
+      final HttpClientBuilder clientBuilder = HttpClients.custom();
+      if (username != null) {
+        final URI uri = new URI(serviceUrl);
+        final String hostName = uri.getHost();
+        int port = uri.getPort();
+        if (port == -1) {
+          if (serviceUrl.startsWith("https")) {
+            port = 443;
+          } else {
+            port = 80;
+          }
+        }
+        final AuthScope authscope = new AuthScope(hostName, port);
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        final Credentials credentials = new UsernamePasswordCredentials(username, password);
+        credentialsProvider.setCredentials(authscope, credentials);
+        clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+      }
+      this.httpClient = clientBuilder.build();
+    } catch (final URISyntaxException e) {
+      throw new IllegalArgumentException("Invalid URL: " + serviceUrl, e);
+    }
   }
 
   private void appendContent(final StringBuilder content, final CloseableHttpResponse response)
@@ -60,8 +95,7 @@ public class JsonHttpClient implements Closeable {
   public Map<String, Object> delete(final String path) throws IOException {
     final HttpDelete httpRequest = new HttpDelete(this.serviceUrl + path);
     try (
-      CloseableHttpClient httpClient = HttpClients.createDefault();
-      CloseableHttpResponse updateResponse = httpClient.execute(httpRequest)) {
+      CloseableHttpResponse updateResponse = this.httpClient.execute(httpRequest)) {
       final StatusLine statusLine = updateResponse.getStatusLine();
       final int statusCode = statusLine.getStatusCode();
       if (statusCode == 200 || statusCode == 204 || statusCode == 404) {
@@ -80,9 +114,9 @@ public class JsonHttpClient implements Closeable {
   public <V> V executeRequest(final HttpUriRequest httpRequest)
     throws IOException, ClientProtocolException {
     httpRequest.addHeader("Accept", Json.MIME_TYPE);
+
     try (
-      CloseableHttpClient httpClient = HttpClients.createDefault();
-      CloseableHttpResponse updateResponse = httpClient.execute(httpRequest)) {
+      CloseableHttpResponse updateResponse = this.httpClient.execute(httpRequest)) {
       final StatusLine statusLine = updateResponse.getStatusLine();
       final int statusCode = statusLine.getStatusCode();
       if (statusCode == 200 || statusCode == 201) {

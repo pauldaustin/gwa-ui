@@ -168,13 +168,16 @@
             <containerId>jetty9x</containerId>
             <systemPropertiesFile>${project.basedir}/config/gwa.properties</systemPropertiesFile>
           </container>
-          
+
           <configuration>
             <type>standalone</type>
             <properties>
               <cargo.servlet.port>8010</cargo.servlet.port>
               <cargo.rmi.port>7010</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
+<!--              <cargo.start.jvmargs>
+          -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8100
+        </cargo.start.jvmargs> --> 
             </properties>
           </configuration>
           <deployables>
@@ -218,6 +221,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
+      <version>1.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-impl</artifactId>
+      <version>1.2.5</version>
+    </dependency>
+<!--     <dependency>
       <groupId>javax.servlet.jsp.jstl</groupId>
       <artifactId>javax.servlet.jsp.jstl-api</artifactId>
       <version>1.2.1</version>
@@ -226,7 +239,7 @@
       <groupId>org.apache.taglibs</groupId>
       <artifactId>taglibs-standard-impl</artifactId>
       <version>1.2.5</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>

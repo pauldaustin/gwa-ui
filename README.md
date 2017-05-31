@@ -47,13 +47,15 @@ developers must be a member of.
 ### Configuration Properties
 The application supports the following configuration properties.
 
-| Name                  | Description              | Sample Value                                 |
-|-----------------------|--------------------------|----------------------------------------------|
-| gwaTermsUrl           | URL to terms of us page  | http://www2.gov.bc.ca/gov/content/data/terms |
-| gwaKongAdminUrl       | URL to kong rest API     | http://localhost:8001                        |
-| gwaGitHubOrganization | GitHub Org name          | bcggov or gwa-qa                             |
-| gwaGitHubClientId     | GitHub Org Client ID     | abcdefgh0123456789123                        |
-| gwaGitHubClientSecret | GitHub Ord Client Secret | abcdefgh01234567890123456789012345678912     |
+| Name                  | Description                | Sample Value                                 |
+|-----------------------|----------------------------|----------------------------------------------|
+| gwaTermsUrl           | URL to terms of us page    | http://www2.gov.bc.ca/gov/content/data/terms |
+| gwaKongAdminUrl       | URL to kong rest API       | http://localhost:8001                        |
+| gwaKongAdminUsername  | Username for kong rest API | kong                                         |
+| gwaKongAdminPassword  | Password for kong rest API | dgdftyftye                                   |
+| gwaGitHubOrganization | GitHub Org name            | bcggov or gwa-qa                             |
+| gwaGitHubClientId     | GitHub Org Client ID       | abcdefgh0123456789123                        |
+| gwaGitHubClientSecret | GitHub Ord Client Secret   | abcdefgh01234567890123456789012345678912     |
 
 Create the config/gwa.properties file containing the above properties. This directory must be in
 the working directory that the servlet container runs in.

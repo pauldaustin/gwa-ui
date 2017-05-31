@@ -4,6 +4,7 @@ import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'ui/apiKeys', pathMatch: 'full' },
   { path: 'ui', redirectTo: 'ui/apiKeys', pathMatch: 'full' },
   { path: 'ui/apiKeys',  component: ApiKeyComponent, pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },

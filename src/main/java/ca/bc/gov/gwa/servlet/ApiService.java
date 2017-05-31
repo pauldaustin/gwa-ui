@@ -125,17 +125,21 @@ public class ApiService implements ServletContextListener {
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
+  private boolean caching;
+
   private final Map<String, Object> config = new HashMap<>();
 
+  private String kongAdminPassword = null;
+
   private String kongAdminUrl = "http://localhost:8001";
+
+  private String kongAdminUsername = null;
 
   private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
 
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;
-
-  private boolean caching;
 
   public ApiService() {
   }
@@ -206,17 +210,6 @@ public class ApiService implements ServletContextListener {
     } catch (final Throwable e) {
       logError("Error adding api " + apiId + " plugin " + pluginName + ":\n" + pluginAdd, e);
     }
-  }
-
-  private Set<String> apiAllIds(final HttpServletRequest httpRequest,
-    final JsonHttpClient httpClient) throws IOException, ClientProtocolException {
-    final Set<String> apiIds = new HashSet<>();
-    final String path = "/apis";
-    kongPageAll(httpRequest, httpClient, path, (api) -> {
-      final String apiId = (String)api.get("api_id");
-      apiIds.add(apiId);
-    });
-    return apiIds;
   }
 
   private Map<String, String> apiAllNamesById(final HttpServletRequest httpRequest,
@@ -558,6 +551,8 @@ public class ApiService implements ServletContextListener {
           e);
       }
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
+      this.kongAdminUsername = getConfig("gwaKongAdminUsername", this.kongAdminUsername);
+      this.kongAdminPassword = getConfig("gwaKongAdminPassword", this.kongAdminPassword);
       instance = this;
     } catch (final RuntimeException e) {
       LoggerFactory.getLogger(getClass()).error("Unable to initialize service", e);
@@ -1214,7 +1209,7 @@ public class ApiService implements ServletContextListener {
   }
 
   public JsonHttpClient newKongClient() {
-    return new JsonHttpClient(this.kongAdminUrl);
+    return new JsonHttpClient(this.kongAdminUrl, this.kongAdminUsername, this.kongAdminPassword);
   }
 
   @SuppressWarnings("unchecked")

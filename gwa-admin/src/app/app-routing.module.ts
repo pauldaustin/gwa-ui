@@ -46,6 +46,7 @@ import { PluginListComponent } from './Plugin/PluginListComponent';
 import { StatusDetailComponent } from './Status/StatusDetailComponent';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'ui/endpoints', pathMatch: 'full' },
   { path: 'ui', redirectTo: 'ui/endpoints', pathMatch: 'full' },
 
   { path: 'ui/apis',  component: ApiListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },

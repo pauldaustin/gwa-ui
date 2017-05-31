@@ -9,7 +9,6 @@
   version="3.1"
 >
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 
@@ -42,52 +41,62 @@
     <servlet-name>DeveloperKeyUiServlet</servlet-name>
     <url-pattern>/ui/*</url-pattern>
   </servlet-mapping>
-
+  
   <error-page>
     <error-code>400</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the path you requested is not valid.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the path you requested is not
+      valid.</location>
   </error-page>
 
   <error-page>
     <error-code>401</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry you must be logged in to access this page.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry you must be logged in to access
+      this page.</location>
   </error-page>
 
   <error-page>
     <error-code>403</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry you do not have permission to access this page.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry you do not have permission to
+      access this page.</location>
   </error-page>
 
   <error-page>
-    <exception-type>org.springframework.security.access.AccessDeniedException</exception-type>
-    <location>/error.jsp?subTitle=I'm sorry you do not have permission to access this page.</location>
+    <exception-type>org.springframework.security.access.AccessDeniedException
+    </exception-type>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry you do not have permission to
+      access this page.</location>
   </error-page>
 
   <error-page>
     <error-code>404</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the page you requested could not be found.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry the page you requested could not
+      be found.</location>
   </error-page>
 
   <error-page>
     <error-code>405</error-code>
-    <location>/WEB-INF/jsp/template/error.jsp?subTitle=The request method is not supported.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=The request method is not supported.
+    </location>
   </error-page>
 
   <error-page>
     <error-code>415</error-code>
-    <location>/WEB-INF/jsp/template/error.jsp?subTitle=The requested media type is not supported.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=The requested media type is not supported.
+    </location>
   </error-page>
 
   <error-page>
     <error-code>500</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry there was an error generating the page you requested.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=I'm sorry there was an error generating the
+      page you requested.</location>
   </error-page>
 
   <error-page>
     <error-code>503</error-code>
-    <location>/WEB-INF/jsp/error.jsp?subTitle=We are upgrading our infrastructure and apologize for any inconvenience. Service will be restored shortly.</location>
+    <location>/WEB-INF/jsp/error.jsp?subTitle=We are upgrading our infrastructure and
+      apologize for any inconvenience. Service will be restored shortly.</location>
   </error-page>
-  
+
   <error-page>
     <location>/WEB-INF/jsp/error.jsp</location>
   </error-page>
