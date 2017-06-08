@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-page-not-found',
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
       </div>
       <div class="panel-body">
         <h4>I'm sorry the page you requested could not be found.</h4>
-        <button type="button" (click)="history.go(-1)" class="btn btn-primary btn-sm">
+        <button type="button" (click)="back()" class="btn btn-primary btn-sm">
           <span class="fa fa-chevron-left" aria-hidden="true"></span> Back
         </button>
       </div>
@@ -17,4 +18,10 @@ import { Component } from '@angular/core';
   `
 })
 export class PageNotFoundComponent {
+  constructor(private location: Location) {
+  }
+
+  back() {
+    this.location.back();
+  }
 }
