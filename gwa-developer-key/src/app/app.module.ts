@@ -1,22 +1,22 @@
-import { NgModule }       from '@angular/core';
+import { NgModule } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-import { HttpModule }    from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
-import { BrowserModule }  from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './Authentication/AuthService';
 import {
-  BcGovTemplate,
+  BcGovTemplateComponent,
   BcGovTemplateModule
 } from './bcgov-template/index';
-import { DeleteDialog } from './Component/DeleteDialog';
-import { MessageDialog } from './Component/MessageDialog';
+import { DeleteDialogComponent } from './Component/DeleteDialogComponent';
+import { MessageDialogComponent } from './Component/MessageDialogComponent';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
 import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
@@ -31,32 +31,33 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
     MaterialModule,
     NgxDatatableModule,
     BcGovTemplateModule.forRoot({
-        title: 'API Keys',
-        headerMenuItems: [
-          {
-            title: 'API Keys',
-            routerLink: 'ui/apiKeys'
-          },
-        ]
-      }
+      title: 'API Keys',
+      headerMenuItems: [
+        {
+          title: 'API Keys',
+          routerLink: 'ui/apiKeys'
+        },
+      ]
+    }
     ),
     AppRoutingModule,
   ],
   entryComponents: [
-    DeleteDialog,
-    MessageDialog
+    DeleteDialogComponent,
+    MessageDialogComponent
   ],
   declarations: [
     ApiKeyComponent,
     PageNotFoundComponent,
-    DeleteDialog,
-    MessageDialog
+    DeleteDialogComponent,
+    MessageDialogComponent
   ],
   providers: [
     AuthService,
     ApiKeyService,
   ],
-  bootstrap: [ BcGovTemplate ]
+  bootstrap: [BcGovTemplateComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
 

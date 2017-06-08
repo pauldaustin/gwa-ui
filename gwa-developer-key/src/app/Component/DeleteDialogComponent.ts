@@ -3,13 +3,13 @@ import {
   Inject
 } from '@angular/core';
 import {
-  MdDialog, 
+  MdDialog,
   MdDialogRef,
   MD_DIALOG_DATA
 } from '@angular/material';
 
 @Component({
-  selector: 'delete-dialog',
+  selector: 'app-delete-dialog',
   template: `
 <h1 md-dialog-title>Delete {{typeTitle}}?</h1>
 <div md-dialog-content>
@@ -22,14 +22,14 @@ import {
 </div>
   `,
 })
-export class DeleteDialog {
-  typeTitle : string = this.data['typeTitle'];
-  
-  objectLabel : string = this.data['objectLabel'];
-  
+export class DeleteDialogComponent {
+  typeTitle: string = this.data['typeTitle'];
+
+  objectLabel: string = this.data['objectLabel'];
+
   constructor(
-    public dialogRef : MdDialogRef<DeleteDialog>,
+    public dialogRef: MdDialogRef<DeleteDialogComponent>,
     @Inject(MD_DIALOG_DATA) public data: any,
-   ) {
+  ) {
   }
 }

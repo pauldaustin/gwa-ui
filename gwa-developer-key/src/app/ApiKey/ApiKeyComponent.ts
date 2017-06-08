@@ -1,28 +1,29 @@
 import {
   Component,
   Injector,
-  Input 
+  Input,
+  OnInit
 } from '@angular/core';
 
-import { BaseComponent }  from '../Component/BaseComponent';
+import { BaseComponent } from '../Component/BaseComponent';
 
 import { ApiKey } from './ApiKey';
-import { ApiKeyService }  from './ApiKeyService';
+import { ApiKeyService } from './ApiKeyService';
 
 @Component({
-  selector: 'apiKey-list',
+  selector: 'app-api-key-list',
   templateUrl: 'ApiKey.html'
 })
-export class ApiKeyComponent extends BaseComponent<ApiKey>{
-  acceptTerms: boolean = false;
+export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
+  acceptTerms = false;
 
   appName: string;
-  
-  appRedirectUrl: string;
-  
-  apiNames : string[] = [];
 
-  apiKey : string;
+  appRedirectUrl: string;
+
+  apiNames: string[] = [];
+
+  apiKey: string;
 
   constructor(
     injector: Injector,
@@ -30,7 +31,7 @@ export class ApiKeyComponent extends BaseComponent<ApiKey>{
   ) {
     super(injector, service);
   }
-  
+
   ngOnInit(): void {
     super.ngOnInit();
     this.route.queryParams.map(params => params)
@@ -40,8 +41,8 @@ export class ApiKeyComponent extends BaseComponent<ApiKey>{
         this.refresh();
       });
   }
-  
-  refresh() : void {
+
+  refresh(): void {
     this.service.getObject('')
       .then(response => {
         this.apiNames = response.apiNames;
@@ -50,22 +51,22 @@ export class ApiKeyComponent extends BaseComponent<ApiKey>{
           this.acceptTerms = true;
         }
       }
-    );
+      );
   }
 
   addApiKey(): void {
-    let apiKey: ApiKey = new ApiKey();
+    const apiKey: ApiKey = new ApiKey();
     this.service.addObject(
       apiKey
     ).then(
-      apiKey => this.refresh()
-    );
+      apiKey2 => this.refresh()
+      );
   }
-  
+
   authorizeAccess(): void {
-    let apiKey = this.apiKey;
+    const apiKey = this.apiKey;
     let url = this.appRedirectUrl;
-    if (url.indexOf('?') == -1) {
+    if (url.indexOf('?') === -1) {
       url += '?';
     } else {
       url += '&';
@@ -74,7 +75,7 @@ export class ApiKeyComponent extends BaseComponent<ApiKey>{
     this.document.location.href = url;
   }
 
-  get hasApiKey() : boolean {
+  get hasApiKey(): boolean {
     return this.apiKey != null;
   }
 }

@@ -1,5 +1,6 @@
 import {
   Injector,
+  OnInit,
   TemplateRef,
   ViewChild
 } from '@angular/core';
@@ -9,11 +10,11 @@ import {
 } from '@angular/material';
 
 import { BaseComponent } from './BaseComponent';
-import { DeleteDialog } from './DeleteDialog';
+import { DeleteDialogComponent } from './DeleteDialogComponent';
 
 import { Service } from '../Service/Service';
 
-export class BaseListComponent<T> extends BaseComponent<T> {
+export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   @ViewChild('idT') idTemplate: TemplateRef<any>;
 
@@ -25,39 +26,40 @@ export class BaseListComponent<T> extends BaseComponent<T> {
 
   @ViewChild('arrayT') arrayTemplate: TemplateRef<any>;
 
-  columns : any[];
+  columns: any[];
 
   dialog: MdDialog = this.injector.get(MdDialog);
-  
+
   rows: Array<T> = [];
 
-  count: number = 0;
+  count = 0;
 
-  offset: number = 0;
+  offset = 0;
 
-  limit: number = 100;
+  limit = 100;
 
-  filterFields : any[];
-  
-  filterFieldName : string;
-   
-  filterValue : string;
-  
-  filter : { [fieldName: string] : string} = {};
-  
-  paging: boolean = false;
-  
+  filterFields: any[];
+
+  filterFieldName: string;
+
+  filterValue: string;
+
+  filter: { [fieldName: string]: string } = {};
+
+  paging = false;
+
   path: string;
 
-  cssClasses= {
+  cssClasses = {
     sortAscending: 'fa fa-chevron-down',
     sortDescending: 'fa fa-chevron-up',
     pagerLeftArrow: 'fa fa-chevron-left',
     pagerRightArrow: 'fa fa-chevron-right',
     pagerPrevious: 'fa fa-step-backward',
     pagerNext: 'fa fa-step-forward'
-  }
-  constructor(injector: Injector, service : Service<T>) {
+  };
+
+  constructor(injector: Injector, service: Service<T>) {
     super(injector, service);
   }
 
@@ -74,14 +76,14 @@ export class BaseListComponent<T> extends BaseComponent<T> {
   }
 
   deleteObject(object: T): void {
-    let dialogRef = this.dialog.open(DeleteDialog, {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: {
         typeTitle: this.service.getTypeTitle(),
         objectLabel: this.service.getLabel(object),
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result == 'Delete') {
+      if (result === 'Delete') {
         this.deleteObjectDo(object);
       }
     });
@@ -94,7 +96,7 @@ export class BaseListComponent<T> extends BaseComponent<T> {
           this.onDeleted(object);
         }
       })
-    ;
+      ;
   }
 
   onDeleted(object: T): void {
@@ -105,8 +107,8 @@ export class BaseListComponent<T> extends BaseComponent<T> {
     }
   }
 
-  getRows() : Array<T> {
-   return this.rows;
+  getRows(): Array<T> {
+    return this.rows;
   }
 
   page(offset: number, limit: number) {
@@ -115,11 +117,11 @@ export class BaseListComponent<T> extends BaseComponent<T> {
       this.rows = results.rows;
     });
   }
-  
+
   fetch(offset: number, limit: number, callback: any) {
-    const filter : { [fieldName: string] : string} = {};
+    const filter: { [fieldName: string]: string } = {};
     if (this.filter) {
-      for (const fieldName in this.filter) {
+      for (const fieldName of Object.keys(this.filter)) {
         filter[fieldName] = this.filter[fieldName];
       }
     }
@@ -127,8 +129,8 @@ export class BaseListComponent<T> extends BaseComponent<T> {
       filter[this.filterFieldName] = this.filterValue;
     }
     this.service.getRowsPage(
-      offset, 
-      limit, 
+      offset,
+      limit,
       this.path,
       this.filter
     ).then(callback);
