@@ -1,5 +1,5 @@
 import {
-  Component, 
+  Component,
   Injector,
   Input
 } from '@angular/core';
@@ -15,14 +15,14 @@ import { ApiService } from './ApiService';
   templateUrl: 'ApiView.html'
 })
 export class ApiViewComponent extends BaseDetailComponent<Api> {
-  endpoint : Plugin = new Plugin(
+  endpoint: Plugin = new Plugin(
     'bcgov-gwa-endpoint',
     {
       api_owners: [],
     }
   );
 
-  keyAuth : Plugin = new Plugin(
+  keyAuth: Plugin = new Plugin(
     'key-auth',
     {
       key_names: 'apikey',
@@ -32,7 +32,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
     false
   );
 
-  acl : Plugin = new Plugin(
+  acl: Plugin = new Plugin(
     'acl',
     {
       whitelist: [],
@@ -42,7 +42,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
   );
 
   constructor(
-    protected injector:Injector,
+    protected injector: Injector,
     protected service: ApiService
   ) {
     super(injector, service);
@@ -57,11 +57,11 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
         .subscribe((data: { api: Api }) => {
           this.setObject(data.api);
         }
-      );
+        );
     }
   }
 
-  protected setObject(api : Api) {
+  protected setObject(api: Api) {
     if (api) {
       let endpoint = api.plugin('bcgov-gwa-endpoint');
       if (endpoint == null) {
@@ -88,8 +88,8 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
   addApiOwner() {
     this.endpoint.config.api_owners.push('');
   }
- 
-  deleteApiOwner(index : number) {
+
+  deleteApiOwner(index: number) {
     const api_owners = this.endpoint.config.api_owners;
     if (index < api_owners.length) {
       api_owners.splice(index);
@@ -99,16 +99,16 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
   addGroupName() {
     this.acl.config.whitelist.push('');
   }
- 
-  deleteGroupName(index : number) {
+
+  deleteGroupName(index: number) {
     const groupNames = this.acl.config.whitelist;
     if (index < groupNames.length) {
       groupNames.splice(index);
     }
   }
-  
-  get developerKeyGroupNames() : string[] {
-    const groupNames : string[] = [];
+
+  get developerKeyGroupNames(): string[] {
+    const groupNames: string[] = [];
     if (this.acl && this.acl.config.whitelist) {
       for (let groupName of this.acl.config.whitelist) {
         groupName = groupName.trim().toLowerCase();
@@ -123,11 +123,11 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
     return groupNames;
   }
 
-  routeDetail() : void {
+  routeDetail(): void {
     this.router.navigate(['..', this.object.name], { relativeTo: this.route });
   }
-  
-  formValid() : boolean {
+
+  formValid(): boolean {
     return (this.object.hosts && this.object.hosts.length > 0) || (this.object.uris && this.object.uris.length > 0);
   }
 }
