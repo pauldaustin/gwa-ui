@@ -5,18 +5,9 @@
   debug="false"
 >
   <appender
-    name="FileLog"
-    class="org.apache.log4j.rolling.RollingFileAppender"
+    name="ConsoleLog"
+    class="org.apache.log4j.ConsoleAppender"
   >
-    <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-      <param
-        name="ActiveFileName"
-        value="logs/gwa.log" />
-      <param
-        name="FileNamePattern"
-        value="logs/gwa.%d.log" />
-    </rollingPolicy>
-
     <layout class="org.apache.log4j.PatternLayout">
       <param
         name="ConversionPattern"
@@ -26,6 +17,6 @@
 
   <root>
     <level value="ERROR" />
-    <appender-ref ref="FileLog" />
+    <appender-ref ref="ConsoleLog" />
   </root>
 </log4j:configuration>
