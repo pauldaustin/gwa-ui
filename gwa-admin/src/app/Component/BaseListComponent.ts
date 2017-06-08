@@ -10,7 +10,7 @@ import {
 } from '@angular/material';
 
 import { BaseComponent } from './BaseComponent';
-import { DeleteDialog } from './DeleteDialog';
+import { DeleteDialogComponent } from './DeleteDialogComponent';
 
 import { Service } from '../Service/Service';
 
@@ -76,7 +76,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   }
 
   deleteObject(object: T): void {
-    const dialogRef = this.dialog.open(DeleteDialog, {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: {
         typeTitle: this.service.getTypeTitle(),
         objectLabel: this.service.getLabel(object),

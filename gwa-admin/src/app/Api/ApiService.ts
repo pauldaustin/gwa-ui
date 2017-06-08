@@ -9,7 +9,7 @@ import { Api } from './Api';
 @Injectable()
 export class ApiService extends BaseService<Api> {
 
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = '/apis';
     this.pathParamName = 'apiName';

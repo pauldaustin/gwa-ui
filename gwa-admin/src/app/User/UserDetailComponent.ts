@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { User } from './User';
 
 @Component({
-  selector: 'user-detail',
+  selector: 'app-user-detail',
   template: `
 <nav md-tab-nav-bar *ngIf="user">
   <a md-tab-link

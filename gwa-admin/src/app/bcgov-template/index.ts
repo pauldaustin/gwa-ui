@@ -1,2 +1,2 @@
-export { BcGovTemplate } from './BcGovTemplate';
+export { BcGovTemplateComponent } from './BcGovTemplateComponent';
 export { BcGovTemplateModule } from './BcGovTemplateModule';

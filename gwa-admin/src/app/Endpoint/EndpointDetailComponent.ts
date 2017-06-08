@@ -6,9 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Api } from '../Api/Api';
 
 @Component({
-  selector: 'endpoint-detail',
+  selector: 'app-endpoint-detail',
   template: `
-<page-not-found *ngIf="!api"></page-not-found>
+<app-page-not-found *ngIf="!api"></app-page-not-found>
 <nav md-tab-nav-bar *ngIf="api">
   <a md-tab-link
      [routerLink]="['.']"

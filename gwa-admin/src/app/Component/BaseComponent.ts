@@ -17,7 +17,7 @@ import {
 
 import { AuthService } from '../Authentication/AuthService';
 import { Service } from '../Service/Service';
-import { MessageDialog } from '../Component/MessageDialog';
+import { MessageDialogComponent } from '../Component/MessageDialogComponent';
 
 export class BaseComponent<T> implements OnInit {
 
@@ -48,7 +48,7 @@ export class BaseComponent<T> implements OnInit {
   }
 
   protected showError(message: string) {
-    const dialogRef = this.dialog.open(MessageDialog, {
+    const dialogRef = this.dialog.open(MessageDialogComponent, {
       data: {
         title: 'Error',
         message: message,

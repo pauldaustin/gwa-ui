@@ -23,12 +23,12 @@ import {
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {
-  BcGovTemplate,
+  BcGovTemplateComponent,
   BcGovTemplateModule
 } from './bcgov-template/index';
 
-import { DeleteDialog } from './Component/DeleteDialog';
-import { MessageDialog } from './Component/MessageDialog';
+import { DeleteDialogComponent } from './Component/DeleteDialogComponent';
+import { MessageDialogComponent } from './Component/MessageDialogComponent';
 import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
 
 import { AuthService } from './Authentication/AuthService';
@@ -112,50 +112,50 @@ import { AppRoutingModule } from './app-routing.module';
 
     NgxDatatableModule,
     BcGovTemplateModule.forRoot({
-        title: 'Gateway Admin',
-        headerMenuItems: [
-          {
-            title: 'Endpoints',
-            routerLink: 'ui/endpoints'
-          },
-          {
-            title: 'APIs',
-            routerLink: 'ui/apis'
-          },
-          {
-            title: 'Plugins',
-            routerLink: 'ui/plugins'
-          },
-          {
-            title: 'Users',
-            icon: 'person',
-            routerLink: 'ui/users'
-          },
-          {
-            title: 'Groups',
-            icon: 'people',
-            routerLink: 'ui/groups'
-          },
-          {
-            title: 'Nodes',
-            routerLink: 'ui/nodes'
-          },
-          {
-            title: 'Status',
-            routerLink: 'ui/status'
-          }
-        ]
-      }
+      title: 'Gateway Admin',
+      headerMenuItems: [
+        {
+          title: 'Endpoints',
+          routerLink: 'ui/endpoints'
+        },
+        {
+          title: 'APIs',
+          routerLink: 'ui/apis'
+        },
+        {
+          title: 'Plugins',
+          routerLink: 'ui/plugins'
+        },
+        {
+          title: 'Users',
+          icon: 'person',
+          routerLink: 'ui/users'
+        },
+        {
+          title: 'Groups',
+          icon: 'people',
+          routerLink: 'ui/groups'
+        },
+        {
+          title: 'Nodes',
+          routerLink: 'ui/nodes'
+        },
+        {
+          title: 'Status',
+          routerLink: 'ui/status'
+        }
+      ]
+    }
     ),
     AppRoutingModule,
   ],
   entryComponents: [
-    MessageDialog,
-    DeleteDialog
+    MessageDialogComponent,
+    DeleteDialogComponent
   ],
   declarations: [
-    DeleteDialog,
-    MessageDialog,
+    DeleteDialogComponent,
+    MessageDialogComponent,
     PageNotFoundComponent,
 
     ApiAddComponent,
@@ -204,7 +204,7 @@ import { AppRoutingModule } from './app-routing.module';
     PluginService,
     StatusService
   ],
-  bootstrap: [ BcGovTemplate ]
+  bootstrap: [BcGovTemplateComponent]
 })
 export class AppModule {
   constructor(mdIconRegistry: MdIconRegistry) {

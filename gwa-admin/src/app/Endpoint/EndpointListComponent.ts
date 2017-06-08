@@ -7,7 +7,7 @@ import { ApiListComponent } from '../Api/ApiListComponent';
 import { ApiService } from '../Api/ApiService';
 
 @Component({
-  selector: 'endpoint-list',
+  selector: 'app-endpoint-list',
   templateUrl: 'EndpointList.html'
 })
 export class EndpointListComponent extends ApiListComponent {

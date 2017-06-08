@@ -12,7 +12,7 @@ import { Plugin } from '../Plugin/Plugin';
 import { ApiService } from './ApiService';
 
 @Component({
-  selector: 'api-view',
+  selector: 'app-api-view',
   templateUrl: 'ApiView.html'
 })
 export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit {

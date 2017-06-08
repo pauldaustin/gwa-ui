@@ -10,7 +10,7 @@ import { EndpointService } from './EndpointService';
 import { Plugin } from '../Plugin/Plugin';
 
 @Component({
-  selector: 'endpoint-view',
+  selector: 'app-endpoint-view',
   templateUrl: 'EndpointView.html'
 })
 export class EndpointViewComponent extends BaseDetailComponent<Api> implements OnInit {

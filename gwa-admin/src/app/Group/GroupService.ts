@@ -8,7 +8,7 @@ import { Group } from './Group';
 
 @Injectable()
 export class GroupService extends BaseService<Group> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = '/groups';
     this.typeTitle = 'Group';

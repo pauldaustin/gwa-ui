@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'api-add',
+  selector: 'app-api-add',
   template: `
 <md-tab-group>
   <md-tab label="Add API">
-    <api-view addPage="true"></api-view>
+    <app-api-view addPage="true"></app-api-view>
   </md-tab>
 </md-tab-group>
   `
 })
-export class ApiAddComponent  {
+export class ApiAddComponent {
 }

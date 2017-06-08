@@ -10,7 +10,7 @@ import { Node } from './Node';
 import { NodeService } from './NodeService';
 
 @Component({
-  selector: 'node-list',
+  selector: 'app-node-list',
   templateUrl: 'NodeList.html'
 })
 export class NodeListComponent extends BaseListComponent<Node> implements OnInit {

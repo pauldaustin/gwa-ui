@@ -7,16 +7,36 @@ export interface HttpMethodState {
 
 export class Api {
   private static ALL_METHODS: Array<string> = [
-    "GET",
-    "HEAD",
-    "OPTIONS",
-    "POST",
-    "PUT",
-    "DELETE"
+    'GET',
+    'HEAD',
+    'OPTIONS',
+    'POST',
+    'PUT',
+    'DELETE'
   ];
 
 
-  static uri(uriTemplate : string, name : string) : string {
+  id: string;
+  created_at: string;
+  upstream_url: string;
+  preserve_host: string;
+  name: string;
+  _hosts: string[] = [];
+  _uris: string[] = [];
+  //  methods : string; getter function
+  strip_uri = true;
+  retries = 5;
+  upstream_connect_timeout = 60000;
+  upstream_send_timeout = 60000;
+  upstream_read_timeout = 60000;
+  https_only = false;
+  http_if_terminated = true;
+
+
+  method_flags: Array<HttpMethodState> = [];
+  _pluginByName: { [name: string]: Plugin } = {};
+
+  static uri(uriTemplate: string, name: string): string {
     if (uriTemplate) {
       if (name) {
         return uriTemplate.replace('{name}', name);
@@ -30,30 +50,10 @@ export class Api {
     this.methods = null;
   }
 
-  id : string;
-  created_at : string;
-  upstream_url : string;
-  preserve_host : string;
-  name : string;
-  _hosts : string[] = [];
-  _uris : string[] = [];
-  //  methods : string; getter function
-  strip_uri : boolean = true;
-  retries : number = 5;
-  upstream_connect_timeout : number = 60000;
-  upstream_send_timeout : number = 60000;
-  upstream_read_timeout : number = 60000;
-  https_only : boolean = false;
-  http_if_terminated : boolean = true;
-  
-
-  method_flags: Array<HttpMethodState> = [];
-  _pluginByName : { [name: string] : Plugin } = {};
-
   get methods(): Array<string> {
-    let methods: Array<string> = [];
+    const methods: Array<string> = [];
     if (this.method_flags) {
-      for (let methodFlag of this.method_flags) {
+      for (const methodFlag of this.method_flags) {
         if (methodFlag.enabled) {
           methods.push(methodFlag.name);
         }
@@ -61,28 +61,28 @@ export class Api {
     }
     return methods;
   }
-  
+
   set methods(allowedHttpMethods: Array<string>) {
     const hasValue = Array.isArray(allowedHttpMethods);
     this.method_flags.length = 0;
-    for (let method of Api.ALL_METHODS) {
-      var enabled : boolean;
+    for (const method of Api.ALL_METHODS) {
+      let enabled: boolean;
       if (hasValue) {
-        enabled = allowedHttpMethods.indexOf(method) != -1;
+        enabled = allowedHttpMethods.indexOf(method) !== -1;
       } else {
-        enabled = method == "GET";
+        enabled = method === 'GET';
       }
-      this.method_flags.push({name: method, enabled: enabled});
+      this.method_flags.push({ name: method, enabled: enabled });
     }
   }
 
-  get uris() : string[] {
+  get uris(): string[] {
     return this._uris;
   }
 
   set uris(uris) {
     this._uris.length = 0;
-    if (typeof uris === "string") {
+    if (typeof uris === 'string') {
       this._uris.push(uris);
     } else if (Array.isArray(uris)) {
       for (const uri of uris) {
@@ -93,13 +93,13 @@ export class Api {
     }
   }
 
-  get hosts() : string[] {
+  get hosts(): string[] {
     return this._hosts;
   }
 
   set hosts(hosts) {
     this._hosts.length = 0;
-    if (typeof hosts === "string") {
+    if (typeof hosts === 'string') {
       this._hosts.push(hosts);
     } else if (Array.isArray(hosts)) {
       for (const host of hosts) {
@@ -110,7 +110,7 @@ export class Api {
     }
   }
 
-/* Plugin Methods */
+  /* Plugin Methods */
 
   get plugins(): Array<Plugin> {
     const names: string[] = Object.keys(this._pluginByName);
@@ -122,17 +122,17 @@ export class Api {
     }
     return plugins;
   }
-  
+
   set plugins(pluginsJson) {
     const pluginsByName = this._pluginByName;
-    for (const name in pluginsByName) {
-      delete pluginsByName[name]
+    for (const name of Object.keys(pluginsByName)) {
+      delete pluginsByName[name];
     }
     if (pluginsJson) {
-      let api = this;
+      const api = this;
       for (const pluginName of Object.keys(pluginsJson)) {
         const pluginJson = pluginsJson[pluginName];
-        let plugin = new Plugin();
+        const plugin = new Plugin();
         Object.assign(plugin, pluginJson);
         plugin.api = api;
         pluginsByName[plugin.name] = plugin;
@@ -158,8 +158,8 @@ export class Api {
     return Api.ALL_METHODS;
   }
 
-  private cleanArray(values : string[]) : string[] {
-    let newValues : string[] = [];
+  private cleanArray(values: string[]): string[] {
+    const newValues: string[] = [];
     for (let value of values) {
       if (value) {
         value = value.trim();
@@ -188,8 +188,8 @@ export class Api {
       upstream_read_timeout: this.upstream_read_timeout,
       https_only: this.https_only,
       http_if_terminated: this.http_if_terminated,
-      
-      plugins : this._pluginByName,
+
+      plugins: this._pluginByName,
     };
   }
 }

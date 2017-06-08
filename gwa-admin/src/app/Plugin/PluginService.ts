@@ -10,7 +10,7 @@ import { Plugin } from '../Plugin/Plugin';
 @Injectable()
 export class PluginService extends BaseService<Plugin> {
 
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = '/plugins';
     this.typeTitle = 'Plugins';

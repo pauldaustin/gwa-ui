@@ -12,7 +12,7 @@ import { Api } from './Api';
 import { ApiService } from './ApiService';
 
 @Component({
-  selector: 'api-list',
+  selector: 'app-api-list',
   templateUrl: 'ApiList.html'
 })
 export class ApiListComponent extends BaseListComponent<Api> implements OnInit {

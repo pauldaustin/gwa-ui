@@ -8,7 +8,7 @@ import { BaseDetailComponent } from '../Component/BaseDetailComponent';
 import { StatusService } from './StatusService';
 
 @Component({
-  selector: 'status-detail',
+  selector: 'app-status-detail',
   template: `
 <div class="row">
   <div class="col-md-6">

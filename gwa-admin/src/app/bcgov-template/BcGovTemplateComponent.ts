@@ -15,11 +15,11 @@ import { BcGovTemplateConfig } from './BcGovTemplateConfig';
 import { MenuItem } from './MenuItem';
 
 @Component({
-  selector: 'bcgov-template',
+  selector: 'app-bcgov-template',
   templateUrl: 'BcGovTemplate.html',
   styleUrls: ['BcGovTemplate.css']
 })
-export class BcGovTemplate {
+export class BcGovTemplateComponent {
 
   title: String = '';
 

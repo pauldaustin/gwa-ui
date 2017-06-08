@@ -11,7 +11,7 @@ import { Group } from '../../Group/Group';
 import { EndpointGroupUserService } from './EndpointGroupUserService';
 
 @Component({
-  selector: 'endpoint-group-user-list',
+  selector: 'app-endpoint-group-app-user-list',
   templateUrl: 'EndpointGroupUserList.html'
 })
 export class EndpointGroupUserListComponent extends BaseListComponent<Group> implements OnInit {

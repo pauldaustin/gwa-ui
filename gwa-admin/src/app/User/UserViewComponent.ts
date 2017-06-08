@@ -8,7 +8,7 @@ import { User } from './User';
 import { UserService } from './UserService';
 
 @Component({
-  selector: 'user-view',
+  selector: 'app-user-view',
   templateUrl: 'UserView.html'
 })
 export class UserViewComponent extends BaseDetailComponent<User> implements OnInit {

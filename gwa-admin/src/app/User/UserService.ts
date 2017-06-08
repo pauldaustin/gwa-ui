@@ -8,7 +8,7 @@ import { User } from './User';
 
 @Injectable()
 export class UserService extends BaseService<User> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = `/users`;
     this.typeTitle = 'User';

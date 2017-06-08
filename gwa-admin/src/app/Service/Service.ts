@@ -8,7 +8,7 @@ export interface Service<T> {
   deleteObject(object: T, path?: string): Promise<boolean>;
 
   newObject(): T;
-  
+
   toObject(json: any): T;
 
   updateObject(object: T): Promise<T>;
@@ -16,17 +16,17 @@ export interface Service<T> {
   getLabel(object: T): string;
 
   getObjects(): Promise<T[]>;
-  
+
   getObject(id: string): Promise<T>;
 
-  getPath() : string;
+  getPath(): string;
 
   getRowsPage(
-    offset : number, 
-    limit : number, 
+    offset: number,
+    limit: number,
     path?: string,
-    filter? : { [fieldName: string] : string}
+    filter?: { [fieldName: string]: string }
   ): Promise<any>;
 
-  getTypeTitle() : string;
+  getTypeTitle(): string;
 }

@@ -25,7 +25,7 @@ import { DOCUMENT } from '@angular/platform-browser';
 
 import { Service } from './Service';
 
-import { MessageDialog } from '../Component/MessageDialog';
+import { MessageDialogComponent } from '../Component/MessageDialogComponent';
 
 @Injectable()
 export abstract class BaseService<T> implements Service<T> {
@@ -113,7 +113,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected showError(message: string) {
-    const dialogRef = this.dialog.open(MessageDialog, {
+    const dialogRef = this.dialog.open(MessageDialogComponent, {
       data: {
         title: 'Error',
         message: message,

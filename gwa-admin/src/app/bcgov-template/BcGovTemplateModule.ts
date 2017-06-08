@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MdIconModule } from '@angular/material';
 
-import { BcGovTemplate } from './BcGovTemplate';
+import { BcGovTemplateComponent } from './BcGovTemplateComponent';
 import { BcGovTemplateConfig } from './BcGovTemplateConfig';
 
 @NgModule({
@@ -12,8 +12,8 @@ import { BcGovTemplateConfig } from './BcGovTemplateConfig';
     RouterModule,
     MdIconModule
   ],
-  declarations: [BcGovTemplate],
-  exports: [BcGovTemplate]
+  declarations: [BcGovTemplateComponent],
+  exports: [BcGovTemplateComponent]
 })
 export class BcGovTemplateModule {
   static forRoot(config: BcGovTemplateConfig): ModuleWithProviders {

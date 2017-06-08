@@ -10,7 +10,7 @@ import { Api } from '../../Api/Api';
 import { Group } from '../../Group/Group';
 
 @Component({
-  selector: 'endpoint-group-list',
+  selector: 'app-endpoint-group-list',
   template: `
 <ngx-datatable
   class="material striped"

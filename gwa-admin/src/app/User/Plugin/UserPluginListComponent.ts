@@ -12,7 +12,7 @@ import { PluginListComponent } from '../../Plugin/PluginListComponent';
 import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
-  selector: 'user-plugin-list',
+  selector: 'app-user-plugin-list',
   templateUrl: 'UserPluginList.html'
 })
 export class UserPluginListComponent extends PluginListComponent {

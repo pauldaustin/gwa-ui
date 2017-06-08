@@ -9,7 +9,7 @@ import {
 } from '@angular/material';
 
 @Component({
-  selector: 'message-dialog',
+  selector: 'app-message-dialog',
   template: `
 <h1 md-dialog-title>{{title}}</h1>
 <div md-dialog-content>{{message}}</div>
@@ -18,13 +18,13 @@ import {
 </div>
   `,
 })
-export class MessageDialog {
+export class MessageDialogComponent {
   title: string = this.data['title'];
 
   message: string = this.data['message'];
 
   constructor(
-    public dialogRef: MdDialogRef<MessageDialog>,
+    public dialogRef: MdDialogRef<MessageDialogComponent>,
     @Inject(MD_DIALOG_DATA) public data: any,
   ) {
   }

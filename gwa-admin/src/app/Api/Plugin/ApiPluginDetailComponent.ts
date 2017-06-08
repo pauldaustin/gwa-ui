@@ -25,7 +25,7 @@ import { Plugin } from '../../Plugin/Plugin';
 import { PluginService } from '../../Plugin/PluginService';
 
 @Component({
-  selector: 'api-plugin-detail',
+  selector: 'app-app-api-plugin-detail',
   templateUrl: 'ApiPluginDetail.html'
 })
 export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implements OnInit {

@@ -10,7 +10,7 @@ import { User } from './User';
 import { UserService } from './UserService';
 
 @Component({
-  selector: 'user-list',
+  selector: 'app-user-list',
   templateUrl: 'UserList.html'
 })
 export class UserListComponent extends BaseListComponent<User> implements OnInit {

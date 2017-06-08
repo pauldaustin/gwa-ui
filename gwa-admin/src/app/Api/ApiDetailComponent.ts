@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Api } from './Api';
 
 @Component({
-  selector: 'api-detail',
+  selector: 'app-api-detail',
   template: `
 <nav md-tab-nav-bar *ngIf="api">
   <a md-tab-link

@@ -9,7 +9,7 @@ import { Node } from './Node';
 
 @Injectable()
 export class NodeService extends BaseService<Node> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = `/nodes`;
   }

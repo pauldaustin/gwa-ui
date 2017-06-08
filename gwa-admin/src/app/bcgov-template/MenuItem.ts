@@ -1,8 +1,8 @@
 export class MenuItem {
 
-  routerLink : string;
+  routerLink: string;
 
-  title : string;
+  title: string;
 
-  icon? : string;
+  icon?: string;
 }
