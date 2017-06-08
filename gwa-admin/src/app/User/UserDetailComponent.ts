@@ -1,4 +1,7 @@
-import { Component} from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { User } from './User';
 
@@ -28,19 +31,19 @@ import { User } from './User';
 <router-outlet></router-outlet>
   `
 })
-export class UserDetailComponent  {
-  user : User;
- 
+export class UserDetailComponent implements OnInit {
+  user: User;
+
   constructor(
     protected route: ActivatedRoute,
   ) {
   }
-  
+
   ngOnInit() {
     this.route.data
       .subscribe((data: { user: User }) => {
         this.user = data.user;
       }
-    );
+      );
   }
 }

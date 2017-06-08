@@ -1,4 +1,7 @@
-import { Component} from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Api } from './Api';
 
@@ -28,19 +31,19 @@ import { Api } from './Api';
 <router-outlet></router-outlet>
   `
 })
-export class ApiDetailComponent  {
-  api : Api;
- 
+export class ApiDetailComponent implements OnInit {
+  api: Api;
+
   constructor(
     protected route: ActivatedRoute,
   ) {
   }
-  
+
   ngOnInit() {
     this.route.data
       .subscribe((data: { api: Api }) => {
         this.api = data.api;
       }
-    );
+      );
   }
 }

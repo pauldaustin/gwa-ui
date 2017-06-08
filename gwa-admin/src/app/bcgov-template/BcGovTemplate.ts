@@ -11,8 +11,8 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { AuthService } from '../Authentication/AuthService';
-import {BcGovTemplateConfig} from './BcGovTemplateConfig';
-import {MenuItem} from './MenuItem';
+import { BcGovTemplateConfig } from './BcGovTemplateConfig';
+import { MenuItem } from './MenuItem';
 
 @Component({
   selector: 'bcgov-template',
@@ -21,15 +21,15 @@ import {MenuItem} from './MenuItem';
 })
 export class BcGovTemplate {
 
-  title : String = '';
+  title: String = '';
 
-  headerMenuItems : Array<MenuItem>;
+  headerMenuItems: Array<MenuItem>;
 
   constructor(
-    private router : Router,
+    private router: Router,
     private authService: AuthService,
     private titleService: Title,
-    @Optional() config : BcGovTemplateConfig
+    @Optional() config: BcGovTemplateConfig
   ) {
     if (config) {
       this.title = config.title;
@@ -39,14 +39,14 @@ export class BcGovTemplate {
       if (config.headerMenuItems) {
         this.headerMenuItems = config.headerMenuItems;
       }
-    } 
+    }
   }
 
-  isMenuVisible(menuItem : MenuItem) : boolean {
-    for (let route of this.router.config) {
-      if (route.path == menuItem.routerLink) {
+  isMenuVisible(menuItem: MenuItem): boolean {
+    for (const route of this.router.config) {
+      if (route.path === menuItem.routerLink) {
         if (route.data) {
-          const roles : string[] = route.data['roles'];
+          const roles: string[] = route.data['roles'];
           if (roles) {
             const visible = this.authService.hasAnyRole(roles);
             return visible;
@@ -56,8 +56,8 @@ export class BcGovTemplate {
     }
     return true;
   }
-  
-  get username() : string {
+
+  get username(): string {
     return this.authService.username;
   }
 }

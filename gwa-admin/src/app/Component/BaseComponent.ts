@@ -1,6 +1,6 @@
-import { 
-  Injector, 
-  OnInit 
+import {
+  Injector,
+  OnInit
 } from '@angular/core';
 import {
   Location
@@ -34,12 +34,12 @@ export class BaseComponent<T> implements OnInit {
   protected router: Router = this.injector.get(Router);
 
   constructor(
-    protected injector:Injector,
+    protected injector: Injector,
     protected service: Service<T>
   ) {
-    
+
   }
-    
+
   ngOnInit(): void {
   }
 
@@ -48,7 +48,7 @@ export class BaseComponent<T> implements OnInit {
   }
 
   protected showError(message: string) {
-    let dialogRef = this.dialog.open(MessageDialog, {
+    const dialogRef = this.dialog.open(MessageDialog, {
       data: {
         title: 'Error',
         message: message,
@@ -56,19 +56,19 @@ export class BaseComponent<T> implements OnInit {
     });
   }
 
-  hasRole(role : string) : boolean {
+  hasRole(role: string): boolean {
     return this.authService.hasRole(role);
   }
 
-  get username() : string {
+  get username(): string {
     return this.authService.username;
   }
-  
-  trackByIndex(index : number) : number { 
+
+  trackByIndex(index: number): number {
     return index;
   }
-  
-  stringValue(object : any) : string {
+
+  stringValue(object: any): string {
     if (object) {
       if (Array.isArray(object)) {
         if (object.length > 0) {

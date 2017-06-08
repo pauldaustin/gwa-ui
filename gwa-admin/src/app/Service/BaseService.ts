@@ -10,7 +10,7 @@ import {
 } from '@angular/common';
 
 import {
-  Headers, 
+  Headers,
   Http,
   Response,
   URLSearchParams
@@ -35,25 +35,25 @@ export abstract class BaseService<T> implements Service<T> {
 
   protected location: Location = this.injector.get(Location);
 
-  protected path : string;
+  protected path: string;
 
-  protected typeTitle : string;
+  protected typeTitle: string;
 
-  protected labelFieldName : string;
+  protected labelFieldName: string;
 
-  protected idFieldName : string = "id";
+  protected idFieldName = 'id';
 
-  pathParamName : string = "id";
+  pathParamName = 'id';
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
-  usePostForDelete : boolean = true;
-  
-  private jsonHeaders =  new Headers({ 'Content-Type': 'application/json' });
+  usePostForDelete = true;
+
+  private jsonHeaders = new Headers({ 'Content-Type': 'application/json' });
 
   constructor(
-    protected injector : Injector,
-   ) {
+    protected injector: Injector,
+  ) {
   }
 
   addObject(object: T, path?: string): Promise<T> {
@@ -65,7 +65,7 @@ export abstract class BaseService<T> implements Service<T> {
       object
     );
   }
-  
+
   protected addObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
     const url = this.getUrl(path);
     const jsonText = JSON.stringify(object);
@@ -95,16 +95,16 @@ export abstract class BaseService<T> implements Service<T> {
       return Promise.resolve(object);
     } else if (object[this.idFieldName]) {
       return this.updateObject(object);
-    } else {  
+    } else {
       return this.addObject(object);
     }
   }
 
   protected handleError(error: any): Promise<any> {
-    if (error.status == 403) {
+    if (error.status === 403) {
       document.location.reload(true);
       return Promise.resolve(null);
-    } else if (error.status == 404) {
+    } else if (error.status === 404) {
       return Promise.resolve(null);
     } else {
       this.showError(error.message || error);
@@ -113,7 +113,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected showError(message: string) {
-    let dialogRef = this.dialog.open(MessageDialog, {
+    const dialogRef = this.dialog.open(MessageDialog, {
       data: {
         title: 'Error',
         message: message,
@@ -130,15 +130,15 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected deleteObjectDo(path: string, callback?: (deleted: boolean) => void, parameters?: any): Promise<boolean> {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     if (parameters) {
-      for (let name in parameters) {
+      for (const name of Object.keys(parameters)) {
         params.set(name, parameters[name]);
       }
     }
 
     const url = this.getUrl(path);
-    var response : Observable<Response>;
+    let response: Observable<Response>;
     if (this.usePostForDelete) {
       response = this.http.post(
         url,
@@ -161,13 +161,13 @@ export abstract class BaseService<T> implements Service<T> {
       );
     }
     return response.toPromise()
-      .then(response => {
-        const json = response.json();
+      .then(httpResponse => {
+        const json = httpResponse.json();
         if (json.error) {
           this.showError(json.error);
           return false;
         } else {
-          var deleted = json.deleted == true;
+          const deleted = json.deleted === true;
           if (callback) {
             callback(deleted);
           }
@@ -178,25 +178,25 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   getLabel(object: T): string {
-    let fieldNames : string[];
+    let fieldNames: string[];
     if (this.labelFieldName) {
       fieldNames = this.labelFieldName.split('.');
     } else {
-      fieldNames = [ this.idFieldName ];
+      fieldNames = [this.idFieldName];
     }
-    let value : any = object;
+    let value: any = object;
     for (const fieldName of fieldNames) {
       if (value == null) {
         return null;
       } else {
-        value = value[fieldName]
+        value = value[fieldName];
       }
     }
     return value;
   }
-  
+
   getObject(id: string): Promise<T> {
-     return this.getObjectDo(this.path +'/' + id);
+    return this.getObjectDo(this.path + '/' + id);
   }
 
   getObjectDo(path: string): Promise<T> {
@@ -218,24 +218,24 @@ export abstract class BaseService<T> implements Service<T> {
   getObjects(): Promise<T[]> {
     return this.getObjectsDo(this.path);
   }
-  
+
   getObjectsDo(path: string): Promise<T[]> {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
 
     const url = this.getUrl(path);
     return this.http.get(url)
       .toPromise()
       .then(response => {
-        let objects: T[] = [];
+        const objects: T[] = [];
         const json = response.json();
         if (json.error) {
           this.showError(json.error);
         } else {
           const data = json.data;
           if (data) {
-            data.forEach((json: any) => {
-              let object = this.toObject(json);
-              objects.push(object);
+            data.forEach((recordJson: any) => {
+              const record = this.toObject(recordJson);
+              objects.push(record);
             });
           }
         }
@@ -243,8 +243,8 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
- 
-  getPath() : string {
+
+  getPath(): string {
     return this.path;
   }
 
@@ -252,16 +252,16 @@ export abstract class BaseService<T> implements Service<T> {
     offset: number,
     limit: number,
     path: string,
-    filter : { [fieldName: string] : string}
+    filter: { [fieldName: string]: string }
   ): Promise<any> {
-    let params = new URLSearchParams();
-    params.set('offset', offset.toString()); 
+    const params = new URLSearchParams();
+    params.set('offset', offset.toString());
     params.set('limit', limit.toString());
     if (filter) {
-      for (const fieldName in filter) {
+      for (const fieldName of Object.keys(filter)) {
         const value = filter[fieldName];
-        params.append("filterFieldName", fieldName);
-        params.append("filterValue", value);
+        params.append('filterFieldName', fieldName);
+        params.append('filterValue', value);
       }
     }
     if (!path) {
@@ -275,7 +275,7 @@ export abstract class BaseService<T> implements Service<T> {
       }
     ).toPromise()
       .then(response => {
-        let rows: T[] = [];
+        const rows: T[] = [];
         let total = 0;
         const json = response.json();
         if (json.error) {
@@ -284,9 +284,9 @@ export abstract class BaseService<T> implements Service<T> {
         } else {
           const data = json.data;
           if (data) {
-            data.forEach((json: any) => {
-              let object = this.toObject(json);
-              rows.push(object);
+            data.forEach((recordJson: any) => {
+              const record = this.toObject(recordJson);
+              rows.push(record);
             });
             total = json.total;
           }
@@ -298,19 +298,19 @@ export abstract class BaseService<T> implements Service<T> {
       })
       .catch(this.handleError.bind(this));
   }
- 
-  getTypeTitle() : string {
+
+  getTypeTitle(): string {
     return this.typeTitle;
   }
-  
+
   newObject(): T {
     return null;
   }
-  
+
   toObject(json: any): T {
-    let object = this.newObject();
-    Object.assign(object, json);
-    return object;
+    const record = this.newObject();
+    Object.assign(record, json);
+    return record;
   }
 
   updateObject(object: T): Promise<T> {

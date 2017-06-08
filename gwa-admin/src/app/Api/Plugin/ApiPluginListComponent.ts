@@ -18,14 +18,14 @@ import { PluginService } from '../../Plugin/PluginService';
 })
 export class ApiPluginListComponent extends PluginListComponent {
   api: Api;
-    
+
   pluginNames: string[];
-    
+
   pluginName: string;
 
   constructor(
-     injector: Injector,
-     service: PluginService
+    injector: Injector,
+    service: PluginService
   ) {
     super(injector, service);
     service.getPluginNames().then(pluginNames => {
@@ -40,10 +40,10 @@ export class ApiPluginListComponent extends PluginListComponent {
 
   initParams(): void {
     this.route.parent.data.subscribe((data: { api: Api }) => {
-        this.api = data.api;
-        this.path = `/apis/${this.api.id}/plugins`;
-        this.refresh();
-      }
+      this.api = data.api;
+      this.path = `/apis/${this.api.id}/plugins`;
+      this.refresh();
+    }
     );
   }
 }

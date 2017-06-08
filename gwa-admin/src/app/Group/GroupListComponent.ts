@@ -1,6 +1,7 @@
-import { 
+import {
   Component,
   Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../Component/BaseListComponent';
@@ -12,9 +13,9 @@ import { GroupService } from './GroupService';
   selector: 'group-list',
   templateUrl: 'GroupList.html'
 })
-export class GroupListComponent extends BaseListComponent<Group> {
+export class GroupListComponent extends BaseListComponent<Group> implements OnInit {
 
-  addGroupName : string;
+  addGroupName: string;
 
   constructor(
     injector: Injector,

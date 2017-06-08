@@ -2,6 +2,7 @@ import 'rxjs/add/operator/toPromise';
 import {
   Injector,
   Input,
+  OnInit,
   TemplateRef,
   ViewChild
 } from '@angular/core';
@@ -14,21 +15,21 @@ import { Params } from '@angular/router';
 import { BaseComponent } from './BaseComponent';
 import { Service } from '../Service/Service';
 
-export class BaseDetailComponent<T> extends BaseComponent<T> {
+export class BaseDetailComponent<T> extends BaseComponent<T> implements OnInit {
   @Input()
-  addPage : boolean = false;
+  addPage = false;
 
-  form : FormGroup;
+  form: FormGroup;
 
   id: string;
-  
-  idParamName : string = "id";
-  
+
+  idParamName = 'id';
+
   object: T;
 
   protected formBuilder: FormBuilder = this.injector.get(FormBuilder);
 
-  constructor(injector: Injector, service : Service<T>) {
+  constructor(injector: Injector, service: Service<T>) {
     super(injector, service);
   }
 
@@ -46,10 +47,10 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
       .subscribe(object => this.setObject(object));
   }
 
-  protected setObject(object : T) {
+  protected setObject(object: T) {
     this.object = object;
   }
-  
+
   postSave(savedObject: T): void {
   }
 
@@ -57,27 +58,27 @@ export class BaseDetailComponent<T> extends BaseComponent<T> {
     return this.service.addOrUpdateObject(this.object);
   }
 
-  protected saveValues(object : any, form : AbstractControl) {
-    for (const key in form.value) {
+  protected saveValues(object: any, form: AbstractControl) {
+    for (const key of Object.keys(form.value)) {
       const value = form.value[key];
       object[key] = value;
     }
   }
 
-  save(close : boolean = true): void {
-   this.saveDo()
-     .then((savedObject) => {
-       if (savedObject != null) {
-         this.postSave(savedObject);
-         if (close) {
-           this.routeList();
-         } else if (this.addPage){
-           this.routeDetail()
-         }
-       }
-     });
+  save(close: boolean = true): void {
+    this.saveDo()
+      .then((savedObject) => {
+        if (savedObject != null) {
+          this.postSave(savedObject);
+          if (close) {
+            this.routeList();
+          } else if (this.addPage) {
+            this.routeDetail();
+          }
+        }
+      });
   }
 
-  routeDetail() : void {
+  routeDetail(): void {
   }
 }

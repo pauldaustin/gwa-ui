@@ -7,7 +7,7 @@ import { BaseService } from '../Service/BaseService';
 
 @Injectable()
 export class StatusService extends BaseService<any> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
   }
 

@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -13,11 +14,11 @@ import { GroupUserService } from './GroupUserService';
   selector: 'user-group-list',
   templateUrl: 'GroupUserList.html'
 })
-export class GroupUserListComponent extends BaseListComponent<Group> {
+export class GroupUserListComponent extends BaseListComponent<Group> implements OnInit {
 
-  groupName : string;
+  groupName: string;
 
-  addUsername : string;
+  addUsername: string;
 
   constructor(
     injector: Injector,
@@ -26,7 +27,6 @@ export class GroupUserListComponent extends BaseListComponent<Group> {
     super(injector, service);
     this.paging = true;
   }
-  
 
   ngOnInit() {
     this.columns = [
@@ -42,7 +42,7 @@ export class GroupUserListComponent extends BaseListComponent<Group> {
         this.refresh();
       });
   }
-  
+
   addUser() {
     const group = this.service.newObject();
     group.group = this.groupName;
@@ -51,5 +51,4 @@ export class GroupUserListComponent extends BaseListComponent<Group> {
         this.refresh();
       });
   }
-
 }

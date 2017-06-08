@@ -1,7 +1,8 @@
 import {
-  Component, 
+  Component,
   Injector,
-  Input
+  Input,
+  OnInit
 } from '@angular/core';
 import { BaseDetailComponent } from '../Component/BaseDetailComponent';
 import { Api } from '../Api/Api';
@@ -12,18 +13,18 @@ import { Plugin } from '../Plugin/Plugin';
   selector: 'endpoint-view',
   templateUrl: 'EndpointView.html'
 })
-export class EndpointViewComponent extends BaseDetailComponent<Api> {
-  
-  acl : Plugin;
-  
-  endpoint : Plugin;
+export class EndpointViewComponent extends BaseDetailComponent<Api> implements OnInit {
 
-  keyAuth : Plugin;
+  acl: Plugin;
 
-  rateLimit : Plugin;
- 
+  endpoint: Plugin;
+
+  keyAuth: Plugin;
+
+  rateLimit: Plugin;
+
   constructor(
-    protected injector:Injector,
+    protected injector: Injector,
     protected endpointService: EndpointService
   ) {
     super(injector, endpointService);
@@ -49,13 +50,13 @@ export class EndpointViewComponent extends BaseDetailComponent<Api> {
               day: null,
               month: null,
               year: null
-            }
+            };
             api.pluginAdd(rateLimit);
           }
           this.rateLimit = rateLimit;
         }
         this.setObject(api);
       }
-    );
+      );
   }
 }

@@ -8,7 +8,7 @@ import { Group } from '../../Group/Group';
 
 @Injectable()
 export class ApiGroupUserService extends BaseService<Group> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.typeTitle = 'Group';
     this.labelFieldName = 'group';
@@ -17,8 +17,8 @@ export class ApiGroupUserService extends BaseService<Group> {
   deleteObject(group: Group, path?: string): Promise<boolean> {
     return this.deleteObjectDo(path + '/' + group.username);
   }
-  
-  newObject() : Group {
+
+  newObject(): Group {
     return new Group();
   }
 }

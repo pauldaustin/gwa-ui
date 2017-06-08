@@ -49,13 +49,13 @@ const routes: Routes = [
   { path: '', redirectTo: 'ui/endpoints', pathMatch: 'full' },
   { path: 'ui', redirectTo: 'ui/endpoints', pathMatch: 'full' },
 
-  { path: 'ui/apis',  component: ApiListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/apis', component: ApiListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+  { path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
   {
     path: 'ui/apis/:apiName',
     component: ApiDetailComponent,
     canActivate: [RoleGuard],
-    data: {roles: ['gwa_admin']},
+    data: { roles: ['gwa_admin'] },
     resolve: { api: ApiResolver },
     children: [
       { path: '', component: ApiViewComponent, pathMatch: 'full' },
@@ -63,18 +63,24 @@ const routes: Routes = [
       { path: 'groups', component: ApiGroupListComponent, pathMatch: 'full' },
     ]
   },
-  { path: 'ui/apis/:apiName/groups/:groupName',  component: ApiGroupUserListComponent },
-  { path: 'ui/apis/:apiName/plugins/_add_', component: ApiPluginAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-
-  
-  { path: 'ui/users',  component: UserListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/users/_add_',  component: UserAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/apis/:apiName/groups/:groupName', component: ApiGroupUserListComponent },
   {
-    path: 'ui/users/:username', 
-    component: UserDetailComponent, 
-    canActivate: [RoleGuard], 
-    data: {roles: ['gwa_admin']},
+    path: 'ui/apis/:apiName/plugins/_add_',
+    component: ApiPluginAddComponent,
+    pathMatch: 'full',
+    canActivate: [RoleGuard],
+    data: { roles: ['gwa_admin'] }
+  },
+  { path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+
+
+  { path: 'ui/users', component: UserListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+  { path: 'ui/users/_add_', component: UserAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+  {
+    path: 'ui/users/:username',
+    component: UserDetailComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['gwa_admin'] },
     resolve: { user: UserResolver },
     children: [
       { path: '', component: UserViewComponent, pathMatch: 'full' },
@@ -83,33 +89,33 @@ const routes: Routes = [
     ]
   },
 
-  { path: 'ui/endpoints',  component: EndpointListComponent },
+  { path: 'ui/endpoints', component: EndpointListComponent },
   {
-    path: 'ui/endpoints/:apiName', 
-    component: EndpointDetailComponent, 
+    path: 'ui/endpoints/:apiName',
+    component: EndpointDetailComponent,
     resolve: { api: EndpointResolver },
     children: [
       { path: '', component: EndpointViewComponent, pathMatch: 'full' },
       { path: 'groups', component: EndpointGroupListComponent, pathMatch: 'full' },
     ]
   },
-  { path: 'ui/endpoints/:apiName/groups/:groupName',  component: EndpointGroupUserListComponent },
+  { path: 'ui/endpoints/:apiName/groups/:groupName', component: EndpointGroupUserListComponent },
 
-  { path: 'ui/groups',  component: GroupListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/groups/:groupName',  component: GroupUserListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/groups', component: GroupListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+  { path: 'ui/groups/:groupName', component: GroupUserListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
 
-  { path: 'ui/nodes',  component: NodeListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/nodes', component: NodeListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
 
-  { path: 'ui/plugins',  component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
-  { path: 'ui/plugins/:pluginName',  component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/plugins', component: PluginNameListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
+  { path: 'ui/plugins/:pluginName', component: PluginListComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
 
-  { path: 'ui/status',  component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']} },
+  { path: 'ui/status', component: StatusDetailComponent, canActivate: [RoleGuard], data: { roles: ['gwa_admin'] } },
   { path: '**', component: PageNotFoundComponent }
-]; 
+];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes) ],
-  exports: [ RouterModule ]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {
 }

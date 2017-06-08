@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { RouterModule }   from '@angular/router';
-import { MdIconModule }   from '@angular/material';
+import { RouterModule } from '@angular/router';
+import { MdIconModule } from '@angular/material';
 
 import { BcGovTemplate } from './BcGovTemplate';
 import { BcGovTemplateConfig } from './BcGovTemplateConfig';
@@ -20,7 +20,7 @@ export class BcGovTemplateModule {
     return {
       ngModule: BcGovTemplateModule,
       providers: [
-        {provide: BcGovTemplateConfig, useValue: config }
+        { provide: BcGovTemplateConfig, useValue: config }
       ]
     };
   }

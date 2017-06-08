@@ -1,18 +1,19 @@
 import {
-  Component, 
-  Injector
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 import { BaseDetailComponent } from '../Component/BaseDetailComponent';
-import { User }         from './User';
-import { UserService }  from './UserService';
+import { User } from './User';
+import { UserService } from './UserService';
 
 @Component({
   selector: 'user-view',
   templateUrl: 'UserView.html'
 })
-export class UserViewComponent extends BaseDetailComponent<User> {
+export class UserViewComponent extends BaseDetailComponent<User> implements OnInit {
   constructor(
-    protected injector:Injector,
+    protected injector: Injector,
     protected service: UserService
   ) {
     super(injector, service);
@@ -26,7 +27,7 @@ export class UserViewComponent extends BaseDetailComponent<User> {
         .subscribe((data: { user: User }) => {
           this.setObject(data.user);
         }
-      );
+        );
     }
   }
 

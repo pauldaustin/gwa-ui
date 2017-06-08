@@ -3,7 +3,7 @@ import {
   Inject
 } from '@angular/core';
 import {
-  MdDialog, 
+  MdDialog,
   MdDialogRef,
   MD_DIALOG_DATA
 } from '@angular/material';
@@ -23,13 +23,13 @@ import {
   `,
 })
 export class DeleteDialog {
-  typeTitle : string = this.data['typeTitle'];
-  
-  objectLabel : string = this.data['objectLabel'];
-  
+  typeTitle: string = this.data['typeTitle'];
+
+  objectLabel: string = this.data['objectLabel'];
+
   constructor(
-    public dialogRef : MdDialogRef<DeleteDialog>,
+    public dialogRef: MdDialogRef<DeleteDialog>,
     @Inject(MD_DIALOG_DATA) public data: any,
-   ) {
+  ) {
   }
 }

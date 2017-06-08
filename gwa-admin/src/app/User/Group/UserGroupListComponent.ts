@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
@@ -13,7 +14,7 @@ import { UserGroupService } from './UserGroupService';
   selector: 'user-group-list',
   templateUrl: 'UserGroupList.html'
 })
-export class UserGroupListComponent extends BaseListComponent<Group> {
+export class UserGroupListComponent extends BaseListComponent<Group> implements OnInit {
   user: User;
 
   addGroupName: string;
@@ -25,9 +26,9 @@ export class UserGroupListComponent extends BaseListComponent<Group> {
     super(injector, service);
     this.paging = true;
     this.filterFields = [
-      { prop: "group", name: "Group"},
+      { prop: 'group', name: 'Group' },
     ];
-    this.filterFieldName = "group";
+    this.filterFieldName = 'group';
   }
 
   ngOnInit(): void {
@@ -36,7 +37,7 @@ export class UserGroupListComponent extends BaseListComponent<Group> {
         this.user = data.user;
         this.path = '/users/' + data.user.username + '/groups';
       }
-    );
+      );
     this.columns = [
       { prop: 'group', name: 'Group', sortable: false },
       { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
@@ -44,7 +45,7 @@ export class UserGroupListComponent extends BaseListComponent<Group> {
     ];
     super.ngOnInit();
   }
-  
+
   addGroup() {
     if (this.addGroupName) {
       const group = this.service.newObject();

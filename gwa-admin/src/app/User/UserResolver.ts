@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { 
-  Router, 
-  Resolve, 
+import {
+  Router,
+  Resolve,
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
@@ -13,9 +13,9 @@ export class UserResolver implements Resolve<User> {
   constructor(
     private service: UserService,
     private router: Router
-  ) {}
+  ) { }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<User> {
-    let username = route.params[this.service.pathParamName];
+    const username = route.params[this.service.pathParamName];
     return this.service.getObject(username).then(user => {
       if (user) {
         return user;

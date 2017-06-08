@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../Component/BaseListComponent';
@@ -12,7 +13,7 @@ import { NodeService } from './NodeService';
   selector: 'node-list',
   templateUrl: 'NodeList.html'
 })
-export class NodeListComponent extends BaseListComponent<Node> {
+export class NodeListComponent extends BaseListComponent<Node> implements OnInit {
 
   constructor(
     injector: Injector,

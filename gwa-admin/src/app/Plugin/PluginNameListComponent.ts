@@ -1,6 +1,7 @@
-import { 
-  Component, 
+import {
+  Component,
   Injector,
+  OnInit,
   TemplateRef,
   ViewChild
 } from '@angular/core';
@@ -14,7 +15,7 @@ import { PluginService } from './PluginService';
   selector: 'plugin-name-list',
   templateUrl: 'PluginNameList.html'
 })
-export class PluginNameListComponent extends BaseListComponent<Plugin> {
+export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {
 
   constructor(
     injector: Injector,
@@ -24,9 +25,9 @@ export class PluginNameListComponent extends BaseListComponent<Plugin> {
     this.paging = true;
   }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.columns = [
-      { prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate,  sortable: false },
+      { prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: false },
     ];
     super.ngOnInit();
   }

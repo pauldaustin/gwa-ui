@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
@@ -24,10 +25,12 @@ import { Group } from '../../Group/Group';
 >
 </ngx-datatable>
 
-<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','endpoints', api.name, 'groups', value]">{{value}}</a></ng-template>
+<ng-template #idT let-row="row" let-value="value">
+  <a [routerLink]="['/ui','endpoints', api.name, 'groups', value]">{{value}}</a>
+</ng-template>
 `
 })
-export class EndpointGroupListComponent extends BaseListComponent<Group> {
+export class EndpointGroupListComponent extends BaseListComponent<Group> implements OnInit {
   api: Api;
 
   constructor(
@@ -50,7 +53,7 @@ export class EndpointGroupListComponent extends BaseListComponent<Group> {
           }
         }
       }
-    );
+      );
     this.columns = [
       { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: false },
     ];

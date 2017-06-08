@@ -3,7 +3,7 @@ import {
   Inject
 } from '@angular/core';
 import {
-  MdDialog, 
+  MdDialog,
   MdDialogRef,
   MD_DIALOG_DATA
 } from '@angular/material';
@@ -19,13 +19,13 @@ import {
   `,
 })
 export class MessageDialog {
-  title : string = this.data['title'];
-  
-  message : string = this.data['message'];
-  
+  title: string = this.data['title'];
+
+  message: string = this.data['message'];
+
   constructor(
-    public dialogRef : MdDialogRef<MessageDialog>,
+    public dialogRef: MdDialogRef<MessageDialog>,
     @Inject(MD_DIALOG_DATA) public data: any,
-   ) {
+  ) {
   }
 }

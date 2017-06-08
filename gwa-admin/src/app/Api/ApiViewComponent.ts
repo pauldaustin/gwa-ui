@@ -1,7 +1,8 @@
 import {
   Component,
   Injector,
-  Input
+  Input,
+  OnInit
 } from '@angular/core';
 
 import { BaseDetailComponent } from '../Component/BaseDetailComponent';
@@ -14,7 +15,7 @@ import { ApiService } from './ApiService';
   selector: 'api-view',
   templateUrl: 'ApiView.html'
 })
-export class ApiViewComponent extends BaseDetailComponent<Api> {
+export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit {
   endpoint: Plugin = new Plugin(
     'bcgov-gwa-endpoint',
     {
@@ -63,19 +64,19 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
 
   protected setObject(api: Api) {
     if (api) {
-      let endpoint = api.plugin('bcgov-gwa-endpoint');
+      const endpoint = api.plugin('bcgov-gwa-endpoint');
       if (endpoint == null) {
         api.pluginAdd(this.endpoint);
       } else {
         this.endpoint = endpoint;
       }
-      let keyAuth = api.plugin('key-auth');
+      const keyAuth = api.plugin('key-auth');
       if (keyAuth == null) {
         api.pluginAdd(this.keyAuth);
       } else {
         this.keyAuth = keyAuth;
       }
-      let acl = api.plugin('acl');
+      const acl = api.plugin('acl');
       if (acl == null) {
         api.pluginAdd(this.acl);
       } else {
@@ -112,9 +113,9 @@ export class ApiViewComponent extends BaseDetailComponent<Api> {
     if (this.acl && this.acl.config.whitelist) {
       for (let groupName of this.acl.config.whitelist) {
         groupName = groupName.trim().toLowerCase();
-        if (groupName.length == 0) {
-        } else if (groupName.indexOf('idir') == 0) {
-        } else if (groupName.indexOf('github') == 0) {
+        if (groupName.length === 0) {
+        } else if (groupName.indexOf('idir') === 0) {
+        } else if (groupName.indexOf('github') === 0) {
         } else {
           groupNames.push(groupName);
         }

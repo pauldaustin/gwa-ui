@@ -9,7 +9,7 @@ import { Group } from '../../Group/Group';
 
 @Injectable()
 export class UserGroupService extends BaseService<Group> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.typeTitle = 'Group';
     this.labelFieldName = 'group';
@@ -20,8 +20,8 @@ export class UserGroupService extends BaseService<Group> {
       `${path}/${group.id}`
     );
   }
-  
-  newObject() : Group {
+
+  newObject(): Group {
     return new Group();
   }
 }

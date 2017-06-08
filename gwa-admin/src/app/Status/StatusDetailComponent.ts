@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 import { Params } from '@angular/router';
 import { BaseDetailComponent } from '../Component/BaseDetailComponent';
@@ -34,11 +35,11 @@ import { StatusService } from './StatusService';
 </div>
   `
 })
-export class StatusDetailComponent extends BaseDetailComponent<any> {
+export class StatusDetailComponent extends BaseDetailComponent<any> implements OnInit {
 
   columns = [
-    { name : 'Name', sortable : false },
-    { name : 'Value', sortable : false }
+    { name: 'Name', sortable: false },
+    { name: 'Value', sortable: false }
   ];
 
   constructor(
@@ -55,11 +56,11 @@ export class StatusDetailComponent extends BaseDetailComponent<any> {
       })
       .subscribe(object => this.object = object);
   }
-  
+
   get serverRows(): any[] {
-    let rows = new Array<any>();
+    const rows = new Array<any>();
     if (this.object) {
-      for (let name in this.object.server) {
+      for (const name of Object.keys(this.object.server)) {
         rows.push({
           name: name,
           value: this.object.server[name]
@@ -68,11 +69,11 @@ export class StatusDetailComponent extends BaseDetailComponent<any> {
     }
     return rows;
   }
-  
+
   get databaseRows(): any[] {
-    let rows = new Array<any>();
+    const rows = new Array<any>();
     if (this.object) {
-      for (let name in this.object.database) {
+      for (const name of Object.keys(this.object.database)) {
         rows.push({
           name: name,
           value: this.object.database[name]

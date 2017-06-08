@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 import { Params } from '@angular/router';
 
@@ -13,12 +14,12 @@ import { EndpointGroupUserService } from './EndpointGroupUserService';
   selector: 'endpoint-group-user-list',
   templateUrl: 'EndpointGroupUserList.html'
 })
-export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
-  apiName : string;
+export class EndpointGroupUserListComponent extends BaseListComponent<Group> implements OnInit {
+  apiName: string;
 
-  groupName : string;
+  groupName: string;
 
-  addUsername : string;
+  addUsername: string;
 
   constructor(
     injector: Injector,
@@ -27,11 +28,11 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
     super(injector, service);
     this.paging = true;
   }
-  
+
 
   ngOnInit() {
     this.columns = [
-      { prop: 'username', name: 'User',  sortable: false },
+      { prop: 'username', name: 'User', sortable: false },
       { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
       { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];
@@ -46,7 +47,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
         this.refresh();
       });
   }
-  
+
   addUser() {
     const group = this.service.newObject();
     group.group = this.groupName;
@@ -57,9 +58,9 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> {
   }
 
   get groupEditable() {
-    if (this.groupName.indexOf('idir') == 0) {
+    if (this.groupName.indexOf('idir') === 0) {
       return false;
-    } else if (this.groupName.indexOf('github') == 0) {
+    } else if (this.groupName.indexOf('github') === 0) {
       return false;
     } else {
       return true;

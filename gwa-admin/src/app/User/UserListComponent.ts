@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../Component/BaseListComponent';
@@ -12,7 +13,7 @@ import { UserService } from './UserService';
   selector: 'user-list',
   templateUrl: 'UserList.html'
 })
-export class UserListComponent extends BaseListComponent<User> {
+export class UserListComponent extends BaseListComponent<User> implements OnInit {
 
   constructor(
     injector: Injector,
@@ -21,10 +22,10 @@ export class UserListComponent extends BaseListComponent<User> {
     super(injector, service);
     this.paging = true;
     this.filterFields = [
-      { prop: "username", name: "Username"},
-      { prop: "custom_id", name: "Custom ID"},
+      { prop: 'username', name: 'Username' },
+      { prop: 'custom_id', name: 'Custom ID' },
     ];
-    this.filterFieldName = "username";
+    this.filterFieldName = 'username';
   }
 
   ngOnInit(): void {
@@ -36,5 +37,5 @@ export class UserListComponent extends BaseListComponent<User> {
       { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];
     super.ngOnInit();
-  } 
+  }
 }

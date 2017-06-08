@@ -1,5 +1,5 @@
-import { 
-  Component, 
+import {
+  Component,
   Injector,
   TemplateRef,
   ViewChild
@@ -26,10 +26,10 @@ export class UserPluginListComponent extends PluginListComponent {
 
   initParams(): void {
     this.route.parent.data.subscribe((data: { user: User }) => {
-        const user = data.user;
-        this.path = `/users/${user.id}/plugins`;
-        this.refresh()
-      }
+      const user = data.user;
+      this.path = `/users/${user.id}/plugins`;
+      this.refresh();
+    }
     );
   }
 }

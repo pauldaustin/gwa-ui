@@ -8,7 +8,7 @@ import { Api } from '../Api/Api';
 
 @Injectable()
 export class EndpointService extends BaseService<Api> {
-  constructor(injector:Injector) {
+  constructor(injector: Injector) {
     super(injector);
     this.path = '/endpoints';
     this.pathParamName = 'apiName';
@@ -16,11 +16,11 @@ export class EndpointService extends BaseService<Api> {
     this.labelFieldName = 'name';
   }
 
-  deleteObject(api : Api, path?: string): Promise<boolean> {
+  deleteObject(api: Api, path?: string): Promise<boolean> {
     return Promise.resolve(false);
   }
 
-  updateObject(api : Api): Promise<Api> {
+  updateObject(api: Api): Promise<Api> {
     return this.updateObjectDo(
       `/endpoints/${api.id}`,
       api

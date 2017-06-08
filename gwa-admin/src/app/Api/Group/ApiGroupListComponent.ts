@@ -1,6 +1,7 @@
-import { 
-  Component, 
-  Injector
+import {
+  Component,
+  Injector,
+  OnInit
 } from '@angular/core';
 
 import { BaseListComponent } from '../../Component/BaseListComponent';
@@ -27,7 +28,7 @@ import { Group } from '../../Group/Group';
 <ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', api.name, 'groups', value]">{{value}}</a></ng-template>
 `
 })
-export class ApiGroupListComponent extends BaseListComponent<Group> {
+export class ApiGroupListComponent extends BaseListComponent<Group> implements OnInit {
   api: Api;
 
   constructor(
@@ -50,7 +51,7 @@ export class ApiGroupListComponent extends BaseListComponent<Group> {
           }
         }
       }
-    );
+      );
     this.columns = [
       { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: false },
     ];
