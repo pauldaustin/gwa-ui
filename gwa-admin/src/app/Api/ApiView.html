@@ -28,9 +28,9 @@
           <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
         </button>
       </div>
-      <ng-template ngFor let-i="index" let-owner [ngForOf]="endpoint.config.api_owners"
+      <ng-template ngFor let-i="index" let-owner [ngForOf]="endpoint.config['api_owners']"
         [ngForTrackBy]="trackByIndex"> <md-input-container fxFlex>
-      <input mdInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config.api_owners[i]"
+      <input mdInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config['api_owners'][i]"
         required="true" pattern="[a-z][a-z0-9_]*" />
       <button mdSuffix (click)="deleteApiOwner(i)" md-icon-button style="color: red">
         <md-icon fontSet="fa" fontIcon="fa-trash" alt="Delete" aria-label="Delete"></md-icon>
@@ -42,14 +42,14 @@
       fxLayoutAlign="none" fxLayoutGap="10px" fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
       <md-slide-toggle name="keyAuth_enabled" [(ngModel)]="keyAuth.enabled" color="primary"
         style="display: inline-block">Allow Developer Keys</md-slide-toggle>
-      <md-slide-toggle name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config.hide_credentials"
+      <md-slide-toggle name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config['hide_credentials']"
         color="primary" style="display: inline-block" [disabled]="!keyAuth.enabled">Hide
       Credentials</md-slide-toggle>
       <md-input-container fxFlex> <input mdInput placeholder="Key Name"
-        name="keyAuth_key_names" [(ngModel)]="keyAuth.config.key_names" required="true"
+        name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required="true"
         [disabled]="!keyAuth.enabled" /> </md-input-container>
       <md-select fxFlex placeholder="Developer Key Group" name="developer_key_group"
-        [(ngModel)]="endpoint.config.developer_key_group"
+        [(ngModel)]="endpoint.config['developer_key_group']"
         [disabled]="!keyAuth.enabled || !acl.enabled || developerKeyGroupNames.length == 0">
       <md-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</md-option>
       </md-select>
@@ -66,9 +66,9 @@
           <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
         </button>
       </div>
-      <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config.whitelist"
+      <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config['whitelist']"
         [ngForTrackBy]="trackByIndex"> <md-input-container fxFlex>
-      <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config.whitelist[i]" required="true"
+      <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true"
         [disabled]="!acl.enabled" pattern="[a-z][a-z0-9_]*" />
       <button mdSuffix (click)="deleteGroupName(i)" md-icon-button style="color: red"
         [disabled]="!acl.enabled">

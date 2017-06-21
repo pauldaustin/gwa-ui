@@ -11,6 +11,7 @@ import {
   AbstractControl,
   FormArray,
   FormControl,
+  FormGroup,
   Validators
 } from '@angular/forms';
 
@@ -24,6 +25,9 @@ import { ApiService } from '../ApiService';
 import { Plugin } from '../../Plugin/Plugin';
 import { PluginService } from '../../Plugin/PluginService';
 
+import { PluginFormGroup } from './PluginFormGroup';
+import { PluginFormField } from './PluginFormField';
+
 @Component({
   selector: 'app-app-api-plugin-detail',
   templateUrl: 'ApiPluginDetail.html'
@@ -33,17 +37,9 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
 
   api: Api;
 
-  groups = [
-    {
-      formGroupName: 'core',
-      fields: [
-        { name: 'enabled', title: 'Enabled', fieldType: 'checkbox' },
-      ],
-    }, {
-      formGroupName: 'config',
-      fields: new Array<any>(),
-    }
-  ];
+  groups: PluginFormGroup[] = new Array<PluginFormGroup>(
+    new PluginFormGroup('enabled', null)
+  );
 
   name: string;
 
@@ -55,66 +51,25 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
   }
 
   setPluginName(name: string) {
-    this.service.getPluginSchema(name).then((schema: any) => {
-      const formGroupConfig = this.formBuilder.group({});
-      const config = this.object.config;
-      const schemaFields: any = schema.fields;
-      const fields: any[] = [];
-      this.groups[1].fields = fields;
-      for (const fieldName of schemaFields) {
-        const schemaField = schemaFields[fieldName];
-        let defaultValue = schemaField['default'];
-        if (defaultValue == null) {
-          if (schemaField.type === 'array') {
-            defaultValue = [];
-          } else {
-            defaultValue = '';
-          }
-        }
-        const field = {
-          name: fieldName,
-          title: fieldName,
-          placeholder: fieldName,
-          required: schemaField.required,
-          fieldType: schemaField.type,
-          defaultValue: defaultValue,
-        };
-        if (!(fieldName in config) || !config[fieldName]) {
-          config[fieldName] = defaultValue;
-        }
-        let formControl: AbstractControl;
-        if (schemaField.type === 'array') {
-          const formArray = this.formBuilder.array([]);
-          for (const value of config[fieldName]) {
-            formArray.push(new FormControl(value, Validators.required));
-          }
-          formControl = formArray;
-        } else if (schemaField.required) {
-          formControl = new FormControl(defaultValue, Validators.required);
-        } else {
-          formControl = new FormControl(defaultValue);
-        }
-        if (schemaField.readOnly) {
-          formControl.disable();
-        }
-        formGroupConfig.addControl(fieldName, formControl);
-        if (schemaField.type === 'boolean') {
-          field.fieldType = 'checkbox';
-        }
-        if (schemaField.enum) {
-          field.fieldType = 'select';
-          field['values'] = schemaField.enum;
-        }
-        fields.push(field);
-      }
-
-      const form = this.formBuilder.group({
-        core: this.formBuilder.group({
-          enabled: true
-        }),
-        config: formGroupConfig
+    this.service.getPluginSchema(name).then((pluginSchema: any) => {
+      const formGroupCore = this.formBuilder.group({
+        enabled: true
       });
 
+      this.groups[0].addField({
+        name: 'enabled',
+        title: 'Enabled',
+        fieldType: 'checkbox'
+      }, formGroupCore.controls['enabled']);
+      const form = this.formBuilder.group({
+        core: formGroupCore
+      });
+
+      const config = this.object.config;
+      const fieldsByName: { [name: string]: PluginFormField } = {};
+      this.addFields(fieldsByName, '', form, 'config', pluginSchema, config);
+
+      this.addLayout(pluginSchema, fieldsByName);
       form.patchValue({
         core: {
           enabled: this.object.enabled
@@ -124,6 +79,110 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
       this.form = form;
     });
 
+  }
+
+  private addLayout(
+    pluginSchema: any,
+    fieldsByName: { [name: string]: PluginFormField },
+  ) {
+    const layout = pluginSchema['layout'];
+    for (const group of layout) {
+      const pluginFormGroup = new PluginFormGroup(group['name'], group['title']);
+      for (const fieldNameRow of group['fields']) {
+        const pluginRow: PluginFormField[] = [];
+        for (const fieldName of fieldNameRow) {
+          const pluginFormField = fieldsByName[fieldName];
+          if (pluginFormField) {
+            pluginRow.push(pluginFormField);
+          }
+        }
+        if (pluginRow.length > 0) {
+          pluginFormGroup.addRow(pluginRow);
+        }
+      }
+      if (pluginFormGroup.rows.length > 0) {
+        this.groups.push(pluginFormGroup);
+      }
+    }
+  }
+
+  private addFields(
+    fieldsByName: { [name: string]: PluginFormField },
+    prefix: string,
+    parentForm: FormGroup,
+    groupName: string,
+    schema: any,
+    config: any,
+    title: string = null
+  ): FormGroup {
+    const formGroup = this.formBuilder.group({});
+    parentForm.addControl(groupName, formGroup);
+
+    const schemaFields = schema.fields;
+    for (const fieldName of Object.keys(schemaFields)) {
+      const schemaField = schemaFields[fieldName];
+      this.addField(fieldsByName, prefix, formGroup, fieldName, schemaField, config);
+    }
+    return formGroup;
+  }
+
+  private addField(
+    fieldsByName: { [name: string]: PluginFormField },
+    prefix: string,
+    formGroup: FormGroup,
+    fieldName: string,
+    pluginField: any,
+    config: any
+  ) {
+    let value = config[fieldName];
+    const fieldType = pluginField.fieldType;
+    if (!value) {
+      value = pluginField['default'];
+    }
+    if (fieldType === 'array') {
+      if (value == null || Object.keys(value).length === 0) {
+        value = [];
+      }
+    } else if (fieldType === 'table') {
+      if (value == null || Object.keys(value).length === 0) {
+        value = {};
+      }
+    } else {
+      if (value == null) {
+        value = '';
+      }
+    }
+    config[fieldName] = value;
+    let formControl: AbstractControl;
+    if (fieldType === 'array') {
+      const formArray = this.formBuilder.array([]);
+      for (const arrayValue of value) {
+        formArray.push(new FormControl(arrayValue, Validators.required));
+      }
+      formControl = formArray;
+    } else if (fieldType === 'table') {
+      formControl = this.addFields(
+        fieldsByName,
+        prefix + fieldName + '.',
+        formGroup,
+        fieldName,
+        pluginField,
+        config[fieldName]
+      );
+    } else if (pluginField.required) {
+      formControl = new FormControl(value, Validators.required);
+    } else {
+      formControl = new FormControl(value);
+    }
+    if (pluginField.readOnly) {
+      formControl.disable();
+    }
+
+    if (fieldType !== 'table') {
+      const pluginFormField = new PluginFormField(pluginField, formControl);
+      formGroup.addControl(fieldName, formControl);
+      fieldsByName[prefix + fieldName] = pluginFormField;
+    }
   }
 
   ngOnInit(): void {
@@ -150,22 +209,9 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
       });
   }
 
-  postSave(savedObject: Plugin): void {
-    this.router.navigate(['/ui/apis', savedObject.api.name, { tabIndex: 1 }]);
-  }
-
   protected saveDo(): Promise<Plugin> {
     this.saveValues(this.object, this.form.controls['core']);
     this.saveValues(this.object.config, this.form.controls['config']);
     return super.saveDo();
-  }
-
-
-  addFieldValue(formArray: FormArray) {
-    formArray.push(new FormControl(null, Validators.required));
-  }
-
-  deleteFieldValue(formArray: FormArray, index: number) {
-    formArray.removeAt(index);
   }
 }

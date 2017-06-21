@@ -9,9 +9,9 @@
       <md-input-container fxFlex *ngIf="object.created_at"> <input mdInput
         placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
       </md-input-container>
-      <md-input-container fxFlex *ngIf="endpoint.config.api_owners.length > 0" fxLayout="column"
+      <md-input-container fxFlex *ngIf="endpoint.config['api_owners'].length > 0" fxLayout="column"
         fxLayoutGap="2px"> <input
-        *ngFor="let owner of endpoint.config.api_owners" mdInput placeholder="Owners"
+        *ngFor="let owner of endpoint.config['api_owners']" mdInput placeholder="Owners"
         value="{{owner}}" disabled /> </md-input-container>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="10px"
@@ -39,9 +39,9 @@
       <div>
         <label class="margin-top-1em">Group Names:</label>
       </div>
-      <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config.whitelist"
+      <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config['whitelist']"
         [ngForTrackBy]="trackByIndex"> <md-input-container fxFlex>
-      <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config.whitelist[i]" required="true"
+      <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true"
         disabled="true" pattern="[a-z][a-z0-9_]*" /> </md-input-container> </ng-template> </ng-template>
     </div>
     <md-divider class="mat-divider"></md-divider>
@@ -50,22 +50,22 @@
       fxLayoutGap.sm="2px" fxLayoutGap.xs="2px">
       <label>Rate Limits:</label>
       <md-input-container fxFlex> <input mdInput placeholder="Second"
-        name="rateLimit_second" type="number" min="0" [(ngModel)]="rateLimit.config.second" />
+        name="rateLimit_second" type="number" min="0" [(ngModel)]="rateLimit.config['second']" />
       </md-input-container>
       <md-input-container fxFlex> <input mdInput placeholder="Minute"
         name="rateLimit_minute" type="number" min="0" required="true"
-        [(ngModel)]="rateLimit.config.minute" /> </md-input-container>
+        [(ngModel)]="rateLimit.config['minute']" /> </md-input-container>
       <md-input-container fxFlex> <input mdInput placeholder="Hour"
-        name="rateLimit_hour" type="number" min="0" [(ngModel)]="rateLimit.config.hour" />
+        name="rateLimit_hour" type="number" min="0" [(ngModel)]="rateLimit.config['hour']" />
       </md-input-container>
       <md-input-container fxFlex> <input mdInput placeholder="Day"
-        name="rateLimit_day" type="number" min="0" [(ngModel)]="rateLimit.config.day" />
+        name="rateLimit_day" type="number" min="0" [(ngModel)]="rateLimit.config['day']" />
       </md-input-container>
       <md-input-container fxFlex> <input mdInput placeholder="Month"
-        name="rateLimit_month" type="number" min="0" [(ngModel)]="rateLimit.config.month" />
+        name="rateLimit_month" type="number" min="0" [(ngModel)]="rateLimit.config['month']" />
       </md-input-container>
       <md-input-container fxFlex> <input mdInput placeholder="Year"
-        name="rateLimit_year" type="number" min="0" [(ngModel)]="rateLimit.config.year" />
+        name="rateLimit_year" type="number" min="0" [(ngModel)]="rateLimit.config['year']" />
       </md-input-container>
     </div>
     </md-card-content> <md-card-actions>

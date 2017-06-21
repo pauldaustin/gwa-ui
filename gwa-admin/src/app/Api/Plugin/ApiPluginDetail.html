@@ -1,52 +1,56 @@
-<md-tab-group *ngIf="form"> <md-tab> <ng-template md-tab-label>
-<a [routerLink]="['/ui', 'api', api.name]">Api: {{api.name}}</a> Plugin: {{object.name}}</ng-template>
-<form [formGroup]="form" class="form-horizontal" role="form">
-  <md-card> <md-card-content>
-  <div *ngFor="let group of groups">
-    <h2 *ngIf="group.title">{{group.title}}</h2>
-    <fieldset [formGroupName]="group.formGroupName">
-      <div *ngFor="let field of group.fields">
-        <div [ngSwitch]="field.fieldType">
-          <md-slide-toggle *ngSwitchCase="'checkbox'" [formControlName]="field.name" color="primary">{{field.name}}</md-slide-toggle>
-          <md-select *ngSwitchCase="'select'" [placeholder]="field.name"
-            [formControlName]="field.name"> <md-option
-            *ngFor="let value of field.values" [value]="value">{{value}}</md-option> </md-select>
-          <div *ngSwitchCase="'array'" [formArrayName]="field.name" fxLayout="row"
-            fxLayout.xs="column" fxLayout.sm="column" fxFlex fxLayoutGap="10px" fxLayoutGap.sm="2px"
-            fxLayoutGap.xs="2px">
-            <div>
-              <label class="margin-top-1em">{{field.name}}:</label>
-              <button (click)="addFieldValue(form.get(group.formGroupName).get(field.name))"
-                md-icon-button style="color: green">
-                <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
-              </button>
+<md-tab-group *ngIf="form">
+  <md-tab>
+    <ng-template md-tab-label><a [routerLink]="['/ui', 'apis', api.name]">Api: {{api.name}}</a> Plugin: {{object.name}}</ng-template>
+    <md-card>
+      <md-card-content>
+        <form [formGroup]="form" class="form-horizontal" role="form">
+          <ng-container *ngFor="let group of groups; first as first">
+            <md-divider *ngIf="!first" class="mat-divider"></md-divider>
+            <h3 *ngIf="group.title">{{group.title}}</h3>
+            <div *ngFor="let row of group.rows" class="flexRowToColumn">
+              <ng-container *ngFor="let formField of row">
+                <div class="flexChild" [ngSwitch]="formField.fieldType" [formGroup]="formField.formGroup">
+                  <md-slide-toggle *ngSwitchCase="'checkbox'" [formControlName]="formField.name" color="primary">{{formField.title}}</md-slide-toggle>
+                  <md-select *ngSwitchCase="'select'" class="full-width" [placeholder]="formField.title"
+                    [formControlName]="formField.name"> <md-option
+                    *ngFor="let value of formField.values" [value]="value">{{value}}</md-option> </md-select>
+                  <div *ngSwitchCase="'array'" [formArrayName]="formField.name" class="flexRowToColumn">
+                    <div class="flexChild" style="flex-grow:0;margin-top:17px">
+                      <label >{{formField.title}}:</label>
+                      <button (click)="formField.formArrayAdd()"
+                        md-icon-button style="color: green; margin: -8px 0px -8px 0px">
+                        <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
+                      </button>
+                    </div>
+                    <md-input-container class="flexChild"
+                      *ngFor="let control of formField.formArray.controls; index as i"
+                      fxFlex> <input mdInput [name]="formField.name + i"
+                      [formControlName]="i" required="true" />
+                    <button mdSuffix
+                      (click)="formField.formArrayRemove(i)"
+                      md-icon-button style="color: red">
+                      <md-icon fontSet="fa" fontIcon="fa-trash" alt="Delete" aria-label="Delete"></md-icon>
+                    </button>
+                    </md-input-container>
+                  </div>
+                  <md-input-container *ngSwitchDefault class="full-width">
+                    <input
+                      mdInput
+                      [placeholder]="formField.title" [name]="formField.name" [type]="formField.fieldType"
+                      [required]="formField.required" [formControlName]="formField.name"
+                    />
+                  </md-input-container>
+                </div>
+              </ng-container>
             </div>
-            <md-input-container
-              *ngFor="let control of form.get(group.formGroupName).get(field.name).controls; index as i"
-              fxFlex> <input mdInput [name]="field.name + i"
-              [formControlName]="i" required="true" />
-            <button mdSuffix
-              (click)="deleteFieldValue(form.get(group.formGroupName).get(field.name), i)"
-              md-icon-button style="color: red">
-              <md-icon fontSet="fa" fontIcon="fa-trash" alt="Delete" aria-label="Delete"></md-icon>
-            </button>
-            </md-input-container>
-          </div>
-          <div *ngSwitchCase="'table'">
-            <label>{{field.name}}</label> <span style="color: red">Table fields not supported</span>
-          </div>
-          <md-input-container *ngSwitchDefault class="full-width"> <input
-            mdInput [placeholder]="field.name" [name]="field.name" [type]="field.fieldType"
-            [required]="field.required" [formControlName]="field.name" /> </md-input-container>
-        </div>
-      </div>
-    </fieldset>
-  </div>
-  </md-card-content> <md-card-actions>
-  <button (click)="routeList()" md-button>Close</button>
-  <button (click)="save(false)" md-raised-button color="accent" [disabled]="!form.valid">Save</button>
-  <button (click)="save(true)" md-raised-button color="primary" [disabled]="!form.valid">Save
-    &amp; Close</button>
-  </md-card-actions> </md-card>
-</form>
-</md-tab> </md-tab-group>
+          </ng-container>
+        </form>
+      </md-card-content>
+      <md-card-actions>
+        <button (click)="routeList()" md-button>Close</button>
+        <button (click)="save(false)" md-raised-button color="accent" [disabled]="!form.valid">Save</button>
+        <button (click)="save(true)" md-raised-button color="primary" [disabled]="!form.valid">Save &amp; Close</button>
+      </md-card-actions>
+    </md-card>
+  </md-tab>
+</md-tab-group>

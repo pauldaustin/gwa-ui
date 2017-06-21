@@ -3,7 +3,10 @@ package ca.bc.gov.gwa.servlet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +42,7 @@ import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.http.JsonHttpConsumer;
 import ca.bc.gov.gwa.http.JsonHttpFunction;
+import ca.bc.gov.gwa.util.CaseConverter;
 import ca.bc.gov.gwa.util.Json;
 import ca.bc.gov.gwa.util.LruMap;
 
@@ -122,6 +126,8 @@ public class ApiService implements ServletContextListener {
     }
     return null;
   }
+
+  private final Map<String, Map<String, Object>> pluginSchemaByName = new HashMap<>();
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
@@ -1292,8 +1298,115 @@ public class ApiService implements ServletContextListener {
     });
   }
 
+  @SuppressWarnings("unchecked")
+  private void pluginSchemaAddFields(final String prefix, final List<String> allFieldNames,
+    final Map<String, Object> pluginSchema, final Map<String, Object> kongPluginSchema,
+    final Map<String, Object> customSchema) {
+    final Map<String, Map<String, Object>> pluginFieldMap = new TreeMap<>();
+    pluginSchema.put("fields", pluginFieldMap);
+    final Map<String, Map<String, Object>> kongFieldMap = (Map<String, Map<String, Object>>)kongPluginSchema
+      .getOrDefault("fields", Collections.emptyMap());
+    final Map<String, Map<String, Object>> customFieldMap = (Map<String, Map<String, Object>>)customSchema
+      .getOrDefault("fields", Collections.emptyMap());
+    for (final String fieldName : kongFieldMap.keySet()) {
+      final Map<String, Object> pluginField = new LinkedHashMap<>();
+      pluginFieldMap.put(fieldName, pluginField);
+      final Map<String, Object> kongField = kongFieldMap.get(fieldName);
+      final Map<String, Object> customField = customFieldMap.getOrDefault(fieldName,
+        Collections.emptyMap());
+      pluginField.put("name", fieldName);
+
+      String fieldType = (String)kongField.get("type");
+      if ("boolean".equals(fieldType)) {
+        fieldType = "checkbox";
+      } else if (kongField.containsKey("enum") || customField.containsKey("values")) {
+        fieldType = "select";
+      }
+      pluginField.put("fieldType", fieldType);
+
+      String title = (String)customField.get("title");
+      if (title == null) {
+        title = CaseConverter.toCapitalizedWords(fieldName);
+      }
+      pluginField.put("title", title);
+      setProperty(pluginField, "required", kongField, "required");
+      setProperty(pluginField, "readOnly", kongField, "immutable");
+      setProperty(pluginField, "values", kongField, "enum", customField.get("values"));
+      Object defaultValue = kongField.get("default");
+      if ("array".equals(fieldType)) {
+        if (defaultValue == null || defaultValue instanceof Map) {
+          defaultValue = Collections.emptyList();
+        }
+      } else if ("table".equals(fieldType)) {
+        if (defaultValue == null) {
+          defaultValue = Collections.emptyMap();
+        }
+        final Map<String, Object> kongPluginChildSchema = (Map<String, Object>)kongField
+          .getOrDefault("schema", Collections.emptyMap());
+        pluginSchemaAddFields(prefix + fieldName + ".", allFieldNames, pluginField,
+          kongPluginChildSchema, customField);
+      }
+      pluginField.put("defaultValue", defaultValue);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public void pluginSchemaGet(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String pluginName) throws IOException {
+    final String schemaPath = "/plugins/schema/" + pluginName;
+    Map<String, Object> customSchema;
+    if (this.pluginSchemaByName.containsKey(pluginName)) {
+      customSchema = this.pluginSchemaByName.get(pluginName);
+    } else {
+      try (
+        InputStream in = getClass()
+          .getResourceAsStream("/ca/bc/gov/gwa/kong/plugins/" + pluginName + ".json")) {
+        if (in == null) {
+          customSchema = Collections.emptyMap();
+        } else {
+          customSchema = Json.read(new InputStreamReader(in, StandardCharsets.UTF_8));
+        }
+      }
+      this.pluginSchemaByName.put(pluginName, customSchema);
+    }
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> kongPluginSchema = httpClient.get(schemaPath);
+      final Map<String, Object> pluginSchema = new LinkedHashMap<>();
+      final List<String> allFieldNames = new ArrayList<>();
+
+      pluginSchemaAddFields("", allFieldNames, pluginSchema, kongPluginSchema, customSchema);
+      new PluginFieldLayout(pluginName, pluginSchema,
+        (List<Map<String, Object>>)customSchema.get("layout"));
+
+      Json.writeJson(httpResponse, pluginSchema);
+    });
+  }
+
   public void setCaching(final boolean caching) {
     this.caching = caching;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <V> V setProperty(final Map<String, Object> target, final String targetName,
+    final Map<String, Object> source, final String sourceName) {
+    final Object value = source.get(sourceName);
+    if (value != null) {
+      target.put(targetName, value);
+    }
+    return (V)value;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <V> V setProperty(final Map<String, Object> target, final String targetName,
+    final Map<String, Object> source, final String sourceName, final Object defaultValue) {
+    Object value = source.get(sourceName);
+    if (value == null) {
+      value = defaultValue;
+    }
+    if (value != null) {
+      target.put(targetName, value);
+    }
+    return (V)value;
   }
 
   public void writeInserted(final HttpServletResponse httpResponse, final String id)

@@ -13,14 +13,16 @@ import { Api } from '../Api/Api';
   <a md-tab-link
      [routerLink]="['.']"
      routerLinkActive
-     #rla="routerLinkActive"
-     [active]="rla.isActive"
+     #rla1="routerLinkActive"
+     [active]="rla1.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
   >Endpoint: {{api.name}}</a>
   <a md-tab-link
      [routerLink]="['groups']"
      routerLinkActive
-     #rla="routerLinkActive"
-     [active]="rla.isActive"
+     #rla2="routerLinkActive"
+     [active]="rla2.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
   >Groups</a>
 </nav>
 <router-outlet></router-outlet>

@@ -50,6 +50,8 @@ import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
 import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 
+import { Config } from './Config';
+
 import { UserListComponent } from './User/UserListComponent';
 import { UserAddComponent } from './User/UserAddComponent';
 import { UserDetailComponent } from './User/UserDetailComponent';
@@ -90,6 +92,8 @@ import { StatusDetailComponent } from './Status/StatusDetailComponent';
 import { StatusService } from './Status/StatusService';
 
 import { AppRoutingModule } from './app-routing.module';
+
+Config.basePath = '/int';
 
 @NgModule({
   imports: [
@@ -189,20 +193,20 @@ import { AppRoutingModule } from './app-routing.module';
     AuthService,
     RoleGuard,
 
-    ApiService,
-    ApiResolver,
     ApiGroupUserService,
-    UserService,
-    UserResolver,
-    UserGroupService,
-    EndpointService,
-    EndpointResolver,
+    ApiResolver,
+    ApiService,
     EndpointGroupUserService,
+    EndpointResolver,
+    EndpointService,
     GroupService,
     GroupUserService,
     NodeService,
     PluginService,
-    StatusService
+    StatusService,
+    UserGroupService,
+    UserResolver,
+    UserService,
   ],
   bootstrap: [BcGovTemplateComponent]
 })

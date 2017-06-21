@@ -10,9 +10,6 @@
 .mat-toolbar-row > * {
   margin-right: 1em;
 }
-.mat-tab-body {
-  padding: 1em;
-}
 /* To Fix bugs*/
 .margin-top-1em {
   margin-top: 1em;

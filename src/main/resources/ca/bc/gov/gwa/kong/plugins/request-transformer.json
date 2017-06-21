@@ -1,0 +1,60 @@
+{
+  "fields":{
+    "http_method": {
+      "title":"HTTP Method"
+    }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["http_method"]
+      ]
+    },
+    {
+      "title": "Add",
+      "name": "add",
+      "fields": [
+        ["add.headers"],
+        ["add.querystring"],
+        ["add.body"]
+      ]
+    },
+    {
+      "title": "Append",
+      "name": "append",
+      "fields": [
+        ["append.headers"],
+        ["append.querystring"],
+        ["append.body"]
+      ]
+    },
+    {
+      "title": "Replace",
+      "name": "replace",
+      "fields": [
+        ["replace.headers"],
+        ["replace.querystring"],
+        ["replace.body"]
+      ]
+    },
+    {
+      "title": "Rename",
+      "name": "rename",
+      "fields": [
+        ["rename.headers"],
+        ["rename.querystring"],
+        ["rename.body"]
+      ]
+    },
+    {
+      "title": "Remove",
+      "name": "remove",
+      "fields": [
+        ["remove.headers"],
+        ["remove.querystring"],
+        ["remove.body"]
+      ]
+    }
+  ]
+}

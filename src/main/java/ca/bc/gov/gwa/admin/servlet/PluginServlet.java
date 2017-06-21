@@ -33,8 +33,7 @@ public class PluginServlet extends BaseAdminServlet {
         final String pluginName = paths.get(0);
         final String type = paths.get(1);
         if ("schema".equals(type)) {
-          final String schemaPath = "/plugins/schema/" + pluginName;
-          this.apiService.handleGet(request, response, schemaPath);
+          this.apiService.pluginSchemaGet(request, response, pluginName);
         }
       }
       break;
