@@ -1,0 +1,19 @@
+{
+  "fields":{
+      "blacklist":{
+         "title":"Blacklist Group Names"
+      },
+      "whitelist":{
+         "title":"Whitelist Group Names"
+      }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["whitelist"],
+        ["blacklist"]
+      ]
+    }
+  ]
+}

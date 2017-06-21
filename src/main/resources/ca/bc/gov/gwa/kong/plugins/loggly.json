@@ -1,0 +1,13 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["host", "port", "timeout"],
+        ["key"],
+        ["successful_severity", "client_errors_severity", "server_errors_severity", "log_level"],
+        ["tags"]
+      ]
+    }
+  ]
+}

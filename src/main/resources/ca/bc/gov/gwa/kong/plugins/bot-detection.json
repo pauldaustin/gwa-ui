@@ -1,0 +1,19 @@
+{
+  "fields":{
+      "blacklist":{
+         "title":"Blacklist User Agent RegEx"
+      },
+      "whitelist":{
+         "title":"Whitelist User Agent RegEx"
+      }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["whitelist"],
+        ["blacklist"]
+      ]
+    }
+  ]
+}

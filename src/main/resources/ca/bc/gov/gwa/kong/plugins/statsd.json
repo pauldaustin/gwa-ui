@@ -1,0 +1,11 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["host", "port", "timeout"],
+        ["metrics"]
+      ]
+    }
+  ]
+}

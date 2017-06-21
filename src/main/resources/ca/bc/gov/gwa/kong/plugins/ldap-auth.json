@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "anonymous": {
+      "title": "Anonymous Consumer UUID"
+    }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["ldap_host", "ldap_port", "start_tls", "verify_ldap_host"],
+        ["base_dn"],
+        ["keepalive", "timeout", "cache_ttl"],
+        ["anonymous"],
+        ["hide_credentials"]
+      ]
+    }
+  ]
+}

@@ -137,7 +137,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
     let value = config[fieldName];
     const fieldType = pluginField.fieldType;
     if (!value) {
-      value = pluginField['default'];
+      value = pluginField['defaultValue'];
     }
     if (fieldType === 'array') {
       if (value == null || Object.keys(value).length === 0) {

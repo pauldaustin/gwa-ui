@@ -1,0 +1,25 @@
+{
+  "layout": [
+    {
+      "name": "limits",
+      "title": "Rate Limits",
+      "fields": [
+        ["second", "minute", "hour", "day", "month", "year"]
+      ]
+    },
+    {
+      "name": "core",
+      "fields": [
+        ["limit_by", "policy", "fault_tolerant", "hide_client_headers"]
+      ]
+    },
+    {
+      "name": "redis",
+      "title": "Redis Server",
+      "fields": [
+        ["redis_host", "redis_port", "redis_timeout"],
+        ["redis_database", "redis_password"]
+      ]
+    }
+  ]
+}

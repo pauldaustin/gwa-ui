@@ -9,12 +9,14 @@
             <h3 *ngIf="group.title">{{group.title}}</h3>
             <div *ngFor="let row of group.rows" class="flexRowToColumn">
               <ng-container *ngFor="let formField of row">
-                <div class="flexChild" [ngSwitch]="formField.fieldType" [formGroup]="formField.formGroup">
-                  <md-slide-toggle *ngSwitchCase="'checkbox'" [formControlName]="formField.name" color="primary">{{formField.title}}</md-slide-toggle>
-                  <md-select *ngSwitchCase="'select'" class="full-width" [placeholder]="formField.title"
-                    [formControlName]="formField.name"> <md-option
-                    *ngFor="let value of formField.values" [value]="value">{{value}}</md-option> </md-select>
-                  <div *ngSwitchCase="'array'" [formArrayName]="formField.name" class="flexRowToColumn">
+                <ng-container [ngSwitch]="formField.fieldType" [formGroup]="formField.formGroup">
+                  <md-slide-toggle class="flexChild" *ngSwitchCase="'checkbox'" [formControlName]="formField.name" color="primary">{{formField.title}}</md-slide-toggle>
+                  <div class="flexChild full-width" *ngSwitchCase="'select'">
+                    <md-select class="full-width" [placeholder]="formField.title" [formControlName]="formField.name">
+                      <md-option *ngFor="let value of formField.values" [value]="value">{{value}}</md-option>
+                    </md-select>
+                  </div>
+                  <div *ngSwitchCase="'array'" [formArrayName]="formField.name" class="flexChild flexRowToColumn">
                     <div class="flexChild" style="flex-grow:0;margin-top:17px">
                       <label >{{formField.title}}:</label>
                       <button (click)="formField.formArrayAdd()"
@@ -33,14 +35,16 @@
                     </button>
                     </md-input-container>
                   </div>
-                  <md-input-container *ngSwitchDefault class="full-width">
-                    <input
-                      mdInput
-                      [placeholder]="formField.title" [name]="formField.name" [type]="formField.fieldType"
-                      [required]="formField.required" [formControlName]="formField.name"
-                    />
-                  </md-input-container>
-                </div>
+                  <div class="flexChild full-width" *ngSwitchDefault>
+                    <md-input-container class="full-width">
+                      <input
+                        mdInput
+                        [placeholder]="formField.title" [name]="formField.name" [type]="formField.fieldType"
+                        [required]="formField.required" [formControlName]="formField.name"
+                      />
+                    </md-input-container>
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
           </ng-container>

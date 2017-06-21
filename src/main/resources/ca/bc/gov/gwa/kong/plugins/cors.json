@@ -26,8 +26,8 @@
     {
       "name": "core",
       "fields": [
-        ["origins"],
         ["methods", "max_age", "credentials", "preflight_continue"],
+        ["origins"],
         ["headers"],
         ["exposed_headers"]
       ]

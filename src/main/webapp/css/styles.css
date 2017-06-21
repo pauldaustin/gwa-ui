@@ -27,21 +27,31 @@
 .mat-slide-toggle {
   display:inline-block;
 }
+.mat-option,
+.mat-select-placeholder {
+  font-size: 14px;
+}
 .mat-select {
-  margin-top: 5px;
+  margin-top: 20px;
 }
 .mat-select-value-text {
   font-size: 14px;
 }
-.mat-select .mat-select-placeholder.mat-floating-placeholder {
-  top: -14px;
-  font-weight: 700;
+.mat-select-placeholder,
+.mat-floating-placeholder {
+  margin-top: 4px;
+}
+.mat-input-underline span.mat-input-ripple {
+  height: 1px;
 }
 .mat-select-value-text {
   font-size: 14px;
 }
 .mat-input-table .mat-icon-button {
   margin: -10px 0px -10px 0px;
+}
+.mat-slide-toggle {
+  margin-top: 1em;
 }
 /* End To Fix bugs*/
 

@@ -1,0 +1,17 @@
+{
+  "fields": {
+    "anonymous": {
+      "title": "Anonymous Consumer UUID"
+    }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["uri_param_names"],
+        ["claims_to_verify", "key_claim_name", "secret_is_base64"],
+        ["anonymous"]
+      ]
+    }
+  ]
+}
