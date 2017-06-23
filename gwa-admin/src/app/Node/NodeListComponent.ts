@@ -20,14 +20,13 @@ export class NodeListComponent extends BaseListComponent<Node> implements OnInit
     protected nodeService: NodeService
   ) {
     super(injector, nodeService);
-    this.paging = true;
   }
 
   ngOnInit(): void {
     this.columns = [
-      { name: 'Name', sortable: false },
-      { name: 'Address', maxWidth: '150', sortable: false },
-      { name: 'Status', maxWidth: '70', sortable: false },
+      { name: 'Name', sortable: true },
+      { name: 'Address', maxWidth: '150', sortable: true },
+      { name: 'Status', maxWidth: '70', sortable: true },
       { name: 'Actions', cellTemplate: this.actionsTemplate, maxWidth: '60', sortable: false }
     ];
     super.ngOnInit();

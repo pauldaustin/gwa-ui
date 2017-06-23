@@ -6,6 +6,14 @@
         <input mdInput placeholder="Add Username" [(ngModel)]="addUsername" pattern="[a-z][a-z0-9_]*" />
       </md-input-container>
       <button type="button" (click)="addUser()" md-raised-button color="primary" [disabled]="!addUsername">Add User</button>
+      <span style="flex: 1 1 auto"></span>
+      <md-progress-spinner
+        *ngIf="refreshingCount"
+        mode="indeterminate"
+      ></md-progress-spinner>
+      <button (click)="refresh()" md-icon-button title="Refresh" >
+        <md-icon fontSet="glyphicon" fontIcon="glyphicon-refresh"></md-icon>
+      </button>
     </md-toolbar>
     <ngx-datatable
       class="material striped"
@@ -27,6 +35,6 @@
 
 <ng-template #actionsT let-row="row">
   <button (click)="deleteObject(row)" md-icon-button style="color: red" [disabled]="!groupEditable">
-    <md-icon fontSet="fa" fontIcon="fa-trash" alt="Delete" aria-label="Delete"></md-icon>
+    <md-icon fontSet="glyphicon" fontIcon="glyphicon-trash"></md-icon>
   </button>
 </ng-template>

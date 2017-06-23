@@ -71,7 +71,9 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     if (this.paging) {
       this.page(this.offset, this.limit);
     } else {
-      this.service.getObjects().then(objects => this.rows = objects);
+      this.service.getObjects(this.path).then(objects => {
+        this.rows = objects;
+      });
     }
   }
 

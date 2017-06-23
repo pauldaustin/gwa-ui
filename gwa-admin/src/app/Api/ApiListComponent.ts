@@ -24,7 +24,6 @@ export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
     protected apiService: ApiService
   ) {
     super(injector, apiService);
-    this.paging = true;
     this.filterFields = [
       { prop: 'name', name: 'Name' },
       { prop: 'hosts', name: 'Host' },
@@ -35,10 +34,10 @@ export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
 
   ngOnInit(): void {
     this.columns = [
-      { name: 'Name', cellTemplate: this.idTemplate, sortable: false },
-      { prop: 'hosts', name: 'Hosts', cellTemplate: this.arrayTemplate, sortable: false },
-      { prop: 'uris', name: 'Paths', cellTemplate: this.arrayTemplate, sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
+      { name: 'Name', cellTemplate: this.idTemplate, sortable: true },
+      { prop: 'hosts', name: 'Hosts', cellTemplate: this.arrayTemplate, sortable: true },
+      { prop: 'uris', name: 'Paths', cellTemplate: this.arrayTemplate, sortable: true },
+      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: true },
       { name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
     ];
     super.ngOnInit();

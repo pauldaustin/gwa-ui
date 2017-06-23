@@ -34,7 +34,6 @@ export class PluginListComponent extends BaseListComponent<Plugin> implements On
     service: PluginService
   ) {
     super(injector, service);
-    this.paging = true;
   }
 
   initParams(): void {
@@ -48,16 +47,16 @@ export class PluginListComponent extends BaseListComponent<Plugin> implements On
   ngOnInit(): void {
     this.columns = [];
     if (this.showApi) {
-      this.columns.push({ prop: 'api_name', name: 'API', cellTemplate: this.apiTemplate, sortable: false });
+      this.columns.push({ prop: 'api_name', name: 'API', cellTemplate: this.apiTemplate, sortable: true });
     }
     if (this.showPlugin) {
-      this.columns.push({ prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: false });
+      this.columns.push({ prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: true });
     }
     if (this.showUser) {
-      this.columns.push({ prop: 'user_username', name: 'User', cellTemplate: this.userTemplate, sortable: false });
+      this.columns.push({ prop: 'user_username', name: 'User', cellTemplate: this.userTemplate, sortable: true });
     }
-    this.columns.push({ prop: 'enabled', name: 'Enabled', cellTemplate: this.flagTemplate, sortable: false });
-    this.columns.push({ prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false });
+    this.columns.push({ prop: 'enabled', name: 'Enabled', cellTemplate: this.flagTemplate, sortable: true });
+    this.columns.push({ prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: true });
     this.columns.push({ prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false });
     this.initParams();
   }

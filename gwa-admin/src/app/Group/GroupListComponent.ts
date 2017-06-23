@@ -22,12 +22,11 @@ export class GroupListComponent extends BaseListComponent<Group> implements OnIn
     protected groupService: GroupService
   ) {
     super(injector, groupService);
-    this.paging = true;
   }
 
   ngOnInit(): void {
     this.columns = [
-      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: false },
+      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true },
     ];
     super.ngOnInit();
   }

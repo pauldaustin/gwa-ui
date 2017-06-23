@@ -55,7 +55,7 @@ export class EndpointGroupListComponent extends BaseListComponent<Group> impleme
       }
       );
     this.columns = [
-      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: false },
+      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true },
     ];
   }
 }

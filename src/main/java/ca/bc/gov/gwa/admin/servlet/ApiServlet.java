@@ -75,7 +75,7 @@ public class ApiServlet extends BaseAdminServlet {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
       case 0: { // API List
-        this.apiService.handleList(request, response, "/apis");
+        this.apiService.handleListAll(request, response, "/apis");
       }
       break;
 

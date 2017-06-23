@@ -1,34 +1,38 @@
-<div class="app-bcgov-template">
+<div class="bcgov-template">
   <header class="bcgov-header header">
-    <nav id="adminMainMenu" class="navbar navbar-default navbar-fixed-top">
-      <div class="navbar-header">
-        <div class="container">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-            data-target="#headerMenu" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span> <span class="icon-bar" aria-hidden="true"></span>
-            <span class="icon-bar" aria-hidden="true"></span> <span class="icon-bar"
-              aria-hidden="true"></span>
-          </button>
-          <div class="navbar-brand">
-            <a href="http://www2.gov.bc.ca/"> <img src="/images/gov3_bc_logo.png"
-              class="hidden-xs" /> <img src="/images/gov3_bc_logo_mobile.png"
-              class="visible-xs-inline-block" />
-            </a> <a routerLink="/"><h1 class="navbar-brand-title">{{title}}</h1></a>
-          </div>
+    <nav>
+      <div class="titlebar">
+        <div class="logo">
+          <a href="http://www2.gov.bc.ca/">
+            <img src="/images/gov3_bc_logo.png" class="logo-large" />
+            <img src="/images/gov3_bc_logo_mobile.png" class="logo-small" />
+          </a> 
         </div>
+
+        <div class="header-title">
+          <a routerLink="/"><h1 >{{title}}</h1></a>
+        </div>
+
+        <button type="button" class="menu-button collapsed" (click)="headerMenuVisible = !headerMenuVisible">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="glyphicon glyphicon-menu-hamburger"></span>
+        </button>
       </div>
-      <div id="headerMenu" class="navbar-collapse collapse" aria-expanded="false">
-        <div class="container">
-          <ul class="nav navbar-nav navbar-left">
-            <li *ngFor="let menuItem of headerMenuItems"><a
-              routerLink="{{menuItem.routerLink}}" title="{{menuItem.title}}"
-              *ngIf="isMenuVisible(menuItem)" routerLinkActive="active-link">{{menuItem.title}}</a>
+      <div class="menu collapse" [ngClass]="{'collapse': !headerMenuVisible}">
+        <div class="menu-sections">
+          <ul>
+            <li *ngFor="let menuItem of headerMenuItems">
+              <a
+                routerLink="{{menuItem.routerLink}}" 
+                title="{{menuItem.title}}" 
+                *ngIf="isMenuVisible(menuItem)" 
+                routerLinkActive="active-link"
+              >{{menuItem.title}}</a>
             </li>
           </ul>
-          <div *ngIf="username" class="navbar-text navbar-right">
-            <span class="navbar-link">{{username}}</span> <a href="logout" class="navbar-link"><md-icon
-                fontSet="fa" fontIcon="fa-sign-out" alt="Logout" aria-label="Logout"></md-icon></a>
-          </div>
+          <ul *ngIf="username" class="menu-right">
+            <li class="navbar-link">{{username}} <a href="logout" class="navbar-link"><md-icon fontSet="fa" fontIcon="fa-sign-out"></md-icon></a></li>
+          </ul>
         </div>
       </div>
     </nav>

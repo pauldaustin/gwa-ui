@@ -3,6 +3,11 @@
   src: url('../fonts/MyriadWebPro.ttf');
 }
 
+body {
+  height: 100%;
+  margin: 0px;
+}
+
 .full-width {
   width: 100%;
 }

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   FormsModule,
   ReactiveFormsModule
@@ -14,6 +14,7 @@ import {
   MdIconModule,
   MdIconRegistry,
   MdInputModule,
+  MdProgressSpinnerModule,
   MdSelectModule,
   MdSlideToggleModule,
   MdTabsModule,
@@ -98,7 +99,7 @@ Config.basePath = '/int';
 @NgModule({
   imports: [
     BrowserModule,
-    NoopAnimationsModule,
+    BrowserAnimationsModule,
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
@@ -109,6 +110,7 @@ Config.basePath = '/int';
     MdDialogModule,
     MdIconModule,
     MdInputModule,
+    MdProgressSpinnerModule,
     MdSelectModule,
     MdSlideToggleModule,
     MdTabsModule,

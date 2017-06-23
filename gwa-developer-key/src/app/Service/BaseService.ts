@@ -23,6 +23,8 @@ import {
 
 import { DOCUMENT } from '@angular/platform-browser';
 
+import { Config } from '../Config';
+
 import { Service } from './Service';
 
 import { MessageDialogComponent } from '../Component/MessageDialogComponent';
@@ -122,7 +124,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected getUrl(path: string): string {
-    return this.location.prepareExternalUrl('/rest' + path);
+    return Config.basePath + '/rest' + path;
   }
 
   deleteObject(object: T, path?: string): Promise<boolean> {
@@ -215,8 +217,11 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
 
-  getObjects(): Promise<T[]> {
-    return this.getObjectsDo(this.path);
+  getObjects(path?: string): Promise<T[]> {
+    if (!path) {
+      path = this.path;
+    }
+    return this.getObjectsDo(path);
   }
 
   getObjectsDo(path: string): Promise<T[]> {

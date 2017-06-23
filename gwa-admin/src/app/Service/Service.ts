@@ -15,7 +15,7 @@ export interface Service<T> {
 
   getLabel(object: T): string;
 
-  getObjects(): Promise<T[]>;
+  getObjects(path: string, filter: { [fieldName: string]: string }): Promise<T[]>;
 
   getObject(id: string): Promise<T>;
 

@@ -29,7 +29,7 @@ public class NodeServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (isPathEmpty(pathInfo)) {
-      this.apiService.handleList(request, response, "/cluster");
+      this.apiService.handleListAll(request, response, "/cluster");
     } else {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }

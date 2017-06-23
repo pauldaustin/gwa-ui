@@ -217,16 +217,23 @@ export abstract class BaseService<T> implements Service<T> {
       .catch(this.handleError.bind(this));
   }
 
-  getObjects(): Promise<T[]> {
-    return this.getObjectsDo(this.path);
+  getObjects(path: string, filter: { [fieldName: string]: string }): Promise<T[]> {
+    if (!path) {
+      path = this.path;
+    }
+    return this.getObjectsDo(path, filter);
   }
 
-  getObjectsDo(path: string): Promise<T[]> {
+  getObjectsDo(path: string, filter: { [fieldName: string]: string }): Promise<T[]> {
     const params = new URLSearchParams();
-
+    this.addFilterParams(params, filter);
     const url = this.getUrl(path);
-    return this.http.get(url)
-      .toPromise()
+    return this.http.get(
+      url,
+      {
+        search: params
+      }
+    ).toPromise()
       .then(response => {
         const objects: T[] = [];
         const json = response.json();
@@ -250,6 +257,15 @@ export abstract class BaseService<T> implements Service<T> {
     return this.path;
   }
 
+  private addFilterParams(params: URLSearchParams, filter: { [fieldName: string]: string }) {
+    if (filter) {
+      for (const fieldName of Object.keys(filter)) {
+        const value = filter[fieldName];
+        params.append('filterFieldName', fieldName);
+        params.append('filterValue', value);
+      }
+    }
+  }
   getRowsPage(
     offset: number,
     limit: number,
@@ -259,13 +275,7 @@ export abstract class BaseService<T> implements Service<T> {
     const params = new URLSearchParams();
     params.set('offset', offset.toString());
     params.set('limit', limit.toString());
-    if (filter) {
-      for (const fieldName of Object.keys(filter)) {
-        const value = filter[fieldName];
-        params.append('filterFieldName', fieldName);
-        params.append('filterValue', value);
-      }
-    }
+    this.addFilterParams(params, filter);
     if (!path) {
       path = this.path;
     }

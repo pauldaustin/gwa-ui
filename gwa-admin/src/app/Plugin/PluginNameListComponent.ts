@@ -22,12 +22,11 @@ export class PluginNameListComponent extends BaseListComponent<Plugin> implement
     service: PluginService
   ) {
     super(injector, service);
-    this.paging = true;
   }
 
   ngOnInit(): void {
     this.columns = [
-      { prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: false },
+      { prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: true },
     ];
     super.ngOnInit();
   }

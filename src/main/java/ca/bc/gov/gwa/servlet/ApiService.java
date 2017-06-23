@@ -758,7 +758,7 @@ public class ApiService implements ServletContextListener {
       final String path = "/plugins?name=bcgov-gwa-endpoint";
       final Map<String, Object> kongResponse;
       if (principal.isUserInRole(ROLE_GWA_ADMIN)) {
-        kongResponse = kongPage(httpRequest, httpClient, path);
+        kongResponse = kongPageAll(httpRequest, httpClient, path);
       } else {
         final String username = principal.getName();
         kongResponse = kongPageAll(httpRequest, httpClient, path, (endpoint) -> {
@@ -776,17 +776,17 @@ public class ApiService implements ServletContextListener {
           }
         });
       }
-      endpointListFromApiList(httpClient, kongResponse);
-      Json.writeJson(httpResponse, kongResponse);
+      final Map<String, Object> response = endpointListFromApiList(httpClient, kongResponse);
+      Json.writeJson(httpResponse, response);
     });
   }
 
-  private void endpointListFromApiList(final JsonHttpClient httpClient,
+  private Map<String, Object> endpointListFromApiList(final JsonHttpClient httpClient,
     final Map<String, Object> kongResponse) throws IOException {
+    final List<Map<String, Object>> apiRows = new ArrayList<>();
     @SuppressWarnings("unchecked")
     final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get("data");
     if (data != null) {
-      final List<Map<String, Object>> apiRows = new ArrayList<>();
       for (final Map<String, Object> endpoint : data) {
         final String apiId = (String)endpoint.get("api_id");
         final String apiName = apiGetName(httpClient, apiId);
@@ -801,8 +801,8 @@ public class ApiService implements ServletContextListener {
           apiRows.add(apiRow);
         }
       }
-      kongResponse.put("data", apiRows);
     }
+    return newResponseRows(apiRows);
   }
 
   @SuppressWarnings("unchecked")
@@ -932,11 +932,16 @@ public class ApiService implements ServletContextListener {
     if (filterFieldNames != null && filterValues != null) {
       for (int i = 0; i < filterFieldNames.length; i++) {
         final String filterFieldName = filterFieldNames[i];
-        final String filterValue = filterValues[i];
-        url.append('&');
-        url.append(filterFieldName);
-        url.append('=');
-        url.append(filterValue);
+        String filterValue = filterValues[i];
+        if (filterValue != null) {
+          filterValue = filterValue.trim();
+          if (filterValue.length() > 0) {
+            url.append('&');
+            url.append(filterFieldName);
+            url.append('=');
+            url.append(filterValue);
+          }
+        }
 
       }
     }
@@ -1091,6 +1096,14 @@ public class ApiService implements ServletContextListener {
     });
   }
 
+  public void handleListAll(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path) throws IOException {
+    handleRequest(httpRequest, httpResponse, (httpClient) -> {
+      final Map<String, Object> response = kongPageAll(httpRequest, httpClient, path);
+      Json.writeJson(httpResponse, response);
+    });
+  }
+
   public void handleRequest(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final JsonHttpConsumer action) throws IOException {
     try (
@@ -1159,6 +1172,16 @@ public class ApiService implements ServletContextListener {
     return kongResponse;
   }
 
+  private Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
+    final JsonHttpClient httpClient, final String path)
+    throws IOException, ClientProtocolException {
+    final List<Map<String, Object>> rows = new ArrayList<>();
+
+    kongPageAll(httpRequest, httpClient, path, (Consumer<Map<String, Object>>)rows::add);
+
+    return newResponseRows(rows);
+  }
+
   protected void kongPageAll(final HttpServletRequest httpRequest, final JsonHttpClient httpClient,
     final String path, final Consumer<Map<String, Object>> action)
     throws IOException, ClientProtocolException {
@@ -1216,6 +1239,13 @@ public class ApiService implements ServletContextListener {
 
   public JsonHttpClient newKongClient() {
     return new JsonHttpClient(this.kongAdminUrl, this.kongAdminUsername, this.kongAdminPassword);
+  }
+
+  private Map<String, Object> newResponseRows(final List<Map<String, Object>> rows) {
+    final Map<String, Object> response = new LinkedHashMap<>();
+    response.put("data", rows);
+    response.put("total", rows.size());
+    return response;
   }
 
   @SuppressWarnings("unchecked")

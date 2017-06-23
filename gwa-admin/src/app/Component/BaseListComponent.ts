@@ -30,6 +30,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
+  refreshingCount = 0;
+
   rows: Array<T> = [];
 
   count = 0;
@@ -71,7 +73,12 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     if (this.paging) {
       this.page(this.offset, this.limit);
     } else {
-      this.service.getObjects().then(objects => this.rows = objects);
+      this.refreshingCount++;
+      const filter = this.newFilter();
+      this.service.getObjects(this.path, filter).then(objects => {
+        this.rows = objects;
+        this.refreshingCount--;
+      });
     }
   }
 
@@ -112,13 +119,15 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   }
 
   page(offset: number, limit: number) {
+    this.refreshingCount++;
     this.fetch(offset, limit, (results: any) => {
+      this.refreshingCount--;
       this.count = results.count;
       this.rows = results.rows;
     });
   }
 
-  fetch(offset: number, limit: number, callback: any) {
+  newFilter(): { [fieldName: string]: string } {
     const filter: { [fieldName: string]: string } = {};
     if (this.filter) {
       for (const fieldName of Object.keys(this.filter)) {
@@ -128,6 +137,11 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     if (this.filterFieldName) {
       filter[this.filterFieldName] = this.filterValue;
     }
+    return filter;
+  }
+
+  fetch(offset: number, limit: number, callback: any) {
+    const filter = this.newFilter();
     this.service.getRowsPage(
       offset,
       limit,
