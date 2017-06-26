@@ -1,5 +1,5 @@
 <div class="bcgov-template">
-  <header class="bcgov-header header">
+  <header>
     <nav>
       <div class="titlebar">
         <div class="logo">
@@ -18,7 +18,7 @@
           <span class="glyphicon glyphicon-menu-hamburger"></span>
         </button>
       </div>
-      <div class="menu collapse" [ngClass]="{'collapse': !headerMenuVisible}">
+      <div class="menu" [ngClass]="{'collapse': !headerMenuVisible}">
         <div class="menu-sections">
           <ul>
             <li *ngFor="let menuItem of headerMenuItems">
@@ -40,21 +40,13 @@
   <div class="bcgov-content container">
     <router-outlet></router-outlet>
   </div>
-  <footer class="bcgov-footer footer">
+  <footer class="bcgov-footer">
     <!--   <img src="http://blog.data.gov.bc.ca/wp-content/themes/bcgov-responsive-theme/dist/images/back-to-top.png" alt="Back to top" title="Back to top" class="back-to-top">
    -->
-    <nav id="bcgovFooterMenu" class="navbar navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-            data-target="#bcgovFooterMenuBar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span> <span class="icon-bar" aria-hidden="true"></span>
-            <span class="icon-bar" aria-hidden="true"></span> <span class="icon-bar"
-              aria-hidden="true"></span>
-          </button>
-        </div>
-        <div id="bcgovFooterMenuBar" class="navbar-collapse collapse" aria-expanded="false">
-          <ul class="nav navbar-nav navbar-left">
+    <nav>
+      <div>
+        <div class="menu" [ngClass]="{'collapse': !footerMenuVisible}">
+          <ul>
             <li><a href="http://www2.gov.bc.ca/gov/content/home" title="About gov.bc.ca">Home</a></li>
             <li><a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" title="Disclaimer">Disclaimer</a></li>
             <li><a href="http://www2.gov.bc.ca/gov/content/home/privacy" title="Privacy">Privacy</a></li>
@@ -65,6 +57,10 @@
               title="Contact Us">Contact Us</a></li>
           </ul>
         </div>
+        <button type="button" class="menu-button collapsed" (click)="footerMenuVisible = !footerMenuVisible">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="glyphicon glyphicon-menu-hamburger"></span>
+        </button>
       </div>
     </nav>
   </footer>

@@ -27,6 +27,8 @@ export class BcGovTemplateComponent {
 
   headerMenuVisible: false;
 
+  footerMenuVisible: false;
+
   constructor(
     private router: Router,
     private authService: AuthService,
