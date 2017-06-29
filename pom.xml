@@ -74,33 +74,45 @@
         </configuration>
         <executions>
           <execution>
-            <id>npm gwa-admin</id>
+            <id>npm update</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>install-node-and-npm</goal>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <workingDirectory>gwa-admin</workingDirectory>
-              <installDirectory>target/temp/gwa-admin</installDirectory>
+              <workingDirectory>angular</workingDirectory>
               <nodeVersion>v7.10.0</nodeVersion>
               <npmVersion>4.5.0</npmVersion>
-              <arguments>run build-prod</arguments>
+              <arguments>update</arguments>
             </configuration>
           </execution>
           <execution>
-            <id>npm gwa-developer-key</id>
+            <id>npm admin</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>install-node-and-npm</goal>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <workingDirectory>gwa-developer-key</workingDirectory>
-              <installDirectory>target/temp/gwa-developer-key</installDirectory>
+              <workingDirectory>admin</workingDirectory>
+              <installDirectory>target/temp/admin</installDirectory>
               <nodeVersion>v7.10.0</nodeVersion>
               <npmVersion>4.5.0</npmVersion>
-              <arguments>run build-prod</arguments>
+              <arguments>run build-prod-admin</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm devkey</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>admin</workingDirectory>
+              <installDirectory>target/temp/devkey</installDirectory>
+              <nodeVersion>v7.10.0</nodeVersion>
+              <npmVersion>4.5.0</npmVersion>
+              <arguments>run build-prod-devkey</arguments>
             </configuration>
           </execution>
         </executions>
@@ -112,7 +124,7 @@
         <version>2.4.2</version>
         <executions>
           <execution>
-            <id>gwa-admin-copy</id>
+            <id>admin-copy</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -122,7 +134,7 @@
               <outputDirectory>target/${project.artifactId}-${project.version}/int</outputDirectory>
               <resources>
                 <resource>
-                  <directory>target/gwa-admin</directory>
+                  <directory>target/admin</directory>
                   <includes>
                     <include>**</include>
                   </includes>
@@ -131,7 +143,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>gwa-developer-key-copy</id>
+            <id>devkey-copy</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -141,7 +153,7 @@
               <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>target/gwa-developer-key</directory>
+                  <directory>target/devkey</directory>
                   <includes>
                     <include>**</include>
                   </includes>
@@ -176,10 +188,10 @@
             <type>standalone</type>
             <properties>
               <cargo.servlet.port>8010</cargo.servlet.port>
-              <cargo.rmi.port>7010</cargo.rmi.port>
+              <cargo.rmi.port>8011</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
               <cargo.start.jvmargs>
-                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8100
+                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8019
               </cargo.start.jvmargs>
             </properties>
           </configuration>

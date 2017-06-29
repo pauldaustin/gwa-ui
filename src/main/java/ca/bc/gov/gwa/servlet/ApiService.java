@@ -816,16 +816,15 @@ public class ApiService implements ServletContextListener {
       return false;
     } else {
       addData(apiRequest, requestData, APIS_FIELD_NAMES);
-
-      final List<Map<String, Object>> plugins = (List<Map<String, Object>>)requestData
+      final String apiId = (String)apiRequest.get("id");
+      final Map<String, Map<String, Object>> plugins = (Map<String, Map<String, Object>>)requestData
         .get("plugins");
-      for (final Map<String, Object> plugin : plugins) {
+      for (final Map<String, Object> plugin : plugins.values()) {
         final String pluginName = (String)plugin.get("name");
-        final Map<String, Object> pluginConfig = null;
+        Map<String, Object> pluginConfig = null;
         if (pluginName.equals(BCGOV_GWA_ENDPOINT)) {
-          // pluginConfig = apiSetPluginEndpoint(plugin, apiRequest, userId);
         } else if (pluginName.equals("rate-limiting")) {
-          // pluginConfig = endPointSetPluginRateLimiting(plugin);
+          pluginConfig = endPointSetPluginRateLimiting(apiId, pluginName, plugin);
         }
         if (pluginConfig != null) {
           final Map<String, Object> pluginRequest = new LinkedHashMap<>();
@@ -841,9 +840,7 @@ public class ApiService implements ServletContextListener {
   }
 
   protected Map<String, Object> endPointSetPluginRateLimiting(final String apiId,
-    final String pluginName, final Map<String, Object> apiUpdate) {
-    final Map<String, Object> pluginUpdate = pluginGet(apiUpdate, pluginName);
-
+    final String pluginName, final Map<String, Object> pluginUpdate) {
     @SuppressWarnings("unchecked")
     final Map<String, Object> configUpdate = (Map<String, Object>)pluginUpdate.get("config");
 

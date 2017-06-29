@@ -1,0 +1,107 @@
+.flexRowToColumn {
+  display:flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.flexRowToColumn .flexChild {
+  margin-right: 10px;
+  flex-grow: 1;
+}
+.flexRowToColumn .flexChild:last-child {
+  margin-right: 0px;
+}
+.flexRowToColumn .flexField {
+  margin-bottom: 5px;
+  margin-right: 10px;
+  flex-grow: 1;
+}
+.flexRowToColumn .flexField:last-child {
+  margin-right: 0px;
+}
+.flexRowToColumn .flexField.labelWithButton {
+  flex-grow: 0;
+  margin-top: 20px;
+}
+.flexRowToColumn .flexField.mat-slide-toggle {
+  margin-top: 13px;
+  flex-grow: 0;
+  margin-bottom: 7px
+}
+.flexRowToColumn > label.flexField {
+  flex-grow: 0;
+  margin-bottom: 11px
+}
+.flexRowToColumn .mat-input-wrapper{
+  padding-bottom: 0px;
+}
+.flexRowToColumn .mat-input-underline{
+  bottom: 0px;
+}
+span.mat-select-placeholder, span.mat-floating-placeholder {
+  width: auto !important;
+}
+@media (max-width: 768px) {
+  .flexRowToColumn {
+    flex-direction:column;
+  }
+  .flexRowToColumn .flexChild {
+    margin-right: 0px;
+    margin-bottom: 2px;
+    width: 100%;
+  }
+  .flexRowToColumn .flexChild:last-child {
+    margin-bottom: 0px;
+  }
+  .flexRowToColumn .flexField {
+    margin-right: 0px;
+    margin-bottom: 2px;
+    width: 100%;
+  }
+  .flexRowToColumn .flexField:last-child {
+    margin-bottom: 0px;
+  }
+  .flexRowToColumn .flexField.labelWithButton {
+    flex-grow: 0;
+    margin-top: 5px;
+  }
+  .flexRowToColumn .flexField.mat-slide-toggle {
+    margin-top: 5px;
+    flex-grow: 0;
+  }
+}
+.mat-tab-body-wrapper {
+   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+.mat-toolbar .mat-progress-spinner {
+  height:24px;
+  width:24px;
+  line-height:24px;
+  margin-right: 5px;
+  margin-bottom: -4px;
+}
+.labelWithButton {
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+}
+
+.labelWithButton label {
+  line-height: 1em; 
+  margin-bottom:0px;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+.labelWithButton button.mat-icon-button {
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+}
+.labelWithButton button.mat-icon-button .mat-icon {
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+}
+.ngx-datatable .datatable-body-cell{
+  user-select:initial!important;
+}
