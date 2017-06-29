@@ -96,7 +96,7 @@ public class UserServlet extends BaseAdminServlet {
       break;
 
       case 1:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
 
       case 2: // Groups
@@ -120,7 +120,7 @@ public class UserServlet extends BaseAdminServlet {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
       case 0:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
 
       case 1: { // User

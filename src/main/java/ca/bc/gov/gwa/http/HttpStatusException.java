@@ -11,7 +11,7 @@ public class HttpStatusException extends IOException {
 
   private final String body;
 
-  private final HttpUriRequest httpRequest;
+  private transient final HttpUriRequest httpRequest;
 
   public HttpStatusException(final HttpUriRequest httpRequest, final int code, final String message,
     final String body) {

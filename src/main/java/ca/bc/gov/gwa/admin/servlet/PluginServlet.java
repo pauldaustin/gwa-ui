@@ -38,7 +38,7 @@ public class PluginServlet extends BaseAdminServlet {
       }
       break;
       default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        sendError(response, HttpServletResponse.SC_NOT_FOUND);
       break;
     }
 

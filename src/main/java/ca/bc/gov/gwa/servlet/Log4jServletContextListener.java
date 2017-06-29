@@ -40,9 +40,8 @@ public class Log4jServletContextListener implements ServletContextListener {
       if (log4JConfig != null) {
         DOMConfigurator.configure(log4JConfig);
       }
-    } catch (final Throwable e) {
-      e.printStackTrace();
+    } catch (final Exception e) {
+      context.log("Unable to initialize logger", e);
     }
   }
-
 }

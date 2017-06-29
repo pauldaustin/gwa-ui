@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
 import ca.bc.gov.gwa.util.JsonParser.EventType;
 
 public interface Json {
@@ -43,7 +45,7 @@ public interface Json {
   }
 
   @SuppressWarnings("unchecked")
-  static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest) throws IOException {
+  static Map<String, Object> readJsonMap(final HttpServletRequest httpRequest) {
     try (
       BufferedReader reader = httpRequest.getReader()) {
       final Object data = read(reader);
@@ -52,6 +54,9 @@ public interface Json {
       } else {
         return null;
       }
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(Json.class).debug("Unable to read", e);
+      return null;
     }
   }
 
@@ -85,13 +90,14 @@ public interface Json {
     return stringWriter.toString();
   }
 
-  static void writeJson(final HttpServletResponse httpResponse, final Map<String, Object> data)
-    throws IOException {
+  static void writeJson(final HttpServletResponse httpResponse, final Map<String, Object> data) {
     httpResponse.setContentType("application/json");
     try (
       PrintWriter writer = httpResponse.getWriter();
       JsonWriter jsonWriter = new JsonWriter(writer, false)) {
       jsonWriter.write(data);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(Json.class).debug("Unable to write: " + data, e);
     }
   }
 

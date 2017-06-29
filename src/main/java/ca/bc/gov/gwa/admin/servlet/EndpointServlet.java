@@ -29,13 +29,13 @@ public class EndpointServlet extends BaseServlet {
           final String userName = paths.get(4);
           this.apiService.apiGroupUserDelete(request, response, apiName, groupName, userName);
         } else {
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+          sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       }
       break;
 
       default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
     }
   }
@@ -64,13 +64,13 @@ public class EndpointServlet extends BaseServlet {
           final String groupName = paths.get(2);
           this.apiService.endpointGroupUserList(request, response, apiName, groupName);
         } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+          sendError(response, HttpServletResponse.SC_NOT_FOUND);
         }
       }
       break;
 
       default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        sendError(response, HttpServletResponse.SC_NOT_FOUND);
       break;
     }
   }
@@ -90,13 +90,13 @@ public class EndpointServlet extends BaseServlet {
           final String userName = paths.get(4);
           this.apiService.apiGroupUserAdd(request, response, apiName, groupName, userName);
         } else {
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+          sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
       }
       break;
 
       default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
     }
   }
@@ -116,7 +116,7 @@ public class EndpointServlet extends BaseServlet {
       break;
 
       default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       break;
     }
   }

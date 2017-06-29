@@ -1,5 +1,6 @@
 package ca.bc.gov.gwa.servlet;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-public class BasePrincipal implements Principal {
+public class BasePrincipal implements Principal, Serializable {
 
   private final String id;
 

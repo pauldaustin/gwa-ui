@@ -16,7 +16,7 @@ public class GroupServlet extends BaseServlet {
   @Override
   protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
   }
 
   @Override
@@ -29,7 +29,7 @@ public class GroupServlet extends BaseServlet {
       final String groupPath = "/groups" + pathInfo;
       this.apiService.groupUserList(request, response, groupPath);
     } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      sendError(response, HttpServletResponse.SC_NOT_FOUND);
     }
   }
 

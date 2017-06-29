@@ -3,7 +3,6 @@ package ca.bc.gov.gwa.admin.servlet.siteminder;
 import java.io.IOException;
 import java.util.Set;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.LoggerFactory;
 
+import ca.bc.gov.gwa.servlet.AbstractFilter;
 import ca.bc.gov.gwa.servlet.ApiService;
 
 @WebFilter(urlPatterns = {
@@ -26,7 +26,7 @@ import ca.bc.gov.gwa.servlet.ApiService;
 }, servletNames = {
   "AdminUiServlet"
 })
-public class SiteminderAuthenticationFilter implements Filter {
+public class SiteminderAuthenticationFilter extends AbstractFilter {
 
   private static final String SITEMINDER_PRINCIPAL = "SiteminderPrincipal";
 
@@ -62,7 +62,7 @@ public class SiteminderAuthenticationFilter implements Filter {
               }
             }
           }
-          httpResponse.sendRedirect(httpRequest.getContextPath());
+          sendRedirect(httpResponse, httpRequest.getContextPath());
         } else {
           final HttpSession session = httpRequest.getSession();
           SiteminderPrincipal principal = (SiteminderPrincipal)session
@@ -72,7 +72,7 @@ public class SiteminderAuthenticationFilter implements Filter {
           final String type = httpRequest.getHeader("smgov_usertype");
           final String userDir = httpRequest.getHeader("sm_authdirname");
           if (userGuid == null || universalid == null || userDir == null) {
-            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
           } else {
             final String userId = (userDir + "_" + userGuid).toLowerCase();
             if (principal == null || principal.isInvalid(userId, 120000)) {
@@ -83,11 +83,11 @@ public class SiteminderAuthenticationFilter implements Filter {
                 groups = this.apiService.consumerGroups(userDir, userId, username);
               } catch (final HttpHostConnectException e) {
                 LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
-                httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                sendError(httpResponse, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 return;
               } catch (final Throwable e) {
                 LoggerFactory.getLogger(getClass()).error("Error getting user's roles", e);
-                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                sendError(httpResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
               }
               principal = new SiteminderPrincipal(userId, type, username, groups);
@@ -99,7 +99,7 @@ public class SiteminderAuthenticationFilter implements Filter {
                 .newHttpServletRequestWrapper(httpRequest);
               chain.doFilter(requestWrapper, response);
             } else {
-              httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+              sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
             }
           }
         }
@@ -110,7 +110,7 @@ public class SiteminderAuthenticationFilter implements Filter {
       throw e;
     } catch (final Throwable e) {
       LoggerFactory.getLogger(getClass()).error("Unknown error", e);
-      httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      sendError(httpResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
   }
 

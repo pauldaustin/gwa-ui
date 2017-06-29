@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -22,13 +21,14 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.http.JsonHttpClient;
+import ca.bc.gov.gwa.servlet.AbstractFilter;
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebFilter(urlPatterns = {
   "/git/*", "/logout", "/rest/*", "/ui/*"
 })
-public class GitHubAuthenticationFilter implements Filter {
+public class GitHubAuthenticationFilter extends AbstractFilter {
 
   private static final String GIT_HUB_PRINCIPAL = "GitHubPrincipal";
 
@@ -61,7 +61,7 @@ public class GitHubAuthenticationFilter implements Filter {
           session.invalidate();
         }
 
-        httpResponse.sendRedirect("https://github.com/logout");
+        sendRedirect(httpResponse, "https://github.com/logout");
       } else {
         final HttpSession session = httpRequest.getSession();
 
@@ -79,7 +79,7 @@ public class GitHubAuthenticationFilter implements Filter {
                 .newHttpServletRequestWrapper(httpRequest);
               chain.doFilter(requestWrapper, response);
             } else {
-              httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+              sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
             }
           }
         }
@@ -92,7 +92,7 @@ public class GitHubAuthenticationFilter implements Filter {
   @SuppressWarnings("unchecked")
   private void handleCallback(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final HttpSession session) throws IOException {
-    final Map<String, String> stateUrlMap = (Map<String, String>)session
+    final LruMap<String, String> stateUrlMap = (LruMap<String, String>)session
       .getAttribute(GIT_HUB_STATE_URL_MAP);
     if (stateUrlMap != null) {
       final String state = httpRequest.getParameter("state");
@@ -119,11 +119,11 @@ public class GitHubAuthenticationFilter implements Filter {
             try {
               groups = this.apiService.consumerGroups("github_bcgov", userId, userName);
             } catch (final HttpHostConnectException e) {
-              httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+              sendError(httpResponse, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
               return;
             } catch (final Throwable e) {
               LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
-              httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+              sendError(httpResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
               return;
             }
             final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);
@@ -138,23 +138,23 @@ public class GitHubAuthenticationFilter implements Filter {
             }
             final GitHubPrincipal principal = new GitHubPrincipal(userId, userName, groups);
             session.setAttribute(GIT_HUB_PRINCIPAL, principal);
-            httpResponse.sendRedirect(redirectUrl);
+            sendRedirect(httpResponse, redirectUrl);
             return;
           }
         }
       }
     }
-    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+    sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
   }
 
   @SuppressWarnings("unchecked")
   public void handleRedirectToGitHub(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final HttpSession session) throws IOException {
     if (httpRequest.getServletPath().startsWith("/rest")) {
-      httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+      sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
     } else {
       final String state = UUID.randomUUID().toString();
-      Map<String, String> stateUrlMap = (Map<String, String>)session
+      LruMap<String, String> stateUrlMap = (LruMap<String, String>)session
         .getAttribute(GIT_HUB_STATE_URL_MAP);
       if (stateUrlMap == null) {
         stateUrlMap = new LruMap<>(10);
@@ -171,7 +171,7 @@ public class GitHubAuthenticationFilter implements Filter {
       stateUrlMap.put(state, redirectUrl);
       final String authorizeUrl = "https://github.com/login/oauth/authorize?client_id="
         + this.clientId + "&scope=read:org&state=" + state;
-      httpResponse.sendRedirect(authorizeUrl);
+      sendRedirect(httpResponse, authorizeUrl);
     }
   }
 

@@ -45,7 +45,7 @@ public abstract class BaseServlet extends HttpServlet {
     return paths;
   }
 
-  protected ApiService apiService;
+  protected transient ApiService apiService;
 
   public BaseServlet() {
     super();
@@ -57,10 +57,6 @@ public abstract class BaseServlet extends HttpServlet {
     this.apiService = ApiService.release();
   }
 
-  public boolean isPathEmpty(final String pathInfo) {
-    return pathInfo == null || "/".equals(pathInfo);
-  }
-
   protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
     final String roleName) throws IOException {
     final Principal userPrincipal = request.getUserPrincipal();
@@ -70,7 +66,7 @@ public abstract class BaseServlet extends HttpServlet {
         return true;
       }
     }
-    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+    sendError(response, HttpServletResponse.SC_FORBIDDEN);
     return false;
   }
 
@@ -78,6 +74,18 @@ public abstract class BaseServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     this.apiService = ApiService.get();
+  }
+
+  public boolean isPathEmpty(final String pathInfo) {
+    return pathInfo == null || "/".equals(pathInfo);
+  }
+
+  protected void sendError(final HttpServletResponse response, final int statusCode) {
+    try {
+      response.sendError(statusCode);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(getClass()).debug("Unable to send status:" + statusCode, e);
+    }
   }
 
   @Override
@@ -96,6 +104,14 @@ public abstract class BaseServlet extends HttpServlet {
       final Class<?> clazz = getClass();
       final Logger logger = LoggerFactory.getLogger(clazz);
       logger.error("Error handling request", e);
+    }
+  }
+
+  protected void sendRedirect(final HttpServletResponse response, final String url) {
+    try {
+      response.sendRedirect(url);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(getClass()).debug("Unable to send redirect: " + url, e);
     }
   }
 

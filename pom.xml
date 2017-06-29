@@ -84,6 +84,7 @@
               <workingDirectory>angular</workingDirectory>
               <nodeVersion>v7.10.0</nodeVersion>
               <npmVersion>4.5.0</npmVersion>
+              <installDirectory>target/temp</installDirectory>
               <arguments>update</arguments>
             </configuration>
           </execution>
@@ -94,10 +95,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <workingDirectory>admin</workingDirectory>
-              <installDirectory>target/temp/admin</installDirectory>
-              <nodeVersion>v7.10.0</nodeVersion>
-              <npmVersion>4.5.0</npmVersion>
+              <workingDirectory>angular</workingDirectory>
               <arguments>run build-prod-admin</arguments>
             </configuration>
           </execution>
@@ -108,10 +106,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <workingDirectory>admin</workingDirectory>
-              <installDirectory>target/temp/devkey</installDirectory>
-              <nodeVersion>v7.10.0</nodeVersion>
-              <npmVersion>4.5.0</npmVersion>
+              <workingDirectory>angular</workingDirectory>
               <arguments>run build-prod-devkey</arguments>
             </configuration>
           </execution>

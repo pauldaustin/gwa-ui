@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
 @WebServlet(urlPatterns = "/int/rest/nodes/*", loadOnStartup = 1)
 public class NodeServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
@@ -17,10 +19,14 @@ public class NodeServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final String name = request.getParameter("name");
     if (name == null) {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      sendError(response, HttpServletResponse.SC_NOT_FOUND);
     } else {
-      final String path = "/cluster?name=" + URLEncoder.encode(name, "UTF-8");
-      this.apiService.handleDelete(request, response, path);
+      try {
+        final String path = "/cluster?name=" + URLEncoder.encode(name, "UTF-8");
+        this.apiService.handleDelete(request, response, path);
+      } catch (final IOException e) {
+        LoggerFactory.getLogger(getClass()).error("Unable to encode:" + name, e);
+      }
     }
   }
 
@@ -31,7 +37,7 @@ public class NodeServlet extends BaseAdminServlet {
     if (isPathEmpty(pathInfo)) {
       this.apiService.handleListAll(request, response, "/cluster");
     } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      sendError(response, HttpServletResponse.SC_NOT_FOUND);
     }
   }
 }
