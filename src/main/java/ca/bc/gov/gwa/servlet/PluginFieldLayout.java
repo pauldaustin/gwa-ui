@@ -87,12 +87,12 @@ public class PluginFieldLayout {
           if (this.unusedFieldNames.remove(fieldName)) {
             rowFields.add(fieldName);
           } else {
-            LoggerFactory.getLogger(getClass())
-              .error(PLUGIN + this.pluginName + " field is used twice " + fieldName);
+            LoggerFactory.getLogger(getClass()).error("Plugin %s field is used twice %s",
+              this.pluginName, fieldName);
           }
         } else {
-          LoggerFactory.getLogger(getClass())
-            .error(PLUGIN + this.pluginName + " does not have the field " + fieldName);
+          LoggerFactory.getLogger(getClass()).error("Plugin %s does not have the field %s",
+            this.pluginName, fieldName);
         }
       }
       if (!rowFields.isEmpty()) {

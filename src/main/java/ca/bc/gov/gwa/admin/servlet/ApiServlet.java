@@ -140,9 +140,8 @@ public class ApiServlet extends BaseAdminServlet {
 
   protected void doGetPluginList(final HttpServletRequest request,
     final HttpServletResponse response, final String apiId) {
-    this.apiService.pluginList(request, response, "/plugins?api_id=" + apiId, row -> {
-      return row.get("consumer_id") == null;
-    });
+    this.apiService.pluginList(request, response, "/plugins?api_id=" + apiId,
+      row -> row.get("consumer_id") == null);
   }
 
   @Override

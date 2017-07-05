@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -94,17 +93,6 @@ public class SiteminderAuthenticationFilter extends AbstractFilter {
     if (session != null) {
       session.invalidate();
     }
-    final Cookie[] cookies = httpRequest.getCookies();
-    if (cookies != null) {
-      for (final Cookie cookie : cookies) {
-        if ("SMSESSION".equals(cookie.getName())) {
-          cookie.setValue("");
-          cookie.setPath("/");
-          cookie.setMaxAge(0);
-          httpResponse.addCookie(cookie);
-        }
-      }
-    }
-    sendRedirect(httpResponse, httpRequest.getContextPath());
+    sendRedirect(httpResponse, "https://logon.gov.bc.ca/clp-cgi/logoff.cgi");
   }
 }
