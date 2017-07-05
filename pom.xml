@@ -71,6 +71,7 @@
         <version>1.4</version>
         <configuration>
           <skip>${skip.frontend}</skip>
+          <installDirectory>target/temp</installDirectory>
         </configuration>
         <executions>
           <execution>
@@ -84,7 +85,6 @@
               <workingDirectory>angular</workingDirectory>
               <nodeVersion>v7.10.0</nodeVersion>
               <npmVersion>4.5.0</npmVersion>
-              <installDirectory>target/temp</installDirectory>
               <arguments>update</arguments>
             </configuration>
           </execution>
