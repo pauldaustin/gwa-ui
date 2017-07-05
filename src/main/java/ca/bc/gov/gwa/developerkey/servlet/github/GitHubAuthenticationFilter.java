@@ -26,7 +26,7 @@ import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebFilter(urlPatterns = {
-  "/git/*", "/logout", "/rest/*", "/ui/*"
+  "/", "/git/*", "/logout", "/rest/*", "/ui/*"
 })
 public class GitHubAuthenticationFilter implements Filter {
 
