@@ -1,0 +1,36 @@
+{
+  "fields":{
+      "credentials":{
+         "title":"Allow Credentials"
+      },
+      "exposed_headers":{
+         "title":"Expose Headers"
+      },
+      "headers":{
+         "title":"Allow Headers"
+      },
+      "max_age":{
+         "title":"Max Age (s)"
+      },
+      "methods":{
+         "title":"Allow Methods"
+      },
+      "origins":{
+         "title":"Allow Origin"
+      },
+      "preflight_continue":{
+         "title":"Preflight Continue"
+      }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["methods", "max_age", "credentials", "preflight_continue"],
+        ["origins"],
+        ["headers"],
+        ["exposed_headers"]
+      ]
+    }
+  ]
+}

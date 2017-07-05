@@ -14,6 +14,16 @@ public class LruMap<K, V> extends LinkedHashMap<K, V> {
   }
 
   @Override
+  public boolean equals(final Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   protected boolean removeEldestEntry(final Entry<K, V> eldest) {
     return size() > this.maxSize;
   }

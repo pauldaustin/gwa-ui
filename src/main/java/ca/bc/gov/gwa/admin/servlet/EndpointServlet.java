@@ -12,6 +12,10 @@ import ca.bc.gov.gwa.servlet.BaseServlet;
 
 @WebServlet(urlPatterns = "/int/rest/endpoints/*", loadOnStartup = 1)
 public class EndpointServlet extends BaseServlet {
+  private static final String USERS = "users";
+
+  private static final String GROUPS = "groups";
+
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -21,23 +25,20 @@ public class EndpointServlet extends BaseServlet {
     if (!this.apiService.endpointAccessAllowed(request, response, paths)) {
       return;
     }
-    switch (paths.size()) {
-      case 5: {
-        final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          final String userName = paths.get(4);
-          this.apiService.apiGroupUserDelete(request, response, apiName, groupName, userName);
-        } else {
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        }
-      }
-      break;
 
-      default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+    if (paths.size() == 5 && GROUPS.equals(paths.get(1)) && USERS.equals(paths.get(3))) {
+      final String apiName = paths.get(0);
+      doDeleteGroupUser(response, paths, apiName);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
+  }
+
+  private void doDeleteGroupUser(final HttpServletResponse response, final List<String> paths,
+    final String apiName) {
+    final String groupName = paths.get(2);
+    final String userName = paths.get(4);
+    this.apiService.apiGroupUserDelete(response, apiName, groupName, userName);
   }
 
   @Override
@@ -48,31 +49,42 @@ public class EndpointServlet extends BaseServlet {
       return;
     }
     switch (paths.size()) {
-      case 0: { // Endpoint List
-        this.apiService.endpointList(request, response);
-      }
+      case 0:
+        doGetEndpointList(request, response);
       break;
-      case 1: { // Endpoint Get
-        final String apiName = paths.get(0);
-        this.apiService.apiGet(request, response, apiName);
-      }
+      case 1:
+        doGetEndpoint(response, paths);
       break;
 
-      case 4: {
+      case 4:
         final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          this.apiService.endpointGroupUserList(request, response, apiName, groupName);
+        if (GROUPS.equals(paths.get(1)) && USERS.equals(paths.get(3))) {
+          doGetGroupUserList(request, response, paths, apiName);
         } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+          sendError(response, HttpServletResponse.SC_NOT_FOUND);
         }
-      }
       break;
 
       default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        sendError(response, HttpServletResponse.SC_NOT_FOUND);
       break;
     }
+  }
+
+  private void doGetEndpoint(final HttpServletResponse response, final List<String> paths) {
+    final String apiName = paths.get(0);
+    this.apiService.apiGet(response, apiName);
+  }
+
+  private void doGetEndpointList(final HttpServletRequest request,
+    final HttpServletResponse response) {
+    this.apiService.endpointList(request, response);
+  }
+
+  private void doGetGroupUserList(final HttpServletRequest request,
+    final HttpServletResponse response, final List<String> paths, final String apiName) {
+    final String groupName = paths.get(2);
+    this.apiService.endpointGroupUserList(request, response, apiName, groupName);
   }
 
   @Override
@@ -82,23 +94,18 @@ public class EndpointServlet extends BaseServlet {
     if (!this.apiService.endpointAccessAllowed(request, response, paths)) {
       return;
     }
-    switch (paths.size()) {
-      case 5: {
-        final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          final String userName = paths.get(4);
-          this.apiService.apiGroupUserAdd(request, response, apiName, groupName, userName);
-        } else {
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        }
-      }
-      break;
-
-      default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+    if (paths.size() == 5 && GROUPS.equals(paths.get(1)) && USERS.equals(paths.get(3))) {
+      doPostGroupUserAdd(response, paths);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
+  }
+
+  private void doPostGroupUserAdd(final HttpServletResponse response, final List<String> paths) {
+    final String apiName = paths.get(0);
+    final String groupName = paths.get(2);
+    final String userName = paths.get(4);
+    this.apiService.apiGroupUserAdd(response, apiName, groupName, userName);
   }
 
   @Override
@@ -108,16 +115,15 @@ public class EndpointServlet extends BaseServlet {
     if (!this.apiService.endpointAccessAllowed(request, response, paths)) {
       return;
     }
-    switch (paths.size()) {
-      case 1: {
-        final String userId = request.getRemoteUser();
-        this.apiService.endpointUpdate(request, response, userId);
-      }
-      break;
-
-      default:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+    if (paths.size() == 1) {
+      doPutEndpointUpdate(request, response);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
+  }
+
+  private void doPutEndpointUpdate(final HttpServletRequest request,
+    final HttpServletResponse response) {
+    this.apiService.endpointUpdate(request, response);
   }
 }

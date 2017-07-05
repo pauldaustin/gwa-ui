@@ -1,0 +1,55 @@
+<md-tab-group *ngIf="form">
+  <md-tab>
+    <ng-template md-tab-label><a [routerLink]="['/ui', 'apis', api.name]">Api: {{api.name}}</a> Plugin: {{object.name}}</ng-template>
+    <md-card>
+      <md-card-content>
+        <form [formGroup]="form" class="form-horizontal" role="form">
+          <ng-container *ngFor="let group of groups; first as first">
+            <md-divider *ngIf="!first" class="mat-divider"></md-divider>
+            <h3 *ngIf="group.title">{{group.title}}</h3>
+            <div *ngFor="let row of group.rows" class="flexRowToColumn">
+              <ng-container *ngFor="let formField of row">
+                <ng-container [ngSwitch]="formField.fieldType" [formGroup]="formField.formGroup">
+                  <md-slide-toggle *ngSwitchCase="'checkbox'"
+                     class="flexField" [formControlName]="formField.name" color="primary">{{formField.title}}</md-slide-toggle>
+                  <md-select *ngSwitchCase="'select'" class="flexField"  [placeholder]="formField.title" [formControlName]="formField.name">
+                    <md-option *ngFor="let value of formField.values" [value]="value">{{value}}</md-option>
+                  </md-select>
+                  <div *ngSwitchCase="'array'" [formArrayName]="formField.name" class="flexField flexRowToColumn">
+                    <div class="flexField" style="flex-grow:0;margin-top:17px">
+                      <label >{{formField.title}}:</label>
+                      <button (click)="formField.formArrayAdd()"
+                        md-icon-button style="color: green; margin: -8px 0px -8px 0px">
+                        <md-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></md-icon>
+                      </button>
+                    </div>
+                    <md-input-container class="flexField" *ngFor="let control of formField.formArray.controls; index as i">
+                      <input mdInput [name]="formField.name + i" [formControlName]="i" required="true" />
+                      <button mdSuffix
+                        (click)="formField.formArrayRemove(i)"
+                        md-icon-button style="color: red">
+                        <md-icon fontSet="glyphicon" fontIcon="glyphicon-trash"></md-icon>
+                      </button>
+                    </md-input-container>
+                  </div>
+                  <md-input-container *ngSwitchDefault class="flexField">
+                    <input
+                      mdInput
+                      [placeholder]="formField.title" [name]="formField.name" [type]="formField.fieldType"
+                      [required]="formField.required" [formControlName]="formField.name"
+                    />
+                  </md-input-container>
+                </ng-container>
+              </ng-container>
+            </div>
+          </ng-container>
+        </form>
+      </md-card-content>
+      <md-card-actions>
+        <button (click)="routeList()" md-button>Close</button>
+        <button (click)="save(false)" md-raised-button color="accent" [disabled]="!form.valid">Save</button>
+        <button (click)="save(true)" md-raised-button color="primary" [disabled]="!form.valid">Save &amp; Close</button>
+      </md-card-actions>
+    </md-card>
+  </md-tab>
+</md-tab-group>

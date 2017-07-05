@@ -1,0 +1,24 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["host", "port", "timeout"]
+      ]
+    },{
+      "name": "metrics",
+      "title": "Metrics",
+      "fields": [
+        ["metrics"],
+        ["tags.request_count"],
+        ["tags.request_size"],
+        ["tags.response_size"],
+        ["tags.latency"],
+        ["tags.upstream_latency"],
+        ["tags.status_count"],
+        ["tags.unique_users"],
+        ["tags.request_per_user"]
+      ]
+    }
+  ]
+}

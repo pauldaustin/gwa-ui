@@ -13,19 +13,6 @@ import ca.bc.gov.gwa.servlet.BaseServlet;
 public class ApiKeyServlet extends BaseServlet {
   private static final long serialVersionUID = 1L;
 
-  // @Override
-  // protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
-  // throws ServletException, IOException {
-  // final String userId = request.getRemoteUser();
-  // final String pathInfo = request.getPathInfo();
-  // if (isPathEmpty(pathInfo)) {
-  // response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-  // } else {
-  // final String deletePath = "/consumers/" + userId + "/key-auth" + pathInfo;
-  // this.apiService.handleDelete(request, response, deletePath);
-  // }
-  // }
-
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {

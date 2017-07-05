@@ -3,15 +3,17 @@
   src: url('../fonts/MyriadWebPro.ttf');
 }
 
+body {
+  height: 100%;
+  margin: 0px;
+}
+
 .full-width {
   width: 100%;
 }
 .mat-toolbar-row > .mat-raised-button,
 .mat-toolbar-row > * {
   margin-right: 1em;
-}
-.mat-tab-body {
-  padding: 1em;
 }
 /* To Fix bugs*/
 .margin-top-1em {
@@ -30,15 +32,22 @@
 .mat-slide-toggle {
   display:inline-block;
 }
+.mat-option,
+.mat-select-placeholder {
+  font-size: 14px;
+}
 .mat-select {
-  margin-top: 5px;
+  margin-top: 20px;
 }
 .mat-select-value-text {
   font-size: 14px;
 }
-.mat-select .mat-select-placeholder.mat-floating-placeholder {
-  top: -14px;
-  font-weight: 700;
+.mat-select-placeholder,
+.mat-floating-placeholder {
+  margin-top: 4px;
+}
+.mat-input-underline span.mat-input-ripple {
+  height: 1px;
 }
 .mat-select-value-text {
   font-size: 14px;

@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Base64 {
   /** The Base-64 alphabet. */
-  private final static byte[] ALPHABET = {
+  private static final byte[] ALPHABET = {
     (byte)'A', (byte)'B', (byte)'C', (byte)'D', (byte)'E', (byte)'F', (byte)'G', (byte)'H',
     (byte)'I', (byte)'J', (byte)'K', (byte)'L', (byte)'M', (byte)'N', (byte)'O', (byte)'P',
     (byte)'Q', (byte)'R', (byte)'S', (byte)'T', (byte)'U', (byte)'V', (byte)'W', (byte)'X',
@@ -20,13 +20,13 @@ public class Base64 {
   };
 
   /** The equals sign as a byte. */
-  private final static byte EQUALS_SIGN = (byte)'=';
+  private static final byte EQUALS_SIGN = (byte)'=';
 
   /**
-   * Encodes the bytes using base-64 encoding as a UTF-8 string.
+   * Encodes the bytes using base-64 encoding as a UTF-8 STRING.
    *
    * @param source The source bytes.
-   * @return The base-64 encoded string.
+   * @return The base-64 encoded STRING.
    */
   public static String encode(final byte[] source) {
     final int len = source.length;
@@ -47,7 +47,7 @@ public class Base64 {
     try {
       return new String(outBuff, 0, encodedLength, "UTF-8");
     } catch (final UnsupportedEncodingException e) {
-      throw new RuntimeException("Unable to get UTF-8 encoding", e);
+      return new String(outBuff, 0, encodedLength);
     }
   }
 
@@ -61,7 +61,7 @@ public class Base64 {
    *
    * @param source The source bytes.
    * @param srcOffset The offset into the source bytes.
-   * @param numSigBytes The number of bytes to read from the source (max 3, min
+   * @param numSigBytes The NUMBER of bytes to read from the source (max 3, min
    *          1).
    * @param destination The destination bytes.
    * @param destOffset The offset into the destination bytes.
@@ -89,4 +89,7 @@ public class Base64 {
 
   }
 
+  private Base64() {
+    // Empty
+  }
 }
