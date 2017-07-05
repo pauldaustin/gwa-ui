@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
+import ca.bc.gov.gwa.servlet.BaseServlet;
+
 @WebServlet(urlPatterns = "/int/rest/nodes/*", loadOnStartup = 1)
 public class NodeServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
@@ -23,7 +25,7 @@ public class NodeServlet extends BaseAdminServlet {
     } else {
       try {
         final String path = "/cluster?name=" + URLEncoder.encode(name, "UTF-8");
-        this.apiService.handleDelete(response, path);
+        BaseServlet.apiService.handleDelete(response, path);
       } catch (final IOException e) {
         LoggerFactory.getLogger(getClass()).error("Unable to encode:" + name, e);
       }
@@ -35,7 +37,7 @@ public class NodeServlet extends BaseAdminServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (isPathEmpty(pathInfo)) {
-      this.apiService.handleListAll(request, response, "/cluster");
+      BaseServlet.apiService.handleListAll(request, response, "/cluster");
     } else {
       sendError(response, HttpServletResponse.SC_NOT_FOUND);
     }

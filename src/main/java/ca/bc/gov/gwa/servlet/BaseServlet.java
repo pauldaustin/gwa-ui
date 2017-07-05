@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
+  protected static ApiService apiService;
+
   protected static List<String> splitPath(final String path) {
     if (path == null || path.length() == 1) {
       return Collections.emptyList();
@@ -45,8 +47,6 @@ public abstract class BaseServlet extends HttpServlet {
     return splitPath(path);
   }
 
-  protected transient ApiService apiService;
-
   public BaseServlet() {
     super();
   }
@@ -54,7 +54,7 @@ public abstract class BaseServlet extends HttpServlet {
   @Override
   public void destroy() {
     super.destroy();
-    this.apiService = null;
+    apiService = null;
   }
 
   protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
@@ -73,7 +73,7 @@ public abstract class BaseServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     final ServletContext servletContext = getServletContext();
-    this.apiService = ApiService.get(servletContext);
+    apiService = ApiService.get(servletContext);
   }
 
   public boolean isPathEmpty(final String pathInfo) {

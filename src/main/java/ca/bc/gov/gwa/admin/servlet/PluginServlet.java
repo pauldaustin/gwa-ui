@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.bc.gov.gwa.servlet.BaseServlet;
+
 @WebServlet(urlPatterns = "/int/rest/plugins/*", loadOnStartup = 1)
 public class PluginServlet extends BaseAdminServlet {
   private static final long serialVersionUID = 1L;
@@ -43,19 +45,19 @@ public class PluginServlet extends BaseAdminServlet {
 
   private void doGetPluginList(final HttpServletRequest request, final HttpServletResponse response,
     final String pluginName) {
-    this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
+    BaseServlet.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
   }
 
   private void doGetPluginNames(final HttpServletResponse response) {
-    this.apiService.pluginNames(response);
+    BaseServlet.apiService.pluginNames(response);
   }
 
   private void doGetPluginNamesList(final HttpServletResponse response) {
-    this.apiService.pluginNameList(response);
+    BaseServlet.apiService.pluginNameList(response);
   }
 
   private void doGetPluginSchema(final HttpServletResponse response, final List<String> paths) {
     final String pluginName = paths.get(0);
-    this.apiService.pluginSchemaGet(response, pluginName);
+    BaseServlet.apiService.pluginSchemaGet(response, pluginName);
   }
 }

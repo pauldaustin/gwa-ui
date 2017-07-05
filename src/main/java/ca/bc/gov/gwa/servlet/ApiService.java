@@ -587,7 +587,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -731,7 +731,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -759,7 +759,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -1018,14 +1018,14 @@ public class ApiService implements ServletContextListener {
 
   private int getPageOffset(final HttpServletRequest httpRequest) {
     final String offset = httpRequest.getParameter("offset");
-    int offsetPage = 0;
     if (offset != null) {
       try {
-        offsetPage = Integer.parseInt(offset);
+        return Integer.parseInt(offset);
       } catch (final Exception e) {
+        return 0;
       }
     }
-    return offsetPage;
+    return 0;
   }
 
   public String getVersion() {
@@ -1417,16 +1417,25 @@ public class ApiService implements ServletContextListener {
           defaultValue = Collections.emptyList();
         }
       } else if ("table".equals(fieldType)) {
-        if (defaultValue == null) {
-          defaultValue = Collections.emptyMap();
-        }
-        final Map<String, Object> kongPluginChildSchema = (Map<String, Object>)kongField
-          .getOrDefault("schema", Collections.emptyMap());
-        pluginSchemaAddFields(prefix + fieldName + ".", allFieldNames, pluginField,
-          kongPluginChildSchema, customField);
+        defaultValue = pluginSchemaAddFieldsTable(prefix, allFieldNames, fieldName, kongField,
+          pluginField, customField, defaultValue);
       }
       pluginField.put("defaultValue", defaultValue);
     }
+  }
+
+  private Object pluginSchemaAddFieldsTable(final String prefix, final List<String> allFieldNames,
+    final String fieldName, final Map<String, Object> kongField,
+    final Map<String, Object> pluginField, final Map<String, Object> customField,
+    Object defaultValue) {
+    if (defaultValue == null) {
+      defaultValue = Collections.emptyMap();
+    }
+    final Map<String, Object> kongPluginChildSchema = (Map<String, Object>)kongField
+      .getOrDefault("schema", Collections.emptyMap());
+    pluginSchemaAddFields(prefix + fieldName + ".", allFieldNames, pluginField,
+      kongPluginChildSchema, customField);
+    return defaultValue;
   }
 
   @SuppressWarnings("unchecked")

@@ -26,10 +26,10 @@ public class GroupServlet extends BaseServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (isPathEmpty(pathInfo)) {
-      this.apiService.handleListAll(request, response, GROUPS_PATH);
+      BaseServlet.apiService.handleListAll(request, response, GROUPS_PATH);
     } else if (pathInfo.indexOf('/', 1) == -1) {
       final String groupPath = GROUPS_PATH + pathInfo;
-      this.apiService.groupUserList(request, response, groupPath);
+      BaseServlet.apiService.groupUserList(request, response, groupPath);
     } else {
       sendError(response, HttpServletResponse.SC_NOT_FOUND);
     }
