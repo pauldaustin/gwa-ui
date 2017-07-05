@@ -48,79 +48,37 @@ import ca.bc.gov.gwa.util.LruMap;
 @WebListener
 public class ApiService implements ServletContextListener {
 
-  private static final String API_SERVICE_NAME = ApiService.class.getName();
-
-  private static final String VALUES = "values";
-
-  private static final String FIELDS = "fields";
-
-  private static final String APPLICATION_JSON = "application/json";
-
-  private static final String TOTAL = "total";
-
-  private static final String NEXT = "next";
-
-  private static final String UNKNOWN_APPLICATION_ERROR = "Unknown application error";
-
-  private static final String KONG_SERVER_RETURNED_AN_ERROR = "Kong server returned an error";
-
-  private static final String KONG_SERVER_NOT_AVAILABLE = "Kong server not available";
-
-  private static final String CONSUMERS_PATH = "/consumers";
-
-  private static final String PLUGINS_PATH2 = "/plugins/";
-
-  private static final String CONSUMER_ID = "consumer_id";
-
-  private static final String API_ID = "api_id";
-
-  private static final String DATA = "data";
+  private static final String ACL = "acl";
 
   private static final String ACLS_PATH = "/acls";
 
-  private static final String CUSTOM_ID = "custom_id";
-
-  private static final String ID = "id";
-
-  private static final String GROUP = "group";
-
-  private static final String USERNAME = "username";
-
-  private static final String CONSUMERS_PATH2 = "/consumers/";
-
-  private static final String PLUGINS = "plugins";
-
-  private static final String APIS_PATH2 = "/apis/";
-
-  private static final String NAME = "name";
-
-  private static final String PLUGINS_PATH = "/plugins";
-
-  private static final String CONFIG = "config";
-
-  private static final String ENABLED = "enabled";
+  private static final String API_ID = "api_id";
 
   private static final String API_OWNERS = "api_owners";
 
-  private static final String HOSTS = "hosts";
+  private static final String API_SERVICE_NAME = ApiService.class.getName();
 
-  private static final String WHITELIST = "whitelist";
+  private static final String APIS_PATH2 = "/apis/";
 
-  private static final String ACL = "acl";
-
-  private static final List<String> ACL_FIELD_NAMES = Arrays.asList(WHITELIST);
-
-  private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", NAME,
-    "consumer_username");
-
-  private static final List<String> APIS_FIELD_NAMES = Arrays.asList(ID, "created_at",
-    "upstream_url", "preserve_host", NAME, HOSTS, "uris", "methods", "strip_uri", "retries",
-    "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
-    "http_if_terminated");
+  private static final String APPLICATION_JSON = "application/json";
 
   private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
+  private static final String CONFIG = "config";
+
+  private static final String CONSUMER_ID = "consumer_id";
+
+  private static final String CONSUMERS_PATH = "/consumers";
+
+  private static final String CONSUMERS_PATH2 = "/consumers/";
+
+  private static final String CUSTOM_ID = "custom_id";
+
+  private static final String DATA = "data";
+
   private static final String DELETED = "deleted";
+
+  private static final String ENABLED = "enabled";
 
   private static final Map<String, Object> ENDPOINT_DEFAULT_CONFIG = Collections
     .singletonMap("allow_developer_keys", false);
@@ -130,10 +88,31 @@ public class ApiService implements ServletContextListener {
   private static final List<String> ENDPOINT_RATE_LIMIT_FIELD_NAMES = Arrays.asList("second",
     "hour", "minute", "day", "month", "year");
 
+  private static final String FIELDS = "fields";
+
+  private static final String GROUP = "group";
+
+  private static final String HOSTS = "hosts";
+
+  private static final String ID = "id";
+
   private static final String KEY_AUTH = "key-auth";
 
   private static final List<String> KEY_AUTH_FIELD_NAMES = Arrays.asList("key_names",
     "hide_credentials", "anonymous");
+
+  private static final String KONG_SERVER_NOT_AVAILABLE = "Kong server not available";
+
+  private static final String KONG_SERVER_RETURNED_AN_ERROR = "Kong server returned an error";
+
+  private static final Logger LOG = LoggerFactory.getLogger(ApiService.class);
+
+  private static final String NAME = "name";
+
+  private static final String NEXT = "next";
+
+  private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", NAME,
+    "consumer_username");
 
   private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
     for (final String fieldName : API_SORT_FIELDS) {
@@ -159,17 +138,38 @@ public class ApiService implements ServletContextListener {
     return 0;
   };
 
+  private static final String PLUGINS = "plugins";
+
+  private static final String PLUGINS_PATH = "/plugins";
+
+  private static final String PLUGINS_PATH2 = "/plugins/";
+
   public static final String ROLE_GWA_ADMIN = "gwa_admin";
 
   public static final String ROLE_GWA_API_OWNER = "gwa_api_owner";
 
+  private static final String TOTAL = "total";
+
+  private static final String UNKNOWN_APPLICATION_ERROR = "Unknown application error";
+
   private static final String UPDATED = "updated";
+
+  private static final String USERNAME = "username";
+
+  private static final String VALUES = "values";
+
+  private static final String WHITELIST = "whitelist";
+
+  private static final List<String> ACL_FIELD_NAMES = Arrays.asList(WHITELIST);
+
+  private static final List<String> APIS_FIELD_NAMES = Arrays.asList(ID, "created_at",
+    "upstream_url", "preserve_host", NAME, HOSTS, "uris", "methods", "strip_uri", "retries",
+    "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
+    "http_if_terminated");
 
   public static ApiService get(final ServletContext servletContext) {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
   }
-
-  private final Map<String, Map<String, Object>> pluginSchemaByName = new HashMap<>();
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
@@ -184,6 +184,8 @@ public class ApiService implements ServletContextListener {
   private String kongAdminUsername = null;
 
   private final Map<String, Map<String, Map<String, Object>>> objectByTypeAndId = new HashMap<>();
+
+  private final Map<String, Map<String, Object>> pluginSchemaByName = new HashMap<>();
 
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
@@ -305,7 +307,7 @@ public class ApiService implements ServletContextListener {
         }
       });
     } catch (final Exception e) {
-      logDebug("Unable to get API:" + apiName, e);
+      LOG.debug("Unable to get API:" + apiName, e);
       throw new IllegalStateException("Error getting API: " + apiName, e);
     }
   }
@@ -321,6 +323,7 @@ public class ApiService implements ServletContextListener {
           this.apiNameById.put(apiId, apiName);
         }
       } catch (final Exception e) {
+        LOG.error("Unable to get API:" + apiId, e);
         return "";
       }
     }
@@ -448,6 +451,7 @@ public class ApiService implements ServletContextListener {
           this.usernameByConsumerId.put(consumerId, username);
         }
       } catch (final Exception e) {
+        LOG.debug("Unable to find user:" + consumerId, e);
         return null;
       }
     }
@@ -560,7 +564,7 @@ public class ApiService implements ServletContextListener {
       final ServletContext servletContext = event.getServletContext();
       servletContext.setAttribute(API_SERVICE_NAME, this);
     } catch (final Exception e) {
-      LoggerFactory.getLogger(getClass()).error("Unable to initialize service", e);
+      LOG.error("Unable to initialize service", e);
       throw e;
     }
   }
@@ -570,7 +574,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -719,7 +723,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -737,6 +741,7 @@ public class ApiService implements ServletContextListener {
       }
       return false;
     } catch (final Exception e) {
+      LOG.debug("Unable to find group:" + groupName, e);
       return false;
     }
   }
@@ -747,7 +752,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -821,7 +826,7 @@ public class ApiService implements ServletContextListener {
       for (final Map<String, Object> plugin : plugins.values()) {
         final String pluginName = (String)plugin.get(NAME);
         Map<String, Object> pluginConfig = null;
-        if (pluginName.equals("rate-limiting")) {
+        if ("rate-limiting".equals(pluginName)) {
           pluginConfig = endPointSetPluginRateLimiting(plugin);
         }
         if (pluginConfig != null) {
@@ -1005,11 +1010,11 @@ public class ApiService implements ServletContextListener {
 
   private int getPageOffset(final HttpServletRequest httpRequest) {
     final String offset = httpRequest.getParameter("offset");
-    if (offset != null) {
+    if (offset != null && offset.length() > 1) {
       try {
         return Integer.parseInt(offset);
       } catch (final Exception e) {
-        return 0;
+        throw new IllegalArgumentException("Offset must be an integer number:" + offset, e);
       }
     }
     return 0;
@@ -1023,7 +1028,7 @@ public class ApiService implements ServletContextListener {
         this.version = (String)kongResponse.get("version");
 
       } catch (final Exception e) {
-        return "0.9.x";
+        throw new IllegalStateException("Unable to get kong version", e);
       }
     }
     return this.version;
@@ -1045,6 +1050,7 @@ public class ApiService implements ServletContextListener {
       try {
         apiResponse = httpClient.post(aclPath, aclRequest);
       } catch (final HttpStatusException e) {
+        LOG.debug("Error adding group", e);
         if (e.getCode() == 404) {
           final Map<String, Object> consumer = Collections.singletonMap(USERNAME, username);
           httpClient.post(CONSUMERS_PATH, consumer);
@@ -1136,22 +1142,8 @@ public class ApiService implements ServletContextListener {
   }
 
   public void handleRequest(final HttpServletResponse httpResponse, final JsonHttpConsumer action) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      action.accept(httpClient);
-    } catch (final HttpStatusException e) {
-      if (e.getCode() == 503) {
-        writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE, e);
-      } else {
-        final String message = e.toString() + "\n" + e.getBody();
-        logError(message, e);
-        writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
-      }
-    } catch (final HttpHostConnectException e) {
-      writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE);
-    } catch (final Exception e) {
-      writeJsonError(httpResponse, UNKNOWN_APPLICATION_ERROR, e);
-    }
+    final JsonHttpFunction function = action;
+    handleRequest(httpResponse, function);
   }
 
   public Map<String, Object> handleRequest(final HttpServletResponse httpResponse,
@@ -1163,12 +1155,14 @@ public class ApiService implements ServletContextListener {
       if (e.getCode() == 503) {
         writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE, e);
       } else {
-        LoggerFactory.getLogger(getClass()).error(e.toString() + "\n" + e.getBody(), e);
+        LOG.error(e.toString() + "\n" + e.getBody(), e);
         writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
       }
     } catch (final HttpHostConnectException e) {
+      LOG.debug("Kong not available", e);
       writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE);
     } catch (final Exception e) {
+      LOG.debug("Unexpected kong error", e);
       writeJsonError(httpResponse, UNKNOWN_APPLICATION_ERROR, e);
     }
     return null;
@@ -1247,27 +1241,20 @@ public class ApiService implements ServletContextListener {
     return response;
   }
 
-  protected void logDebug(final String message, final Throwable e) {
-    final Logger logger = LoggerFactory.getLogger(ApiService.class);
-    logger.error(message, e);
-  }
-
   private void logError(final String message, final Throwable e) {
-    final Class<? extends ApiService> clazz = getClass();
-    final Logger logger = LoggerFactory.getLogger(clazz);
     if (e instanceof HttpStatusException) {
       final HttpStatusException statusE = (HttpStatusException)e;
       if (statusE.getCode() == 503) {
-        logger.error("{}\nKong not available", message);
+        LOG.error("{}\nKong not available", message);
       } else {
         final String logMessage = message + "\n" + e.toString() + "\n" + statusE.getBody();
-        logger.error(logMessage, statusE);
+        LOG.error(logMessage, statusE);
       }
     } else if (e instanceof HttpHostConnectException) {
-      logger.error("{}\nKong not available", message);
+      LOG.error("{}\nKong not available", message);
     } else {
       final String logMessage = message + "\n" + e.getMessage();
-      logger.error(logMessage, e);
+      LOG.error(logMessage, e);
     }
   }
 
@@ -1461,7 +1448,7 @@ public class ApiService implements ServletContextListener {
         }
       }
     } catch (final Exception e) {
-      LoggerFactory.getLogger(getClass()).error("Unable to read config from: " + propertiesFile, e);
+      LOG.error("Unable to read config from: " + propertiesFile, e);
     }
   }
 
@@ -1469,7 +1456,7 @@ public class ApiService implements ServletContextListener {
     try {
       response.sendError(statusCode);
     } catch (final IOException e) {
-      LoggerFactory.getLogger(getClass()).debug("Unable to send status:" + statusCode, e);
+      LOG.debug("Unable to send status:" + statusCode, e);
     }
   }
 
@@ -1519,13 +1506,13 @@ public class ApiService implements ServletContextListener {
       writer.print(message);
       writer.println("\"}");
     } catch (final IOException ioe) {
-      logDebug("Unable to write error: " + message, ioe);
+      LOG.debug("Unable to write error: " + message, ioe);
     }
   }
 
   public void writeJsonError(final HttpServletResponse httpResponse, final String message,
     final Throwable e) {
-    LoggerFactory.getLogger(getClass()).error(message, e);
+    LOG.error(message, e);
     httpResponse.setContentType(APPLICATION_JSON);
     try (
       PrintWriter writer = httpResponse.getWriter()) {
@@ -1533,7 +1520,7 @@ public class ApiService implements ServletContextListener {
       writer.print(message);
       writer.println("\"}");
     } catch (final IOException ioe) {
-      logDebug("Unable to write error: " + message, ioe);
+      LOG.debug("Unable to write error: " + message, ioe);
     }
   }
 
@@ -1545,7 +1532,7 @@ public class ApiService implements ServletContextListener {
       writer.print(field);
       writer.println("\": true}");
     } catch (final IOException ioe) {
-      logDebug("Unable to write status: " + field, ioe);
+      LOG.debug("Unable to write status: " + field, ioe);
     }
   }
 }

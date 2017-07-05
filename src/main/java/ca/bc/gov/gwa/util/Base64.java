@@ -47,7 +47,7 @@ public class Base64 {
     try {
       return new String(outBuff, 0, encodedLength, "UTF-8");
     } catch (final UnsupportedEncodingException e) {
-      return new String(outBuff, 0, encodedLength);
+      throw new IllegalStateException("UTF-8not supported", e);
     }
   }
 

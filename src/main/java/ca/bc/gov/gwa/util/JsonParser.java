@@ -285,7 +285,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
         break;
       }
     } catch (final IOException e) {
-      this.nextEvent = EventType.END_DOCUMENT;
+      throw new IllegalStateException("Error getting next event", e);
     }
   }
 
@@ -491,13 +491,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
 
   @Override
   public String toString() {
-    String jsonText = "";
-    try {
-      jsonText = getString(this.reader, 80);
-    } catch (final IOException e) {
-      jsonText = "";
-    }
     return this.currentEvent + " : " + this.currentValue + " "
-      + Character.toString((char)this.currentCharacter) + jsonText;
+      + Character.toString((char)this.currentCharacter);
   }
 }

@@ -62,7 +62,7 @@ public interface Json {
       jsonWriter.write(values);
       return writer.toString();
     } catch (final IOException e) {
-      return writer.toString();
+      throw new IllegalStateException(e);
     }
   }
 
@@ -73,7 +73,7 @@ public interface Json {
       jsonWriter.write(values);
       return writer.toString();
     } catch (final IOException e) {
-      return writer.toString();
+      throw new IllegalStateException(e);
     }
   }
 
@@ -84,7 +84,7 @@ public interface Json {
       jsonWriter.value(value);
       return stringWriter.toString();
     } catch (final IOException e) {
-      return stringWriter.toString();
+      throw new IllegalStateException(e);
     }
   }
 
@@ -95,7 +95,7 @@ public interface Json {
       JsonWriter jsonWriter = new JsonWriter(writer, false)) {
       jsonWriter.write(data);
     } catch (final IOException e) {
-      LoggerFactory.getLogger(Json.class).debug("Unable to write: " + data, e);
+      throw new IllegalStateException("Unable to write: " + data, e);
     }
   }
 
