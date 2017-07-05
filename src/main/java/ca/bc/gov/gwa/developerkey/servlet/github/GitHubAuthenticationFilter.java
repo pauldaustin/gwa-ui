@@ -41,6 +41,7 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
 
   private String organizationRole;
 
+  @SuppressWarnings("unchecked")
   private void addGitHubGroups(final JsonHttpClient client, final String accessToken,
     final Set<String> groups) throws IOException {
     final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);
@@ -78,7 +79,7 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
     final HttpSession session = httpRequest.getSession();
 
     final String fullPath = httpRequest.getServletPath();
-    if (fullPath.equals("/git/callback")) {
+    if ("/git/callback".equals(fullPath)) {
       handleCallback(httpRequest, httpResponse, session);
     } else {
       final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
