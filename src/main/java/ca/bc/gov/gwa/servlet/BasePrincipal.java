@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 public class BasePrincipal implements Principal, Serializable {
 
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+
   private final String id;
 
   private final String name;

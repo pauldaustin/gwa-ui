@@ -5,6 +5,11 @@ import java.util.Set;
 import ca.bc.gov.gwa.servlet.BasePrincipal;
 
 public class GitHubPrincipal extends BasePrincipal {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+
   public GitHubPrincipal(final String id, final String name, final Set<String> roles) {
     super(id, name, roles);
   }

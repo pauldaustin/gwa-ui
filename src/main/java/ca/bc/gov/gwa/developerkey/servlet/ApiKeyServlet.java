@@ -16,12 +16,12 @@ public class ApiKeyServlet extends BaseServlet {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    BaseServlet.apiService.developerApiKeyGet(request, response);
+    this.apiService.developerApiKeyGet(request, response);
   }
 
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    BaseServlet.apiService.developerApiKeyAdd(request, response);
+    this.apiService.developerApiKeyAdd(request, response);
   }
 }

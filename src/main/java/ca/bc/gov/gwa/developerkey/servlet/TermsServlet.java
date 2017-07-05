@@ -16,7 +16,7 @@ public class TermsServlet extends BaseServlet {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    final String termsUrl = BaseServlet.apiService.getConfig("gwaTermsUrl");
+    final String termsUrl = this.apiService.getConfig("gwaTermsUrl");
     sendRedirect(response, termsUrl);
   }
 }

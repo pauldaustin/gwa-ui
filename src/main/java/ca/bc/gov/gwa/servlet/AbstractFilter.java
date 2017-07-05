@@ -19,13 +19,13 @@ public abstract class AbstractFilter implements Filter {
 
   @Override
   public void destroy() {
-    BaseServlet.apiService = null;
+    this.apiService = null;
   }
 
   protected Set<String> getGroups(final HttpServletResponse httpResponse, final String userId,
     final String username) {
     try {
-      return BaseServlet.apiService.consumerGroups(userId, username);
+      return this.apiService.consumerGroups(userId, username);
     } catch (final HttpHostConnectException e) {
       LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
       sendError(httpResponse, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
@@ -40,7 +40,7 @@ public abstract class AbstractFilter implements Filter {
   @Override
   public void init(final FilterConfig filterConfig) throws ServletException {
     final ServletContext servletContext = filterConfig.getServletContext();
-    BaseServlet.apiService = ApiService.get(servletContext);
+    this.apiService = ApiService.get(servletContext);
   }
 
   protected void sendError(final HttpServletResponse response, final int statusCode) {

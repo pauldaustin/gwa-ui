@@ -6,6 +6,11 @@ import java.util.Set;
 import ca.bc.gov.gwa.servlet.BasePrincipal;
 
 public class SiteminderPrincipal extends BasePrincipal {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+
   private final String type;
 
   SiteminderPrincipal(final String id, final String type, final String name,

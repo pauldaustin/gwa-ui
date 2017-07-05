@@ -28,7 +28,7 @@ public final class JsonWriter implements Closeable {
   }
 
   public void charSequence(final CharSequence string) throws IOException {
-    int length = string.length();
+    final int length = string.length();
     for (int i = 0; i < length; i++) {
       final char c = string.charAt(i);
       switch (c) {

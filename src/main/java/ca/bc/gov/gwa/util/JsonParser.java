@@ -51,7 +51,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
     try {
       this.currentCharacter = this.reader.read();
     } catch (final IOException e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException("Error parsing file", e);
     }
   }
 
@@ -70,14 +70,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       do {
         final Object value = getValue();
         if (value instanceof EventType) {
-          final EventType event = (EventType)value;
-          if (event == EventType.COMMA) {
-            throw new IllegalStateException(
-              "Missing value before ',' " + getString(this.reader, 80));
-          } else if (event == EventType.END_ARRAY && !list.isEmpty()) {
-            throw new IllegalStateException(
-              "Missing value after ',' and before ']' " + getString(this.reader, 80));
-          }
+          getArrayError(list, value);
         } else {
           list.add(value);
           this.currentEvent = next();
@@ -91,6 +84,16 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       throw new IllegalStateException("Exepecting start array, not: " + this);
     }
 
+  }
+
+  private void getArrayError(final List<Object> list, final Object value) throws IOException {
+    final EventType event = (EventType)value;
+    if (event == EventType.COMMA) {
+      throw new IllegalStateException("Missing value before ',' " + getString(this.reader, 80));
+    } else if (event == EventType.END_ARRAY && !list.isEmpty()) {
+      throw new IllegalStateException(
+        "Missing value after ',' and before ']' " + getString(this.reader, 80));
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -111,21 +114,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       || hasNext() && next() == EventType.START_OBJECT) {
       final Map<String, Object> map = new LinkedHashMap<>();
       do {
-        if (hasNext() && next() == EventType.STRING) {
-          final String key = getStringIntern();
-          if (hasNext() && next() == EventType.COLON) {
-            if (hasNext()) {
-              final Object value = getValue();
-              if (value instanceof EventType) {
-                throw new IllegalStateException("Exepecting a value, not: " + key + "=" + value);
-              }
-              if (key != null) {
-                map.put(key, value);
-              }
-            }
-          }
-          next();
-        }
+        getMapEntry(map);
       } while (this.currentEvent == EventType.COMMA);
       if (this.currentEvent != EventType.END_OBJECT) {
         throw new IllegalStateException("Exepecting end object, not:" + this.currentEvent);
@@ -135,6 +124,28 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       throw new IllegalStateException("Exepecting end object, not:" + getEvent());
     }
 
+  }
+
+  private void getMapEntry(final Map<String, Object> map) throws IOException {
+    if (hasNext() && next() == EventType.STRING) {
+      final String key = getStringIntern();
+      if (hasNext() && next() == EventType.COLON) {
+        getMapValue(map, key);
+      }
+      next();
+    }
+  }
+
+  private void getMapValue(final Map<String, Object> map, final String key) throws IOException {
+    if (hasNext()) {
+      final Object value = getValue();
+      if (value instanceof EventType) {
+        throw new IllegalStateException("Exepecting a value, not: " + key + "=" + value);
+      }
+      if (key != null) {
+        map.put(key, value);
+      }
+    }
   }
 
   public String getString() {

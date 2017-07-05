@@ -306,7 +306,7 @@ public class ApiService implements ServletContextListener {
       });
     } catch (final Exception e) {
       logDebug("Unable to get API:" + apiName, e);
-      throw new RuntimeException("Error getting API: " + apiName, e);
+      throw new IllegalStateException("Error getting API: " + apiName, e);
     }
   }
 
@@ -321,6 +321,7 @@ public class ApiService implements ServletContextListener {
           this.apiNameById.put(apiId, apiName);
         }
       } catch (final Exception e) {
+        return "";
       }
     }
     return apiName;
@@ -552,31 +553,13 @@ public class ApiService implements ServletContextListener {
   @Override
   public void contextInitialized(final ServletContextEvent event) {
     try {
-      final File propertiesFile = new File("config/gwa.properties");
-      try {
-        if (propertiesFile.exists()) {
-          final Properties properties = new Properties();
-          try (
-            FileInputStream in = new FileInputStream(propertiesFile)) {
-            properties.load(in);
-            final Enumeration<?> propertyNames = properties.propertyNames();
-            while (propertyNames.hasMoreElements()) {
-              final String propertyName = (String)propertyNames.nextElement();
-              final String value = properties.getProperty(propertyName);
-              this.config.put(propertyName, value);
-            }
-          }
-        }
-      } catch (final Exception e) {
-        LoggerFactory.getLogger(getClass()).error("Unable to read config from: " + propertiesFile,
-          e);
-      }
+      readProperties();
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
       this.kongAdminUsername = getConfig("gwaKongAdminUsername", this.kongAdminUsername);
       this.kongAdminPassword = getConfig("gwaKongAdminPassword", this.kongAdminPassword);
       final ServletContext servletContext = event.getServletContext();
       servletContext.setAttribute(API_SERVICE_NAME, this);
-    } catch (final RuntimeException e) {
+    } catch (final Exception e) {
       LoggerFactory.getLogger(getClass()).error("Unable to initialize service", e);
       throw e;
     }
@@ -587,7 +570,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -652,7 +635,6 @@ public class ApiService implements ServletContextListener {
     });
   }
 
-  @SuppressWarnings("unchecked")
   public boolean endpointAccessAllowed(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final List<String> paths) {
     if (paths.isEmpty()) {
@@ -662,27 +644,33 @@ public class ApiService implements ServletContextListener {
       if (principal.isUserInRole(ROLE_GWA_ADMIN)) {
         return true;
       } else {
-        final String endpointName = paths.get(0);
-        final Map<String, Object> api = apiGet(endpointName);
-        if (api != null) {
-          final String username = principal.getName();
-          final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
-          if (endPoint != null) {
-            final Map<String, Object> config = (Map<String, Object>)endPoint.get(CONFIG);
-            final Object owners = config.get(API_OWNERS);
-            if (owners instanceof List) {
-              final List<String> apiOwners = (List<String>)owners;
-              if (apiOwners.contains(username)) {
-                return true;
-              }
-            }
-          }
-        }
-        sendError(httpResponse, HttpServletResponse.SC_NOT_FOUND);
-        return false;
+        return endpointAccessAllowedApiOwner(httpResponse, paths, principal);
       }
 
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private boolean endpointAccessAllowedApiOwner(final HttpServletResponse httpResponse,
+    final List<String> paths, final SiteminderPrincipal principal) {
+    final String endpointName = paths.get(0);
+    final Map<String, Object> api = apiGet(endpointName);
+    if (api != null) {
+      final String username = principal.getName();
+      final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
+      if (endPoint != null) {
+        final Map<String, Object> config = (Map<String, Object>)endPoint.get(CONFIG);
+        final Object owners = config.get(API_OWNERS);
+        if (owners instanceof List) {
+          final List<String> apiOwners = (List<String>)owners;
+          if (apiOwners.contains(username)) {
+            return true;
+          }
+        }
+      }
+    }
+    sendError(httpResponse, HttpServletResponse.SC_NOT_FOUND);
+    return false;
   }
 
   @SuppressWarnings("unchecked")
@@ -731,7 +719,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -759,7 +747,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -880,7 +868,6 @@ public class ApiService implements ServletContextListener {
               final String pluginPath = apiPath + PLUGINS_PATH2 + pluginId;
               httpClient.patch(pluginPath, pluginRequest);
             }
-            // TODO error handling
           }
         }
         Json.writeJson(httpResponse, apiResponse);
@@ -1424,18 +1411,20 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private Object pluginSchemaAddFieldsTable(final String prefix, final List<String> allFieldNames,
     final String fieldName, final Map<String, Object> kongField,
     final Map<String, Object> pluginField, final Map<String, Object> customField,
-    Object defaultValue) {
-    if (defaultValue == null) {
-      defaultValue = Collections.emptyMap();
-    }
+    final Object defaultValue) {
     final Map<String, Object> kongPluginChildSchema = (Map<String, Object>)kongField
       .getOrDefault("schema", Collections.emptyMap());
     pluginSchemaAddFields(prefix + fieldName + ".", allFieldNames, pluginField,
       kongPluginChildSchema, customField);
-    return defaultValue;
+    if (defaultValue == null) {
+      return Collections.emptyMap();
+    } else {
+      return defaultValue;
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -1453,6 +1442,27 @@ public class ApiService implements ServletContextListener {
 
       Json.writeJson(httpResponse, pluginSchema);
     });
+  }
+
+  private void readProperties() {
+    final File propertiesFile = new File("config/gwa.properties");
+    try {
+      if (propertiesFile.exists()) {
+        final Properties properties = new Properties();
+        try (
+          FileInputStream in = new FileInputStream(propertiesFile)) {
+          properties.load(in);
+          final Enumeration<?> propertyNames = properties.propertyNames();
+          while (propertyNames.hasMoreElements()) {
+            final String propertyName = (String)propertyNames.nextElement();
+            final String value = properties.getProperty(propertyName);
+            this.config.put(propertyName, value);
+          }
+        }
+      }
+    } catch (final Exception e) {
+      LoggerFactory.getLogger(getClass()).error("Unable to read config from: " + propertiesFile, e);
+    }
   }
 
   protected void sendError(final HttpServletResponse response, final int statusCode) {

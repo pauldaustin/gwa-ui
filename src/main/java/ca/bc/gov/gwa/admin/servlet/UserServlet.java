@@ -9,8 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.bc.gov.gwa.servlet.BaseServlet;
-
 @WebServlet(urlPatterns = "/int/rest/users/*", loadOnStartup = 1)
 public class UserServlet extends BaseAdminServlet {
   private static final String PLUGINS = "plugins";
@@ -55,14 +53,14 @@ public class UserServlet extends BaseAdminServlet {
   private void doDeleteUser(final HttpServletResponse response, final List<String> paths) {
     final String username = paths.get(0);
     final String consumerPath = CONSUMERS_PATH + username;
-    BaseServlet.apiService.handleDelete(response, consumerPath);
+    this.apiService.handleDelete(response, consumerPath);
   }
 
   private void doDeleteUserGroup(final HttpServletResponse response, final List<String> paths) {
     final String username = paths.get(0);
     final String groupId = paths.get(2);
     final String groupPath = CONSUMERS_PATH + username + "/acls/" + groupId;
-    BaseServlet.apiService.handleDelete(response, groupPath);
+    this.apiService.handleDelete(response, groupPath);
   }
 
   @Override
@@ -97,25 +95,25 @@ public class UserServlet extends BaseAdminServlet {
   private void doGetUser(final HttpServletResponse response, final List<String> paths) {
     final String username = paths.get(0);
     final String consumerPath = CONSUMERS_PATH + username;
-    BaseServlet.apiService.handleGet(response, consumerPath);
+    this.apiService.handleGet(response, consumerPath);
   }
 
   private void doGetUserGroups(final HttpServletRequest request, final HttpServletResponse response,
     final List<String> paths) {
     final String consumerIdOrUsername = paths.get(0);
     final String groupsPath = CONSUMERS_PATH + consumerIdOrUsername + "/acls";
-    BaseServlet.apiService.handleList(request, response, groupsPath);
+    this.apiService.handleList(request, response, groupsPath);
   }
 
   private void doGetUserList(final HttpServletRequest request, final HttpServletResponse response) {
-    BaseServlet.apiService.handleList(request, response, "/consumers");
+    this.apiService.handleList(request, response, "/consumers");
   }
 
   private void doGetUserPlugins(final HttpServletRequest request,
     final HttpServletResponse response, final List<String> paths) {
     final String consumerIdOrUsername = paths.get(0);
-    BaseServlet.apiService.pluginList(request, response,
-      "/plugins?consumer_id=" + consumerIdOrUsername, null);
+    this.apiService.pluginList(request, response, "/plugins?consumer_id=" + consumerIdOrUsername,
+      null);
   }
 
   @Override
@@ -146,13 +144,13 @@ public class UserServlet extends BaseAdminServlet {
   }
 
   private void doPostUserAdd(final HttpServletRequest request, final HttpServletResponse response) {
-    BaseServlet.apiService.handleAdd(request, response, CONSUMERS_PATH, CONSUMER_FIELD_NAMES);
+    this.apiService.handleAdd(request, response, CONSUMERS_PATH, CONSUMER_FIELD_NAMES);
   }
 
   private void doPostUserGroupAdd(final HttpServletRequest request,
     final HttpServletResponse response, final List<String> paths) {
     final String username = paths.get(0);
-    BaseServlet.apiService.consumerGroupAdd(request, response, username);
+    this.apiService.consumerGroupAdd(request, response, username);
   }
 
   @Override
@@ -177,7 +175,7 @@ public class UserServlet extends BaseAdminServlet {
   private void doPutUserUpdate(final HttpServletRequest request, final HttpServletResponse response,
     final List<String> paths) {
     final String username = paths.get(0);
-    BaseServlet.apiService.handleUpdatePatch(request, response, CONSUMERS_PATH + username,
+    this.apiService.handleUpdatePatch(request, response, CONSUMERS_PATH + username,
       CONSUMER_FIELD_NAMES);
   }
 
