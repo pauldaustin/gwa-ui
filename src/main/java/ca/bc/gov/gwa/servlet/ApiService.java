@@ -323,6 +323,7 @@ public class ApiService implements ServletContextListener {
           this.apiNameById.put(apiId, apiName);
         }
       } catch (final Exception e) {
+        LOG.error("Unable to get API:" + apiId, e);
         return "";
       }
     }
@@ -450,6 +451,7 @@ public class ApiService implements ServletContextListener {
           this.usernameByConsumerId.put(consumerId, username);
         }
       } catch (final Exception e) {
+        LOG.debug("Unable to find user:" + consumerId, e);
         return null;
       }
     }
@@ -739,6 +741,7 @@ public class ApiService implements ServletContextListener {
       }
       return false;
     } catch (final Exception e) {
+      LOG.debug("Unable to find group:" + groupName, e);
       return false;
     }
   }
@@ -1007,11 +1010,11 @@ public class ApiService implements ServletContextListener {
 
   private int getPageOffset(final HttpServletRequest httpRequest) {
     final String offset = httpRequest.getParameter("offset");
-    if (offset != null) {
+    if (offset != null && offset.length() > 1) {
       try {
         return Integer.parseInt(offset);
       } catch (final Exception e) {
-        return 0;
+        throw new IllegalArgumentException("Offset must be an integer number:" + offset, e);
       }
     }
     return 0;
@@ -1025,7 +1028,7 @@ public class ApiService implements ServletContextListener {
         this.version = (String)kongResponse.get("version");
 
       } catch (final Exception e) {
-        return "0.9.x";
+        throw new IllegalStateException("Unable to get kong version", e);
       }
     }
     return this.version;
@@ -1047,6 +1050,7 @@ public class ApiService implements ServletContextListener {
       try {
         apiResponse = httpClient.post(aclPath, aclRequest);
       } catch (final HttpStatusException e) {
+        LOG.debug("Error adding group", e);
         if (e.getCode() == 404) {
           final Map<String, Object> consumer = Collections.singletonMap(USERNAME, username);
           httpClient.post(CONSUMERS_PATH, consumer);
@@ -1138,22 +1142,8 @@ public class ApiService implements ServletContextListener {
   }
 
   public void handleRequest(final HttpServletResponse httpResponse, final JsonHttpConsumer action) {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      action.accept(httpClient);
-    } catch (final HttpStatusException e) {
-      if (e.getCode() == 503) {
-        writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE, e);
-      } else {
-        final String message = e.toString() + "\n" + e.getBody();
-        logError(message, e);
-        writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
-      }
-    } catch (final HttpHostConnectException e) {
-      writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE);
-    } catch (final Exception e) {
-      writeJsonError(httpResponse, UNKNOWN_APPLICATION_ERROR, e);
-    }
+    final JsonHttpFunction function = action;
+    handleRequest(httpResponse, function);
   }
 
   public Map<String, Object> handleRequest(final HttpServletResponse httpResponse,
@@ -1169,8 +1159,10 @@ public class ApiService implements ServletContextListener {
         writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
       }
     } catch (final HttpHostConnectException e) {
+      LOG.debug("Kong not available", e);
       writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE);
     } catch (final Exception e) {
+      LOG.debug("Unexpected kong error", e);
       writeJsonError(httpResponse, UNKNOWN_APPLICATION_ERROR, e);
     }
     return null;
