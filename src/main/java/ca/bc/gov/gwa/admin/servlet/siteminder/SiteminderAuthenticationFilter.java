@@ -28,7 +28,32 @@ public class SiteminderAuthenticationFilter extends AbstractFilter {
 
   private static final String SITEMINDER_PRINCIPAL = "SiteminderPrincipal";
 
-  protected void doFilerLogin(final FilterChain chain, final HttpServletRequest httpRequest,
+  @Override
+  public void doFilter(final ServletRequest request, final ServletResponse response,
+    final FilterChain chain) throws IOException, ServletException {
+    final HttpServletRequest httpRequest = (HttpServletRequest)request;
+    final HttpServletResponse httpResponse = (HttpServletResponse)response;
+    try {
+      if (request.getAttribute("siteminderFiltered") == null) {
+        request.setAttribute("siteminderFiltered", Boolean.TRUE);
+        final String servletPath = httpRequest.getServletPath();
+        if ("/int/logout".equals(servletPath)) {
+          doFilterLogout(httpRequest, httpResponse);
+        } else {
+          doFilterLogin(chain, httpRequest, httpResponse);
+        }
+      } else {
+        chain.doFilter(request, response);
+      }
+    } catch (ServletException | IOException e) {
+      throw e;
+    } catch (final Exception e) {
+      LoggerFactory.getLogger(getClass()).error("Unknown error", e);
+      sendError(httpResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  protected void doFilterLogin(final FilterChain chain, final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) throws IOException, ServletException {
     final HttpSession session = httpRequest.getSession();
     SiteminderPrincipal principal = (SiteminderPrincipal)session.getAttribute(SITEMINDER_PRINCIPAL);
@@ -59,31 +84,6 @@ public class SiteminderAuthenticationFilter extends AbstractFilter {
       } else {
         sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
       }
-    }
-  }
-
-  @Override
-  public void doFilter(final ServletRequest request, final ServletResponse response,
-    final FilterChain chain) throws IOException, ServletException {
-    final HttpServletRequest httpRequest = (HttpServletRequest)request;
-    final HttpServletResponse httpResponse = (HttpServletResponse)response;
-    try {
-      if (request.getAttribute("siteminderFiltered") == null) {
-        request.setAttribute("siteminderFiltered", Boolean.TRUE);
-        final String servletPath = httpRequest.getServletPath();
-        if ("/int/logout".equals(servletPath)) {
-          doFilterLogout(httpRequest, httpResponse);
-        } else {
-          doFilerLogin(chain, httpRequest, httpResponse);
-        }
-      } else {
-        chain.doFilter(request, response);
-      }
-    } catch (ServletException | IOException e) {
-      throw e;
-    } catch (final Exception e) {
-      LoggerFactory.getLogger(getClass()).error("Unknown error", e);
-      sendError(httpResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
   }
 
