@@ -14,8 +14,24 @@ public class SiteminderPrincipal extends BasePrincipal {
     this.type = type;
   }
 
+  @Override
+  public boolean equals(final Object object) {
+    if (this == object) {
+      return true;
+    } else if (object instanceof SiteminderPrincipal) {
+      return super.equals(object);
+    } else {
+      return false;
+    }
+  }
+
   public String getType() {
     return this.type;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   @Override

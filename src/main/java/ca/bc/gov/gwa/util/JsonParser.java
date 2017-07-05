@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 
 public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   public enum EventType {
-    booleanValue, colon, comma, endArray, endDocument, endObject, nullValue, number, startArray, startDocument, startObject, string, unknown
+    BOOLEAN_VALUE, COLON, COMMA, END_ARRAY, END_DOCUMENT, END_OBJECT, NULL_VALUE, NUMBER, START_ARRAY, START_DOCUMENT, START_OBJECT, STRING, UNKNOWN
   }
 
   public static String getString(final Reader reader, final int count) throws IOException {
@@ -34,13 +34,13 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
 
   private int currentCharacter;
 
-  private EventType currentEvent = EventType.startDocument;
+  private EventType currentEvent = EventType.START_DOCUMENT;
 
   private Object currentValue;
 
   private int depth;
 
-  private EventType nextEvent = EventType.startDocument;
+  private EventType nextEvent = EventType.START_DOCUMENT;
 
   private Object nextValue;
 
@@ -65,27 +65,25 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public List<Object> getArray() throws IOException {
-    if (getEvent() == EventType.startArray || hasNext() && next() == EventType.startArray) {
+    if (getEvent() == EventType.START_ARRAY || hasNext() && next() == EventType.START_ARRAY) {
       final List<Object> list = new ArrayList<>();
       do {
         final Object value = getValue();
         if (value instanceof EventType) {
           final EventType event = (EventType)value;
-          if (event == EventType.comma) {
+          if (event == EventType.COMMA) {
             throw new IllegalStateException(
               "Missing value before ',' " + getString(this.reader, 80));
-          } else if (event == EventType.endArray) {
-            if (!list.isEmpty()) {
-              throw new IllegalStateException(
-                "Missing value after ',' and before ']' " + getString(this.reader, 80));
-            }
+          } else if (event == EventType.END_ARRAY && !list.isEmpty()) {
+            throw new IllegalStateException(
+              "Missing value after ',' and before ']' " + getString(this.reader, 80));
           }
         } else {
           list.add(value);
           this.currentEvent = next();
         }
-      } while (this.currentEvent == EventType.comma);
-      if (this.currentEvent != EventType.endArray) {
+      } while (this.currentEvent == EventType.COMMA);
+      if (this.currentEvent != EventType.END_ARRAY) {
         throw new IllegalStateException("Exepecting end array, not '" + this + ']');
       }
       return list;
@@ -109,29 +107,27 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public Map<String, Object> getMap() throws IOException {
-    if (this.currentEvent == EventType.startObject
-      || hasNext() && next() == EventType.startObject) {
+    if (this.currentEvent == EventType.START_OBJECT
+      || hasNext() && next() == EventType.START_OBJECT) {
       final Map<String, Object> map = new LinkedHashMap<>();
       do {
-        if (hasNext() && next() == EventType.string) {
+        if (hasNext() && next() == EventType.STRING) {
           final String key = getStringIntern();
-          if (hasNext()) {
-            if (next() == EventType.colon) {
-              if (hasNext()) {
-                final Object value = getValue();
-                if (value instanceof EventType) {
-                  throw new IllegalStateException("Exepecting a value, not: " + key + "=" + value);
-                }
-                if (key != null) {
-                  map.put(key, value);
-                }
+          if (hasNext() && next() == EventType.COLON) {
+            if (hasNext()) {
+              final Object value = getValue();
+              if (value instanceof EventType) {
+                throw new IllegalStateException("Exepecting a value, not: " + key + "=" + value);
+              }
+              if (key != null) {
+                map.put(key, value);
               }
             }
           }
           next();
         }
-      } while (this.currentEvent == EventType.comma);
-      if (this.currentEvent != EventType.endObject) {
+      } while (this.currentEvent == EventType.COMMA);
+      if (this.currentEvent != EventType.END_OBJECT) {
         throw new IllegalStateException("Exepecting end object, not:" + this.currentEvent);
       }
       return map;
@@ -142,10 +138,10 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public String getString() {
-    if (getEvent() == EventType.string || hasNext() && next() == EventType.string) {
+    if (getEvent() == EventType.STRING || hasNext() && next() == EventType.STRING) {
       return getCurrentValue();
     } else {
-      throw new IllegalStateException("Expecting a string");
+      throw new IllegalStateException("Expecting a STRING");
     }
   }
 
@@ -161,17 +157,17 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   public Object getValue() throws IOException {
     if (hasNext()) {
       final EventType event = next();
-      if (event == EventType.startArray) {
+      if (event == EventType.START_ARRAY) {
         return getArray();
-      } else if (event == EventType.startObject) {
+      } else if (event == EventType.START_OBJECT) {
         return this.getMap();
-      } else if (event == EventType.booleanValue) {
+      } else if (event == EventType.BOOLEAN_VALUE) {
         return getCurrentValue();
-      } else if (event == EventType.nullValue) {
+      } else if (event == EventType.NULL_VALUE) {
         return getCurrentValue();
-      } else if (event == EventType.string) {
+      } else if (event == EventType.STRING) {
         return getCurrentValue();
-      } else if (event == EventType.number) {
+      } else if (event == EventType.NUMBER) {
         return getCurrentValue();
       } else {
         return event;
@@ -183,7 +179,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
 
   @Override
   public boolean hasNext() {
-    return this.currentEvent != EventType.endDocument;
+    return this.currentEvent != EventType.END_DOCUMENT;
   }
 
   public boolean isEvent(final EventType eventType) {
@@ -205,36 +201,36 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       skipWhitespace();
       switch (this.currentCharacter) {
         case ',':
-          this.nextEvent = EventType.comma;
+          this.nextEvent = EventType.COMMA;
           this.currentCharacter = this.reader.read();
         break;
         case ':':
-          this.nextEvent = EventType.colon;
+          this.nextEvent = EventType.COLON;
           this.currentCharacter = this.reader.read();
         break;
         case '{':
-          this.nextEvent = EventType.startObject;
+          this.nextEvent = EventType.START_OBJECT;
           this.currentCharacter = this.reader.read();
           this.depth++;
         break;
         case '}':
-          this.nextEvent = EventType.endObject;
+          this.nextEvent = EventType.END_OBJECT;
           this.currentCharacter = this.reader.read();
           this.depth--;
         break;
         case '[':
-          this.nextEvent = EventType.startArray;
+          this.nextEvent = EventType.START_ARRAY;
           this.currentCharacter = this.reader.read();
         break;
         case ']':
-          this.nextEvent = EventType.endArray;
+          this.nextEvent = EventType.END_ARRAY;
           this.currentCharacter = this.reader.read();
         break;
         case 't':
           for (int i = 0; i < 3; i++) {
             this.currentCharacter = this.reader.read();
           }
-          this.nextEvent = EventType.booleanValue;
+          this.nextEvent = EventType.BOOLEAN_VALUE;
           this.nextValue = Boolean.TRUE;
           this.currentCharacter = this.reader.read();
         break;
@@ -242,7 +238,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
           for (int i = 0; i < 4; i++) {
             this.currentCharacter = this.reader.read();
           }
-          this.nextEvent = EventType.booleanValue;
+          this.nextEvent = EventType.BOOLEAN_VALUE;
           this.nextValue = Boolean.FALSE;
           this.currentCharacter = this.reader.read();
         break;
@@ -250,35 +246,35 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
           for (int i = 0; i < 3; i++) {
             this.currentCharacter = this.reader.read();
           }
-          this.nextEvent = EventType.nullValue;
+          this.nextEvent = EventType.NULL_VALUE;
           this.nextValue = null;
           this.currentCharacter = this.reader.read();
         break;
         case '"':
-          this.nextEvent = EventType.string;
+          this.nextEvent = EventType.STRING;
 
           processString();
           this.currentCharacter = this.reader.read();
         break;
         case '-':
-          this.nextEvent = EventType.number;
+          this.nextEvent = EventType.NUMBER;
 
           processNumber();
         break;
         case -1:
-          this.nextEvent = EventType.endDocument;
+          this.nextEvent = EventType.END_DOCUMENT;
         break;
         default:
           if (this.currentCharacter >= '0' && this.currentCharacter <= '9') {
-            this.nextEvent = EventType.number;
+            this.nextEvent = EventType.NUMBER;
             processNumber();
           } else {
-            this.nextEvent = EventType.unknown;
+            this.nextEvent = EventType.UNKNOWN;
           }
         break;
       }
     } catch (final IOException e) {
-      this.nextEvent = EventType.endDocument;
+      this.nextEvent = EventType.END_DOCUMENT;
     }
   }
 
@@ -352,6 +348,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
           break;
           case 'f':
             text.append('\f');
+          break;
           case 'n':
             text.append('\n');
           break;
@@ -362,19 +359,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
             text.append('\t');
           break;
           case 'u':
-            final char[] buf = new char[4];
-            final int readCount = this.reader.read(buf);
-            final String unicodeText = String.valueOf(buf, 0, readCount);
-            if (readCount == 4) {
-              try {
-                final int unicode = Integer.parseInt(unicodeText, 16);
-                text.append((char)unicode);
-              } catch (final NumberFormatException e) {
-                throw e;
-              }
-            } else {
-              throw new IllegalStateException("Unicode escape not correct " + unicodeText);
-            }
+            processUnicodeEscape(text);
           break;
           default:
             throw new IllegalStateException(
@@ -388,17 +373,34 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
     this.nextValue = text.toString();
   }
 
+  private void processUnicodeEscape(final StringBuilder text) throws IOException {
+    final char[] buf = new char[4];
+    final int readCount = this.reader.read(buf);
+    final String unicodeText = String.valueOf(buf, 0, readCount);
+    if (readCount == 4) {
+      try {
+        final int unicode = Integer.parseInt(unicodeText, 16);
+        text.append((char)unicode);
+      } catch (final NumberFormatException e) {
+        throw e;
+      }
+    } else {
+      throw new IllegalStateException("Unicode escape not correct " + unicodeText);
+    }
+  }
+
   @Override
   public void remove() {
+    throw new UnsupportedOperationException();
   }
 
   /** Skip to next attribute in any object.*/
   public String skipToAttribute() {
     while (hasNext()) {
       final EventType eventType = next();
-      if (eventType == EventType.string) {
+      if (eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (hasNext() && next() == EventType.colon) {
+        if (hasNext() && next() == EventType.COLON) {
           return key;
         }
       }
@@ -416,19 +418,17 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   public boolean skipToAttribute(final String fieldName) {
     while (hasNext()) {
       final EventType eventType = next();
-      if (eventType == EventType.string) {
+      if (eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (key.equals(fieldName)) {
-          if (hasNext() && next() == EventType.colon) {
-            if (hasNext()) {
-              next();
-              return true;
-            } else {
-              return false;
-            }
+        if (key.equals(fieldName) && hasNext() && next() == EventType.COLON) {
+          if (hasNext()) {
+            next();
+            return true;
+          } else {
+            return false;
           }
         }
-      } else if (eventType == EventType.unknown) {
+      } else if (eventType == EventType.UNKNOWN) {
         return false;
       }
     }
@@ -440,14 +440,14 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
     int objectCount = 0;
     while (hasNext()) {
       final EventType eventType = next();
-      if (objectCount == 0 && eventType == EventType.string) {
+      if (objectCount == 0 && eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (hasNext() && next() == EventType.colon) {
+        if (hasNext() && next() == EventType.COLON) {
           return key;
         }
-      } else if (eventType == EventType.startObject) {
+      } else if (eventType == EventType.START_OBJECT) {
         objectCount++;
-      } else if (eventType == EventType.endObject) {
+      } else if (eventType == EventType.END_OBJECT) {
         if (objectCount == 0) {
           return null;
         } else {
@@ -459,16 +459,14 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public boolean skipToNextObjectInArray() {
-    if (isEvent(EventType.startArray, EventType.comma)) {
-      if (hasNext()) {
-        final EventType eventType = next();
-        if (eventType == EventType.startObject) {
-          return true;
-        } else if (eventType == EventType.endArray) {
-          return false;
-        } else {
-          throw new IllegalArgumentException("Unexpected element: " + this);
-        }
+    if (isEvent(EventType.START_ARRAY, EventType.COMMA) && hasNext()) {
+      final EventType eventType = next();
+      if (eventType == EventType.START_OBJECT) {
+        return true;
+      } else if (eventType == EventType.END_ARRAY) {
+        return false;
+      } else {
+        throw new IllegalArgumentException("Unexpected element: " + this);
       }
     }
     return false;
@@ -486,6 +484,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
     try {
       jsonText = getString(this.reader, 80);
     } catch (final IOException e) {
+      jsonText = "";
     }
     return this.currentEvent + " : " + this.currentValue + " "
       + Character.toString((char)this.currentCharacter) + jsonText;

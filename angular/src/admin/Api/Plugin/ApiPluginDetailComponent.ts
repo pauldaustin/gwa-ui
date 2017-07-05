@@ -17,7 +17,7 @@ import {
 
 import { Params } from '@angular/router';
 
-import { BaseDetailComponent } from '../../../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../../shared/Component/BaseDetailComponent';
 
 import { Api } from '../Api';
 import { ApiService } from '../ApiService';

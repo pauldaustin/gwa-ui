@@ -11,6 +11,8 @@ import ca.bc.gov.gwa.servlet.BaseServlet;
 
 @WebServlet(urlPatterns = "/int/rest/groups/*", loadOnStartup = 1)
 public class GroupServlet extends BaseServlet {
+  private static final String GROUPS_PATH = "/groups";
+
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -24,9 +26,9 @@ public class GroupServlet extends BaseServlet {
     throws ServletException, IOException {
     final String pathInfo = request.getPathInfo();
     if (isPathEmpty(pathInfo)) {
-      this.apiService.handleListAll(request, response, "/groups");
+      this.apiService.handleListAll(request, response, GROUPS_PATH);
     } else if (pathInfo.indexOf('/', 1) == -1) {
-      final String groupPath = "/groups" + pathInfo;
+      final String groupPath = GROUPS_PATH + pathInfo;
       this.apiService.groupUserList(request, response, groupPath);
     } else {
       sendError(response, HttpServletResponse.SC_NOT_FOUND);

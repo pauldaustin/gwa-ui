@@ -4,7 +4,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import { BaseDetailComponent } from '../../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
 import { Api } from '../Api/Api';
 import { EndpointService } from './EndpointService';
 import { Plugin } from '../Plugin/Plugin';

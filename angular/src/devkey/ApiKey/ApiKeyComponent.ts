@@ -5,7 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseComponent } from '../../Component/BaseComponent';
+import { BaseComponent } from '../../shared/Component/BaseComponent';
 
 import { ApiKey } from './ApiKey';
 import { ApiKeyService } from './ApiKeyService';

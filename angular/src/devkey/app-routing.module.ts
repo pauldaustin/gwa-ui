@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PageNotFoundComponent } from '../Component/PageNotFoundComponent';
+import { PageNotFoundComponent } from '../shared/Component/PageNotFoundComponent';
 import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
 
 const routes: Routes = [

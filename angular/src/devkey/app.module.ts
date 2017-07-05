@@ -10,14 +10,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { AppRoutingModule } from './app-routing.module';
-import { AuthService } from '../Authentication/AuthService';
-import {
-  BcGovTemplateComponent,
-  BcGovTemplateModule
-} from '../bcgov-template/index';
-import { DeleteDialogComponent } from '../Component/DeleteDialogComponent';
-import { MessageDialogComponent } from '../Component/MessageDialogComponent';
-import { PageNotFoundComponent } from '../Component/PageNotFoundComponent';
+import { BcGovTemplateComponent } from '../shared/bcgov-template/BcGovTemplateComponent';
+import { SharedModule } from '../shared/shared.module';
 import { ApiKeyService } from './ApiKey/ApiKeyService';
 import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
 
@@ -30,7 +24,8 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
     HttpModule,
     MaterialModule,
     NgxDatatableModule,
-    BcGovTemplateModule.forRoot({
+    SharedModule.forRoot({
+      basePath: '',
       title: 'API Keys',
       headerMenuItems: [
         {
@@ -40,20 +35,14 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
       ]
     }
     ),
-    AppRoutingModule,
+    AppRoutingModule
   ],
   entryComponents: [
-    DeleteDialogComponent,
-    MessageDialogComponent
   ],
   declarations: [
     ApiKeyComponent,
-    PageNotFoundComponent,
-    DeleteDialogComponent,
-    MessageDialogComponent
   ],
   providers: [
-    AuthService,
     ApiKeyService,
   ],
   bootstrap: [BcGovTemplateComponent]

@@ -18,24 +18,21 @@ public class PluginServlet extends BaseAdminServlet {
     final List<String> paths = splitPathInfo(request);
     switch (paths.size()) {
       case 0:
-        this.apiService.pluginNameList(response);
+        doGetPluginNamesList(response);
       break;
-      case 1: {
+      case 1:
         final String pluginName = paths.get(0);
         if ("_names".equals(pluginName)) {
-          this.apiService.pluginNames(response);
+          doGetPluginNames(response);
         } else {
-          this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
+          doGetPluginList(request, response, pluginName);
         }
-      }
       break;
-      case 2: {
-        final String pluginName = paths.get(0);
+      case 2:
         final String type = paths.get(1);
         if ("schema".equals(type)) {
-          this.apiService.pluginSchemaGet(request, response, pluginName);
+          doGetPluginSchema(response, paths);
         }
-      }
       break;
       default:
         sendError(response, HttpServletResponse.SC_NOT_FOUND);
@@ -44,4 +41,21 @@ public class PluginServlet extends BaseAdminServlet {
 
   }
 
+  private void doGetPluginList(final HttpServletRequest request, final HttpServletResponse response,
+    final String pluginName) {
+    this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
+  }
+
+  private void doGetPluginNames(final HttpServletResponse response) {
+    this.apiService.pluginNames(response);
+  }
+
+  private void doGetPluginNamesList(final HttpServletResponse response) {
+    this.apiService.pluginNameList(response);
+  }
+
+  private void doGetPluginSchema(final HttpServletResponse response, final List<String> paths) {
+    final String pluginName = paths.get(0);
+    this.apiService.pluginSchemaGet(response, pluginName);
+  }
 }

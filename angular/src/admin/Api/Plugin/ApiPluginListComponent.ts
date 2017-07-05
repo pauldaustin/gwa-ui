@@ -6,7 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { BaseListComponent } from '../../../Component/BaseListComponent';
+import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
 
 import { Api } from '../Api';
 import { PluginListComponent } from '../../Plugin/PluginListComponent';

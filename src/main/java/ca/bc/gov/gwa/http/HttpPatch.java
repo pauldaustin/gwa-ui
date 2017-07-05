@@ -8,7 +8,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 @NotThreadSafe
 public class HttpPatch extends HttpEntityEnclosingRequestBase {
 
-  public final static String METHOD_NAME = "PATCH";
+  public static final String METHOD_NAME = "PATCH";
 
   public HttpPatch() {
     super();

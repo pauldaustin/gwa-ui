@@ -56,11 +56,9 @@ public class BasePrincipal implements Principal, Serializable {
   }
 
   public boolean isExpired(final long timeInMillis) {
-    if (this.timestamp + timeInMillis < System.currentTimeMillis()) {
-      return true;
-    } else {
-      return false;
-    }
+    final long time = System.currentTimeMillis();
+    final long expireTime = this.timestamp + timeInMillis;
+    return expireTime < time;
   }
 
   public boolean isInvalid(final String id, final long timeInMillis) {

@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { Params } from '@angular/router';
 
-import { BaseListComponent } from '../../Component/BaseListComponent';
+import { BaseListComponent } from '../../shared/Component/BaseListComponent';
 
 import { Group } from './Group';
 import { GroupUserService } from './GroupUserService';

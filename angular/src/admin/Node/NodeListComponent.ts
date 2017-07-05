@@ -4,7 +4,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseListComponent } from '../../Component/BaseListComponent';
+import { BaseListComponent } from '../../shared/Component/BaseListComponent';
 
 import { Node } from './Node';
 import { NodeService } from './NodeService';

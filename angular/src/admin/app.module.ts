@@ -23,16 +23,12 @@ import {
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {
-  BcGovTemplateComponent,
-  BcGovTemplateModule
-} from '../bcgov-template/index';
+  BcGovTemplateComponent
+} from '../shared/bcgov-template/BcGovTemplateComponent';
+import { SharedModule } from '../shared/shared.module';
 
-import { DeleteDialogComponent } from '../Component/DeleteDialogComponent';
-import { MessageDialogComponent } from '../Component/MessageDialogComponent';
-import { PageNotFoundComponent } from '../Component/PageNotFoundComponent';
-
-import { AuthService } from '../Authentication/AuthService';
-import { RoleGuard } from '../Authentication/RoleGuard';
+import { AuthService } from '../shared/Authentication/AuthService';
+import { RoleGuard } from '../shared/Authentication/RoleGuard';
 
 import { ApiListComponent } from './Api/ApiListComponent';
 import { ApiAddComponent } from './Api/ApiAddComponent';
@@ -50,7 +46,7 @@ import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
 import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
 import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 
-import { Config } from '../Config';
+import { Config } from '../shared/Config';
 
 import { UserListComponent } from './User/UserListComponent';
 import { UserAddComponent } from './User/UserAddComponent';
@@ -93,8 +89,6 @@ import { StatusService } from './Status/StatusService';
 
 import { AppRoutingModule } from './app-routing.module';
 
-Config.basePath = '/int';
-
 @NgModule({
   imports: [
     BrowserModule,
@@ -115,7 +109,8 @@ Config.basePath = '/int';
     MdToolbarModule,
 
     NgxDatatableModule,
-    BcGovTemplateModule.forRoot({
+    SharedModule.forRoot({
+      basePath: '/int',
       title: 'Gateway Admin',
       headerMenuItems: [
         {
@@ -154,14 +149,8 @@ Config.basePath = '/int';
     AppRoutingModule,
   ],
   entryComponents: [
-    MessageDialogComponent,
-    DeleteDialogComponent
   ],
   declarations: [
-    DeleteDialogComponent,
-    MessageDialogComponent,
-    PageNotFoundComponent,
-
     ApiAddComponent,
     ApiDetailComponent,
     ApiListComponent,

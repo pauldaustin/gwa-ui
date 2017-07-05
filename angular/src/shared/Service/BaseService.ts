@@ -2,7 +2,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
-  Injector
+  Injector,
+  Optional
 } from '@angular/core';
 
 import {
@@ -31,11 +32,13 @@ import { MessageDialogComponent } from '../Component/MessageDialogComponent';
 
 @Injectable()
 export abstract class BaseService<T> implements Service<T> {
+  protected config = this.injector.get(Config);
+
   protected document: any = this.injector.get(DOCUMENT);
 
-  protected http: Http = this.injector.get(Http);
+  protected http = this.injector.get(Http);
 
-  protected location: Location = this.injector.get(Location);
+  protected location = this.injector.get(Location);
 
   protected path: string;
 
@@ -54,7 +57,7 @@ export abstract class BaseService<T> implements Service<T> {
   private jsonHeaders = new Headers({ 'Content-Type': 'application/json' });
 
   constructor(
-    protected injector: Injector,
+    protected injector: Injector
   ) {
   }
 
@@ -124,7 +127,7 @@ export abstract class BaseService<T> implements Service<T> {
   }
 
   protected getUrl(path: string): string {
-    return Config.basePath + '/rest' + path;
+    return this.config.basePath + '/rest' + path;
   }
 
   deleteObject(object: T, path?: string): Promise<boolean> {

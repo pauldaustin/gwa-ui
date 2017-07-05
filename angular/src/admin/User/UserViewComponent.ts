@@ -3,7 +3,7 @@ import {
   Injector,
   OnInit
 } from '@angular/core';
-import { BaseDetailComponent } from '../../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
 import { User } from './User';
 import { UserService } from './UserService';
 

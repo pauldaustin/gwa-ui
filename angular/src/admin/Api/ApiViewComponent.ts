@@ -5,7 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseDetailComponent } from '../../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
 
 import { Api } from './Api';
 import { Plugin } from '../Plugin/Plugin';

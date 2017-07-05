@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RoleGuard } from '../Authentication/RoleGuard';
-import { PageNotFoundComponent } from '../Component/PageNotFoundComponent';
+import { RoleGuard } from '../shared/Authentication/RoleGuard';
+import { PageNotFoundComponent } from '../shared/Component/PageNotFoundComponent';
 
 import { ApiAddComponent } from './Api/ApiAddComponent';
 import { ApiListComponent } from './Api/ApiListComponent';

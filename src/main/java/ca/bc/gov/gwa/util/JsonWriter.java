@@ -28,7 +28,8 @@ public final class JsonWriter implements Closeable {
   }
 
   public void charSequence(final CharSequence string) throws IOException {
-    for (int i = 0; i < string.length(); i++) {
+    int length = string.length();
+    for (int i = 0; i < length; i++) {
       final char c = string.charAt(i);
       switch (c) {
         case '"':
@@ -113,25 +114,21 @@ public final class JsonWriter implements Closeable {
 
     if (size > 1) {
       if (this.indent) {
-        {
-          final Object value = values[0];
-          indent();
-          value(value);
-        }
+        Object value = values[0];
+        indent();
+        value(value);
         for (int index = 1; index < size; index++) {
           endAttribute();
           indent();
-          final Object value = values[index];
+          value = values[index];
           value(value);
         }
       } else {
-        {
-          final Object value = values[0];
-          value(value);
-        }
+        Object value = values[0];
+        value(value);
         for (int index = 1; index < size; index++) {
           endAttribute();
-          final Object value = values[index];
+          value = values[index];
           value(value);
         }
       }

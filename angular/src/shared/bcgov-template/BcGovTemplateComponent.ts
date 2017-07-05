@@ -11,7 +11,7 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { AuthService } from '../Authentication/AuthService';
-import { BcGovTemplateConfig } from './BcGovTemplateConfig';
+import { Config } from '../Config';
 import { MenuItem } from './MenuItem';
 
 @Component({
@@ -25,15 +25,15 @@ export class BcGovTemplateComponent {
 
   headerMenuItems: Array<MenuItem>;
 
-  headerMenuVisible: false;
+  headerMenuVisible = false;
 
-  footerMenuVisible: false;
+  footerMenuVisible = false;
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private titleService: Title,
-    @Optional() config: BcGovTemplateConfig
+    @Optional() config: Config
   ) {
     if (config) {
       this.title = config.title;

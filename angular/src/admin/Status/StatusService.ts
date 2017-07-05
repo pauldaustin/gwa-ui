@@ -3,7 +3,7 @@ import {
   Injector
 } from '@angular/core';
 
-import { BaseService } from '../../Service/BaseService';
+import { BaseService } from '../../shared/Service/BaseService';
 
 @Injectable()
 export class StatusService extends BaseService<any> {

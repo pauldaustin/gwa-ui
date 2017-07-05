@@ -129,7 +129,7 @@
               <outputDirectory>target/${project.artifactId}-${project.version}/int</outputDirectory>
               <resources>
                 <resource>
-                  <directory>target/admin</directory>
+                  <directory>target/gwa-admin</directory>
                   <includes>
                     <include>**</include>
                   </includes>
@@ -148,7 +148,7 @@
               <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>target/devkey</directory>
+                  <directory>target/gwa-devkey</directory>
                   <includes>
                     <include>**</include>
                   </includes>

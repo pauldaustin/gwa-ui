@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +42,7 @@ public abstract class BaseServlet extends HttpServlet {
 
   protected static List<String> splitPathInfo(final HttpServletRequest request) {
     final String path = request.getPathInfo();
-    final List<String> paths = splitPath(path);
-    return paths;
+    return splitPath(path);
   }
 
   protected transient ApiService apiService;
@@ -54,11 +54,11 @@ public abstract class BaseServlet extends HttpServlet {
   @Override
   public void destroy() {
     super.destroy();
-    this.apiService = ApiService.release();
+    this.apiService = null;
   }
 
   protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
-    final String roleName) throws IOException {
+    final String roleName) {
     final Principal userPrincipal = request.getUserPrincipal();
     if (userPrincipal instanceof BasePrincipal) {
       final BasePrincipal principal = (BasePrincipal)userPrincipal;
@@ -72,8 +72,8 @@ public abstract class BaseServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    super.init();
-    this.apiService = ApiService.get();
+    final ServletContext servletContext = getServletContext();
+    this.apiService = ApiService.get(servletContext);
   }
 
   public boolean isPathEmpty(final String pathInfo) {
@@ -85,6 +85,14 @@ public abstract class BaseServlet extends HttpServlet {
       response.sendError(statusCode);
     } catch (final IOException e) {
       LoggerFactory.getLogger(getClass()).debug("Unable to send status:" + statusCode, e);
+    }
+  }
+
+  protected void sendRedirect(final HttpServletResponse response, final String url) {
+    try {
+      response.sendRedirect(url);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(getClass()).debug("Unable to send redirect: " + url, e);
     }
   }
 
@@ -100,18 +108,10 @@ public abstract class BaseServlet extends HttpServlet {
       } else {
         super.service(request, response);
       }
-    } catch (final Throwable e) {
+    } catch (final Exception e) {
       final Class<?> clazz = getClass();
       final Logger logger = LoggerFactory.getLogger(clazz);
       logger.error("Error handling request", e);
-    }
-  }
-
-  protected void sendRedirect(final HttpServletResponse response, final String url) {
-    try {
-      response.sendRedirect(url);
-    } catch (final IOException e) {
-      LoggerFactory.getLogger(getClass()).debug("Unable to send redirect: " + url, e);
     }
   }
 

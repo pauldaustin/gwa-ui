@@ -23,7 +23,7 @@ public class NodeServlet extends BaseAdminServlet {
     } else {
       try {
         final String path = "/cluster?name=" + URLEncoder.encode(name, "UTF-8");
-        this.apiService.handleDelete(request, response, path);
+        this.apiService.handleDelete(response, path);
       } catch (final IOException e) {
         LoggerFactory.getLogger(getClass()).error("Unable to encode:" + name, e);
       }

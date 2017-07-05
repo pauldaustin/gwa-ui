@@ -13,6 +13,10 @@ import java.util.Set;
 import org.slf4j.LoggerFactory;
 
 public class PluginFieldLayout {
+  private static final String PLUGIN = "Plugin ";
+
+  private static final String FIELDS = "fields";
+
   private final List<Map<String, Object>> groups = new ArrayList<>();
 
   private final Map<String, Map<String, Object>> groupByName = new HashMap<>();
@@ -39,15 +43,14 @@ public class PluginFieldLayout {
           if (title != null) {
             group.put("title", title);
           }
-          final List<List<String>> rows = (List<List<String>>)groupDefinition.getOrDefault("fields",
+          final List<List<String>> rows = (List<List<String>>)groupDefinition.getOrDefault(FIELDS,
             Collections.emptyList());
           for (final List<String> row : rows) {
             addRow(groupName, row);
           }
         }
       } catch (final Exception e) {
-        LoggerFactory.getLogger(getClass()).error("Plugin " + pluginName + " error parsing layout",
-          e);
+        LoggerFactory.getLogger(getClass()).error(PLUGIN + pluginName + " error parsing layout", e);
       }
     }
     for (final String fieldName : this.unusedFieldNames) {
@@ -59,14 +62,14 @@ public class PluginFieldLayout {
   @SuppressWarnings("unchecked")
   private void addField(final String groupName, final String fieldName) {
     final Map<String, Object> group = getGroup(groupName);
-    final List<List<String>> rows = (List<List<String>>)group.get("fields");
+    final List<List<String>> rows = (List<List<String>>)group.get(FIELDS);
     rows.add(Collections.singletonList(fieldName));
   }
 
   @SuppressWarnings("unchecked")
   private void addFieldName(final String prefix, final Map<String, Object> schema) {
     final Map<String, Map<String, Object>> fields = (Map<String, Map<String, Object>>)schema
-      .getOrDefault("fields", Collections.emptyMap());
+      .getOrDefault(FIELDS, Collections.emptyMap());
     for (final Entry<String, Map<String, Object>> entry : fields.entrySet()) {
       final String fieldName = entry.getKey();
       this.allFieldNames.add(prefix + fieldName);
@@ -85,16 +88,16 @@ public class PluginFieldLayout {
             rowFields.add(fieldName);
           } else {
             LoggerFactory.getLogger(getClass())
-              .error("Plugin " + this.pluginName + " field is used twice " + fieldName);
+              .error(PLUGIN + this.pluginName + " field is used twice " + fieldName);
           }
         } else {
           LoggerFactory.getLogger(getClass())
-            .error("Plugin " + this.pluginName + " does not have the field " + fieldName);
+            .error(PLUGIN + this.pluginName + " does not have the field " + fieldName);
         }
       }
       if (!rowFields.isEmpty()) {
         final Map<String, Object> group = getGroup(groupName);
-        final List<List<String>> rows = (List<List<String>>)group.get("fields");
+        final List<List<String>> rows = (List<List<String>>)group.get(FIELDS);
         rows.add(rowFields);
       }
     }
@@ -105,7 +108,7 @@ public class PluginFieldLayout {
     if (group == null) {
       group = new LinkedHashMap<>();
       group.put("name", groupName);
-      group.put("fields", new ArrayList<>());
+      group.put(FIELDS, new ArrayList<>());
       this.groups.add(group);
       this.groupByName.put(groupName, group);
     }

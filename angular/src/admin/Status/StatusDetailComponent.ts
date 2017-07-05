@@ -4,7 +4,7 @@ import {
   OnInit
 } from '@angular/core';
 import { Params } from '@angular/router';
-import { BaseDetailComponent } from '../../Component/BaseDetailComponent';
+import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
 import { StatusService } from './StatusService';
 
 @Component({
