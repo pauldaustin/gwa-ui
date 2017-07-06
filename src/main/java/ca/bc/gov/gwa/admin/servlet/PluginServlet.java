@@ -16,29 +16,26 @@ public class PluginServlet extends BaseAdminServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0:
-        doGetPluginNamesList(response);
-      break;
-      case 1:
-        final String pluginName = paths.get(0);
-        if ("_names".equals(pluginName)) {
-          doGetPluginNames(response);
-        } else {
-          doGetPluginList(request, response, pluginName);
-        }
-      break;
-      case 2:
-        final String type = paths.get(1);
-        if ("schema".equals(type)) {
-          doGetPluginSchema(response, paths);
-        }
-      break;
-      default:
-        sendError(response, HttpServletResponse.SC_NOT_FOUND);
-      break;
+    final int pathCount = paths.size();
+    if (pathCount == 0) {
+      doGetPluginNamesList(response);
+      return;
+    } else if (pathCount == 1) {
+      final String pluginName = paths.get(0);
+      if ("_names".equals(pluginName)) {
+        doGetPluginNames(response);
+      } else {
+        doGetPluginList(request, response, pluginName);
+      }
+      return;
+    } else if (pathCount == 2) {
+      final String type = paths.get(1);
+      if ("schema".equals(type)) {
+        doGetPluginSchema(response, paths);
+        return;
+      }
     }
-
+    sendError(response, HttpServletResponse.SC_NOT_FOUND);
   }
 
   private void doGetPluginList(final HttpServletRequest request, final HttpServletResponse response,

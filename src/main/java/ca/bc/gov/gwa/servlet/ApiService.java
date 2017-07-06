@@ -114,24 +114,21 @@ public class ApiService implements ServletContextListener {
   private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", NAME,
     "consumer_username");
 
+  @SuppressWarnings("unchecked")
   private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
     for (final String fieldName : API_SORT_FIELDS) {
-      @SuppressWarnings("unchecked")
       final Comparable<Object> value1 = (Comparable<Object>)row1.get(fieldName);
       final Object value2 = row2.get(fieldName);
       if (value1 == null) {
         if (value2 != null) {
           return 1;
         }
+      } else if (value2 == null) {
+        return -1;
       } else {
-        if (value2 == null) {
-          return -1;
-        } else {
-
-          final int compare = value1.compareTo(value2);
-          if (compare != 0) {
-            return compare;
-          }
+        final int compare = value1.compareTo(value2);
+        if (compare != 0) {
+          return compare;
         }
       }
     }
@@ -574,7 +571,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -723,7 +720,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -752,7 +749,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
