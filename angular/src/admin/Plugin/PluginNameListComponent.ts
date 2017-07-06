@@ -13,7 +13,14 @@ import { PluginService } from './PluginService';
 
 @Component({
   selector: 'app-plugin-name-list',
-  templateUrl: 'PluginNameList.html'
+  templateUrl: 'PluginNameList.html',
+  styles: [`
+:host {
+  flex-grow: 1;
+  display: flex;
+  height: 100%;
+}
+  `]
 })
 export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {
 

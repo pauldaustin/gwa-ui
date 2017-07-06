@@ -102,6 +102,15 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   width: 24px;
   line-height: 24px;
 }
+.table-container {
+  display: flex;
+  flex-direction:column;
+  flex-grow: 1;
+}
 .ngx-datatable .datatable-body-cell{
   user-select:initial!important;
+}
+
+:host {
+  display: flex;
 }

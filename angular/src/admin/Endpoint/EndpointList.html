@@ -1,4 +1,4 @@
-<div>
+<div class="table-container">
   <md-toolbar>
     <md-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
       <md-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</md-option>
@@ -17,7 +17,7 @@
     </button>
   </md-toolbar>
   <ngx-datatable
-    class="material striped"
+    class="material striped fullscreen"
     [rows]="rows"
     [columns]="columns"
     [columnMode]="'force'"

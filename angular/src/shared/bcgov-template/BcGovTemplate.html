@@ -30,6 +30,7 @@
               >{{menuItem.title}}</a>
             </li>
           </ul>
+          <div class="fill-width"></div>
           <ul *ngIf="username" class="menu-right">
             <li class="navbar-link">{{username}} <a href="logout" class="navbar-link"><md-icon fontSet="fa" fontIcon="fa-sign-out"></md-icon></a></li>
           </ul>
@@ -37,15 +38,15 @@
       </div>
     </nav>
   </header>
+
   <div class="bcgov-content container">
     <router-outlet></router-outlet>
   </div>
-  <footer class="bcgov-footer">
-    <!--   <img src="http://blog.data.gov.bc.ca/wp-content/themes/bcgov-responsive-theme/dist/images/back-to-top.png" alt="Back to top" title="Back to top" class="back-to-top">
-   -->
+
+  <footer>
     <nav>
-      <div>
-        <div class="menu" [ngClass]="{'collapse': !footerMenuVisible}">
+      <div class="menu" [ngClass]="{'collapse': !footerMenuVisible}">
+        <div class="menu-sections">
           <ul>
             <li><a href="http://www2.gov.bc.ca/gov/content/home" title="About gov.bc.ca">Home</a></li>
             <li><a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" title="Disclaimer">Disclaimer</a></li>
@@ -57,6 +58,8 @@
               title="Contact Us">Contact Us</a></li>
           </ul>
         </div>
+      </div>
+     <div class="titlebar">
         <button type="button" class="menu-button collapsed" (click)="footerMenuVisible = !footerMenuVisible">
           <span class="sr-only">Toggle navigation</span>
           <span class="glyphicon glyphicon-menu-hamburger"></span>

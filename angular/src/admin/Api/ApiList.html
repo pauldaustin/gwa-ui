@@ -1,4 +1,4 @@
-<div>
+<div class="table-container">
   <md-toolbar>
     <a routerLink="/ui/apis/_add_" md-raised-button>Add API</a>
     <md-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
@@ -18,7 +18,7 @@
     </button>
   </md-toolbar>
   <ngx-datatable
-    class="material striped"
+    class="material striped flex-height"
     [rows]="rows"
     [columns]="columns"
     [columnMode]="'force'"
