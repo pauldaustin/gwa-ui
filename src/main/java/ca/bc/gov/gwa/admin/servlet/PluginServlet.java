@@ -40,7 +40,8 @@ public class PluginServlet extends BaseAdminServlet {
 
   private void doGetPluginList(final HttpServletRequest request, final HttpServletResponse response,
     final String pluginName) {
-    this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
+    String path = "/plugins?name=" + pluginName;
+    this.apiService.pluginList(request, response, path, null);
   }
 
   private void doGetPluginNames(final HttpServletResponse response) {

@@ -23,7 +23,7 @@ export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
     injector: Injector,
     protected apiService: ApiService
   ) {
-    super(injector, apiService);
+    super(injector, apiService, 'APIs - Gateway Admin');
     this.filterFields = [
       { prop: 'name', name: 'Name' },
       { prop: 'hosts', name: 'Host' },
@@ -33,6 +33,7 @@ export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
   }
 
   ngOnInit(): void {
+    this.x = y;
     this.columns = [
       { name: 'Name', cellTemplate: this.idTemplate, sortable: true },
       { prop: 'hosts', name: 'Hosts', cellTemplate: this.arrayTemplate, sortable: true },

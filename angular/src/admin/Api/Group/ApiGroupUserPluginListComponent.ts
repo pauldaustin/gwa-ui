@@ -14,7 +14,7 @@ import { ApiGroupUserService } from './ApiGroupUserService';
   selector: 'app-api-group-app-user-list',
   templateUrl: 'ApiGroupUserList.html'
 })
-export class ApiGroupUserListComponent extends BaseListComponent<Group> implements OnInit {
+export class ApiGroupUserListPluginComponent extends BaseListComponent<Group> implements OnInit {
   apiName: string;
 
   groupName: string;
@@ -28,7 +28,6 @@ export class ApiGroupUserListComponent extends BaseListComponent<Group> implemen
     super(injector, service, 'API Group Users - Gateway Admin');
     this.paging = true;
   }
-
 
   ngOnInit() {
     this.columns = [

@@ -25,7 +25,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> imp
     injector: Injector,
     service: EndpointGroupUserService
   ) {
-    super(injector, service);
+    super(injector, service, 'Endpoint Group Users - Gateway Admin');
     this.paging = true;
   }
 

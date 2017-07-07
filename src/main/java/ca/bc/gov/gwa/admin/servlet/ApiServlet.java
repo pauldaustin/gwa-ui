@@ -21,7 +21,8 @@ public class ApiServlet extends BaseAdminServlet {
 
   private static final String GROUPS = "groups";
 
-  private static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config");
+  private static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config",
+    "enabled");
 
   private static final String PLUGINS = "plugins";
 

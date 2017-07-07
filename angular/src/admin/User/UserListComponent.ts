@@ -19,7 +19,7 @@ export class UserListComponent extends BaseListComponent<User> implements OnInit
     injector: Injector,
     service: UserService
   ) {
-    super(injector, service);
+    super(injector, service, 'User Groups - Gateway Admin');
     this.paging = true;
     this.filterFields = [
       { prop: 'username', name: 'Username' },

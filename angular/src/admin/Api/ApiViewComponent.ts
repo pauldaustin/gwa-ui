@@ -46,7 +46,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     protected injector: Injector,
     protected service: ApiService
   ) {
-    super(injector, service);
+    super(injector, service, 'API - Gateway Admin');
     this.idParamName = 'apiName';
   }
 
@@ -64,6 +64,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
 
   protected setObject(api: Api) {
     if (api) {
+      this.setTitle(`API: ${api.name} - Gateway Admin`);
       const endpoint = api.plugin('bcgov-gwa-endpoint');
       if (endpoint == null) {
         api.pluginAdd(this.endpoint);

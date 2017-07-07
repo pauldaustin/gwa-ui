@@ -61,8 +61,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     pagerNext: 'fa fa-step-forward'
   };
 
-  constructor(injector: Injector, service: Service<T>) {
-    super(injector, service);
+  constructor(injector: Injector, service: Service<T>, title: string) {
+    super(injector, service, title);
   }
 
   ngOnInit() {

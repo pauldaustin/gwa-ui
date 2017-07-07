@@ -36,7 +36,7 @@ export class EndpointGroupListComponent extends BaseListComponent<Group> impleme
   constructor(
     injector: Injector,
   ) {
-    super(injector, null);
+    super(injector, null, 'Endpoint Groups - Gateway Admin');
   }
 
   ngOnInit(): void {

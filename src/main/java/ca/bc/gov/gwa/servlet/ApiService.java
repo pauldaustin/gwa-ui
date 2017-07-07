@@ -571,7 +571,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -720,7 +720,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -749,7 +749,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -1222,7 +1222,7 @@ public class ApiService implements ServletContextListener {
     throws IOException {
     final List<Map<String, Object>> allRows = new ArrayList<>();
     kongPageAll(httpRequest, httpClient, path, row -> {
-      if (filter != null && filter.test(row)) {
+      if (filter == null || filter.test(row)) {
         allRows.add(row);
       }
     });

@@ -32,12 +32,18 @@
   flex-grow: 0;
   margin-bottom: 11px
 }
+.mat-toolbar-row .mat-input-wrapper,
 .flexRowToColumn .mat-input-wrapper{
   padding-bottom: 0px;
 }
+.mat-toolbar-row .mat-input-underline,
 .flexRowToColumn .mat-input-underline{
   bottom: 0px;
 }
+.mat-toolbar-row .mat-input-infix {
+  padding-bottom: 0px;
+}
+.mat-toolbar-row .mat-floating-placeholder,
 span.mat-select-placeholder, span.mat-floating-placeholder {
   width: auto !important;
 }
@@ -80,6 +86,13 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   margin-right: 5px;
   margin-bottom: -4px;
 }
+
+.mat-toolbar .mat-toolbar-row {
+  display: flex;
+  align-items: flex-end!important;
+  padding-bottom: 10px;
+}
+
 .labelWithButton {
   display:flex;
   flex-direction:row;
@@ -110,4 +123,112 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
 
 .ngx-datatable .datatable-body-cell{
   user-select:initial!important;
+}
+
+body {
+  min-height: 100%;
+  margin: 0px;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+.mat-toolbar-row > .mat-raised-button,
+.mat-toolbar-row > * {
+  margin-right: 1em;
+}
+/* To Fix bugs*/
+.margin-top-1em {
+  margin-top: 1em;
+}
+.mat-card-content .mat-divider {
+  display: block;
+  border-top-style: solid;
+  border-top-width: 1px;
+  margin: 10px -24px 10px -24px;
+}
+.mat-toolbar .mat-input-container,
+.mat-toolbar .mat-select {
+  font-size: 14px;
+}
+.mat-slide-toggle {
+  display:inline-block;
+}
+.mat-option,
+.mat-select-placeholder {
+  font-size: 14px;
+}
+.mat-select {
+  margin-top: 20px;
+}
+.mat-select-value-text {
+  font-size: 14px;
+}
+.mat-select-placeholder,
+.mat-floating-placeholder {
+  margin-top: 4px;
+}
+.mat-input-underline span.mat-input-ripple {
+  height: 1px;
+}
+.mat-select-value-text {
+  font-size: 14px;
+}
+.mat-input-table .mat-icon-button {
+  margin: -10px 0px -10px 0px;
+}
+/* End To Fix bugs*/
+
+.row .form-group {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.form-control .checkbox-inline {
+  padding-top: 0px;
+}
+
+.nav-tabs {
+  margin-bottom: 0;
+}
+
+.ngx-datatable {
+  width:100%;
+}
+.ngx-datatable.scroll-vertical {
+  height: calc(100vh - 300px);
+  flex: 1 1 auto;
+}
+.ngx-datatable.fixed-height {
+  height: 450px;
+}
+
+.ngx-datatable .datatable-footer .datatable-pager,
+.ngx-datatable .datatable-footer .datatable-pager ul.pager {
+  display: none;
+}
+.datatable-body-cell-label .mat-icon-button {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  margin-top: -5px;
+}
+.btn-toolbar {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.btn-toolbar .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  padding-left: 6px;
+  float: left;
+}
+.btn-toolbar .input-group {
+  display: inline-table;
+  vertical-align: middle;
+}
+.btn-toolbar .input-group-addon {
+  width: auto;
 }

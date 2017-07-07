@@ -47,10 +47,11 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
     protected injector: Injector,
     protected service: PluginService
   ) {
-    super(injector, service);
+    super(injector, service, 'Plugin - Gateway Admin');
   }
 
   setPluginName(name: string) {
+    this.setTitle(`Plugin: ${name} - API ${this.api.name} - Gateway Admin`);
     this.service.getPluginSchema(name).then((pluginSchema: any) => {
       const formGroupCore = this.formBuilder.group({
         enabled: true

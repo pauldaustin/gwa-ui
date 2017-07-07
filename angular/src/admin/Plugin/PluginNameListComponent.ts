@@ -17,12 +17,12 @@ import { PluginService } from './PluginService';
   selector: 'app-plugin-name-list',
   templateUrl: 'PluginNameList.html'
 })
-export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {  
+export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {
   constructor(
     injector: Injector,
     service: PluginService
   ) {
-    super(injector, service);
+    super(injector, service, 'Plugins - Gateway Admin');
   }
 
   ngOnInit(): void {

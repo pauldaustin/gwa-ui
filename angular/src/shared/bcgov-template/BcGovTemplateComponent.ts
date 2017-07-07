@@ -1,10 +1,13 @@
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/first';
 import {
   Component,
-  Optional
+  Optional,
+  OnInit
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
+  ActivatedRoute,
   Router,
   RouterState,
   RouterStateSnapshot,
@@ -19,7 +22,7 @@ import { MenuItem } from './MenuItem';
   templateUrl: 'BcGovTemplate.html',
   styleUrls: ['BcGovTemplate.css']
 })
-export class BcGovTemplateComponent {
+export class BcGovTemplateComponent  implements OnInit {
 
   title: String = '';
 
@@ -29,7 +32,10 @@ export class BcGovTemplateComponent {
 
   footerMenuVisible = false;
 
+  showHeaderAndFooter = true;
+
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private titleService: Title,
@@ -45,6 +51,14 @@ export class BcGovTemplateComponent {
       }
     }
   }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (this.showHeaderAndFooter) {
+        this.showHeaderAndFooter = !('true' === params['contentOnly']);
+      }
+    });
+  };
 
   isMenuVisible(menuItem: MenuItem): boolean {
     for (const route of this.router.config) {

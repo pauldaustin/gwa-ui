@@ -24,7 +24,7 @@ export class GroupUserListComponent extends BaseListComponent<Group> implements 
     injector: Injector,
     service: GroupUserService
   ) {
-    super(injector, service);
+    super(injector, service, 'Group Users - Gateway Admin');
     this.paging = true;
   }
 
@@ -37,6 +37,7 @@ export class GroupUserListComponent extends BaseListComponent<Group> implements 
     this.route.params
       .map(params => params['groupName'])
       .subscribe(groupName => {
+        this.setTitle(`Group: ${groupName} - Gateway Admin`);
         this.groupName = groupName;
         this.path = `/groups/${groupName}`;
         this.refresh();

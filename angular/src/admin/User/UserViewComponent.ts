@@ -16,7 +16,7 @@ export class UserViewComponent extends BaseDetailComponent<User> implements OnIn
     protected injector: Injector,
     protected service: UserService
   ) {
-    super(injector, service);
+    super(injector, service, 'User - Gateway Admin');
   }
 
   ngOnInit() {
@@ -25,6 +25,7 @@ export class UserViewComponent extends BaseDetailComponent<User> implements OnIn
     } else {
       this.route.parent.data
         .subscribe((data: { user: User }) => {
+          this.setTitle(`User: ${data.user.username} - Gateway Admin`);
           this.setObject(data.user);
         }
         );

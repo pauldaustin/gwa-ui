@@ -29,7 +29,7 @@ export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
     injector: Injector,
     service: ApiKeyService
   ) {
-    super(injector, service);
+    super(injector, service, 'Developer API Keys');
   }
 
   ngOnInit(): void {

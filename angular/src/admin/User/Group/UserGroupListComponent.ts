@@ -23,7 +23,7 @@ export class UserGroupListComponent extends BaseListComponent<Group> implements 
     injector: Injector,
     service: UserGroupService
   ) {
-    super(injector, service);
+    super(injector, service, 'Users - Gateway Admin');
     this.paging = true;
     this.filterFields = [
       { prop: 'group', name: 'Group' },

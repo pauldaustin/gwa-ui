@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { MdIconModule } from '@angular/material';
+import { MdButtonModule,MdIconModule } from '@angular/material';
 
 import { Config } from './Config';
 import { BcGovTemplateComponent } from './bcgov-template/BcGovTemplateComponent';
@@ -24,6 +24,7 @@ const COMMON_MODULES = [
     BrowserModule,
     RouterModule,
 
+    MdButtonModule,
     MdIconModule,
   ],
   exports: COMMON_MODULES,

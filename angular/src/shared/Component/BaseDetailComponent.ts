@@ -29,8 +29,8 @@ export class BaseDetailComponent<T> extends BaseComponent<T> implements OnInit {
 
   protected formBuilder: FormBuilder = this.injector.get(FormBuilder);
 
-  constructor(injector: Injector, service: Service<T>) {
-    super(injector, service);
+  constructor(injector: Injector, service: Service<T>, title: string) {
+    super(injector, service, title);
   }
 
   ngOnInit() {
