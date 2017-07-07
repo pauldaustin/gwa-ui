@@ -74,22 +74,13 @@ body {
   width:100%;
 }
 .ngx-datatable.scroll-vertical {
-  flex-grow: 1;
+  height: calc(100vh - 250px);
+  flex: 1 1 auto;
 }
 .ngx-datatable.fixed-height {
   height: 450px;
 }
-.ngx-datatable.flex-height {
-  flex-grow: 1;
-  align-items: stretch;
-}
-.ngx-datatable.flex-height div.visible {
-  display: flex;
-  flex-direction:column;
-}
-.ngx-datatable.flex-height div.visible .datatable-body {
-  flex-grow: 1;
-}
+
 .ngx-datatable .datatable-footer .datatable-pager,
 .ngx-datatable .datatable-footer .datatable-pager ul.pager {
   display: none;

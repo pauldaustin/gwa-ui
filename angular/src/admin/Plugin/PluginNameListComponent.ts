@@ -6,6 +6,8 @@ import {
   ViewChild
 } from '@angular/core';
 
+import {DataSource} from '@angular/cdk';
+
 import { BaseListComponent } from '../../shared/Component/BaseListComponent';
 
 import { Plugin } from './Plugin';
@@ -13,17 +15,9 @@ import { PluginService } from './PluginService';
 
 @Component({
   selector: 'app-plugin-name-list',
-  templateUrl: 'PluginNameList.html',
-  styles: [`
-:host {
-  flex-grow: 1;
-  display: flex;
-  height: 100%;
-}
-  `]
+  templateUrl: 'PluginNameList.html'
 })
-export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {
-
+export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {  
   constructor(
     injector: Injector,
     service: PluginService
