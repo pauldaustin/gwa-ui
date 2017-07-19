@@ -1,11 +1,11 @@
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/first';
 import {
   Component,
   Optional,
   OnInit
 } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 import {
   ActivatedRoute,
   Router,
@@ -13,16 +13,16 @@ import {
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
-import { AuthService } from '../Authentication/AuthService';
-import { Config } from '../Config';
-import { MenuItem } from './MenuItem';
+import {AuthService} from '../Authentication/AuthService';
+import {Config} from '../Config';
+import {MenuItem} from './MenuItem';
 
 @Component({
   selector: 'app-bcgov-template',
   templateUrl: 'BcGovTemplate.html',
   styleUrls: ['BcGovTemplate.css']
 })
-export class BcGovTemplateComponent  implements OnInit {
+export class BcGovTemplateComponent implements OnInit {
 
   title: String = '';
 
@@ -58,7 +58,7 @@ export class BcGovTemplateComponent  implements OnInit {
         this.showHeaderAndFooter = !('true' === params['contentOnly']);
       }
     });
-  };
+  }
 
   isMenuVisible(menuItem: MenuItem): boolean {
     for (const route of this.router.config) {

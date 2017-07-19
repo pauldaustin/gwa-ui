@@ -20,7 +20,7 @@ import ca.bc.gov.gwa.servlet.AbstractFilter;
 import ca.bc.gov.gwa.servlet.ApiService;
 
 @WebFilter(urlPatterns = {
-  "/int/ui/*", "/int/rest/*", "/int/logout"
+  "/int/ui/*", "/int/rest/*", "/int/logout", "/int/login/*"
 }, servletNames = {
   "AdminUiServlet"
 })

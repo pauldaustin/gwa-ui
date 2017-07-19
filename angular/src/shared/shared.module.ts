@@ -12,15 +12,17 @@ import {Config} from './Config';
 import {BcGovTemplateComponent} from './bcgov-template/BcGovTemplateComponent';
 import {AuthService} from './Authentication/AuthService';
 import {DeleteDialogComponent} from './Component/DeleteDialogComponent';
+import {LoginDialogComponent} from './Component/LoginDialogComponent';
 import {MessageDialogComponent} from './Component/MessageDialogComponent';
 import {PageNotFoundComponent} from './Component/PageNotFoundComponent';
 
 const COMMON_MODULES = [
   PageNotFoundComponent,
   DeleteDialogComponent,
+  LoginDialogComponent,
   MessageDialogComponent,
   BcGovTemplateComponent
-]
+];
 
 @NgModule({
   imports: [
@@ -33,6 +35,7 @@ const COMMON_MODULES = [
   exports: COMMON_MODULES,
   entryComponents: [
     DeleteDialogComponent,
+    LoginDialogComponent,
     MessageDialogComponent
   ],
   declarations: COMMON_MODULES,

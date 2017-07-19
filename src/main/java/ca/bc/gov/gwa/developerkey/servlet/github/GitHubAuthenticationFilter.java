@@ -25,7 +25,7 @@ import ca.bc.gov.gwa.servlet.AbstractFilter;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebFilter(urlPatterns = {
-  "/", "/git/*", "/logout", "/rest/*", "/ui/*"
+  "/", "/login/*", "/git/*", "/logout", "/rest/*", "/ui/*"
 })
 public class GitHubAuthenticationFilter extends AbstractFilter {
 
@@ -84,7 +84,7 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
     } else {
       final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
       if (principal == null || principal.isExpired(120000)) {
-        handleRedirectToGitHub(httpRequest, httpResponse, session);
+        handleRedirectToGitHub(chain, httpRequest, httpResponse, session);
       } else {
         if (principal.isUserInRole(this.organizationRole)) {
           final HttpServletRequestWrapper requestWrapper = principal
@@ -157,11 +157,14 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
   }
 
   @SuppressWarnings("unchecked")
-  public void handleRedirectToGitHub(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final HttpSession session) {
-    if (httpRequest.getServletPath().startsWith("/rest")) {
+  public void handleRedirectToGitHub(final FilterChain chain, final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final HttpSession session)
+    throws IOException, ServletException {
+    final String servletPath = httpRequest.getServletPath();
+    if (servletPath.startsWith("/rest")) {
       sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
-    } else {
+    } else if (!servletPath.startsWith("/ui")
+      || !"true".equals(httpRequest.getParameter("contentOnly"))) {
       final String state = UUID.randomUUID().toString();
       LruMap<String, String> stateUrlMap = (LruMap<String, String>)session
         .getAttribute(GIT_HUB_STATE_URL_MAP);
@@ -181,6 +184,8 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
       final String authorizeUrl = "https://github.com/login/oauth/authorize?client_id="
         + this.clientId + "&scope=read:org&state=" + state;
       sendRedirect(httpResponse, authorizeUrl);
+    } else {
+      chain.doFilter(httpRequest, httpResponse);
     }
   }
 

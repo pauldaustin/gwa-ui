@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import {HttpModule} from '@angular/http';
 import {
   MdButtonModule,
   MdCardModule,
@@ -20,74 +20,76 @@ import {
   MdToolbarModule
 } from '@angular/material';
 
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 
 import {
   BcGovTemplateComponent
 } from '../shared/bcgov-template/BcGovTemplateComponent';
-import { SharedModule } from '../shared/shared.module';
+import {SharedModule} from '../shared/shared.module';
 
-import { AuthService } from '../shared/Authentication/AuthService';
-import { RoleGuard } from '../shared/Authentication/RoleGuard';
+import {AuthService} from '../shared/Authentication/AuthService';
+import {RoleGuard} from '../shared/Authentication/RoleGuard';
 
-import { ApiListComponent } from './Api/ApiListComponent';
-import { ApiAddComponent } from './Api/ApiAddComponent';
-import { ApiDetailComponent } from './Api/ApiDetailComponent';
-import { ApiViewComponent } from './Api/ApiViewComponent';
-import { ApiService } from './Api/ApiService';
-import { ApiResolver } from './Api/ApiResolver';
+import {ApiListComponent} from './Api/ApiListComponent';
+import {ApiAddComponent} from './Api/ApiAddComponent';
+import {ApiDetailComponent} from './Api/ApiDetailComponent';
+import {ApiViewComponent} from './Api/ApiViewComponent';
+import {ApiService} from './Api/ApiService';
+import {ApiResolver} from './Api/ApiResolver';
 
-import { ApiGroupListComponent } from './Api/Group/ApiGroupListComponent';
+import {ApiGroupListComponent} from './Api/Group/ApiGroupListComponent';
 
-import { ApiGroupUserListComponent } from './Api/Group/ApiGroupUserListComponent';
-import { ApiGroupUserService } from './Api/Group/ApiGroupUserService';
+import {ApiGroupUserListComponent} from './Api/Group/ApiGroupUserListComponent';
+import {ApiGroupUserService} from './Api/Group/ApiGroupUserService';
+import {ApiGroupUserPluginListComponent} from './Api/Group/ApiGroupUserPluginListComponent';
 
-import { ApiPluginListComponent } from './Api/Plugin/ApiPluginListComponent';
-import { ApiPluginDetailComponent } from './Api/Plugin/ApiPluginDetailComponent';
-import { ApiPluginAddComponent } from './Api/Plugin/ApiPluginAddComponent';
 
-import { Config } from '../shared/Config';
+import {ApiPluginListComponent} from './Api/Plugin/ApiPluginListComponent';
+import {ApiPluginDetailComponent} from './Api/Plugin/ApiPluginDetailComponent';
+import {ApiPluginAddComponent} from './Api/Plugin/ApiPluginAddComponent';
 
-import { UserListComponent } from './User/UserListComponent';
-import { UserAddComponent } from './User/UserAddComponent';
-import { UserDetailComponent } from './User/UserDetailComponent';
-import { UserViewComponent } from './User/UserViewComponent';
-import { UserService } from './User/UserService';
-import { UserResolver } from './User/UserResolver';
+import {Config} from '../shared/Config';
 
-import { UserGroupListComponent } from './User/Group/UserGroupListComponent';
-import { UserGroupService } from './User/Group/UserGroupService';
+import {UserListComponent} from './User/UserListComponent';
+import {UserAddComponent} from './User/UserAddComponent';
+import {UserDetailComponent} from './User/UserDetailComponent';
+import {UserViewComponent} from './User/UserViewComponent';
+import {UserService} from './User/UserService';
+import {UserResolver} from './User/UserResolver';
 
-import { UserPluginListComponent } from './User/Plugin/UserPluginListComponent';
+import {UserGroupListComponent} from './User/Group/UserGroupListComponent';
+import {UserGroupService} from './User/Group/UserGroupService';
 
-import { EndpointDetailComponent } from './Endpoint/EndpointDetailComponent';
-import { EndpointViewComponent } from './Endpoint/EndpointViewComponent';
-import { EndpointListComponent } from './Endpoint/EndpointListComponent';
-import { EndpointResolver } from './Endpoint/EndpointResolver';
-import { EndpointService } from './Endpoint/EndpointService';
+import {UserPluginListComponent} from './User/Plugin/UserPluginListComponent';
 
-import { EndpointGroupListComponent } from './Endpoint/Group/EndpointGroupListComponent';
+import {EndpointDetailComponent} from './Endpoint/EndpointDetailComponent';
+import {EndpointViewComponent} from './Endpoint/EndpointViewComponent';
+import {EndpointListComponent} from './Endpoint/EndpointListComponent';
+import {EndpointResolver} from './Endpoint/EndpointResolver';
+import {EndpointService} from './Endpoint/EndpointService';
 
-import { EndpointGroupUserListComponent } from './Endpoint/Group/EndpointGroupUserListComponent';
-import { EndpointGroupUserService } from './Endpoint/Group/EndpointGroupUserService';
+import {EndpointGroupListComponent} from './Endpoint/Group/EndpointGroupListComponent';
 
-import { GroupUserListComponent } from './Group/GroupUserListComponent';
-import { GroupUserService } from './Group/GroupUserService';
+import {EndpointGroupUserListComponent} from './Endpoint/Group/EndpointGroupUserListComponent';
+import {EndpointGroupUserService} from './Endpoint/Group/EndpointGroupUserService';
 
-import { GroupListComponent } from './Group/GroupListComponent';
-import { GroupService } from './Group/GroupService';
+import {GroupUserListComponent} from './Group/GroupUserListComponent';
+import {GroupUserService} from './Group/GroupUserService';
 
-import { NodeListComponent } from './Node/NodeListComponent';
-import { NodeService } from './Node/NodeService';
+import {GroupListComponent} from './Group/GroupListComponent';
+import {GroupService} from './Group/GroupService';
 
-import { PluginNameListComponent } from './Plugin/PluginNameListComponent';
-import { PluginListComponent } from './Plugin/PluginListComponent';
-import { PluginService } from './Plugin/PluginService';
+import {NodeListComponent} from './Node/NodeListComponent';
+import {NodeService} from './Node/NodeService';
 
-import { StatusDetailComponent } from './Status/StatusDetailComponent';
-import { StatusService } from './Status/StatusService';
+import {PluginNameListComponent} from './Plugin/PluginNameListComponent';
+import {PluginListComponent} from './Plugin/PluginListComponent';
+import {PluginService} from './Plugin/PluginService';
 
-import { AppRoutingModule } from './app-routing.module';
+import {StatusDetailComponent} from './Status/StatusDetailComponent';
+import {StatusService} from './Status/StatusService';
+
+import {AppRoutingModule} from './app-routing.module';
 
 @NgModule({
   imports: [
@@ -157,6 +159,7 @@ import { AppRoutingModule } from './app-routing.module';
     ApiViewComponent,
     ApiGroupListComponent,
     ApiGroupUserListComponent,
+    ApiGroupUserPluginListComponent,
     ApiPluginDetailComponent,
     ApiPluginAddComponent,
     UserAddComponent,

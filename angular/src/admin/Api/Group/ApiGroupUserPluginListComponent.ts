@@ -3,18 +3,18 @@ import {
   Injector,
   OnInit
 } from '@angular/core';
-import { Params } from '@angular/router';
+import {Params} from '@angular/router';
 
-import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
-import { Group } from '../../Group/Group';
-import { ApiGroupUserService } from './ApiGroupUserService';
+import {Group} from '../../Group/Group';
+import {ApiGroupUserService} from './ApiGroupUserService';
 
 @Component({
   selector: 'app-api-group-app-user-list',
   templateUrl: 'ApiGroupUserList.html'
 })
-export class ApiGroupUserListPluginComponent extends BaseListComponent<Group> implements OnInit {
+export class ApiGroupUserPluginListComponent extends BaseListComponent<Group> implements OnInit {
   apiName: string;
 
   groupName: string;
@@ -31,9 +31,9 @@ export class ApiGroupUserListPluginComponent extends BaseListComponent<Group> im
 
   ngOnInit() {
     this.columns = [
-      { prop: 'username', name: 'User', sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
-      { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
+      {prop: 'username', name: 'User', sortable: false},
+      {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false},
+      {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
     ];
     this.route.params
       .map(params => {

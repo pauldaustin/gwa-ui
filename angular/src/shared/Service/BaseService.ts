@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import {
   Injectable,
@@ -22,16 +22,21 @@ import {
   MdDialogRef
 } from '@angular/material';
 
-import { DOCUMENT } from '@angular/platform-browser';
+import {DOCUMENT} from '@angular/platform-browser';
 
-import { Config } from '../Config';
+import {Config} from '../Config';
 
-import { Service } from './Service';
+import {Service} from './Service';
 
-import { MessageDialogComponent } from '../Component/MessageDialogComponent';
+import {LoginDialogComponent} from '../Component/LoginDialogComponent';
+
+import {MessageDialogComponent} from '../Component/MessageDialogComponent';
 
 @Injectable()
 export abstract class BaseService<T> implements Service<T> {
+
+  private static loginDialog: MdDialogRef<LoginDialogComponent>;
+
   protected config = this.injector.get(Config);
 
   protected document: any = this.injector.get(DOCUMENT);
@@ -54,7 +59,7 @@ export abstract class BaseService<T> implements Service<T> {
 
   usePostForDelete = true;
 
-  private jsonHeaders = new Headers({ 'Content-Type': 'application/json' });
+  private jsonHeaders = new Headers({'Content-Type': 'application/json'});
 
   constructor(
     protected injector: Injector
@@ -71,15 +76,62 @@ export abstract class BaseService<T> implements Service<T> {
     );
   }
 
+  public httpRequest<R>(request: (http: Http) => Observable<Response>, handler: (response: Response) => R): Promise<R> {
+    const response = request(this.http);
+    return response.toPromise()
+      .then(handler)
+      .catch(error => {
+        if (error.status === 403) {
+          return new Promise((resolve, reject) => {
+            let loginDialog = BaseService.loginDialog;
+            if (loginDialog) {
+              loginDialog.componentInstance.login();
+            } else {
+              loginDialog = this.dialog.open(LoginDialogComponent);
+              BaseService.loginDialog = loginDialog;
+              loginDialog.afterClosed().subscribe(dialogResponse => {
+                BaseService.loginDialog = null;
+              });
+            }
+            loginDialog.afterClosed().subscribe(dialogResponse => {
+              if (dialogResponse === 'Login') {
+                this.httpRequest(request, handler).then(
+                  validResult => {
+                    console.log(validResult);
+                    resolve(validResult);
+                  },
+                  errorResult => {
+                    console.log(errorResult);
+                    reject(errorResult);
+                  }
+                );
+              } else {
+                reject('Not logged in');
+              }
+            });
+          });
+        } else if (error.status === 404) {
+          return Promise.resolve(null);
+        } else {
+          this.showError(error.message || error);
+          return Promise.reject(error.message || error);
+        }
+      }
+      );
+  }
+
   protected addObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
     const url = this.getUrl(path);
     const jsonText = JSON.stringify(object);
-    return this.http.post(
-      url,
-      jsonText,
-      { headers: this.jsonHeaders }
-    ).toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.post(
+          url,
+          jsonText,
+          {headers: this.jsonHeaders}
+        );
+      },
+      response => {
         const json = response.json();
         if (json.error) {
           this.showError(json.error);
@@ -91,8 +143,8 @@ export abstract class BaseService<T> implements Service<T> {
           }
           return object;
         }
-      })
-      .catch(this.handleError.bind(this));
+      }
+    );
   }
 
   addOrUpdateObject(object: T): Promise<T> {
@@ -102,18 +154,6 @@ export abstract class BaseService<T> implements Service<T> {
       return this.updateObject(object);
     } else {
       return this.addObject(object);
-    }
-  }
-
-  protected handleError(error: any): Promise<any> {
-    if (error.status === 403) {
-      document.location.reload(true);
-      return Promise.resolve(null);
-    } else if (error.status === 404) {
-      return Promise.resolve(null);
-    } else {
-      this.showError(error.message || error);
-      return Promise.reject(error.message || error);
     }
   }
 
@@ -143,43 +183,51 @@ export abstract class BaseService<T> implements Service<T> {
     }
 
     const url = this.getUrl(path);
-    let response: Observable<Response>;
-    if (this.usePostForDelete) {
-      response = this.http.post(
-        url,
-        '',
-        {
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            'X-HTTP-Method-Override': 'DELETE'
-          }),
-          search: params
+    const handler = httpResponse => {
+      const json = httpResponse.json();
+      if (json.error) {
+        this.showError(json.error);
+        return false;
+      } else {
+        const deleted = json.deleted === true;
+        if (callback) {
+          callback(deleted);
         }
+        return deleted;
+      }
+    };
+
+    if (this.usePostForDelete) {
+      return this.httpRequest(
+        http => {
+          return http.post(
+            url,
+            '',
+            {
+              headers: new Headers({
+                'Content-Type': 'application/json',
+                'X-HTTP-Method-Override': 'DELETE'
+              }),
+              search: params
+            }
+          );
+        },
+        handler
       );
     } else {
-      response = this.http.delete(
-        url,
-        {
-          headers: this.jsonHeaders,
-          search: params
-        }
+      return this.httpRequest(
+        http => {
+          return http.delete(
+            url,
+            {
+              headers: this.jsonHeaders,
+              search: params
+            }
+          );
+        },
+        handler
       );
     }
-    return response.toPromise()
-      .then(httpResponse => {
-        const json = httpResponse.json();
-        if (json.error) {
-          this.showError(json.error);
-          return false;
-        } else {
-          const deleted = json.deleted === true;
-          if (callback) {
-            callback(deleted);
-          }
-          return deleted;
-        }
-      })
-      .catch(this.handleError.bind(this));
   }
 
   getLabel(object: T): string {
@@ -206,9 +254,11 @@ export abstract class BaseService<T> implements Service<T> {
 
   getObjectDo(path: string): Promise<T> {
     const url = this.getUrl(path);
-    return this.http.get(url)
-      .toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.get(url);
+      },
+      response => {
         const json = response.json();
         if (json.error) {
           this.showError(json.error);
@@ -216,28 +266,32 @@ export abstract class BaseService<T> implements Service<T> {
         } else {
           return this.toObject(json);
         }
-      })
-      .catch(this.handleError.bind(this));
+      }
+    );
   }
 
-  getObjects(path: string, filter: { [fieldName: string]: string }): Promise<T[]> {
+  getObjects(path: string, filter: {[fieldName: string]: string}): Promise<T[]> {
     if (!path) {
       path = this.path;
     }
     return this.getObjectsDo(path, filter);
   }
 
-  getObjectsDo(path: string, filter: { [fieldName: string]: string }): Promise<T[]> {
+  getObjectsDo(path: string, filter: {[fieldName: string]: string}): Promise<T[]> {
     const params = new URLSearchParams();
     this.addFilterParams(params, filter);
     const url = this.getUrl(path);
-    return this.http.get(
-      url,
-      {
-        search: params
-      }
-    ).toPromise()
-      .then(response => {
+
+    return this.httpRequest(
+      http => {
+        return http.get(
+          url,
+          {
+            search: params
+          }
+        );
+      },
+      response => {
         const objects: T[] = [];
         const json = response.json();
         if (json.error) {
@@ -252,15 +306,15 @@ export abstract class BaseService<T> implements Service<T> {
           }
         }
         return objects;
-      })
-      .catch(this.handleError.bind(this));
+      }
+    );
   }
 
   getPath(): string {
     return this.path;
   }
 
-  private addFilterParams(params: URLSearchParams, filter: { [fieldName: string]: string }) {
+  private addFilterParams(params: URLSearchParams, filter: {[fieldName: string]: string}) {
     if (filter) {
       for (const fieldName of Object.keys(filter)) {
         const value = filter[fieldName];
@@ -273,7 +327,7 @@ export abstract class BaseService<T> implements Service<T> {
     offset: number,
     limit: number,
     path: string,
-    filter: { [fieldName: string]: string }
+    filter: {[fieldName: string]: string}
   ): Promise<any> {
     const params = new URLSearchParams();
     params.set('offset', offset.toString());
@@ -283,13 +337,16 @@ export abstract class BaseService<T> implements Service<T> {
       path = this.path;
     }
     const url = this.getUrl(path);
-    return this.http.get(
-      url,
-      {
-        search: params
-      }
-    ).toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.get(
+          url,
+          {
+            search: params
+          }
+        );
+      },
+      response => {
         const rows: T[] = [];
         let total = 0;
         const json = response.json();
@@ -310,8 +367,8 @@ export abstract class BaseService<T> implements Service<T> {
           rows: rows,
           count: total
         };
-      })
-      .catch(this.handleError.bind(this));
+      }
+    );
   }
 
   getTypeTitle(): string {
@@ -335,12 +392,15 @@ export abstract class BaseService<T> implements Service<T> {
   protected updateObjectDo(path: string, object: T, callback?: () => void): Promise<T> {
     const url = this.getUrl(path);
     const jsonText = JSON.stringify(object);
-    return this.http.put(
-      url,
-      jsonText,
-      { headers: this.jsonHeaders }
-    ).toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.put(
+          url,
+          jsonText,
+          {headers: this.jsonHeaders}
+        );
+      },
+      response => {
         const json = response.json();
         if (json.error) {
           this.showError(json.error);
@@ -352,7 +412,7 @@ export abstract class BaseService<T> implements Service<T> {
           }
           return object;
         }
-      })
-      .catch(this.handleError.bind(this));
+      }
+    );
   }
 }
