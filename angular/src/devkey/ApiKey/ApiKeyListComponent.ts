@@ -17,9 +17,13 @@ import {ApiKeyService} from './ApiKeyService';
 export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements OnInit {
   acceptTerms = false;
 
+  apiKey: string;
+
   appName: string;
 
   appRedirectUrl: string;
+
+  appSendMessage = false;
 
   hasApiKey = false;
 
@@ -40,6 +44,7 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
       .subscribe(params => {
         this.appName = params['appName'];
         this.appRedirectUrl = params['appRedirectUrl'];
+        this.appSendMessage = params['appSendMessage'] === 'true';
         this.refresh();
       });
   }
@@ -54,21 +59,43 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
   }
 
   authorizeAccess(): void {
-    const apiKey = this.rows[0];
-    let url = this.appRedirectUrl;
-    if (url.indexOf('?') === -1) {
-      url += '?';
+    if (this.appSendMessage) {
+      let messageWindow = window.opener;
+      if (!messageWindow) {
+        messageWindow = window.parent;
+      }
+      messageWindow.postMessage(this.apiKey, '*');
     } else {
-      url += '&';
+      const apiKey = this.rows[0];
+      let url = this.appRedirectUrl;
+      if (url.indexOf('?') === -1) {
+        url += '?';
+      } else {
+        url += '&';
+      }
+      url += 'apiKey=' + apiKey;
+      this.document.location.href = url;
     }
-    url += 'apiKey=' + apiKey;
-    this.document.location.href = url;
   }
 
   protected setRows(rows: ApiKey[]) {
     super.setRows(rows);
     if (rows.length > 0) {
+      this.hasApiKey = true;
+      let setApiKey = true;
+      if (this.apiKey) {
+        for (const row of rows) {
+          if (this.apiKey === row.key) {
+            setApiKey = false;
+          }
+        }
+      }
+      if (setApiKey) {
+        this.apiKey = this.rows[0].key;
+      }
       this.acceptTerms = true;
+    } else {
+      this.hasApiKey = false;
     }
   }
 }

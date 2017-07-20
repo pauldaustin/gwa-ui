@@ -40,16 +40,17 @@ export class LoginDialogComponent implements AfterViewInit {
   }
 
   login() {
+    const window = document.defaultView;
     if (this.loginWindow && !this.loginWindow.closed) {
       this.loginWindow.focus();
     } else {
-      const top = window.top;
-      let width = top.outerWidth * 0.9;
+      const top = window;
+      let width = window.outerWidth * 0.9;
       if (width > 800) {
         width = 800;
       }
-      const x = top.outerWidth / 2 + top.screenX - (width / 2);
-      const y = top.outerHeight / 2 + top.screenY - (300);
+      const x = window.outerWidth / 2 + window.screenX - (width / 2);
+      const y = window.outerHeight / 2 + window.screenY - (300);
 
       this.loginWindow = window.open(
         this.config.basePath + '/login/window',

@@ -173,7 +173,6 @@ footer .titlebar {
 }
 
 .menu li>a.active-link {
-  color: #fcba19;
   font-weight: bold;
   text-decoration: underline;
 }
