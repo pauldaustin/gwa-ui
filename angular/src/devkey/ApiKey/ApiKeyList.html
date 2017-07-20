@@ -1,0 +1,62 @@
+<div>
+
+  <md-card *ngIf="appName && appRedirectUrl">
+    <md-card-title>Authorize application {{appName}}</md-card-title>
+    <md-card-content>
+      <p>Allow application {{appName}} to use your API Key to access web services?</p>
+      <p>By allowing access you accept all responsibility for any access to the web service using
+      your developer key.</p>
+      <p>You can revoke access by replacing your API Key.</p>
+    </md-card-content>
+    <md-card-actions>
+       <button
+         (click)="addApiKey()" 
+         md-raised-button color="primary" 
+         *ngIf="!hasApiKey" 
+         [disabled]="!acceptTerms"
+       >Create API Key</button>
+       <button (click)="authorizeAccess()" md-raised-button color="primary" [disabled]="!hasApiKey">Authorize application {{appName}}</button>
+    </md-card-actions>
+  </md-card>
+  <div class="flexRowToColumn" style="align-items:stretch">
+    <md-card class="flexChild">
+      <md-card-title>Developer API Key</md-card-title>
+      <md-card-content>
+        <md-checkbox [(ngModel)]="acceptTerms">I agree to the <a href="terms" target="_blank">API Key Terms of Use</a></md-checkbox>
+        
+        <div class="table-container"
+          style="width:400px"
+        >
+          <md-toolbar>
+            <button (click)="addApiKey()" md-raised-button color="primary" [disabled]="!acceptTerms">Create API Key</button>
+          </md-toolbar>
+          <ngx-datatable
+            class="material striped"
+            [rows]="rows"
+            [columns]="columns"
+            [columnMode]="'standard'"
+            [headerHeight]="30"
+            [footerHeight]="false"
+            [rowHeight]="30"
+            [cssClasses]="cssClasses"
+            style="width:400px"
+          >
+            <ngx-datatable-column name="API Key" prop="key" [width]="300">
+              <ng-template let-key="value" ngx-datatable-cell-template>
+                {{key}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Actions" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+<button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
+  <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+</button>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+      </md-card-content>
+    </md-card>
+    <app-api-list></app-api-list>
+  </div>
+</div>

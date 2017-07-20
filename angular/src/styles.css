@@ -3,30 +3,23 @@
   flex-direction:row;
   flex-wrap: wrap;
   align-items: flex-end;
+  margin: -5px;
 }
 .flexRowToColumn .flexChild {
-  margin-right: 10px;
+  margin: 5px;
   flex-grow: 1;
-}
-.flexRowToColumn .flexChild:last-child {
-  margin-right: 0px;
 }
 .flexRowToColumn .flexField {
-  margin-bottom: 5px;
-  margin-right: 10px;
+  margin: 5px;
   flex-grow: 1;
-}
-.flexRowToColumn .flexField:last-child {
-  margin-right: 0px;
 }
 .flexRowToColumn .flexField.labelWithButton {
   flex-grow: 0;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 .flexRowToColumn .flexField.mat-slide-toggle {
-  margin-top: 13px;
+  margin-top: 18px;
   flex-grow: 0;
-  margin-bottom: 7px
 }
 .flexRowToColumn > label.flexField {
   flex-grow: 0;
@@ -52,27 +45,17 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
     flex-direction:column;
   }
   .flexRowToColumn .flexChild {
-    margin-right: 0px;
-    margin-bottom: 2px;
     width: 100%;
-  }
-  .flexRowToColumn .flexChild:last-child {
-    margin-bottom: 0px;
   }
   .flexRowToColumn .flexField {
-    margin-right: 0px;
-    margin-bottom: 2px;
     width: 100%;
-  }
-  .flexRowToColumn .flexField:last-child {
-    margin-bottom: 0px;
   }
   .flexRowToColumn .flexField.labelWithButton {
     flex-grow: 0;
-    margin-top: 5px;
+    margin-top: 10px;
   }
   .flexRowToColumn .flexField.mat-slide-toggle {
-    margin-top: 5px;
+    margin-top: 10px;
     flex-grow: 0;
   }
 }

@@ -1,0 +1,20 @@
+<md-card class="flexChild">
+  <md-card-title>Applications</md-card-title>
+  <md-card-content>
+    <p>You have permission to access the following applications.</p>
+    <div class="table-container">
+      <ngx-datatable
+        class="material striped"
+        [rows]="rows"
+        [columns]="columns"
+        [columnMode]="'force'"
+        [headerHeight]="30"
+        [footerHeight]="false"
+        [rowHeight]="30"
+        [cssClasses]="cssClasses"
+        style="width:400px"
+      >
+      </ngx-datatable>
+    </div>
+  </md-card-content>
+</md-card>

@@ -1,19 +1,23 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import { MaterialModule } from '@angular/material';
-import { BrowserModule } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {HttpModule} from '@angular/http';
+import {MaterialModule} from '@angular/material';
+import {BrowserModule} from '@angular/platform-browser';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { AppRoutingModule } from './app-routing.module';
-import { BcGovTemplateComponent } from '../shared/bcgov-template/BcGovTemplateComponent';
-import { SharedModule } from '../shared/shared.module';
-import { ApiKeyService } from './ApiKey/ApiKeyService';
-import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import {AppRoutingModule} from './app-routing.module';
+import {BcGovTemplateComponent} from '../shared/bcgov-template/BcGovTemplateComponent';
+import {SharedModule} from '../shared/shared.module';
+
+import {ApiService} from './Api/ApiService';
+import {ApiListComponent} from './Api/ApiListComponent';
+
+import {ApiKeyService} from './ApiKey/ApiKeyService';
+import {ApiKeyListComponent} from './ApiKey/ApiKeyListComponent';
 
 @NgModule({
   imports: [
@@ -40,9 +44,11 @@ import { ApiKeyComponent } from './ApiKey/ApiKeyComponent';
   entryComponents: [
   ],
   declarations: [
-    ApiKeyComponent,
+    ApiListComponent,
+    ApiKeyListComponent,
   ],
   providers: [
+    ApiService,
     ApiKeyService,
   ],
   bootstrap: [BcGovTemplateComponent]

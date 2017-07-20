@@ -22,12 +22,12 @@ body {
   margin: 0px;
 }
 @font-face {
-  font-family: 'Myriad-Web-Pro';
+  font-family: 'Myriad-Pro';
   src: url('../fonts/MyriadWebPro.ttf');
 }
 
 .bcgov-template {
-  font-family: 'Myriad-Web-Pro', Calibri, Arial, sans serif;
+  font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
   display:flex;
   flex-direction:column;
   min-height: 100vh;

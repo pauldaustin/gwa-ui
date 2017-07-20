@@ -5,25 +5,23 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseComponent } from '../../shared/Component/BaseComponent';
+import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
-import { ApiKey } from './ApiKey';
-import { ApiKeyService } from './ApiKeyService';
+import {ApiKey} from './ApiKey';
+import {ApiKeyService} from './ApiKeyService';
 
 @Component({
   selector: 'app-api-key-list',
-  templateUrl: 'ApiKey.html'
+  templateUrl: 'ApiKeyList.html'
 })
-export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
+export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements OnInit {
   acceptTerms = false;
 
   appName: string;
 
   appRedirectUrl: string;
 
-  apiNames: string[] = [];
-
-  apiKey: string;
+  hasApiKey = false;
 
   constructor(
     injector: Injector,
@@ -33,6 +31,10 @@ export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
   }
 
   ngOnInit(): void {
+    this.columns = [
+      {name: 'API Key', prop: 'key', sortable: true},
+      {name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
+    ];
     super.ngOnInit();
     this.route.queryParams.map(params => params)
       .subscribe(params => {
@@ -40,18 +42,6 @@ export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
         this.appRedirectUrl = params['appRedirectUrl'];
         this.refresh();
       });
-  }
-
-  refresh(): void {
-    this.service.getObject('')
-      .then(response => {
-        this.apiNames = response.apiNames;
-        this.apiKey = response.apiKey;
-        if (this.apiKey) {
-          this.acceptTerms = true;
-        }
-      }
-      );
   }
 
   addApiKey(): void {
@@ -64,7 +54,7 @@ export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
   }
 
   authorizeAccess(): void {
-    const apiKey = this.apiKey;
+    const apiKey = this.rows[0];
     let url = this.appRedirectUrl;
     if (url.indexOf('?') === -1) {
       url += '?';
@@ -75,7 +65,10 @@ export class ApiKeyComponent extends BaseComponent<ApiKey> implements OnInit {
     this.document.location.href = url;
   }
 
-  get hasApiKey(): boolean {
-    return this.apiKey != null;
+  protected setRows(rows: ApiKey[]) {
+    super.setRows(rows);
+    if (rows.length > 0) {
+      this.acceptTerms = true;
+    }
   }
 }

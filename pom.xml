@@ -172,7 +172,7 @@
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>1.6.3</version>
+        <version>1.6.4</version>
         <configuration>
           <container>
             <containerId>jetty9x</containerId>
@@ -185,9 +185,9 @@
               <cargo.servlet.port>8010</cargo.servlet.port>
               <cargo.rmi.port>8011</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
-              <cargo.start.jvmargs>
+            <!--  <cargo.start.jvmargs>
                 -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8019
-              </cargo.start.jvmargs>
+              </cargo.start.jvmargs> --> 
             </properties>
           </configuration>
           <deployables>

@@ -1,15 +1,50 @@
 .bcgov-template {
-  font-family: 'Myriad-Web-Pro', Calibri, Arial, sans serif;
-  display:flex;
-  flex-direction:column;
+  font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background-color: #f1f1f1;
 }
+
 .collapse {
   display: none;
 }
 
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto
+}
+.menu .menu-sections.container {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+@media ( min-width :769px) {
+  .container {
+    width: 750px;
+  }
+  .menu .menu-sections.container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media ( min-width :993px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media ( min-width :1201px) {
+  .container {
+    width: 1170px;
+  }
+}
+
 header {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
 }
 
@@ -18,18 +53,18 @@ header {
   align-self: stretch;
   margin: auto 0px auto 0px;
 }
+
 .header-title a {
   text-decoration: none;
-}
-.header-title a h1 {
   color: white;
   margin: 0px;
-  font-size: 35px;
+  font-size: 45px;
 }
 
 .logo {
   margin-right: 10px;
 }
+
 .logo-large {
   display: none;
 }
@@ -37,13 +72,22 @@ header {
 .bcgov-content {
   flex: 1;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   margin: 0px;
+  align-items: stretch;
+}
+
+.bcgov-content .container {
+  background-color: white;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 footer {
   font-size: 14px;
-  margin-top: 10px;
   border-top: 2px solid #fcba19;
 }
 
@@ -54,10 +98,12 @@ footer .menu {
 .titlebar {
   background-color: #003366;
   padding: 10px;
-  display:flex;
-  flex-direction:row;
-  align-items: flex-start;
 }
+.titlebar .container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  }
 
 header .titlebar {
   border-bottom: 2px solid #fcba19;
@@ -80,12 +126,12 @@ footer .titlebar {
   height: 38px;
 }
 
-.menu-button:hover,
 .menu-button:hover {
   border-width: 0px;
   background-color: #c6d6ee;
   color: #003366;
 }
+
 .menu-button:focus {
   outline: 0;
 }
@@ -97,28 +143,36 @@ footer .titlebar {
 
 .menu .menu-sections {
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .menu ul {
   list-style: none;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   align-items: flex-start;
   margin: 0px;
   padding: 0px;
 }
+
 .menu li {
   border-top: 1px solid #748bad;
   padding: 5px 10px 5px 10px;
-  display:block;
+  display: block;
   width: 100%;
 }
-.menu li > a {
+
+.menu li>a {
   color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;
 }
 
-.menu li > a.active-link {
+.menu li>a:hover {
+  text-decoration: underline;
+}
+
+.menu li>a.active-link {
   color: #fcba19;
   font-weight: bold;
   text-decoration: underline;
@@ -131,7 +185,7 @@ footer .titlebar {
 
 .fill-width {
   flex-grow: 1;
-  height: 0px;  
+  height: 0px;
 }
 
 footer .menu-button {
@@ -141,7 +195,6 @@ footer .menu-button {
 
 @media ( min-width : 769px) {
   .bcgov-content {
-    margin: 0px 5%;
   }
   .logo-small {
     display: none;
@@ -155,36 +208,34 @@ footer .menu-button {
   .titlebar {
     padding: 10px 20px 10px 20px;
   }
-  
   footer .titlebar {
     display: none;
   }
-
   .menu.collapse {
-    display: block!important;
-    height: auto!important;
+    display: block !important;
+    height: auto !important;
     padding-bottom: 0;
-    overflow: visible!important;
+    overflow: visible !important;
   }
   .menu .menu-sections {
-    flex-direction:row;
+    flex-direction: row;
     flex-wrap: wrap;
     padding: 10px 30px 0px 30px;
   }
   .menu ul {
-    flex-direction:row;
+    flex-direction: row;
   }
-
-  .menu ul > li {
+  .menu ul>li {
     border-left: 1px solid #748bad;
     border-top-width: 0px;
     padding: 0px 10px 0px 10px;
-    width:auto;
+    width: auto;
     margin-bottom: 10px;
   }
   .menu ul>li:first-child {
     border-left-width: 0px;
   }
   .menu-right {
+    
   }
 }

@@ -97,11 +97,9 @@ export abstract class BaseService<T> implements Service<T> {
               if (dialogResponse === 'Login') {
                 this.httpRequest(request, handler).then(
                   validResult => {
-                    console.log(validResult);
                     resolve(validResult);
                   },
                   errorResult => {
-                    console.log(errorResult);
                     reject(errorResult);
                   }
                 );

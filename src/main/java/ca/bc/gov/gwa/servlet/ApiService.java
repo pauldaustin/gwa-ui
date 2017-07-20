@@ -571,6 +571,39 @@ public class ApiService implements ServletContextListener {
     handleRequest(httpResponse, httpClient -> {
       final String userId = httpRequest.getRemoteUser();
       final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
+      final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
+        Collections.emptyMap());
+      Json.writeJson(httpResponse, apiKeyResponse);
+    });
+
+  }
+
+  /**
+   * Delete all existing API keys and create a new one.
+   *
+   * @param httpRequest
+   * @param httpResponse
+
+   */
+  public void developerApiKeyDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiKey) {
+    final String userId = httpRequest.getRemoteUser();
+    final String path = CONSUMERS_PATH2 + userId + "/key-auth/" + apiKey;
+    handleDelete(httpResponse, path);
+  }
+
+  /**
+   * Delete all existing API keys and create a new one.
+   *
+   * @param httpRequest
+   * @param httpResponse
+
+   */
+  public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    handleRequest(httpResponse, httpClient -> {
+      final String userId = httpRequest.getRemoteUser();
+      final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
       kongPageAll(httpRequest, httpClient, keyAuthPath, apiKey -> {
         final String id = (String)apiKey.get(ID);
         try {
@@ -580,22 +613,44 @@ public class ApiService implements ServletContextListener {
           logError(message, e);
         }
       });
-      final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
-        Collections.emptyMap());
-      Json.writeJson(httpResponse, apiKeyResponse);
+      writeJsonResponse(httpResponse, "deleted");
     });
 
   }
 
+  public void developerApiKeyList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    handleRequest(httpResponse, httpClient -> {
+
+      final String username = httpRequest.getRemoteUser();
+      final String keyAuthPath = CONSUMERS_PATH2 + username + "/key-auth";
+      final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
+      final List<Map<String, Object>> keyAuthList = getList(keyAuthResponse, DATA);
+
+      final Map<String, Object> kongResponse = new LinkedHashMap<>();
+      final List<Map<String, Object>> apiKeys = new ArrayList<>();
+      for (final Map<String, Object> keyAuth : keyAuthList) {
+        final String id = (String)keyAuth.get("id");
+        final String key = (String)keyAuth.get("key");
+        final Map<String, Object> apiKey = new LinkedHashMap<>();
+        apiKey.put("id", id);
+        apiKey.put("key", key);
+        apiKeys.add(apiKey);
+      }
+      kongResponse.put(DATA, apiKeys);
+      Json.writeJson(httpResponse, kongResponse);
+    });
+  }
+
   @SuppressWarnings("unchecked")
-  public void developerApiKeyGet(final HttpServletRequest httpRequest,
+  public void developerApiList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, String> apiAllNamesById = apiAllNamesById(httpRequest, httpClient);
 
       final Set<String> groups = consumerGroups(httpRequest, httpClient);
 
-      final Set<String> apiNames = new TreeSet<>();
+      final Map<String, Map<String, Object>> apiByName = new TreeMap<>();
       final String path = "/plugins?name=acl";
       kongPageAll(httpRequest, httpClient, path, acl -> {
         if (acl.get(CONSUMER_ID) == null) {
@@ -607,23 +662,13 @@ public class ApiService implements ServletContextListener {
           } else if (whitelist.isEmpty() || containsAny(whitelist, groups)) {
             final String apiId = (String)acl.get(API_ID);
             final String apiName = apiAllNamesById.get(apiId);
-            apiNames.add(apiName);
+            apiByName.put(apiName, Collections.singletonMap("name", apiName));
           }
         }
       });
 
-      final String username = httpRequest.getRemoteUser();
-      final String keyAuthPath = CONSUMERS_PATH2 + username + "/key-auth";
-      final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
-      final List<Map<String, Object>> keyAuthList = getList(keyAuthResponse, DATA);
-
       final Map<String, Object> kongResponse = new LinkedHashMap<>();
-      kongResponse.put("apiNames", apiNames);
-      if (!keyAuthList.isEmpty()) {
-        final Map<String, Object> keyAuth = keyAuthList.get(0);
-        final Object key = keyAuth.get("key");
-        kongResponse.put("apiKey", key);
-      }
+      kongResponse.put(DATA, apiByName.values());
       Json.writeJson(httpResponse, kongResponse);
     });
   }

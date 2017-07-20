@@ -117,7 +117,7 @@ public abstract class BaseServlet extends HttpServlet {
     try {
       String method = request.getMethod();
       final String methodOverride = request.getHeader("X-HTTP-Method-Override");
-      if ("DELETE".equals(methodOverride) && !"POST".equals(request.getMethod())) {
+      if ("DELETE".equals(methodOverride) && "POST".equals(request.getMethod())) {
         method = methodOverride;
       }
       doService(request, response, method);

@@ -2,24 +2,26 @@
   <header *ngIf="showHeaderAndFooter">
     <nav>
       <div class="titlebar">
-        <div class="logo">
-          <a href="http://www2.gov.bc.ca/">
-            <img src="/images/gov3_bc_logo.png" class="logo-large" />
-            <img src="/images/gov3_bc_logo_mobile.png" class="logo-small" />
-          </a> 
+        <div class="container">
+          <div class="logo">
+            <a href="http://www2.gov.bc.ca/">
+              <img src="/images/gov3_bc_logo.png" class="logo-large" />
+              <img src="/images/gov3_bc_logo_mobile.png" class="logo-small" />
+            </a> 
+          </div>
+  
+          <div class="header-title">
+            <a routerLink="/">{{title}}</a>
+          </div>
+  
+          <button type="button" class="menu-button collapsed" (click)="headerMenuVisible = !headerMenuVisible">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="fa fa-bars"></span>
+          </button>
         </div>
-
-        <div class="header-title">
-          <a routerLink="/"><h1 >{{title}}</h1></a>
-        </div>
-
-        <button type="button" class="menu-button collapsed" (click)="headerMenuVisible = !headerMenuVisible">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="fa fa-bars"></span>
-        </button>
       </div>
       <div class="menu" [ngClass]="{'collapse': !headerMenuVisible}">
-        <div class="menu-sections">
+        <div class="menu-sections container">
           <ul>
             <li *ngFor="let menuItem of headerMenuItems">
               <a
@@ -40,13 +42,15 @@
   </header>
 
   <div class="bcgov-content">
-    <router-outlet></router-outlet>
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 
   <footer *ngIf="showHeaderAndFooter">
     <nav>
       <div class="menu" [ngClass]="{'collapse': !footerMenuVisible}">
-        <div class="menu-sections">
+        <div class="menu-sections container" >
           <ul>
             <li><a href="http://www2.gov.bc.ca/gov/content/home" title="About gov.bc.ca">Home</a></li>
             <li><a href="http://www2.gov.bc.ca/gov/content/home/disclaimer" title="Disclaimer">Disclaimer</a></li>
