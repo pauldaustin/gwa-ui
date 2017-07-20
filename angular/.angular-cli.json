@@ -1,81 +1,81 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "project": {
-    "name": "gwa-admin"
-  },
-  "apps": [
-    {
-      "name": "admin",
-      "prefix": "admin",
-      "root": "src",
-      "outDir": "dist/admin",
-      "assets": [
-        "assets",
-        "favicon.ico"
-      ],
-      "index": "index.html",
-      "main": "admin/main.ts",
-      "polyfills": "polyfills.ts",
-      "tsconfig": "tsconfig.app.json",
-      "styles": [
-        "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-        "../node_modules/@swimlane/ngx-datatable/release/index.css",
-        "../node_modules/@swimlane/ngx-datatable/release/themes/material.css",
-        "../node_modules/font-awesome/css/font-awesome.css",
-        "styles.css"
-      ],
-      "scripts": [
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
-    },
-    {
-      "name": "devkey",
-      "prefix": "devkey",
-      "root": "src",
-      "outDir": "dist/devkey",
-      "assets": [
-        "assets",
-        "favicon.ico"
-      ],
-      "index": "index.html",
-      "main": "devkey/main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "styles": [
-        "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-        "../node_modules/@swimlane/ngx-datatable/release/index.css",
-        "../node_modules/@swimlane/ngx-datatable/release/themes/material.css",
-        "../node_modules/font-awesome/css/font-awesome.css",
-        "../../src/main/webapp/css/styles.css",
-        "styles.css"
-      ],
-      "scripts": [
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
-    }
-  ],
-  "lint": [
-    {
-      "project": "src/tsconfig.app.json"
-    },
-    {
-      "project": "src/tsconfig.spec.json"
-    },
-    {
-      "project": "e2e/tsconfig.e2e.json"
-    }
-  ],
-  "defaults": {
-    "styleExt": "css",
-    "component": {}
-  }
+	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+	"project": {
+		"name": "gwa-admin"
+	},
+	"apps": [
+		{
+			"name": "admin",
+			"prefix": "app",
+			"root": "src",
+			"outDir": "dist/admin",
+			"assets": [
+				"assets",
+				"favicon.ico"
+			],
+			"index": "index.html",
+			"main": "admin/main.ts",
+			"polyfills": "polyfills.ts",
+			"tsconfig": "tsconfig.app.json",
+			"styles": [
+				"../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+				"../node_modules/@swimlane/ngx-datatable/release/index.css",
+				"../node_modules/@swimlane/ngx-datatable/release/themes/material.css",
+				"../node_modules/font-awesome/css/font-awesome.css",
+				"styles.css"
+			],
+			"scripts": [],
+			"environmentSource": "environments/environment.ts",
+			"environments": {
+				"dev": "environments/environment.ts",
+				"prod": "environments/environment.prod.ts"
+			}
+		},
+		{
+			"name": "devkey",
+			"prefix": "app",
+			"root": "src",
+			"outDir": "dist/devkey",
+			"assets": [
+				"assets",
+				"favicon.ico"
+			],
+			"index": "index.html",
+			"main": "devkey/main.ts",
+			"polyfills": "polyfills.ts",
+			"test": "test.ts",
+			"tsconfig": "tsconfig.app.json",
+			"styles": [
+				"../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+				"../node_modules/@swimlane/ngx-datatable/release/index.css",
+				"../node_modules/@swimlane/ngx-datatable/release/themes/material.css",
+				"../node_modules/font-awesome/css/font-awesome.css",
+				"../../src/main/webapp/css/styles.css",
+				"styles.css"
+			],
+			"scripts": [],
+			"environmentSource": "environments/environment.ts",
+			"environments": {
+				"dev": "environments/environment.ts",
+				"prod": "environments/environment.prod.ts"
+			}
+		}
+	],
+	"lint": [
+		{
+			"project": "src/tsconfig.app.json"
+		},
+		{
+			"project": "src/tsconfig.spec.json"
+		},
+		{
+			"project": "e2e/tsconfig.e2e.json"
+		}
+	],
+	"defaults": {
+		"styleExt": "css",
+		"component": {
+			
+		}
+	}
 }
