@@ -87,7 +87,9 @@ export abstract class BaseService<T> implements Service<T> {
             if (loginDialog) {
               loginDialog.componentInstance.login();
             } else {
-              loginDialog = this.dialog.open(LoginDialogComponent);
+              loginDialog = this.dialog.open(LoginDialogComponent, {
+                disableClose: true
+              });
               BaseService.loginDialog = loginDialog;
               loginDialog.afterClosed().subscribe(dialogResponse => {
                 BaseService.loginDialog = null;

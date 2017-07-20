@@ -49,7 +49,7 @@ The application supports the following configuration properties.
 
 | Name                  | Description                | Sample Value                                 |
 |-----------------------|----------------------------|----------------------------------------------|
-| gwaTermsUrl           | URL to terms of us page    | http://www2.gov.bc.ca/gov/content/data/terms |
+| gwaTermsUrl           | URL to terms of us page    | http://www2.gov.bc.ca/gov/content?id=D1EE0A405E584363B205CD4353E02C88 |
 | gwaKongAdminUrl       | URL to kong rest API       | http://localhost:8001                        |
 | gwaKongAdminUsername  | Username for kong rest API | kong                                         |
 | gwaKongAdminPassword  | Password for kong rest API | dgdftyftye                                   |
