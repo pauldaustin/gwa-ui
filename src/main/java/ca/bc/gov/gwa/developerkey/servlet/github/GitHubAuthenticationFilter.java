@@ -29,6 +29,8 @@ import ca.bc.gov.gwa.util.LruMap;
 })
 public class GitHubAuthenticationFilter extends AbstractFilter {
 
+  private static final int EXPIRY_TIME_MS = 10 * 60 * 1000;
+
   private static final String GITHUB = "github_";
 
   private static final String GIT_HUB_PRINCIPAL = "GitHubPrincipal";
@@ -83,7 +85,7 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
       handleCallback(httpRequest, httpResponse, session);
     } else {
       final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
-      if (principal == null || principal.isExpired(120000)) {
+      if (principal == null || principal.isExpired(EXPIRY_TIME_MS)) {
         handleRedirectToGitHub(chain, httpRequest, httpResponse, session);
       } else {
         if (principal.isUserInRole(this.organizationRole)) {

@@ -26,6 +26,8 @@ import ca.bc.gov.gwa.servlet.ApiService;
 })
 public class SiteminderAuthenticationFilter extends AbstractFilter {
 
+  private static final int EXPIRY_TIME_MS = 10 * 60 * 1000;
+
   private static final String SITEMINDER_PRINCIPAL = "SiteminderPrincipal";
 
   @Override
@@ -65,7 +67,7 @@ public class SiteminderAuthenticationFilter extends AbstractFilter {
       sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
     } else {
       final String userId = (userDir + "_" + userGuid).toLowerCase();
-      if (principal == null || principal.isInvalid(userId, 120000)) {
+      if (principal == null || principal.isInvalid(userId, EXPIRY_TIME_MS)) {
         final String username = (userDir + "_" + universalid).toLowerCase();
 
         final Set<String> groups = getGroups(httpResponse, userId, username);
