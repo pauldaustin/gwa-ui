@@ -264,20 +264,18 @@ button.back {
   <c:when test="${requestScope['javax.servlet.error.status_code'] == 403}">
     <c:choose>
       <c:when test="${requestScope['javax.servlet.forward.request_uri'].startsWith('/int')}">
-<c:set var="gwaMailSubject" value="[GWA] Gateway Admin Grant API Owner" />
-<c:set var="gwaMailBody" value="Please grant my account IDIR account [YOUR ACCOUNT GOES HERE] the ROLE_GWA_API_OWNER role using the Gateway Admin (GWA) application." />
-<c:url value="mailto:data@gov.bc.ca?subject=${gwaMailSubject}&body=${gwaMailBody}" var="gwaMailUrl" />
 <p>You do not have permission to access the Gateway Admin (GWA) application.</p>
-
-<p>If you are an API owner send the following email requesting access the Gateway Admin application. Replace [YOUR ACCOUNT GOES HERE] with your IDIR account. The To: link below should automatically create an email with the subject and body.</p>
-<div class="email">
-  <b>To:</b> <a href="${gwaMailUrl}">data@gov.bc.ca</a> <br />
-  <b>Subject:</b> <c:out value="${gwaMailSubject}" /> <br />
-  <b>Body:</b> <c:out value="${gwaMailBody}" />
-</div>
+ 
+<p>If you are an API owner please email your IDIR account name to <a href="mailto:data@gov.bc.ca">data@gov.bc.ca</a> along with the name of the API.</p>
+ 
+<p>See the <a href="https://gogs.data.gov.bc.ca/DataBC/gwa/wiki/API+Owner+Guide">GWA API Owner's Guide</a> for more information on GWA.</p>
       </c:when>
       <c:otherwise>
-      <p>Dev key error</p>
+<p>You do not have permission to access the Gateway Admin (GWA) application.</p>
+ 
+<p>You must first join the bcgov GitHub organization <a href="https://github.com/bcgov">https://github.com/bcgov</a>.</p>
+ 
+<p>See the <a href="https://github.com/bcgov/gwa/wiki/Developer-Guide">GWA Developer Guide</a> for more information on GWA</p>
       </c:otherwise>
     </c:choose>
   </c:when>
