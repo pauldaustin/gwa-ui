@@ -36,7 +36,7 @@ export class AuthService extends BaseService<any>  {
 
   hasRole(role: string): boolean {
     if (this.roles == null) {
-      return true;
+      return false;
     } else {
       return this.roles.indexOf(role) !== -1;
     }

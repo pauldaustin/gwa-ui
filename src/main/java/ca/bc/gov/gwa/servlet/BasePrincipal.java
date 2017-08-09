@@ -10,10 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 public class BasePrincipal implements Principal, Serializable {
-
-  /**
-   *
-   */
   private static final long serialVersionUID = 1L;
 
   private final String id;
@@ -28,6 +24,10 @@ public class BasePrincipal implements Principal, Serializable {
     this.id = id;
     this.name = name;
     this.roles = roles;
+  }
+
+  protected void addRole(final String role) {
+    this.roles.add(role);
   }
 
   @Override

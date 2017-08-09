@@ -166,7 +166,7 @@ export abstract class BaseService<T> implements Service<T> {
     });
   }
 
-  protected getUrl(path: string): string {
+  public getUrl(path: string): string {
     return this.config.basePath + '/rest' + path;
   }
 

@@ -173,6 +173,13 @@ public class JsonHttpClient implements Closeable {
     return executeRequestJson(request, data);
   }
 
+  public Map<String, Object> put(final String path) throws IOException {
+    final HttpPut httpRequest = new HttpPut(this.serviceUrl + path);
+    final StringEntity updateRequestEntity = new StringEntity("", ContentType.TEXT_PLAIN);
+    httpRequest.setEntity(updateRequestEntity);
+    return executeRequest(httpRequest);
+  }
+
   public Map<String, Object> put(final String path, final Map<String, Object> data)
     throws IOException {
     final HttpPut updateRequest = new HttpPut(this.serviceUrl + path);

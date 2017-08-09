@@ -1,3 +1,9 @@
+import {Observable} from 'rxjs/Observable';
+
+import {
+  Http,
+  Response,
+} from '@angular/http';
 
 export interface Service<T> {
 
@@ -15,7 +21,7 @@ export interface Service<T> {
 
   getLabel(object: T): string;
 
-  getObjects(path: string, filter: { [fieldName: string]: string }): Promise<T[]>;
+  getObjects(path: string, filter: {[fieldName: string]: string}): Promise<T[]>;
 
   getObject(id: string): Promise<T>;
 
@@ -25,8 +31,12 @@ export interface Service<T> {
     offset: number,
     limit: number,
     path?: string,
-    filter?: { [fieldName: string]: string }
+    filter?: {[fieldName: string]: string}
   ): Promise<any>;
 
   getTypeTitle(): string;
+
+  getUrl(path: string): string;
+
+  httpRequest<R>(request: (http: Http) => Observable<Response>, handler: (response: Response) => T): Promise<T>;
 }

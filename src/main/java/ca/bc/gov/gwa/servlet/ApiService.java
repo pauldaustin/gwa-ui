@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.admin.servlet.siteminder.SiteminderPrincipal;
+import ca.bc.gov.gwa.developerkey.servlet.github.GitHubPrincipal;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.http.JsonHttpConsumer;
@@ -60,7 +62,7 @@ public class ApiService implements ServletContextListener {
 
   private static final String APIS_PATH2 = "/apis/";
 
-  private static final String APPLICATION_JSON = "application/json";
+  public static final String APPLICATION_JSON = "application/json";
 
   private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
@@ -168,6 +170,12 @@ public class ApiService implements ServletContextListener {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
   }
 
+  private String gitHubAccessToken;
+
+  private String gitHubClientId;
+
+  private String gitHubClientSecret;
+
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
   private boolean caching;
@@ -187,6 +195,10 @@ public class ApiService implements ServletContextListener {
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;
+
+  private String gitHubOrganizationRole;
+
+  private String gitHubOrganizationName;
 
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
@@ -551,6 +563,15 @@ public class ApiService implements ServletContextListener {
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
       this.kongAdminUsername = getConfig("gwaKongAdminUsername", this.kongAdminUsername);
       this.kongAdminPassword = getConfig("gwaKongAdminPassword", this.kongAdminPassword);
+      this.gitHubOrganizationName = getConfig("gwaGitHubOrganization", "gwa-qa");
+      this.gitHubOrganizationRole = "github_" + this.gitHubOrganizationName;
+      this.gitHubAccessToken = getConfig("gwaGitHubAccessToken");
+      this.gitHubClientId = getConfig("gwaGitHubClientId");
+      this.gitHubClientSecret = getConfig("gwaGitHubClientSecret");
+      if (this.gitHubClientId == null || this.gitHubClientSecret == null) {
+        LoggerFactory.getLogger(getClass())
+          .error("Missing gitHubClientId or gitHubClientSecret configuration");
+      }
       final ServletContext servletContext = event.getServletContext();
       servletContext.setAttribute(API_SERVICE_NAME, this);
     } catch (final Exception e) {
@@ -564,7 +585,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -583,7 +604,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -597,7 +618,7 @@ public class ApiService implements ServletContextListener {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -754,7 +775,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -782,7 +803,7 @@ public class ApiService implements ServletContextListener {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -981,6 +1002,26 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public String getGitHubAccessToken(final String state, final String code) throws IOException {
+    final String accessToken;
+    try (
+      JsonHttpClient client = new JsonHttpClient("https://github.com")) {
+      final Map<String, Object> accessResponse = client
+        .get("/login/oauth/access_token?client_id=" + this.gitHubClientId + "&client_secret="
+          + this.gitHubClientSecret + "&code=" + code + "&state=" + state);
+      accessToken = (String)accessResponse.get("access_token");
+    }
+    return accessToken;
+  }
+
+  public String getGitHubClientId() {
+    return this.gitHubClientId;
+  }
+
+  public String getGitHubOrganizationRole() {
+    return this.gitHubOrganizationRole;
+  }
+
   private String getKongPageUrl(final HttpServletRequest httpRequest, final String path) {
     final String limit = httpRequest.getParameter("limit");
     final StringBuilder url = new StringBuilder(this.kongAdminUrl);
@@ -1078,6 +1119,19 @@ public class ApiService implements ServletContextListener {
     final String version = getVersion();
     final Map<String, Object> response = Collections.singletonMap("version", version);
     Json.writeJson(httpResponse, response);
+  }
+
+  public void gitHubAddOrganizationMember(final HttpServletRequest request) throws IOException {
+    final Principal userPrincipal = request.getUserPrincipal();
+    if (userPrincipal instanceof GitHubPrincipal) {
+      final GitHubPrincipal gitHubPrincipal = (GitHubPrincipal)userPrincipal;
+      try (
+        JsonHttpClient client = new JsonHttpClient("https://api.github.com")) {
+        client.put("/orgs/" + this.gitHubOrganizationName + "/memberships/"
+          + gitHubPrincipal.getLogin() + "?access_token=" + this.gitHubAccessToken);
+        gitHubPrincipal.addDeveloperRole();
+      }
+    }
   }
 
   public void groupUserAdd(final HttpServletResponse httpResponse, final String username,
@@ -1366,7 +1420,6 @@ public class ApiService implements ServletContextListener {
     });
   }
 
-  @SuppressWarnings("unchecked")
   public void pluginNames(final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> enabledResponse = httpClient.get("/plugins/enabled");
