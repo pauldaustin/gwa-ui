@@ -12,6 +12,7 @@ import {
 import {BaseComponent} from './BaseComponent';
 import {DeleteDialogComponent} from './DeleteDialogComponent';
 
+import {ArrayDataSource} from '../../shared/Service/ArrayDataSource';
 import {Service} from '../Service/Service';
 
 export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
@@ -27,6 +28,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   @ViewChild('arrayT') arrayTemplate: TemplateRef<any>;
 
   columns: any[];
+
+  dataSource = new ArrayDataSource<T>();
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
@@ -84,6 +87,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   protected setRows(rows: T[]) {
     this.rows = rows;
+    this.dataSource.setData(rows);
   }
 
   deleteObject(object: T): void {

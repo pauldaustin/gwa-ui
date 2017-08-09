@@ -1,20 +1,19 @@
-<md-card class="flexChild">
+<md-card style="flex: 1">
   <md-card-title>Applications</md-card-title>
   <md-card-content>
     <p>You have permission to access the following applications.</p>
+    
     <div class="table-container">
-      <ngx-datatable
-        class="material striped"
-        [rows]="rows"
-        [columns]="columns"
-        [columnMode]="'force'"
-        [headerHeight]="30"
-        [footerHeight]="false"
-        [rowHeight]="30"
-        [cssClasses]="cssClasses"
-        style="width:400px"
-      >
-      </ngx-datatable>
+      <md-table #table [dataSource]="dataSource">
+        <ng-container cdkColumnDef="name">
+          <md-header-cell *cdkHeaderCellDef>Name</md-header-cell>
+          <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
+        </ng-container>
+        
+        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+        
+        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+      </md-table>
     </div>
   </md-card-content>
 </md-card>

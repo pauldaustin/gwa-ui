@@ -4,7 +4,20 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import {MaterialModule} from '@angular/material';
+import {CdkTableModule} from '@angular/cdk';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {
+  MdButtonModule,
+  MdCheckboxModule,
+  MdCardModule,
+  MdDialogModule,
+  MdIconModule,
+  MdIconRegistry,
+  MdProgressSpinnerModule,
+  MdSelectModule,
+  MdTableModule,
+  MdToolbarModule
+} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
@@ -26,8 +39,22 @@ import {ApiKeyListComponent} from './ApiKey/ApiKeyListComponent';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    MaterialModule,
+
+    CdkTableModule,
+
+    FlexLayoutModule,
+
+    MdButtonModule,
+    MdCardModule,
+    MdCheckboxModule,
+    MdDialogModule,
+    MdIconModule,
+    MdProgressSpinnerModule,
+    MdSelectModule,
+    MdTableModule,
+    MdToolbarModule,
     NgxDatatableModule,
+
     SharedModule.forRoot({
       basePath: '',
       title: 'API Keys',
@@ -54,5 +81,8 @@ import {ApiKeyListComponent} from './ApiKey/ApiKeyListComponent';
   bootstrap: [BcGovTemplateComponent]
 })
 export class AppModule {
+  constructor(mdIconRegistry: MdIconRegistry) {
+    mdIconRegistry.registerFontClassAlias('fa', 'fa');
+  }
 }
 

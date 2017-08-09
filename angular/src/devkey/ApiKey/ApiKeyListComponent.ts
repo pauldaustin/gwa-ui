@@ -12,7 +12,8 @@ import {ApiKeyService} from './ApiKeyService';
 
 @Component({
   selector: 'app-api-key-list',
-  templateUrl: 'ApiKeyList.html'
+  templateUrl: 'ApiKeyList.html',
+  styleUrls: ['ApiKeyList.css']
 })
 export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements OnInit {
   acceptTerms = false;
@@ -24,6 +25,8 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
   appRedirectUrl: string;
 
   appSendMessage = false;
+
+  displayedColumns = ['key', 'actions'];
 
   hasApiKey = false;
 

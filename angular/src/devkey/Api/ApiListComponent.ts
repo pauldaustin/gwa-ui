@@ -4,7 +4,6 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-
 import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
 import {Api} from './Api';
@@ -22,6 +21,8 @@ import {ApiService} from './ApiService';
 })
 export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
 
+  displayedColumns = ['name'];
+
   constructor(
     injector: Injector,
     service: ApiService
@@ -35,5 +36,4 @@ export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
     ];
     super.ngOnInit();
   }
-
 }
