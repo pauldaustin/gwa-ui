@@ -56,7 +56,7 @@ The application supports the following configuration properties.
 | gwaGitHubOrganization | GitHub Org name            | bcggov or gwa-qa                             |
 | gwaGitHubClientId     | GitHub Org Client ID       | abcdefgh0123456789123                        |
 | gwaGitHubClientSecret | GitHub Ord Client Secret   | abcdefgh01234567890123456789012345678912     |
-| gwaGitAccessToken     | GitHub Personal Access Token of Organization Owner | abcdefgh01234567890123456789012345678912     |
+| gwaGitHubAccessToken  | GitHub Personal Access Token of Organization Owner | abcdefgh01234567890123456789012345678912     |
 
 Create the config/gwa.properties file containing the above properties. This directory must be in
 the working directory that the servlet container runs in.
