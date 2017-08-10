@@ -30,8 +30,8 @@ Install the following additional Kong Plugins
 
 ### GitHub Organization Access
 
-The GWA Developer Key application requires OAuth application access to the organization that the
-developers must be a member of.
+The GWA Developer Key application requires OAuth application access to the organization (bcgov-keygen)
+that the developers must be a member of.
 
 1. Open the OAuth applications configuration page for the GitHub organization
      https://github.com/organizations/gwa-qa/settings/applications - Delivery & Test
@@ -44,6 +44,14 @@ developers must be a member of.
 3. Click Register application
 4. Record the Client ID and Client Secret for the configuration.
 
+### GitHub Personal Access Token
+
+1. Create a new http://github.com user account that will only be used for managing organization (bcgov-keygen) access.
+2. Add the new user as an admin for the organization (bcgov-keygen).
+3. Login as the new user.
+4. Using https://github.com/settings/tokens generate a new personal access token with the admin:org permission.
+5. Record the generated token for use in the gwaGitHubAccessToken configuration.
+
 ### Configuration Properties
 The application supports the following configuration properties.
 
@@ -53,7 +61,7 @@ The application supports the following configuration properties.
 | gwaKongAdminUrl       | URL to kong rest API       | http://localhost:8001                        |
 | gwaKongAdminUsername  | Username for kong rest API | kong                                         |
 | gwaKongAdminPassword  | Password for kong rest API | dgdftyftye                                   |
-| gwaGitHubOrganization | GitHub Org name            | bcggov or gwa-qa                             |
+| gwaGitHubOrganization | GitHub Org name            | bcgov-keygen                                 |
 | gwaGitHubClientId     | GitHub Org Client ID       | abcdefgh0123456789123                        |
 | gwaGitHubClientSecret | GitHub Ord Client Secret   | abcdefgh01234567890123456789012345678912     |
 | gwaGitHubAccessToken  | GitHub Personal Access Token of Organization Owner | abcdefgh01234567890123456789012345678912     |
