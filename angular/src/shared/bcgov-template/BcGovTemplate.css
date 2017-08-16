@@ -1,25 +1,51 @@
 .bcgov-template {
-  font-family: 'Myriad-Web-Pro', Calibri, Arial, sans serif;
-  display:flex;
-  flex-direction:column;
+  font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background-color: #f1f1f1;
 }
+
 .collapse {
   display: none;
 }
-header {
-  margin-bottom: 10px;
-  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto
+}
+.menu .menu-sections.container {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
-.titlebar {
-  background-color: #003366;
-  border-bottom: 2px solid #fcba19;
-  padding: 10px;
-  width: 100%;
-  display:flex;
-  flex-direction:row;
-  align-items: flex-start;
+@media ( min-width :820px) {
+  .container {
+    width: 750px;
+  }
+  .menu .menu-sections.container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media ( min-width :1020px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media ( min-width :1220px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+header {
+  margin-bottom: 5px;
+  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
 }
 
 .header-title {
@@ -27,23 +53,68 @@ header {
   align-self: stretch;
   margin: auto 0px auto 0px;
 }
+
 .header-title a {
   text-decoration: none;
-}
-.header-title a h1 {
   color: white;
   margin: 0px;
-  font-size: 35px;
+  font-size: 45px;
 }
 
 .logo {
   margin-right: 10px;
 }
+
 .logo-large {
   display: none;
 }
 
+.bcgov-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0px;
+  align-items: stretch;
+}
+
+.bcgov-content .container {
+  background-color: white;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  font-size: 14px;
+  border-top: 2px solid #fcba19;
+}
+
+footer .menu {
+  background-color: #003366;
+}
+
+.titlebar {
+  background-color: #003366;
+  padding: 10px;
+}
+.titlebar .container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  }
+
+header .titlebar {
+  border-bottom: 2px solid #fcba19;
+}
+
+footer .titlebar {
+  padding: 10px 10px 10px 0px;
+}
+
 .menu-button {
+  display: block;
   border-width: 0px;
   border-radius: 0px;
   padding: 4px;
@@ -55,12 +126,12 @@ header {
   height: 38px;
 }
 
-.menu-button:hover,
 .menu-button:hover {
   border-width: 0px;
   background-color: #c6d6ee;
   color: #003366;
 }
+
 .menu-button:focus {
   outline: 0;
 }
@@ -70,31 +141,38 @@ header {
   color: #ffffff;
 }
 
-.menu .sections {
+.menu .menu-sections {
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .menu ul {
   list-style: none;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   align-items: flex-start;
   margin: 0px;
   padding: 0px;
 }
+
 .menu li {
   border-top: 1px solid #748bad;
   padding: 5px 10px 5px 10px;
-  display:block;
+  display: block;
   width: 100%;
 }
-.menu li > a {
+
+.menu li>a {
   color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;
 }
 
-.menu li > a.active-link {
-  color: #fcba19;
+.menu li>a:hover {
+  text-decoration: underline;
+}
+
+.menu li>a.active-link {
   font-weight: bold;
   text-decoration: underline;
 }
@@ -103,7 +181,20 @@ header {
   height: 20px;
   margin-top: -4px;
 }
+
+.fill-width {
+  flex-grow: 1;
+  height: 0px;
+}
+
+footer .menu-button {
+  margin-left: auto;
+  display: block;
+}
+
 @media ( min-width : 769px) {
+  .bcgov-content {
+  }
   .logo-small {
     display: none;
   }
@@ -116,135 +207,34 @@ header {
   .titlebar {
     padding: 10px 20px 10px 20px;
   }
+  footer .titlebar {
+    display: none;
+  }
   .menu.collapse {
-    display: block!important;
-    height: auto!important;
+    display: block !important;
+    height: auto !important;
     padding-bottom: 0;
-    overflow: visible!important;
+    overflow: visible !important;
   }
   .menu .menu-sections {
-    flex-direction:row;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding: 10px 30px 0px 30px;
   }
   .menu ul {
-    flex-direction:row;
+    flex-direction: row;
   }
-
-  .menu ul > li {
+  .menu ul>li {
     border-left: 1px solid #748bad;
     border-top-width: 0px;
     padding: 0px 10px 0px 10px;
-    width:auto;
+    width: auto;
     margin-bottom: 10px;
   }
   .menu ul>li:first-child {
     border-left-width: 0px;
   }
   .menu-right {
-    margin-left: auto;
-    width: 100%;
+    
   }
-}
-
-/* OLD STUFF */
-
-.bcgov-header .navbar-toggle {
-  border-width: 0px;
-  border-radius: 0px;
-  padding: 4px;
-  margin: 16px 6px 17px 6px;
-}
-
-.bcgov-content {
-  flex: 1 1 auto;
-}
-
-.navbar-text {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.navbar-text .navbar-link {
-  display: inline-block;
-  vertical-align: top;
-  height: 20px;
-}
-
-.navbar-text .navbar-link .mat-icon {
-  height: 20px;
-  margin-top: -4px;
-}
-
-@media ( min-width : 769px) {
-  .bcgov-footer nav li {
-    border-left: 1px solid #4b5e73;
-    padding: 2px 10px;
-  }
-  .bcgov-footer nav li:first-child {
-    border-left-width: 0px;
-  }
-  .bcgov-header .navbar-link, .bcgov-header .navbar-nav>li>a, .bcgov-header .nav>li>a {
-    padding-top: 0px;
-    padding-bottom: 0px;
-  }
-  .bcgov-footer nav li a {
-    padding: 0px;
-  }
-}
-
-.bcgov-footer {
-  font-size: 13px;
-  margin-top: 0.5em;
-}
-
-.bcgov-footer nav {
-  background-color: #003366;
-  border-top: 2px solid #fcba19;
-  min-height: 42px;
-  width: 100%;
-  line-height: 18px;
-  border-radius: 0px;
-  margin-bottom: 0px;
-}
-
-.bcgov-footer nav ul {
-  padding: 10px 0;
-}
-
-.bcgov-footer nav li a {
-  color: #ffffff;
-}
-
-.bcgov-footer nav li a:active,
-.bcgov-footer nav li a:hover,
-.bcgov-footer nav li a:visited {
-  text-decoration: underline;
-}
-
-.bcgov-footer .navbar-toggle {
-  border-width: 0px;
-  border-radius: 0px;
-  padding: 4px;
-  margin: 6px 6px 7px 6px;
-}
-
-.bcgov-header .navbar-toggle .icon-bar,
-.bcgov-footer .navbar-toggle .icon-bar {
-  background-color: #c6d6ee;
-  height: 5px;
-  width: 34px;
-  radius: 0px;
-  border-radius: 0px;
-  border-width: 0px;
-}
-
-.bcgov-header .navbar-toggle:hover,
-.bcgov-footer .navbar-toggle:hover {
-  border-width: 0px;
-  background-color: #c6d6ee;
-}
-
-.bcgov-header .navbar-toggle:hover .icon-bar,
-.bcgov-footer .navbar-toggle:hover .icon-bar {
-  background-color: #003366;
 }

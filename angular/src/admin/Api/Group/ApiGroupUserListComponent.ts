@@ -25,7 +25,7 @@ export class ApiGroupUserListComponent extends BaseListComponent<Group> implemen
     injector: Injector,
     service: ApiGroupUserService
   ) {
-    super(injector, service);
+    super(injector, service, 'API Group Users - Gateway Admin');
     this.paging = true;
   }
 

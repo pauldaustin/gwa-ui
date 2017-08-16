@@ -65,7 +65,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public List<Object> getArray() throws IOException {
-    if (getEvent() == EventType.START_ARRAY || hasNext() && next() == EventType.START_ARRAY) {
+    if (getEvent() == EventType.START_ARRAY || isNext(EventType.START_ARRAY)) {
       final List<Object> list = new ArrayList<>();
       do {
         final Object value = getValue();
@@ -110,8 +110,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public Map<String, Object> getMap() throws IOException {
-    if (this.currentEvent == EventType.START_OBJECT
-      || hasNext() && next() == EventType.START_OBJECT) {
+    if (this.currentEvent == EventType.START_OBJECT || isNext(EventType.START_OBJECT)) {
       final Map<String, Object> map = new LinkedHashMap<>();
       do {
         getMapEntry(map);
@@ -127,9 +126,9 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   private void getMapEntry(final Map<String, Object> map) throws IOException {
-    if (hasNext() && next() == EventType.STRING) {
+    if (isNext(EventType.STRING)) {
       final String key = getStringIntern();
-      if (hasNext() && next() == EventType.COLON) {
+      if (isNext(EventType.COLON)) {
         getMapValue(map, key);
       }
       next();
@@ -149,7 +148,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
   }
 
   public String getString() {
-    if (getEvent() == EventType.STRING || hasNext() && next() == EventType.STRING) {
+    if (getEvent() == EventType.STRING || isNext(EventType.STRING)) {
       return getCurrentValue();
     } else {
       throw new IllegalStateException("Expecting a STRING");
@@ -204,6 +203,10 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       }
     }
     return false;
+  }
+
+  private boolean isNext(final EventType eventType) {
+    return hasNext() && next() == eventType;
   }
 
   private void moveNext() {
@@ -411,7 +414,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       final EventType eventType = next();
       if (eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (hasNext() && next() == EventType.COLON) {
+        if (isNext(EventType.COLON)) {
           return key;
         }
       }
@@ -431,7 +434,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       final EventType eventType = next();
       if (eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (key.equals(fieldName) && hasNext() && next() == EventType.COLON) {
+        if (key.equals(fieldName) && isNext(EventType.COLON)) {
           if (hasNext()) {
             next();
             return true;
@@ -453,7 +456,7 @@ public class JsonParser implements Iterator<JsonParser.EventType>, Closeable {
       final EventType eventType = next();
       if (objectCount == 0 && eventType == EventType.STRING) {
         final String key = getStringIntern();
-        if (hasNext() && next() == EventType.COLON) {
+        if (isNext(EventType.COLON)) {
           return key;
         }
       } else if (eventType == EventType.START_OBJECT) {

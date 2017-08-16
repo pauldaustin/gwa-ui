@@ -21,7 +21,7 @@ export class GroupListComponent extends BaseListComponent<Group> implements OnIn
     injector: Injector,
     protected groupService: GroupService
   ) {
-    super(injector, groupService);
+    super(injector, groupService, 'Groups - Gateway Admin');
   }
 
   ngOnInit(): void {

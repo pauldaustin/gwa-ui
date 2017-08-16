@@ -57,6 +57,21 @@ public abstract class BaseServlet extends HttpServlet {
     this.apiService = null;
   }
 
+  protected void doService(final HttpServletRequest request, final HttpServletResponse response,
+    final String method) {
+    try {
+      if ("DELETE".equals(method)) {
+        doDelete(request, response);
+      } else {
+        super.service(request, response);
+      }
+    } catch (final Exception e) {
+      final Class<?> clazz = getClass();
+      final Logger logger = LoggerFactory.getLogger(clazz);
+      logger.error("Error handling request", e);
+    }
+  }
+
   protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
     final String roleName) {
     final Principal userPrincipal = request.getUserPrincipal();
@@ -100,14 +115,12 @@ public abstract class BaseServlet extends HttpServlet {
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     try {
+      String method = request.getMethod();
       final String methodOverride = request.getHeader("X-HTTP-Method-Override");
-      if (methodOverride == null || !"POST".equals(request.getMethod())) {
-        super.service(request, response);
-      } else if ("DELETE".equals(methodOverride)) {
-        doDelete(request, response);
-      } else {
-        super.service(request, response);
+      if ("DELETE".equals(methodOverride) && "POST".equals(request.getMethod())) {
+        method = methodOverride;
       }
+      doService(request, response, method);
     } catch (final Exception e) {
       final Class<?> clazz = getClass();
       final Logger logger = LoggerFactory.getLogger(clazz);

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.admin.servlet.siteminder.SiteminderPrincipal;
+import ca.bc.gov.gwa.developerkey.servlet.github.GitHubPrincipal;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.http.JsonHttpConsumer;
@@ -60,7 +62,7 @@ public class ApiService implements ServletContextListener {
 
   private static final String APIS_PATH2 = "/apis/";
 
-  private static final String APPLICATION_JSON = "application/json";
+  public static final String APPLICATION_JSON = "application/json";
 
   private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
@@ -114,24 +116,21 @@ public class ApiService implements ServletContextListener {
   private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", NAME,
     "consumer_username");
 
+  @SuppressWarnings("unchecked")
   private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
     for (final String fieldName : API_SORT_FIELDS) {
-      @SuppressWarnings("unchecked")
       final Comparable<Object> value1 = (Comparable<Object>)row1.get(fieldName);
       final Object value2 = row2.get(fieldName);
       if (value1 == null) {
         if (value2 != null) {
           return 1;
         }
+      } else if (value2 == null) {
+        return -1;
       } else {
-        if (value2 == null) {
-          return -1;
-        } else {
-
-          final int compare = value1.compareTo(value2);
-          if (compare != 0) {
-            return compare;
-          }
+        final int compare = value1.compareTo(value2);
+        if (compare != 0) {
+          return compare;
         }
       }
     }
@@ -171,6 +170,12 @@ public class ApiService implements ServletContextListener {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
   }
 
+  private String gitHubAccessToken;
+
+  private String gitHubClientId;
+
+  private String gitHubClientSecret;
+
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
   private boolean caching;
@@ -190,6 +195,10 @@ public class ApiService implements ServletContextListener {
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;
+
+  private String gitHubOrganizationRole;
+
+  private String gitHubOrganizationName;
 
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
@@ -291,8 +300,7 @@ public class ApiService implements ServletContextListener {
           fixHostsMapToList(apiResponse);
           final Map<String, Object> pluginsResponse = httpClient
             .get(APIS_PATH2 + apiId + PLUGINS_PATH);
-          final List<Map<String, Object>> plugins = (List<Map<String, Object>>)pluginsResponse
-            .get(DATA);
+          final List<Map<String, Object>> plugins = getList(pluginsResponse, DATA);
           final Map<String, Map<String, Object>> pluginByName = new TreeMap<>();
           for (final Map<String, Object> plugin : plugins) {
             if (plugin.get(CONSUMER_ID) == null) {
@@ -430,13 +438,11 @@ public class ApiService implements ServletContextListener {
   protected Map<String, Object> consumerGet(final JsonHttpClient httpClient, final String filter)
     throws IOException {
     final Map<String, Object> consumerResponse = httpClient.get(filter);
-    @SuppressWarnings("unchecked")
-    final List<Map<String, Object>> consumers = (List<Map<String, Object>>)consumerResponse
-      .get(DATA);
-    if (consumers != null && !consumers.isEmpty()) {
-      return consumers.get(0);
-    } else {
+    final List<Map<String, Object>> consumers = getList(consumerResponse, DATA);
+    if (consumers.isEmpty()) {
       return Collections.emptyMap();
+    } else {
+      return consumers.get(0);
     }
   }
 
@@ -481,7 +487,6 @@ public class ApiService implements ServletContextListener {
     return groups;
   }
 
-  @SuppressWarnings("unchecked")
   public Set<String> consumerGroups(final String customId, final String username)
     throws IOException {
     final Set<String> roles = new TreeSet<>();
@@ -519,13 +524,10 @@ public class ApiService implements ServletContextListener {
       this.usernameByConsumerId.put(id, username);
       final String groupsPath = CONSUMERS_PATH2 + id + ACLS_PATH;
       final Map<String, Object> groupsResponse = httpClient.get(groupsPath);
-      final List<Map<String, Object>> groupList = (List<Map<String, Object>>)groupsResponse
-        .get(DATA);
-      if (groupList != null) {
-        for (final Map<String, Object> groupRecord : groupList) {
-          final String group = (String)groupRecord.get(GROUP);
-          roles.add(group);
-        }
+      final List<Map<String, Object>> groupList = getList(groupsResponse, DATA);
+      for (final Map<String, Object> groupRecord : groupList) {
+        final String group = (String)groupRecord.get(GROUP);
+        roles.add(group);
       }
     }
     return roles;
@@ -561,6 +563,15 @@ public class ApiService implements ServletContextListener {
       this.kongAdminUrl = getConfig("gwaKongAdminUrl", this.kongAdminUrl);
       this.kongAdminUsername = getConfig("gwaKongAdminUsername", this.kongAdminUsername);
       this.kongAdminPassword = getConfig("gwaKongAdminPassword", this.kongAdminPassword);
+      this.gitHubOrganizationName = getConfig("gwaGitHubOrganization", "gwa-qa");
+      this.gitHubOrganizationRole = "github_" + this.gitHubOrganizationName;
+      this.gitHubAccessToken = getConfig("gwaGitHubAccessToken");
+      this.gitHubClientId = getConfig("gwaGitHubClientId");
+      this.gitHubClientSecret = getConfig("gwaGitHubClientSecret");
+      if (this.gitHubClientId == null || this.gitHubClientSecret == null) {
+        LoggerFactory.getLogger(getClass())
+          .error("Missing gitHubClientId or gitHubClientSecret configuration");
+      }
       final ServletContext servletContext = event.getServletContext();
       servletContext.setAttribute(API_SERVICE_NAME, this);
     } catch (final Exception e) {
@@ -581,6 +592,39 @@ public class ApiService implements ServletContextListener {
     handleRequest(httpResponse, httpClient -> {
       final String userId = httpRequest.getRemoteUser();
       final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
+      final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
+        Collections.emptyMap());
+      Json.writeJson(httpResponse, apiKeyResponse);
+    });
+
+  }
+
+  /**
+   * Delete all existing API keys and create a new one.
+   *
+   * @param httpRequest
+   * @param httpResponse
+  
+   */
+  public void developerApiKeyDelete(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiKey) {
+    final String userId = httpRequest.getRemoteUser();
+    final String path = CONSUMERS_PATH2 + userId + "/key-auth/" + apiKey;
+    handleDelete(httpResponse, path);
+  }
+
+  /**
+   * Delete all existing API keys and create a new one.
+   *
+   * @param httpRequest
+   * @param httpResponse
+  
+   */
+  public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    handleRequest(httpResponse, httpClient -> {
+      final String userId = httpRequest.getRemoteUser();
+      final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
       kongPageAll(httpRequest, httpClient, keyAuthPath, apiKey -> {
         final String id = (String)apiKey.get(ID);
         try {
@@ -590,51 +634,62 @@ public class ApiService implements ServletContextListener {
           logError(message, e);
         }
       });
-      final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
-        Collections.emptyMap());
-      Json.writeJson(httpResponse, apiKeyResponse);
+      writeJsonResponse(httpResponse, "deleted");
     });
 
   }
 
+  public void developerApiKeyList(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    handleRequest(httpResponse, httpClient -> {
+
+      final String username = httpRequest.getRemoteUser();
+      final String keyAuthPath = CONSUMERS_PATH2 + username + "/key-auth";
+      final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
+      final List<Map<String, Object>> keyAuthList = getList(keyAuthResponse, DATA);
+
+      final Map<String, Object> kongResponse = new LinkedHashMap<>();
+      final List<Map<String, Object>> apiKeys = new ArrayList<>();
+      for (final Map<String, Object> keyAuth : keyAuthList) {
+        final String id = (String)keyAuth.get("id");
+        final String key = (String)keyAuth.get("key");
+        final Map<String, Object> apiKey = new LinkedHashMap<>();
+        apiKey.put("id", id);
+        apiKey.put("key", key);
+        apiKeys.add(apiKey);
+      }
+      kongResponse.put(DATA, apiKeys);
+      Json.writeJson(httpResponse, kongResponse);
+    });
+  }
+
   @SuppressWarnings("unchecked")
-  public void developerApiKeyGet(final HttpServletRequest httpRequest,
+  public void developerApiList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, String> apiAllNamesById = apiAllNamesById(httpRequest, httpClient);
 
       final Set<String> groups = consumerGroups(httpRequest, httpClient);
 
-      final Set<String> apiNames = new TreeSet<>();
+      final Map<String, Map<String, Object>> apiByName = new TreeMap<>();
       final String path = "/plugins?name=acl";
       kongPageAll(httpRequest, httpClient, path, acl -> {
         if (acl.get(CONSUMER_ID) == null) {
           final Map<String, Object> config = (Map<String, Object>)acl.get(CONFIG);
-          final List<String> blacklist = (List<String>)config.get("blacklist");
-          final List<String> whitelist = (List<String>)config.get(WHITELIST);
+          final List<String> blacklist = getList(config, "blacklist");
+          final List<String> whitelist = getList(config, WHITELIST);
           if (containsAny(blacklist, groups)) {
             // Ignore blacklist
-          } else if (whitelist == null || containsAny(whitelist, groups)) {
+          } else if (whitelist.isEmpty() || containsAny(whitelist, groups)) {
             final String apiId = (String)acl.get(API_ID);
             final String apiName = apiAllNamesById.get(apiId);
-            apiNames.add(apiName);
+            apiByName.put(apiName, Collections.singletonMap("name", apiName));
           }
         }
       });
 
-      final String username = httpRequest.getRemoteUser();
-      final String keyAuthPath = CONSUMERS_PATH2 + username + "/key-auth";
-      final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
-      final List<Map<String, Object>> keyAuthList = (List<Map<String, Object>>)keyAuthResponse
-        .get(DATA);
-
       final Map<String, Object> kongResponse = new LinkedHashMap<>();
-      kongResponse.put("apiNames", apiNames);
-      if (keyAuthList != null && !keyAuthList.isEmpty()) {
-        final Map<String, Object> keyAuth = keyAuthList.get(0);
-        final Object key = keyAuth.get("key");
-        kongResponse.put("apiKey", key);
-      }
+      kongResponse.put(DATA, apiByName.values());
       Json.writeJson(httpResponse, kongResponse);
     });
   }
@@ -664,12 +719,9 @@ public class ApiService implements ServletContextListener {
       final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
       if (endPoint != null) {
         final Map<String, Object> config = (Map<String, Object>)endPoint.get(CONFIG);
-        final Object owners = config.get(API_OWNERS);
-        if (owners instanceof List) {
-          final List<String> apiOwners = (List<String>)owners;
-          if (apiOwners.contains(username)) {
-            return true;
-          }
+        final List<String> apiOwners = getList(config, API_OWNERS);
+        if (apiOwners.contains(username)) {
+          return true;
         }
       }
     }
@@ -734,8 +786,7 @@ public class ApiService implements ServletContextListener {
         if (aclPlugin != null) {
           final Map<String, Object> config = (Map<String, Object>)aclPlugin.getOrDefault(CONFIG,
             Collections.emptyMap());
-          final List<String> apiGroups = (List<String>)config.getOrDefault(WHITELIST,
-            Collections.emptyList());
+          final List<String> apiGroups = getList(config, WHITELIST);
           return apiGroups.contains(groupName);
         }
       }
@@ -774,13 +825,8 @@ public class ApiService implements ServletContextListener {
         final String username = principal.getName();
         kongResponse = kongPageAll(httpRequest, httpClient, path, endpoint -> {
           final Map<String, Object> config = (Map<String, Object>)endpoint.get(CONFIG);
-          final Object owners = config.get(API_OWNERS);
-          if (owners instanceof List) {
-            final List<String> apiOwners = (List<String>)owners;
-            return apiOwners.contains(username);
-          } else {
-            return false;
-          }
+          final List<String> apiOwners = getList(config, API_OWNERS);
+          return apiOwners.contains(username);
         });
       }
       final Map<String, Object> response = endpointListFromApiList(httpClient, kongResponse);
@@ -791,21 +837,18 @@ public class ApiService implements ServletContextListener {
   private Map<String, Object> endpointListFromApiList(final JsonHttpClient httpClient,
     final Map<String, Object> kongResponse) {
     final List<Map<String, Object>> apiRows = new ArrayList<>();
-    @SuppressWarnings("unchecked")
-    final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get(DATA);
-    if (data != null) {
-      for (final Map<String, Object> endpoint : data) {
-        final String apiId = (String)endpoint.get(API_ID);
-        final String apiName = apiGetName(httpClient, apiId);
-        final Map<String, Object> api = apiGet(apiName);
-        if (api != null) {
-          final Map<String, Object> apiRow = new LinkedHashMap<>();
-          for (final String fieldName : Arrays.asList(ID, NAME, "created_at", HOSTS, "uris")) {
-            final Object values = api.get(fieldName);
-            apiRow.put(fieldName, values);
-          }
-          apiRows.add(apiRow);
+    final List<Map<String, Object>> data = getList(kongResponse, DATA);
+    for (final Map<String, Object> endpoint : data) {
+      final String apiId = (String)endpoint.get(API_ID);
+      final String apiName = apiGetName(httpClient, apiId);
+      final Map<String, Object> api = apiGet(apiName);
+      if (api != null) {
+        final Map<String, Object> apiRow = new LinkedHashMap<>();
+        for (final String fieldName : Arrays.asList(ID, NAME, "created_at", HOSTS, "uris")) {
+          final Object values = api.get(fieldName);
+          apiRow.put(fieldName, values);
         }
+        apiRows.add(apiRow);
       }
     }
     return newResponseRows(apiRows);
@@ -959,6 +1002,26 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public String getGitHubAccessToken(final String state, final String code) throws IOException {
+    final String accessToken;
+    try (
+      JsonHttpClient client = new JsonHttpClient("https://github.com")) {
+      final Map<String, Object> accessResponse = client
+        .get("/login/oauth/access_token?client_id=" + this.gitHubClientId + "&client_secret="
+          + this.gitHubClientSecret + "&code=" + code + "&state=" + state);
+      accessToken = (String)accessResponse.get("access_token");
+    }
+    return accessToken;
+  }
+
+  public String getGitHubClientId() {
+    return this.gitHubClientId;
+  }
+
+  public String getGitHubOrganizationRole() {
+    return this.gitHubOrganizationRole;
+  }
+
   private String getKongPageUrl(final HttpServletRequest httpRequest, final String path) {
     final String limit = httpRequest.getParameter("limit");
     final StringBuilder url = new StringBuilder(this.kongAdminUrl);
@@ -990,6 +1053,24 @@ public class ApiService implements ServletContextListener {
       }
     }
     return url.toString();
+  }
+
+  @SuppressWarnings({
+    "unchecked", "rawtypes"
+  })
+  private <V> List<V> getList(final Map<String, Object> map, final String key) {
+    final Object value = map.get(key);
+    if (value == null) {
+      return Collections.emptyList();
+    } else if (value instanceof List) {
+      return (List<V>)value;
+    } else if (value instanceof Map) {
+      final Map mapValue = (Map)value;
+      if (mapValue.isEmpty()) {
+        return Collections.emptyList();
+      }
+    }
+    throw new IllegalArgumentException("Expecting a list for " + key + " not " + value);
   }
 
   private Map<String, Object> getMap(final Map<String, Object> requestData,
@@ -1040,6 +1121,19 @@ public class ApiService implements ServletContextListener {
     Json.writeJson(httpResponse, response);
   }
 
+  public void gitHubAddOrganizationMember(final HttpServletRequest request) throws IOException {
+    final Principal userPrincipal = request.getUserPrincipal();
+    if (userPrincipal instanceof GitHubPrincipal) {
+      final GitHubPrincipal gitHubPrincipal = (GitHubPrincipal)userPrincipal;
+      try (
+        JsonHttpClient client = new JsonHttpClient("https://api.github.com")) {
+        client.put("/orgs/" + this.gitHubOrganizationName + "/memberships/"
+          + gitHubPrincipal.getLogin() + "?access_token=" + this.gitHubAccessToken);
+        gitHubPrincipal.addDeveloperRole();
+      }
+    }
+  }
+
   public void groupUserAdd(final HttpServletResponse httpResponse, final String username,
     final String groupName) {
     handleRequest(httpResponse, httpClient -> {
@@ -1071,14 +1165,11 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse, final String path) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get(DATA);
-      if (data != null) {
-        for (final Map<String, Object> acl : data) {
-          final String consumerId = (String)acl.get(CONSUMER_ID);
-          final String username = consumerGetUsername(httpClient, consumerId);
-          acl.put(USERNAME, username);
-        }
+      final List<Map<String, Object>> data = getList(kongResponse, DATA);
+      for (final Map<String, Object> acl : data) {
+        final String consumerId = (String)acl.get(CONSUMER_ID);
+        final String username = consumerGetUsername(httpClient, consumerId);
+        acl.put(USERNAME, username);
       }
       Json.writeJson(httpResponse, kongResponse);
     });
@@ -1209,12 +1300,9 @@ public class ApiService implements ServletContextListener {
     String urlString = getKongPageUrl(httpRequest, path);
     do {
       final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> rows = (List<Map<String, Object>>)kongResponse.get(DATA);
-      if (rows != null) {
-        for (final Map<String, Object> row : rows) {
-          action.accept(row);
-        }
+      final List<Map<String, Object>> rows = getList(kongResponse, DATA);
+      for (final Map<String, Object> row : rows) {
+        action.accept(row);
       }
       urlString = (String)kongResponse.get(NEXT);
     } while (urlString != null);
@@ -1225,7 +1313,7 @@ public class ApiService implements ServletContextListener {
     throws IOException {
     final List<Map<String, Object>> allRows = new ArrayList<>();
     kongPageAll(httpRequest, httpClient, path, row -> {
-      if (filter != null && filter.test(row)) {
+      if (filter == null || filter.test(row)) {
         allRows.add(row);
       }
     });
@@ -1295,37 +1383,30 @@ public class ApiService implements ServletContextListener {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> kongResponse = kongPageAll(httpRequest, httpClient, path, filter);
       pluginListAddData(httpResponse, httpClient, kongResponse);
-      @SuppressWarnings("unchecked")
-      final List<Map<String, Object>> rows = (List<Map<String, Object>>)kongResponse.get(DATA);
-      if (rows != null) {
-        rows.sort(PLUGIN_COMPARATOR);
-      }
+      final List<Map<String, Object>> rows = getList(kongResponse, DATA);
+      rows.sort(PLUGIN_COMPARATOR);
     });
   }
 
   private void pluginListAddData(final HttpServletResponse httpResponse,
     final JsonHttpClient httpClient, final Map<String, Object> kongResponse) {
-    @SuppressWarnings("unchecked")
-    final List<Map<String, Object>> data = (List<Map<String, Object>>)kongResponse.get(DATA);
-    if (data != null) {
-      for (final Map<String, Object> acl : data) {
-        final String apiId = (String)acl.get(API_ID);
-        final String apiName = apiGetName(httpClient, apiId);
-        acl.put("api_name", apiName);
+    final List<Map<String, Object>> data = getList(kongResponse, DATA);
+    for (final Map<String, Object> acl : data) {
+      final String apiId = (String)acl.get(API_ID);
+      final String apiName = apiGetName(httpClient, apiId);
+      acl.put("api_name", apiName);
 
-        final String consumerId = (String)acl.get(CONSUMER_ID);
-        final String username = consumerGetUsername(httpClient, consumerId);
-        acl.put("consumer_username", username);
-      }
+      final String consumerId = (String)acl.get(CONSUMER_ID);
+      final String username = consumerGetUsername(httpClient, consumerId);
+      acl.put("consumer_username", username);
     }
     Json.writeJson(httpResponse, kongResponse);
   }
 
-  @SuppressWarnings("unchecked")
   public void pluginNameList(final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> enabledResponse = httpClient.get("/plugins/enabled");
-      final List<String> pluginNames = (List<String>)enabledResponse.get("enabled_plugins");
+      final List<String> pluginNames = getList(enabledResponse, "enabled_plugins");
       Collections.sort(pluginNames);
       final List<Map<String, Object>> rows = new ArrayList<>();
       for (final String pluginName : pluginNames) {
@@ -1339,11 +1420,10 @@ public class ApiService implements ServletContextListener {
     });
   }
 
-  @SuppressWarnings("unchecked")
   public void pluginNames(final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> enabledResponse = httpClient.get("/plugins/enabled");
-      final List<String> pluginNames = (List<String>)enabledResponse.get("enabled_plugins");
+      final List<String> pluginNames = getList(enabledResponse, "enabled_plugins");
       Collections.sort(pluginNames);
       Json.writeJson(httpResponse, enabledResponse);
     });
@@ -1414,7 +1494,6 @@ public class ApiService implements ServletContextListener {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public void pluginSchemaGet(final HttpServletResponse httpResponse, final String pluginName) {
     final String schemaPath = "/plugins/schema/" + pluginName;
     final Map<String, Object> customSchema = getCustomSchema(pluginName);
@@ -1424,8 +1503,7 @@ public class ApiService implements ServletContextListener {
       final List<String> allFieldNames = new ArrayList<>();
 
       pluginSchemaAddFields("", allFieldNames, pluginSchema, kongPluginSchema, customSchema);
-      new PluginFieldLayout(pluginName, pluginSchema,
-        (List<Map<String, Object>>)customSchema.get("layout"));
+      new PluginFieldLayout(pluginName, pluginSchema, getList(customSchema, "layout"));
 
       Json.writeJson(httpResponse, pluginSchema);
     });

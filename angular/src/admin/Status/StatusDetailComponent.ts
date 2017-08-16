@@ -46,7 +46,7 @@ export class StatusDetailComponent extends BaseDetailComponent<any> implements O
     injector: Injector,
     protected statusService: StatusService
   ) {
-    super(injector, statusService);
+    super(injector, statusService, 'Status - Gateway Admin');
   }
 
   ngOnInit() {

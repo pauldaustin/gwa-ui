@@ -3,9 +3,9 @@ import {
   Injector
 } from '@angular/core';
 
-import { BaseService } from '../../shared/Service/BaseService';
+import {BaseService} from '../../shared/Service/BaseService';
 
-import { Plugin } from '../Plugin/Plugin';
+import {Plugin} from '../Plugin/Plugin';
 
 @Injectable()
 export class PluginService extends BaseService<Plugin> {
@@ -19,22 +19,26 @@ export class PluginService extends BaseService<Plugin> {
 
   getPluginNames(): Promise<string[]> {
     const url = this.getUrl('/plugins/_names');
-    return this.http.get(url)
-      .toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.get(url);
+      },
+      response => {
         return response.json().enabled_plugins;
-      })
-      .catch(this.handleError);
+      }
+    );
   }
 
   getPluginSchema(pluginName: String): Promise<any> {
     const url = this.getUrl(`/plugins/${pluginName}/schema`);
-    return this.http.get(url)
-      .toPromise()
-      .then(response => {
+    return this.httpRequest(
+      http => {
+        return http.get(url);
+      },
+      response => {
         return response.json();
-      })
-      .catch(this.handleError);
+      }
+    );
   }
 
   addObject(plugin: Plugin): Promise<Plugin> {

@@ -1,25 +1,28 @@
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/first';
 import {
   Component,
-  Optional
+  Optional,
+  OnInit
 } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import {Title} from '@angular/platform-browser';
 import {
+  ActivatedRoute,
   Router,
   RouterState,
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
-import { AuthService } from '../Authentication/AuthService';
-import { Config } from '../Config';
-import { MenuItem } from './MenuItem';
+import {AuthService} from '../Authentication/AuthService';
+import {Config} from '../Config';
+import {MenuItem} from './MenuItem';
 
 @Component({
   selector: 'app-bcgov-template',
   templateUrl: 'BcGovTemplate.html',
   styleUrls: ['BcGovTemplate.css']
 })
-export class BcGovTemplateComponent {
+export class BcGovTemplateComponent implements OnInit {
 
   title: String = '';
 
@@ -29,7 +32,10 @@ export class BcGovTemplateComponent {
 
   footerMenuVisible = false;
 
+  showHeaderAndFooter = true;
+
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private titleService: Title,
@@ -44,6 +50,14 @@ export class BcGovTemplateComponent {
         this.headerMenuItems = config.headerMenuItems;
       }
     }
+  }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (this.showHeaderAndFooter) {
+        this.showHeaderAndFooter = !('true' === params['contentOnly']);
+      }
+    });
   }
 
   isMenuVisible(menuItem: MenuItem): boolean {

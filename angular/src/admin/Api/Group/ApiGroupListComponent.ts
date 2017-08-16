@@ -34,7 +34,7 @@ export class ApiGroupListComponent extends BaseListComponent<Group> implements O
   constructor(
     injector: Injector,
   ) {
-    super(injector, null);
+    super(injector, null, 'API Groups - Gateway Admin');
   }
 
   ngOnInit(): void {

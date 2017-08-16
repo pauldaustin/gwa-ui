@@ -1,4 +1,4 @@
 export class ApiKey {
-  apiKey: string;
-  apiNames: string[];
+  id: string;
+  key: string;
 }

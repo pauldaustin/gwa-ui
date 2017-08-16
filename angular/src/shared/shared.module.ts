@@ -1,34 +1,41 @@
-import { CommonModule } from '@angular/common';
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {NgModule, ModuleWithProviders} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouterModule} from '@angular/router';
 
-import { MdIconModule } from '@angular/material';
+import {
+  MdButtonModule,
+  MdIconModule
+} from '@angular/material';
 
-import { Config } from './Config';
-import { BcGovTemplateComponent } from './bcgov-template/BcGovTemplateComponent';
-import { AuthService } from './Authentication/AuthService';
-import { DeleteDialogComponent } from './Component/DeleteDialogComponent';
-import { MessageDialogComponent } from './Component/MessageDialogComponent';
-import { PageNotFoundComponent } from './Component/PageNotFoundComponent';
+import {Config} from './Config';
+import {BcGovTemplateComponent} from './bcgov-template/BcGovTemplateComponent';
+import {AuthService} from './Authentication/AuthService';
+import {DeleteDialogComponent} from './Component/DeleteDialogComponent';
+import {LoginDialogComponent} from './Component/LoginDialogComponent';
+import {MessageDialogComponent} from './Component/MessageDialogComponent';
+import {PageNotFoundComponent} from './Component/PageNotFoundComponent';
 
 const COMMON_MODULES = [
-    PageNotFoundComponent,
-    DeleteDialogComponent,
-    MessageDialogComponent,
-    BcGovTemplateComponent
-]
+  PageNotFoundComponent,
+  DeleteDialogComponent,
+  LoginDialogComponent,
+  MessageDialogComponent,
+  BcGovTemplateComponent
+];
 
 @NgModule({
   imports: [
     BrowserModule,
     RouterModule,
 
+    MdButtonModule,
     MdIconModule,
   ],
   exports: COMMON_MODULES,
   entryComponents: [
     DeleteDialogComponent,
+    LoginDialogComponent,
     MessageDialogComponent
   ],
   declarations: COMMON_MODULES,
@@ -41,9 +48,8 @@ export class SharedModule {
     return {
       ngModule: SharedModule,
       providers: [
-        { provide: Config, useValue: config }
+        {provide: Config, useValue: config}
       ]
     };
   }
 }
-

@@ -32,7 +32,7 @@
             <md-input-container class="flexField">
               <input mdInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config['api_owners'][i]" required="true" pattern="[a-z][a-z0-9_]*" />
               <button mdSuffix (click)="deleteApiOwner(i)" md-icon-button style="color: red">
-                <md-icon fontSet="glyphicon" fontIcon="glyphicon-trash"></md-icon>
+                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
               </button>
             </md-input-container>
           </ng-template>
@@ -63,7 +63,7 @@
             <md-input-container class="flexField">
               <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true" [disabled]="!acl.enabled" pattern="[a-z][a-z0-9_]*" />
               <button mdSuffix (click)="deleteGroupName(i)" md-icon-button style="color: red" [disabled]="!acl.enabled">
-                <md-icon fontSet="glyphicon" fontIcon="glyphicon-trash"></md-icon>
+                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
               </button>
             </md-input-container>
           </ng-template>

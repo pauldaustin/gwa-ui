@@ -19,7 +19,7 @@ export class NodeListComponent extends BaseListComponent<Node> implements OnInit
     injector: Injector,
     protected nodeService: NodeService
   ) {
-    super(injector, nodeService);
+    super(injector, nodeService, 'Nodes - Gateway Admin');
   }
 
   ngOnInit(): void {

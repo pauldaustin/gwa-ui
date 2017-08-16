@@ -27,7 +27,7 @@ export class EndpointViewComponent extends BaseDetailComponent<Api> implements O
     protected injector: Injector,
     protected endpointService: EndpointService
   ) {
-    super(injector, endpointService);
+    super(injector, endpointService, 'Endpoint - Gateway Admin');
     this.idParamName = 'apiName';
   }
 
@@ -36,6 +36,7 @@ export class EndpointViewComponent extends BaseDetailComponent<Api> implements O
       .subscribe((data: { api: Api }) => {
         const api = data.api;
         if (api) {
+          this.setTitle(`Endpoint: ${api.name} - Gateway Admin`);
           this.endpoint = api.plugin('bcgov-gwa-endpoint');
           this.acl = api.plugin('acl');
           this.keyAuth = api.plugin('key-auth');

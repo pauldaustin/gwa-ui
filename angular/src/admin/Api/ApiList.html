@@ -1,4 +1,4 @@
-<div>
+<div class="table-container">
   <md-toolbar>
     <a routerLink="/ui/apis/_add_" md-raised-button>Add API</a>
     <md-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
@@ -14,11 +14,11 @@
       mode="indeterminate"
     ></md-progress-spinner>
     <button (click)="refresh()" md-icon-button title="Refresh" >
-      <md-icon fontSet="glyphicon" fontIcon="glyphicon-refresh"></md-icon>
+      <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
     </button>
   </md-toolbar>
   <ngx-datatable
-    class="material striped"
+    class="material striped flex-height"
     [rows]="rows"
     [columns]="columns"
     [columnMode]="'force'"
@@ -39,6 +39,6 @@
 
 <ng-template #actionsT let-row="row">
   <button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
-    <md-icon fontSet="glyphicon" fontIcon="glyphicon-trash"></md-icon>
+    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
   </button>
 </ng-template>

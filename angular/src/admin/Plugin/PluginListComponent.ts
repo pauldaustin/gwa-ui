@@ -33,12 +33,13 @@ export class PluginListComponent extends BaseListComponent<Plugin> implements On
     injector: Injector,
     service: PluginService
   ) {
-    super(injector, service);
+    super(injector, service, 'Plugin - Gateway Admin');
   }
 
   initParams(): void {
     this.route.params.subscribe(params => {
       this.pluginName = params['pluginName'];
+      this.setTitle(`Plugin: ${this.pluginName} - Gateway Admin`);
       this.path = `/plugins/${this.pluginName}`;
       this.refresh();
     });

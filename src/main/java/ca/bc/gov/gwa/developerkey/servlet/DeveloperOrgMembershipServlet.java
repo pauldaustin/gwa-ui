@@ -9,19 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import ca.bc.gov.gwa.servlet.BaseServlet;
 
-@WebServlet(urlPatterns = "/rest/apiKeys", loadOnStartup = 1)
-public class ApiKeyServlet extends BaseServlet {
+@WebServlet(urlPatterns = "/rest/organizations/_join", loadOnStartup = 1)
+public class DeveloperOrgMembershipServlet extends BaseServlet {
   private static final long serialVersionUID = 1L;
-
-  @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException {
-    this.apiService.developerApiKeyGet(request, response);
-  }
 
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    this.apiService.developerApiKeyAdd(request, response);
+    this.apiService.gitHubAddOrganizationMember(request);
+    this.apiService.writeJsonResponse(response, "added");
   }
 }

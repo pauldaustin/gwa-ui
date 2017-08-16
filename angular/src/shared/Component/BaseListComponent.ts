@@ -9,10 +9,11 @@ import {
   MdDialogRef
 } from '@angular/material';
 
-import { BaseComponent } from './BaseComponent';
-import { DeleteDialogComponent } from './DeleteDialogComponent';
+import {BaseComponent} from './BaseComponent';
+import {DeleteDialogComponent} from './DeleteDialogComponent';
 
-import { Service } from '../Service/Service';
+import {ArrayDataSource} from '../../shared/Service/ArrayDataSource';
+import {Service} from '../Service/Service';
 
 export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
@@ -27,6 +28,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   @ViewChild('arrayT') arrayTemplate: TemplateRef<any>;
 
   columns: any[];
+
+  dataSource = new ArrayDataSource<T>();
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
@@ -46,7 +49,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   filterValue: string;
 
-  filter: { [fieldName: string]: string } = {};
+  filter: {[fieldName: string]: string} = {};
 
   paging = false;
 
@@ -61,8 +64,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     pagerNext: 'fa fa-step-forward'
   };
 
-  constructor(injector: Injector, service: Service<T>) {
-    super(injector, service);
+  constructor(injector: Injector, service: Service<T>, title: string) {
+    super(injector, service, title);
   }
 
   ngOnInit() {
@@ -76,10 +79,15 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
       this.refreshingCount++;
       const filter = this.newFilter();
       this.service.getObjects(this.path, filter).then(objects => {
-        this.rows = objects;
+        this.setRows(objects);
         this.refreshingCount--;
       });
     }
+  }
+
+  protected setRows(rows: T[]) {
+    this.rows = rows;
+    this.dataSource.setData(rows);
   }
 
   deleteObject(object: T): void {
@@ -127,8 +135,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     });
   }
 
-  newFilter(): { [fieldName: string]: string } {
-    const filter: { [fieldName: string]: string } = {};
+  newFilter(): {[fieldName: string]: string} {
+    const filter: {[fieldName: string]: string} = {};
     if (this.filter) {
       for (const fieldName of Object.keys(this.filter)) {
         filter[fieldName] = this.filter[fieldName];

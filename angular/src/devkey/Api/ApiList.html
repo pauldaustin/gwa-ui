@@ -1,0 +1,19 @@
+<md-card style="flex: 1">
+  <md-card-title>Applications</md-card-title>
+  <md-card-content>
+    <p>You have permission to access the following applications.</p>
+    
+    <div class="table-container">
+      <md-table #table [dataSource]="dataSource">
+        <ng-container cdkColumnDef="name">
+          <md-header-cell *cdkHeaderCellDef>Name</md-header-cell>
+          <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
+        </ng-container>
+        
+        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+        
+        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+      </md-table>
+    </div>
+  </md-card-content>
+</md-card>

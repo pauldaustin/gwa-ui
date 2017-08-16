@@ -62,10 +62,10 @@ public final class JsonWriter implements Closeable {
 
   @Override
   public void close() throws IOException {
-    final Writer out = this.out;
+    final Writer oldOut = this.out;
     this.out = null;
-    if (out != null) {
-      out.close();
+    if (oldOut != null) {
+      oldOut.close();
     }
   }
 
@@ -157,8 +157,7 @@ public final class JsonWriter implements Closeable {
   }
 
   public void startList() throws IOException {
-    final boolean indent = true;
-    startList(indent);
+    startList(true);
   }
 
   public void startList(final boolean indent) throws IOException {
