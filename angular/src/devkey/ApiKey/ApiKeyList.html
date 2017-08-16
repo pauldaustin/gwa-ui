@@ -19,7 +19,7 @@
         <button (click)="authorizeAccess()" md-raised-button color="primary" [disabled]="!hasApiKey">Authorize application {{appName}}</button>
       </md-card-actions>
     </md-card>
-    <div class="rowToColumn" *ngIf="!appName">
+    <div class="rowToColumn">
       <md-card>
         <md-card-title>Developer API Key <a href="https://github.com/bcgov/gwa/wiki/Developer-Guide" alt="Developer Guide" target="_blank"><md-icon fontSet="fa" fontIcon="fa-question-circle" ></md-icon></a></md-card-title>
         <md-card-content>
