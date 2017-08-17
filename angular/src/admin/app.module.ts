@@ -79,9 +79,6 @@ import {GroupUserService} from './Group/GroupUserService';
 import {GroupListComponent} from './Group/GroupListComponent';
 import {GroupService} from './Group/GroupService';
 
-import {NodeListComponent} from './Node/NodeListComponent';
-import {NodeService} from './Node/NodeService';
-
 import {PluginNameListComponent} from './Plugin/PluginNameListComponent';
 import {PluginListComponent} from './Plugin/PluginListComponent';
 import {PluginService} from './Plugin/PluginService';
@@ -138,10 +135,6 @@ import {AppRoutingModule} from './app-routing.module';
           routerLink: 'ui/groups'
         },
         {
-          title: 'Nodes',
-          routerLink: 'ui/nodes'
-        },
-        {
           title: 'Status',
           routerLink: 'ui/status'
         }
@@ -174,7 +167,6 @@ import {AppRoutingModule} from './app-routing.module';
     EndpointGroupUserListComponent,
     GroupListComponent,
     GroupUserListComponent,
-    NodeListComponent,
     PluginNameListComponent,
     PluginListComponent,
     ApiPluginListComponent,
@@ -193,7 +185,6 @@ import {AppRoutingModule} from './app-routing.module';
     EndpointService,
     GroupService,
     GroupUserService,
-    NodeService,
     PluginService,
     StatusService,
     UserGroupService,
