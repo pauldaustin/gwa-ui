@@ -6,15 +6,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -45,10 +51,68 @@ import ca.bc.gov.gwa.http.JsonHttpConsumer;
 import ca.bc.gov.gwa.http.JsonHttpFunction;
 import ca.bc.gov.gwa.util.CaseConverter;
 import ca.bc.gov.gwa.util.Json;
+import ca.bc.gov.gwa.util.JsonWriter;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebListener
 public class ApiService implements ServletContextListener {
+
+  private class BooleanHolder {
+    private boolean value;
+
+    public BooleanHolder(final boolean value) {
+      this.setValue(value);
+    }
+
+    public boolean isValue() {
+      return this.value;
+    }
+
+    public void setValue(final boolean value) {
+      this.value = value;
+    }
+  }
+
+  private class ObjectHolder {
+    private Object value;
+
+    @SuppressWarnings("unchecked")
+    public <V> V getValue() {
+      return (V)this.value;
+    }
+
+    public void setValue(final Object value) {
+      this.value = value;
+    }
+  }
+
+  private static final String KEY_AUTH = "/key-auth";
+
+  private static final String PLUGINS = "plugins";
+
+  private static final String CONSUMERS = "consumers";
+
+  private static final String USERS = "users";
+
+  private static final String USERS_PATH = "/users";
+
+  private static final String USERS_PATH2 = "/users/";
+
+  private static final String PLUGIN_DATA = "pluginData";
+
+  private static final String CONFIG = "config";
+
+  private static final String RESULT = "result";
+
+  private static final String ITEM = "item";
+
+  private static final String PATH = "path";
+
+  private static final String TYPE = "type";
+
+  private static final String INDEX = "index";
+
+  private static final String CREATED_AT = "created_at";
 
   private static final String ACL = "acl";
 
@@ -60,13 +124,18 @@ public class ApiService implements ServletContextListener {
 
   private static final String API_SERVICE_NAME = ApiService.class.getName();
 
+  private static final String APIS_PATH = "/apis";
+
   private static final String APIS_PATH2 = "/apis/";
 
   public static final String APPLICATION_JSON = "application/json";
 
   private static final String BCGOV_GWA_ENDPOINT = "bcgov-gwa-endpoint";
 
-  private static final String CONFIG = "config";
+  private static final List<String> CONFIG_PLUGIN_NAMES = Arrays.asList("acls", "basic-auth",
+    "hmac-auth", "jwt", "key-auth", "oauth2");
+
+  private static final List<String> CONFIG_TYPES = Arrays.asList("apis", CONSUMERS, PLUGINS);
 
   private static final String CONSUMER_ID = "consumer_id";
 
@@ -98,8 +167,6 @@ public class ApiService implements ServletContextListener {
 
   private static final String ID = "id";
 
-  private static final String KEY_AUTH = "key-auth";
-
   private static final List<String> KEY_AUTH_FIELD_NAMES = Arrays.asList("key_names",
     "hide_credentials", "anonymous");
 
@@ -113,8 +180,41 @@ public class ApiService implements ServletContextListener {
 
   private static final String NEXT = "next";
 
+  private static final String PLUGINS_PATH = "/plugins";
+
+  private static final String PLUGINS_PATH2 = "/plugins/";
+
+  public static final String ROLE_GWA_ADMIN = "gwa_admin";
+
+  public static final String ROLE_GWA_API_OWNER = "gwa_api_owner";
+
+  private static final String TOTAL = "total";
+
+  private static final String UNKNOWN_APPLICATION_ERROR = "Unknown application error";
+
+  private static final String UPDATED = "updated";
+
+  private static final String USERNAME = "username";
+
+  private static final String[] USERNAME_CUSTOM_ID = new String[] {
+    USERNAME, CUSTOM_ID
+  };
+
+  private static final String VALUES = "values";
+
+  private static final String VERSION = "version";
+
+  private static final String WHITELIST = "whitelist";
+
+  private static final List<String> ACL_FIELD_NAMES = Arrays.asList(WHITELIST);
+
   private static final List<String> API_SORT_FIELDS = Arrays.asList("api_name", NAME,
     "consumer_username");
+
+  private static final List<String> APIS_FIELD_NAMES = Arrays.asList(ID, CREATED_AT, "upstream_url",
+    "preserve_host", NAME, HOSTS, "uris", "methods", "strip_uri", "retries",
+    "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
+    "http_if_terminated");
 
   @SuppressWarnings("unchecked")
   private static final Comparator<Map<String, Object>> PLUGIN_COMPARATOR = (row1, row2) -> {
@@ -137,38 +237,15 @@ public class ApiService implements ServletContextListener {
     return 0;
   };
 
-  private static final String PLUGINS = "plugins";
-
-  private static final String PLUGINS_PATH = "/plugins";
-
-  private static final String PLUGINS_PATH2 = "/plugins/";
-
-  public static final String ROLE_GWA_ADMIN = "gwa_admin";
-
-  public static final String ROLE_GWA_API_OWNER = "gwa_api_owner";
-
-  private static final String TOTAL = "total";
-
-  private static final String UNKNOWN_APPLICATION_ERROR = "Unknown application error";
-
-  private static final String UPDATED = "updated";
-
-  private static final String USERNAME = "username";
-
-  private static final String VALUES = "values";
-
-  private static final String WHITELIST = "whitelist";
-
-  private static final List<String> ACL_FIELD_NAMES = Arrays.asList(WHITELIST);
-
-  private static final List<String> APIS_FIELD_NAMES = Arrays.asList(ID, "created_at",
-    "upstream_url", "preserve_host", NAME, HOSTS, "uris", "methods", "strip_uri", "retries",
-    "upstream_connect_timeout", "upstream_send_timeout", "upstream_read_timeout", "https_only",
-    "http_if_terminated");
-
   public static ApiService get(final ServletContext servletContext) {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
   }
+
+  private final Map<String, String> apiNameById = new LruMap<>(1000);
+
+  private boolean caching;
+
+  private final Map<String, Object> config = new HashMap<>();
 
   private String gitHubAccessToken;
 
@@ -176,11 +253,9 @@ public class ApiService implements ServletContextListener {
 
   private String gitHubClientSecret;
 
-  private final Map<String, String> apiNameById = new LruMap<>(1000);
+  private String gitHubOrganizationName;
 
-  private boolean caching;
-
-  private final Map<String, Object> config = new HashMap<>();
+  private String gitHubOrganizationRole;
 
   private String kongAdminPassword = null;
 
@@ -195,10 +270,6 @@ public class ApiService implements ServletContextListener {
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;
-
-  private String gitHubOrganizationRole;
-
-  private String gitHubOrganizationName;
 
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
@@ -221,7 +292,7 @@ public class ApiService implements ServletContextListener {
     } else {
       handleRequest(httpResponse, httpClient -> {
         final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
-        final Map<String, Object> apiResponse = httpClient.post("/apis", apiRequest);
+        final Map<String, Object> apiResponse = httpClient.post(APIS_PATH, apiRequest);
         final String apiId = (String)apiResponse.get(ID);
         if (apiId != null) {
           apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
@@ -270,7 +341,7 @@ public class ApiService implements ServletContextListener {
   private Map<String, String> apiAllNamesById(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient) throws IOException {
     final Map<String, String> namesById = new HashMap<>();
-    final String path = "/apis";
+    final String path = APIS_PATH;
     kongPageAll(httpRequest, httpClient, path, api -> {
       final String apiId = (String)api.get(ID);
       final String name = (String)api.get(NAME);
@@ -435,6 +506,367 @@ public class ApiService implements ServletContextListener {
     }
   }
 
+  public void configExport(final Writer writer) throws IOException {
+    final Date date = new Date(System.currentTimeMillis());
+    configExport(writer, date);
+  }
+
+  public void configExport(final Writer writer, final Date date) throws IOException {
+    final boolean indent = true;
+    try (
+      JsonHttpClient httpClient = newKongClient();
+      JsonWriter json = new JsonWriter(writer, indent)) {
+      final Map<String, Object> serverInfo = httpClient.get("/");
+      json.startObject();
+
+      final String version = (String)serverInfo.get(VERSION);
+      json.label(VERSION);
+      json.value(version);
+      json.endAttribute();
+
+      final String dateString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date);
+      json.label("date");
+      json.value(dateString);
+
+      for (final String type : CONFIG_TYPES) {
+        json.endAttribute();
+        if (CONSUMERS.equals(type)) {
+          json.label(USERS);
+        } else {
+          json.label(type);
+        }
+        json.startList();
+        final BooleanHolder firstRecord = new BooleanHolder(true);
+        final Consumer<Map<String, Object>> baseConsumer = record -> {
+          try {
+            if (firstRecord.isValue()) {
+              firstRecord.setValue(false);
+            } else {
+              json.endAttribute();
+            }
+            removeEmptyValues(record);
+            json.write(record);
+          } catch (final IOException e) {
+            throw new IllegalStateException(e);
+          }
+        };
+        Consumer<Map<String, Object>> consumer = baseConsumer;
+        if (CONSUMERS.equals(type)) {
+          consumer = consumerRecord -> {
+            final String consumerId = (String)consumerRecord.get("id");
+            final Map<String, Object> consumerPluginData = new TreeMap<>();
+            for (final String consumerPlugin : CONFIG_PLUGIN_NAMES) {
+              final List<Map<String, Object>> pluginData = new ArrayList<>();
+              try {
+                kongPageAll(httpClient, "/consumers/" + consumerId + "/" + consumerPlugin,
+                  record -> {
+                    removeEmptyValues(record);
+                    pluginData.add(record);
+                  });
+              } catch (final IOException e) {
+                throw new IllegalStateException(e);
+              }
+              if (!pluginData.isEmpty()) {
+                consumerPluginData.put(consumerPlugin, pluginData);
+              }
+            }
+            if (!consumerPluginData.isEmpty()) {
+              consumerRecord.put(PLUGIN_DATA, consumerPluginData);
+            }
+            baseConsumer.accept(consumerRecord);
+          };
+        }
+        kongPageAll(httpClient, "/" + type, consumer);
+        json.endList();
+      }
+      json.endObject();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public Map<String, Object> configImport(final Reader reader) throws IOException {
+    final List<Map<String, Object>> results = new ArrayList<>();
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      final Map<String, Map<String, String>> idMapByType = new TreeMap<>();
+      final Map<String, String> consumerLabelById = new HashMap<>();
+      final Map<String, String> apiNameById = new HashMap<>();
+      final Map<String, Object> config = Json.read(reader);
+      final AtomicInteger index = new AtomicInteger(1);
+      // APIS
+      for (final Map<String, Object> api : (List<Map<String, Object>>)config.get("apis")) {
+        configImportApi(index, httpClient, api, idMapByType, results, apiNameById);
+      }
+
+      // Consumers
+      for (final Map<String, Object> consumer : (List<Map<String, Object>>)config.get(USERS)) {
+        configImportUser(index, httpClient, consumer, idMapByType, results, consumerLabelById);
+      }
+
+      // Plugins
+      for (final Map<String, Object> plugin : (List<Map<String, Object>>)config.get(PLUGINS)) {
+        configImportPlugin(index, httpClient, plugin, idMapByType, results, consumerLabelById,
+          apiNameById);
+      }
+    }
+    final Map<String, Object> result = new LinkedHashMap<>();
+    result.put("total", results.size());
+    result.put("data", results);
+    return result;
+  }
+
+  private void configImportApi(final AtomicInteger index, final JsonHttpClient httpClient,
+    final Map<String, Object> api, final Map<String, Map<String, String>> idMapByType,
+    final List<Map<String, Object>> errors, final Map<String, String> apiNameById)
+    throws IOException {
+    configImportRecord(index, httpClient, "apis", api, idMapByType, errors, APIS_PATH, APIS_PATH,
+      null, "name");
+    final String apiId = (String)api.get("id");
+    final String apiName = (String)api.get("name");
+    apiNameById.put(apiId, apiName);
+  }
+
+  private void configImportPlugin(final AtomicInteger index, final JsonHttpClient httpClient,
+    final Map<String, Object> pluginConfig, final Map<String, Map<String, String>> idMapByType,
+    final List<Map<String, Object>> results, final Map<String, String> consumerLabelById,
+    final Map<String, String> apiNameById) throws IOException {
+    String apiId = (String)pluginConfig.get(API_ID);
+    final Map<String, String> apiIdMap = idMapByType.get("apis");
+    if (apiIdMap != null) {
+      apiId = apiIdMap.getOrDefault(apiId, apiId);
+    }
+    final String apiName = apiNameById.getOrDefault(apiId, apiId);
+    final String pathPrefix = APIS_PATH2 + apiName + "/plugins";
+    final Map<String, Object> newConfig = getNewConfig(pluginConfig, idMapByType);
+    final String id = (String)newConfig.remove("id");
+    final String consumerId = (String)pluginConfig.get(CONSUMER_ID);
+
+    final String pluginName = (String)pluginConfig.get("name");
+    String label = apiName + ": " + pluginName;
+    final String uiPath;
+    String type = PLUGINS;
+    if (consumerId == null) {
+      uiPath = pathPrefix + "/" + pluginName;
+    } else {
+      final String consumerLabel = consumerLabelById.get(consumerId);
+      uiPath = null; // TODO not supported yet
+      label += ": " + consumerLabel;
+      type += ": user";
+    }
+    try {
+      final ObjectHolder kongConfigHolder = new ObjectHolder();
+
+      kongPageAll(httpClient, pathPrefix, kongPluginConfig -> {
+        final Object kongConsumerId = kongPluginConfig.get(CONSUMER_ID);
+
+        if (consumerId == null) {
+          if (kongConsumerId != null) {
+            return;
+          }
+        } else {
+          if (!consumerId.equals(kongConsumerId)) {
+            return;
+          }
+        }
+        final Object kongPluginName = kongPluginConfig.get("name");
+        if (pluginName.equals(kongPluginName)) {
+          removeEmptyValues(kongPluginConfig);
+          kongConfigHolder.setValue(kongPluginConfig);
+        }
+      });
+
+      Map<String, Object> kongConfig = kongConfigHolder.getValue();
+      if (kongConfig == null) {
+        kongConfig = httpClient.post(pathPrefix, newConfig);
+        configImportResultInsert(results, index, type, uiPath, label, kongConfig);
+      } else {
+        configImportResultChanged(results, index, type, uiPath, label, newConfig, kongConfig);
+      }
+      getId(type, kongConfig, idMapByType, id);
+    } catch (final HttpStatusException e) {
+      configImportResultError(results, index, type, uiPath, label, newConfig, e);
+    }
+  }
+
+  private String configImportRecord(final AtomicInteger index, final JsonHttpClient httpClient,
+    final String type, final Map<String, Object> typeConfig,
+    final Map<String, Map<String, String>> idMapByType, final List<Map<String, Object>> results,
+    final String pathPrefix, final String uiPathPrefix, final String labelPrefix,
+    final String... keyNames) throws IOException {
+    final String primaryKeyName = keyNames[0];
+    final Map<String, Object> newConfig = getNewConfig(typeConfig, idMapByType);
+    final String originalId = (String)newConfig.remove("id");
+    if (newConfig.isEmpty()) {
+      return null;
+    } else {
+      String label = (String)newConfig.getOrDefault(primaryKeyName, originalId);
+      if (labelPrefix != null) {
+        label = labelPrefix + ": " + label;
+      }
+      String uiPath = getPath(uiPathPrefix, label);
+      try {
+        for (final String keyName : keyNames) {
+          final String key = (String)typeConfig.get(keyName);
+          if (key != null) {
+            final String path = pathPrefix + "/" + key;
+            final Map<String, Object> kongConfig = kongGet(httpClient, path);
+            if (kongConfig != null) {
+              removeEmptyValues(kongConfig);
+              final String kongId = getId(type, kongConfig, idMapByType, originalId);
+              typeConfig.put("id", kongId);
+              label = key;
+              if (labelPrefix != null) {
+                label = labelPrefix + ": " + label;
+              }
+              configImportResultChanged(results, index, type, uiPath, label, newConfig, kongConfig);
+              return key;
+            }
+          }
+        }
+        uiPath = null;
+        label = (String)newConfig.getOrDefault(primaryKeyName, originalId);
+        if (labelPrefix != null) {
+          label = labelPrefix + ": " + label;
+        }
+        final Map<String, Object> kongConfig = httpClient.post(pathPrefix, newConfig);
+        final String kongId = (String)kongConfig.get("id");
+        typeConfig.put("id", kongId);
+        label = (String)kongConfig.getOrDefault(primaryKeyName, kongId);
+        if (labelPrefix != null) {
+          label = labelPrefix + ": " + label;
+        }
+        uiPath = uiPathPrefix + "/" + label;
+
+        configImportResultInsert(results, index, type, uiPath, label, kongConfig);
+        return label;
+      } catch (final HttpStatusException e) {
+        configImportResultError(results, index, type, uiPath, label, newConfig, e);
+        return null;
+      }
+    }
+  }
+
+  private void configImportResultChanged(final List<Map<String, Object>> results,
+    final AtomicInteger index, final String type, final String path, final String label,
+    final Map<String, Object> newConfig, final Map<String, Object> kongConfig) {
+    final Set<String> fieldNames = new HashSet<>(newConfig.keySet());
+    fieldNames.addAll(kongConfig.keySet());
+    fieldNames.remove("id");
+    fieldNames.remove(CREATED_AT);
+    fieldNames.remove(PLUGIN_DATA);
+    final List<String> changedFieldNames = new ArrayList<>();
+    final List<Object> oldValues = new ArrayList<>();
+    final List<Object> newValues = new ArrayList<>();
+    for (final String fieldName : fieldNames) {
+      final Object oldValue = kongConfig.get(fieldName);
+      final Object newValue = newConfig.get(fieldName);
+      boolean changed = false;
+      if (oldValue == null) {
+        changed = newValue != null;
+      } else {
+        changed = !oldValue.equals(newValue);
+      }
+      if (changed) {
+        changedFieldNames.add(fieldName);
+        oldValues.add(oldValue);
+        newValues.add(newValue);
+      }
+    }
+    final Map<String, Object> result = new LinkedHashMap<>();
+    result.put(INDEX, index.getAndIncrement());
+    result.put(TYPE, type);
+    result.put(PATH, path);
+    result.put(ITEM, label);
+    if (changedFieldNames.isEmpty()) {
+      result.put(RESULT, "Matched");
+    } else {
+      result.put(RESULT, "Ignore - Changed Values");
+      result.put("changedFieldNames", changedFieldNames);
+      result.put("oldValues", oldValues);
+      result.put("newValues", newValues);
+    }
+    result.put(CONFIG, newConfig);
+    results.add(result);
+  }
+
+  private void configImportResultError(final List<Map<String, Object>> results,
+    final AtomicInteger index, final String type, final String path, final String label,
+    final Map<String, Object> newConfig, final HttpStatusException e) {
+
+    final Map<String, Object> result = new LinkedHashMap<>();
+    result.put(INDEX, index.getAndIncrement());
+    result.put(TYPE, type);
+    result.put(PATH, path);
+    result.put(ITEM, label);
+    result.put(RESULT, "Ignore - Error");
+    result.put("error", e.getCode() + "-" + e.getMessage());
+    result.put("request", e.getHttpRequest());
+    final String body = e.getBody();
+    result.put("body", body);
+
+    result.put(CONFIG, newConfig);
+
+    results.add(result);
+  }
+
+  private void configImportResultInsert(final List<Map<String, Object>> results,
+    final AtomicInteger index, final String type, final String path, final String label,
+    final Map<String, Object> savedConfig) {
+    removeEmptyValues(savedConfig);
+    final Map<String, Object> result = new LinkedHashMap<>();
+    result.put(INDEX, index.getAndIncrement());
+    result.put(TYPE, type);
+    result.put(PATH, path);
+    result.put(ITEM, label);
+    result.put(RESULT, "Inserted");
+    result.put(CONFIG, savedConfig);
+    results.add(result);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void configImportUser(final AtomicInteger index, final JsonHttpClient httpClient,
+    final Map<String, Object> typeConfig, final Map<String, Map<String, String>> idMapByType,
+    final List<Map<String, Object>> errors, final Map<String, String> consumerLabelById)
+    throws IOException {
+    final String consumerLabel = configImportRecord(index, httpClient, USERS, typeConfig,
+      idMapByType, errors, CONSUMERS_PATH, USERS_PATH, null, USERNAME_CUSTOM_ID);
+    if (consumerLabel != null) {
+      consumerLabelById.put((String)typeConfig.get("id"), consumerLabel);
+      final Map<String, List<Map<String, Object>>> pluginData = (Map<String, List<Map<String, Object>>>)typeConfig
+        .get(PLUGIN_DATA);
+      if (pluginData != null && consumerLabel != null) {
+        for (final String pluginName : pluginData.keySet()) {
+          for (final Map<String, Object> pluginConfig : pluginData.get(pluginName)) {
+            final String pluginPathPrefix = CONSUMERS_PATH2 + consumerLabel + "/" + pluginName;
+            // final String pluginUiPathPrefix = USERS_PATH2 + consumerLabel + "/" + pluginName;
+            final String pluginUiPathPrefix = null;
+            final String typeLabel = USERS + ": plugin";
+            final String labelPrefix = consumerLabel + ": " + pluginName;
+            if ("acls".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, "group");
+            } else if ("basic-auth".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, USERNAME);
+            } else if ("hmac-auth".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, USERNAME_CUSTOM_ID);
+            } else if ("jwt".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, USERNAME_CUSTOM_ID);
+            } else if ("key-auth".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, "key");
+            } else if ("oauth".equals(pluginName)) {
+              configImportRecord(index, httpClient, typeLabel, pluginConfig, idMapByType, errors,
+                pluginPathPrefix, pluginUiPathPrefix, labelPrefix, USERNAME_CUSTOM_ID);
+            }
+          }
+        }
+      }
+    }
+  }
+
   protected Map<String, Object> consumerGet(final JsonHttpClient httpClient, final String filter)
     throws IOException {
     final Map<String, Object> consumerResponse = httpClient.get(filter);
@@ -591,7 +1023,7 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final String userId = httpRequest.getRemoteUser();
-      final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
+      final String keyAuthPath = CONSUMERS_PATH2 + userId + KEY_AUTH;
       final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
         Collections.emptyMap());
       Json.writeJson(httpResponse, apiKeyResponse);
@@ -624,7 +1056,7 @@ public class ApiService implements ServletContextListener {
     final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
       final String userId = httpRequest.getRemoteUser();
-      final String keyAuthPath = CONSUMERS_PATH2 + userId + "/key-auth";
+      final String keyAuthPath = CONSUMERS_PATH2 + userId + KEY_AUTH;
       kongPageAll(httpRequest, httpClient, keyAuthPath, apiKey -> {
         final String id = (String)apiKey.get(ID);
         try {
@@ -644,7 +1076,7 @@ public class ApiService implements ServletContextListener {
     handleRequest(httpResponse, httpClient -> {
 
       final String username = httpRequest.getRemoteUser();
-      final String keyAuthPath = CONSUMERS_PATH2 + username + "/key-auth";
+      final String keyAuthPath = CONSUMERS_PATH2 + username + KEY_AUTH;
       final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
       final List<Map<String, Object>> keyAuthList = getList(keyAuthResponse, DATA);
 
@@ -844,7 +1276,7 @@ public class ApiService implements ServletContextListener {
       final Map<String, Object> api = apiGet(apiName);
       if (api != null) {
         final Map<String, Object> apiRow = new LinkedHashMap<>();
-        for (final String fieldName : Arrays.asList(ID, NAME, "created_at", HOSTS, "uris")) {
+        for (final String fieldName : Arrays.asList(ID, NAME, CREATED_AT, HOSTS, "uris")) {
           final Object values = api.get(fieldName);
           apiRow.put(fieldName, values);
         }
@@ -1022,16 +1454,35 @@ public class ApiService implements ServletContextListener {
     return this.gitHubOrganizationRole;
   }
 
+  private String getId(final String type, final Map<String, Object> config,
+    final Map<String, Map<String, String>> idMapByType, final String id) {
+    if (config == null) {
+      return null;
+    } else {
+      final String idKong = (String)config.get("id");
+      if (idKong != null) {
+        Map<String, String> idMap = idMapByType.get(type);
+        if (idMap == null) {
+          idMap = new HashMap<>();
+          idMapByType.put(type, idMap);
+        }
+        idMap.put(id, idKong);
+      }
+      return idKong;
+    }
+  }
+
   private String getKongPageUrl(final HttpServletRequest httpRequest, final String path) {
-    final String limit = httpRequest.getParameter("limit");
-    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
-    url.append(path);
+    final StringBuilder url1 = new StringBuilder(this.kongAdminUrl);
+    url1.append(path);
+    final StringBuilder url = url1;
     if (path.indexOf('?') == -1) {
       url.append('?');
     } else {
       url.append('&');
     }
     url.append("size=");
+    final String limit = httpRequest.getParameter("limit");
     url.append(limit);
 
     final String[] filterFieldNames = httpRequest.getParameterValues("filterFieldName");
@@ -1052,6 +1503,12 @@ public class ApiService implements ServletContextListener {
 
       }
     }
+    return url.toString();
+  }
+
+  private String getKongPageUrl(final String path) {
+    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
+    url.append(path);
     return url.toString();
   }
 
@@ -1080,6 +1537,28 @@ public class ApiService implements ServletContextListener {
     return data;
   }
 
+  private Map<String, Object> getNewConfig(final Map<String, Object> typeConfig,
+    final Map<String, Map<String, String>> idMapByType) {
+    final Map<String, Object> newConfig = new LinkedHashMap<>(typeConfig);
+    newConfig.remove(CREATED_AT);
+    removeEmptyValues(newConfig);
+    for (final Entry<String, Object> entry : newConfig.entrySet()) {
+      final String name = entry.getKey();
+      if (name.endsWith("_id")) {
+        final String idType = name.substring(0, name.length() - 3) + "s";
+        final Map<String, String> idMap = idMapByType.get(idType);
+        if (idMap != null) {
+          final String referencedId = (String)entry.getValue();
+          final String newReferencedId = idMap.get(referencedId);
+          if (newReferencedId != null) {
+            entry.setValue(newReferencedId);
+          }
+        }
+      }
+    }
+    return newConfig;
+  }
+
   private synchronized Map<String, Map<String, Object>> getObjectById(final String type) {
     Map<String, Map<String, Object>> objectById = this.objectByTypeAndId.get(type);
     if (objectById == null) {
@@ -1101,12 +1580,20 @@ public class ApiService implements ServletContextListener {
     return 0;
   }
 
+  private String getPath(final String prefix, final String suffix) {
+    if (prefix == null) {
+      return null;
+    } else {
+      return prefix + "/" + suffix;
+    }
+  }
+
   public String getVersion() {
     if (this.version == null) {
       try (
         JsonHttpClient httpClient = newKongClient()) {
         final Map<String, Object> kongResponse = httpClient.get("");
-        this.version = (String)kongResponse.get("version");
+        this.version = (String)kongResponse.get(VERSION);
 
       } catch (final Exception e) {
         throw new IllegalStateException("Unable to get kong version", e);
@@ -1117,7 +1604,7 @@ public class ApiService implements ServletContextListener {
 
   public void getVersion(final HttpServletResponse httpResponse) {
     final String version = getVersion();
-    final Map<String, Object> response = Collections.singletonMap("version", version);
+    final Map<String, Object> response = Collections.singletonMap(VERSION, version);
     Json.writeJson(httpResponse, response);
   }
 
@@ -1274,6 +1761,19 @@ public class ApiService implements ServletContextListener {
     });
   }
 
+  private Map<String, Object> kongGet(final JsonHttpClient httpClient, final String apiPath)
+    throws IOException {
+    try {
+      return httpClient.get(apiPath);
+    } catch (final HttpStatusException e) {
+      if (e.getCode() == 404) {
+        return null;
+      } else {
+        throw e;
+      }
+    }
+  }
+
   protected Map<String, Object> kongPage(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient, final String path) throws IOException {
     int offsetPage = getPageOffset(httpRequest);
@@ -1327,6 +1827,19 @@ public class ApiService implements ServletContextListener {
     }
     response.put(TOTAL, allRows.size());
     return response;
+  }
+
+  private void kongPageAll(final JsonHttpClient httpClient, final String path,
+    final Consumer<Map<String, Object>> action) throws IOException {
+    String urlString = getKongPageUrl(path);
+    do {
+      final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
+      final List<Map<String, Object>> rows = getList(kongResponse, DATA);
+      for (final Map<String, Object> row : rows) {
+        action.accept(row);
+      }
+      urlString = (String)kongResponse.get(NEXT);
+    } while (urlString != null);
   }
 
   private void logError(final String message, final Throwable e) {
@@ -1449,7 +1962,7 @@ public class ApiService implements ServletContextListener {
         Collections.emptyMap());
       pluginField.put(NAME, fieldName);
 
-      String fieldType = (String)kongField.get("type");
+      String fieldType = (String)kongField.get(TYPE);
       if ("boolean".equals(fieldType)) {
         fieldType = "checkbox";
       } else if (kongField.containsKey("enum") || customField.containsKey(VALUES)) {
@@ -1527,6 +2040,51 @@ public class ApiService implements ServletContextListener {
       }
     } catch (final Exception e) {
       LOG.error("Unable to read config from: " + propertiesFile, e);
+    }
+  }
+
+  private boolean removeEmptyValue(final Object value) {
+    if (value == null) {
+      return true;
+    } else if (value instanceof String) {
+      final String stringValue = (String)value;
+      if (stringValue.isEmpty()) {
+        return true;
+      }
+    } else if (value instanceof Map) {
+      @SuppressWarnings("unchecked")
+      final Map<String, Object> mapValue = (Map<String, Object>)value;
+      if (mapValue.isEmpty()) {
+        return true;
+      } else {
+        removeEmptyValues(mapValue);
+      }
+    } else if (value instanceof List) {
+      final List<?> listValue = (List<?>)value;
+      if (listValue.isEmpty()) {
+        return true;
+      } else {
+        for (final Iterator<?> listIterator = listValue.iterator(); listIterator.hasNext();) {
+          final Object listItem = listIterator.next();
+          if (removeEmptyValue(listItem)) {
+            listIterator.remove();
+          }
+        }
+        return listValue.isEmpty();
+      }
+    }
+    return false;
+  }
+
+  private void removeEmptyValues(final Map<String, Object> map) {
+    final Set<Entry<String, Object>> entrySet = map.entrySet();
+    for (final Iterator<Entry<String, Object>> entryIterator = entrySet.iterator(); entryIterator
+      .hasNext();) {
+      final Entry<String, Object> entry = entryIterator.next();
+      final Object value = entry.getValue();
+      if (removeEmptyValue(value)) {
+        entryIterator.remove();
+      }
     }
   }
 

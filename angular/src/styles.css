@@ -108,7 +108,13 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   flex-direction:column;
   flex-grow: 1;
 }
-
+.table-container.fill-height {
+  flex: 1 1 auto;
+  max-height: calc(100vh - 300px);
+}
+.table-container.fill-height .mat-table {
+  overflow: auto;
+}
 .ngx-datatable .datatable-body-cell{
   user-select:initial!important;
 }
@@ -128,6 +134,9 @@ body {
 /* To Fix bugs*/
 .margin-top-1em {
   margin-top: 1em;
+}
+.mat-dialog-container {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 .mat-card-content .mat-divider {
   display: block;
@@ -164,6 +173,9 @@ body {
 }
 .mat-input-table .mat-icon-button {
   margin: -10px 0px -10px 0px;
+}
+.mat-raised-button .mat-button-wrapper .mat-icon {
+  vertical-align: baseline;
 }
 /* End To Fix bugs*/
 
@@ -222,3 +234,29 @@ body {
 .btn-toolbar .input-group-addon {
   width: auto;
 }
+
+.table.material table {
+  background: #FFF;
+  border-collapse: collapse;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+  padding: 0px;
+  margin: 0px;
+}
+
+.table.material thead > tr > th {
+  text-align: left;
+  padding: .5rem 1.2rem;
+  font-weight: 400;
+  color: #757575;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.table.material tbody > tr  > td {
+  padding: .5rem 1.2rem;
+  line-height: 1.625;
+}
+
+.table.material tbody > tr:nth-of-type(even)  > td {
+  background: #eee;
+}
+

@@ -4,10 +4,10 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
-import { Api } from '../Api';
-import { Group } from '../../Group/Group';
+import {Api} from '../Api';
+import {Group} from '../../Group/Group';
 
 @Component({
   selector: 'app-api-group-list',
@@ -39,21 +39,21 @@ export class ApiGroupListComponent extends BaseListComponent<Group> implements O
 
   ngOnInit(): void {
     this.route.parent.data
-      .subscribe((data: { api: Api }) => {
+      .subscribe((data: {api: Api}) => {
         this.api = data.api;
         const endpoint = this.api.plugin('acl');
         if (endpoint) {
           const groupNames = endpoint.config.whitelist;
           if (groupNames) {
             for (const groupName of groupNames) {
-              this.rows.push({ group: groupName });
+              this.rows.push({group: groupName});
             }
           }
         }
       }
       );
     this.columns = [
-      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true },
+      {prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true},
     ];
   }
 }

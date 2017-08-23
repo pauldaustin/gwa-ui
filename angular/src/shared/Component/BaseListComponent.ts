@@ -39,6 +39,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   count = 0;
 
+  hasRows = false;
+
   offset = 0;
 
   limit = 100;
@@ -87,6 +89,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   protected setRows(rows: T[]) {
     this.rows = rows;
+    this.hasRows = rows.length > 0;
     this.dataSource.setData(rows);
   }
 

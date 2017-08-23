@@ -223,6 +223,7 @@ public final class JsonWriter implements Closeable {
       while (i < size - 1) {
         final Object value = iterator.next();
         indent();
+        this.startAttribute = true;
         value(value);
         endAttribute();
         i++;
@@ -230,6 +231,7 @@ public final class JsonWriter implements Closeable {
       if (iterator.hasNext()) {
         indent();
         final Object value = iterator.next();
+        this.startAttribute = true;
         value(value);
       }
     } else {

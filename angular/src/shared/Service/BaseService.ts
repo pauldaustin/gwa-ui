@@ -292,22 +292,26 @@ export abstract class BaseService<T> implements Service<T> {
         );
       },
       response => {
-        const objects: T[] = [];
-        const json = response.json();
-        if (json.error) {
-          this.showError(json.error);
-        } else {
-          const data = json.data;
-          if (data) {
-            data.forEach((recordJson: any) => {
-              const record = this.toObject(recordJson);
-              objects.push(record);
-            });
-          }
-        }
-        return objects;
+        return this.getObjectsFromJson(response);
       }
     );
+  }
+
+  public getObjectsFromJson(response): T[] {
+    const objects: T[] = [];
+    const json = response.json();
+    if (json.error) {
+      this.showError(json.error);
+    } else {
+      const data = json.data;
+      if (data) {
+        data.forEach((recordJson: any) => {
+          const record = this.toObject(recordJson);
+          objects.push(record);
+        });
+      }
+    }
+    return objects;
   }
 
   getPath(): string {

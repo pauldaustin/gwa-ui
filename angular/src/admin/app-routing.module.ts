@@ -43,6 +43,8 @@ import {PluginListComponent} from './Plugin/PluginListComponent';
 
 import {StatusDetailComponent} from './Status/StatusDetailComponent';
 
+import {ImportExportComponent} from './import-export/import-export.component';
+
 const routes: Routes = [
   {path: '', redirectTo: 'ui/endpoints', pathMatch: 'full'},
   {path: 'ui', redirectTo: 'ui/endpoints', pathMatch: 'full'},
@@ -106,6 +108,9 @@ const routes: Routes = [
   {path: 'ui/plugins/:pluginName', component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
 
   {path: 'ui/status', component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+
+  {path: 'ui/importExport', component: ImportExportComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+
   {path: '**', component: PageNotFoundComponent}
 ];
 

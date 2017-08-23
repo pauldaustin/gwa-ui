@@ -23,6 +23,8 @@ export interface Service<T> {
 
   getObjects(path: string, filter: {[fieldName: string]: string}): Promise<T[]>;
 
+  getObjectsFromJson(response): T[];
+
   getObject(id: string): Promise<T>;
 
   getPath(): string;

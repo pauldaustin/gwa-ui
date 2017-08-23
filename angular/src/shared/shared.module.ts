@@ -2,10 +2,12 @@ import {CommonModule} from '@angular/common';
 import {NgModule, ModuleWithProviders} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
+import {FormsModule} from '@angular/forms';
 
 import {
   MdButtonModule,
-  MdIconModule
+  MdIconModule,
+  MdInputModule
 } from '@angular/material';
 
 import {Config} from './Config';
@@ -15,22 +17,26 @@ import {DeleteDialogComponent} from './Component/DeleteDialogComponent';
 import {LoginDialogComponent} from './Component/LoginDialogComponent';
 import {MessageDialogComponent} from './Component/MessageDialogComponent';
 import {PageNotFoundComponent} from './Component/PageNotFoundComponent';
+import {InputFileComponent} from './input-file/input-file-component';
 
 const COMMON_MODULES = [
   PageNotFoundComponent,
   DeleteDialogComponent,
   LoginDialogComponent,
   MessageDialogComponent,
-  BcGovTemplateComponent
+  BcGovTemplateComponent,
+  InputFileComponent
 ];
 
 @NgModule({
   imports: [
     BrowserModule,
     RouterModule,
+    FormsModule,
 
     MdButtonModule,
     MdIconModule,
+    MdInputModule
   ],
   exports: COMMON_MODULES,
   entryComponents: [

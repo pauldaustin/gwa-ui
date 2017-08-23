@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import {HttpModule} from '@angular/http';
+import {CdkTableModule} from '@angular/cdk';
 import {
   MdButtonModule,
   MdCardModule,
@@ -17,6 +18,7 @@ import {
   MdSelectModule,
   MdSlideToggleModule,
   MdTabsModule,
+  MdTableModule,
   MdToolbarModule
 } from '@angular/material';
 
@@ -86,6 +88,10 @@ import {PluginService} from './Plugin/PluginService';
 import {StatusDetailComponent} from './Status/StatusDetailComponent';
 import {StatusService} from './Status/StatusService';
 
+import {ImportExportComponent} from './import-export/import-export.component';
+import {ImportExportViewComponent} from './import-export/import-export-view.component';
+import {ImportExportService} from './import-export/import-export.service';
+
 import {AppRoutingModule} from './app-routing.module';
 
 @NgModule({
@@ -96,6 +102,8 @@ import {AppRoutingModule} from './app-routing.module';
     ReactiveFormsModule,
     HttpModule,
 
+    CdkTableModule,
+
     MdButtonModule,
     MdCardModule,
     MdDialogModule,
@@ -105,6 +113,7 @@ import {AppRoutingModule} from './app-routing.module';
     MdSelectModule,
     MdSlideToggleModule,
     MdTabsModule,
+    MdTableModule,
     MdToolbarModule,
 
     NgxDatatableModule,
@@ -137,6 +146,10 @@ import {AppRoutingModule} from './app-routing.module';
         {
           title: 'Status',
           routerLink: 'ui/status'
+        },
+        {
+          title: 'Import/Export',
+          routerLink: 'ui/importExport'
         }
       ]
     }
@@ -144,6 +157,7 @@ import {AppRoutingModule} from './app-routing.module';
     AppRoutingModule,
   ],
   entryComponents: [
+    ImportExportViewComponent
   ],
   declarations: [
     ApiAddComponent,
@@ -171,7 +185,9 @@ import {AppRoutingModule} from './app-routing.module';
     PluginListComponent,
     ApiPluginListComponent,
     UserPluginListComponent,
-    StatusDetailComponent
+    StatusDetailComponent,
+    ImportExportComponent,
+    ImportExportViewComponent
   ],
   providers: [
     AuthService,
@@ -190,6 +206,7 @@ import {AppRoutingModule} from './app-routing.module';
     UserGroupService,
     UserResolver,
     UserService,
+    ImportExportService,
   ],
   bootstrap: [BcGovTemplateComponent]
 })

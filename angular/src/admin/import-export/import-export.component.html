@@ -1,0 +1,63 @@
+<div class="table-container">
+  <md-toolbar>
+    <a [href]="getUrl('/config/export')" md-raised-button color="primary">
+      <md-icon fontSet="fa" fontIcon="fa-download"></md-icon> Export
+    </a>
+    
+    <app-input-file
+      accept="application/json"
+      (onFileSelect)="onFileSelect($event)"
+    ></app-input-file>
+
+    <button (click)="importFileClick()" md-raised-button [disabled]="!importFile" color="primary">
+      <md-icon fontSet="fa" fontIcon="fa-upload"></md-icon> Import
+    </button>
+  </md-toolbar>
+
+  <ngx-datatable
+    #importTable
+    class="material striped flex-height expandable"
+    [rows]="rows"
+    [columnMode]="'force'"
+    [headerHeight]="30"
+    [footerHeight]="30"
+    [rowHeight]="30"
+    [count]="count"
+    [cssClasses]="cssClasses"
+    [scrollbarV]="true"
+  >
+    <ngx-datatable-column
+      name="Index"
+      [width]="80"
+    >
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{row.index}}
+        <button (click)="showView(row)" md-icon-button>
+          <md-icon fontSet="fa" fontIcon="fa-info-circle" color="primary"></md-icon>
+        </button> 
+      </ng-template>
+    </ngx-datatable-column> 
+    <ngx-datatable-column
+      name="Type"
+      [width]="100"
+    >
+      <ng-template let-row="row" ngx-datatable-cell-template>{{row.type}}</ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="Item"
+      [width]="300"
+    >
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <a href="ui{{row.path}}" target="view" *ngIf="row.path; else labelElse">{{row.item}}</a>
+        <ng-template #labelElse>{{row.item}}</ng-template>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+      name="Result"
+      [width]="150"
+    >
+      <ng-template let-row="row" ngx-datatable-cell-template>{{row.result}}</ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+</div>
+
