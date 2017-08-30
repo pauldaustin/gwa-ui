@@ -117,7 +117,7 @@ The applications request the API key via the following page and parameters. The 
 https://gwa.apps.gov.bc.ca/ui/apiKeys
 
 |Parameter|Description|Example|
-|-|-|-|
+|---------|-----------|-------|
 | appName     | The REQUIRED name of the application that is requesting access to the user's API key. | API Console |
 | appRedirectUrl | The URL that the user's web browser will be redirected to when the Authorize Application button is clicked. | https://appConsole.apps.gov.bc.ca/authorizedApiKey |
 | appSendMessage | Flag indicating if the API key should be sent via JavaScript window.postMessage. | true |
