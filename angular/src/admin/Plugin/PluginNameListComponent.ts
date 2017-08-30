@@ -6,12 +6,10 @@ import {
   ViewChild
 } from '@angular/core';
 
-import {DataSource} from '@angular/cdk';
+import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
-import { BaseListComponent } from '../../shared/Component/BaseListComponent';
-
-import { Plugin } from './Plugin';
-import { PluginService } from './PluginService';
+import {Plugin} from './Plugin';
+import {PluginService} from './PluginService';
 
 @Component({
   selector: 'app-plugin-name-list',
@@ -27,7 +25,7 @@ export class PluginNameListComponent extends BaseListComponent<Plugin> implement
 
   ngOnInit(): void {
     this.columns = [
-      { prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: true },
+      {prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: true},
     ];
     super.ngOnInit();
   }
