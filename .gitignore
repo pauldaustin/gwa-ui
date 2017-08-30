@@ -11,6 +11,8 @@ target
 *.ldb
 log/
 config
+angular/node
 node_modules
 /logs/
 /.externalToolBuilders/
+.tern-project

@@ -1,0 +1,12 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["http_endpoint"],
+        ["content_type"],
+        ["method", "keepalive", "timeout"]
+      ]
+    }
+  ]
+}

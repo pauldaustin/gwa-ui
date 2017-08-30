@@ -19,5 +19,4 @@ public abstract class BaseAdminServlet extends BaseServlet {
       super.service(request, response);
     }
   }
-
 }

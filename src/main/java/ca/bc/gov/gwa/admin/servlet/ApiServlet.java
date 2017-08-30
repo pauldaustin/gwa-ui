@@ -1,208 +1,204 @@
 package ca.bc.gov.gwa.admin.servlet;
 
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.bc.gov.gwa.servlet.ApiService;
-
 @WebServlet(urlPatterns = "/int/rest/apis/*", loadOnStartup = 1)
 public class ApiServlet extends BaseAdminServlet {
+  private static final String POST = "POST";
+
+  private static final String DELETE = "DELETE";
+
+  private static final String GET = "GET";
+
+  private static final String API = "api";
+
+  private static final String APIS_PATH = "/apis/";
+
+  private static final String GROUPS = "groups";
+
+  private static final List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config",
+    "enabled");
+
+  private static final String PLUGINS = "plugins";
+
+  private static final String PLUGINS_PATH = "/plugins/";
+
   private static final long serialVersionUID = 1L;
 
-  @Override
-  protected void doDelete(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException {
-    final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+  private static final String USERS = "users";
 
-      case 1: { // API
-        final String apiName = paths.get(0);
-        final String path = "/apis/" + apiName;
-        this.apiService.handleDelete(request, response, path);
-        this.apiService.clearCachedObject("api", apiName);
-      }
-      break;
+  private static final String PUT = "PUT";
 
-      case 2:
-        if ("plugins".equals(paths.get(1))) { // Plugin
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        } else {
-          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-      break;
-
-      case 3: {
-        final String apiName = paths.get(0);
-        if ("plugins".equals(paths.get(1))) {
-          final String pluginName = paths.get(2);
-          final String path = "/apis/" + apiName + "/plugins/" + pluginName;
-          this.apiService.handleDelete(request, response, path);
-          this.apiService.clearCachedObject("api", apiName);
-        } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-      case 5: {
-        final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          final String userName = paths.get(4);
-          this.apiService.apiGroupUserDelete(request, response, apiName, groupName, userName);
-        } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-
-      default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      break;
+  private void do0ApiList(final HttpServletRequest request, final HttpServletResponse response,
+    final String method) {
+    if (GET.equals(method)) {
+      do0ApiListGet(request, response);
+    } else if (POST.equals(method)) {
+      do0ApiListAdd(request, response);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
   }
 
-  @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException {
-    final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0: { // API List
-        this.apiService.handleList(request, response, "/apis");
-      }
-      break;
+  protected void do0ApiListAdd(final HttpServletRequest request,
+    final HttpServletResponse response) {
+    this.apiService.apiAdd(request, response);
+  }
 
-      case 1: { // API Get
-        final String apiId = paths.get(0);
-        this.apiService.apiGet(request, response, apiId);
+  protected void do0ApiListGet(final HttpServletRequest request,
+    final HttpServletResponse response) {
+    this.apiService.handleListAll(request, response, "/apis");
+  }
 
-      }
-      break;
-
-      case 2: {
-        final String apiId = paths.get(0);
-        if ("plugins".equals(paths.get(1))) { // Plugin list
-          this.apiService.pluginList(request, response, "/plugins?api_id=" + apiId, (row) -> {
-            return row.get("consumer_id") == null;
-          });
-        } else {
-          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-
-      case 4: {
-        final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          this.apiService.endpointGroupUserList(request, response, apiName, groupName);
-        } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-      default:
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      break;
+  private void do1Api(final HttpServletRequest request, final HttpServletResponse response,
+    final String method, final List<String> paths) {
+    final String apiIdOrName = paths.get(0);
+    if (GET.equals(method)) {
+      do1ApiGet(response, apiIdOrName);
+    } else if (DELETE.equals(method)) {
+      do1ApiDelete(response, apiIdOrName);
+    } else if (PUT.equals(method)) {
+      do1ApiUpdate(request, response, apiIdOrName);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
   }
 
-  @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException {
-    final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0: // API
-        this.apiService.apiAdd(request, response);
-      break;
+  protected void do1ApiDelete(final HttpServletResponse response, final String apiName) {
+    final String path = APIS_PATH + apiName;
+    this.apiService.handleDelete(response, path);
+    this.apiService.clearCachedObject(API, apiName);
+  }
 
-      case 1:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+  protected void do1ApiGet(final HttpServletResponse response, final String apiId) {
+    this.apiService.apiGet(response, apiId);
+  }
 
-      case 2: {
-        final String apiName = paths.get(0);
-        if ("plugins".equals(paths.get(1))) { // Plugin
-          final String pluginAddPath = "/apis/" + apiName + "/plugins";
-          this.apiService.handleAdd(request, response, pluginAddPath);
-        } else {
-          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
+  protected void do1ApiUpdate(final HttpServletRequest request, final HttpServletResponse response,
+    final String apiName) {
+    this.apiService.apiUpdate(request, response, apiName);
+  }
 
-      case 3:
-        if ("plugins".equals(paths.get(1))) {
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-      break;
-      case 5: {
-        final String apiName = paths.get(0);
-        if ("groups".equals(paths.get(1)) && "users".equals(paths.get(3))) {
-          final String groupName = paths.get(2);
-          final String userName = paths.get(4);
-          this.apiService.apiGroupUserAdd(request, response, apiName, groupName, userName);
-        } else {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-
-      default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      break;
+  private void do2PluginList(final HttpServletRequest request, final HttpServletResponse response,
+    final String method, final List<String> paths) {
+    final String apiName = paths.get(0);
+    if (GET.equals(method)) {
+      do2PluginListGet(request, response, apiName);
+    } else if (POST.equals(method)) {
+      do2PluginListAdd(request, response, apiName);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
   }
 
-  @Override
-  protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException {
-    final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0:
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-      break;
+  protected void do2PluginListAdd(final HttpServletRequest request,
+    final HttpServletResponse response, final String apiName) {
+    final String pluginAddPath = APIS_PATH + apiName + "/plugins";
+    this.apiService.handleAdd(request, response, pluginAddPath);
+  }
 
-      case 1: { // API
-        final String apiName = paths.get(0);
-        this.apiService.apiUpdate(request, response, apiName);
-      }
-      break;
+  protected void do2PluginListGet(final HttpServletRequest request,
+    final HttpServletResponse response, final String apiId) {
+    this.apiService.pluginList(request, response, "/plugins?api_id=" + apiId,
+      row -> row.get("consumer_id") == null);
+  }
 
-      case 2: {
-        if ("plugins".equals(paths.get(1))) { // Plugin
-          response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        } else {
-          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-
-      case 3: {
-        final String apiName = paths.get(0);
-        if ("plugins".equals(paths.get(1))) { // Plugin
-          final String pluginName = paths.get(2);
-          final String updatePath = "/apis/" + apiName + "/plugins/" + pluginName;
-          this.apiService.handleUpdatePatch(request, response, updatePath,
-            ApiService.PLUGIN_FIELD_NAMES);
-          this.apiService.clearCachedObject("api", apiName);
-        } else {
-          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-      }
-      break;
-      default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      break;
+  private void do3Plugin(final HttpServletRequest request, final HttpServletResponse response,
+    final String method, final List<String> paths) {
+    final String apiIdOrName = paths.get(0);
+    final String pluginName = paths.get(2);
+    if (DELETE.equals(method)) {
+      do3PluginDelete(response, apiIdOrName, pluginName);
+    } else if (PUT.equals(method)) {
+      do3PluginUpdate(request, response, apiIdOrName, pluginName);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
+  }
+
+  protected void do3PluginDelete(final HttpServletResponse response, final String apiName,
+    final String pluginName) {
+    final String path = APIS_PATH + apiName + PLUGINS_PATH + pluginName;
+    this.apiService.handleDelete(response, path);
+    this.apiService.clearCachedObject(API, apiName);
+  }
+
+  protected void do3PluginUpdate(final HttpServletRequest request,
+    final HttpServletResponse response, final String apiName, final String pluginName) {
+    final String updatePath = APIS_PATH + apiName + PLUGINS_PATH + pluginName;
+    this.apiService.handleUpdatePatch(request, response, updatePath, ApiServlet.PLUGIN_FIELD_NAMES);
+    this.apiService.clearCachedObject(API, apiName);
+  }
+
+  private void do4UserGroupList(final HttpServletRequest request,
+    final HttpServletResponse response, final List<String> paths) {
+    final String apiName = paths.get(0);
+    final String groupName = paths.get(2);
+    this.apiService.endpointGroupUserList(request, response, apiName, groupName);
+  }
+
+  private void do5GroupUser(final HttpServletResponse response, final String method,
+    final List<String> paths) {
+    final String apiName = paths.get(0);
+    final String groupName = paths.get(2);
+    final String userName = paths.get(4);
+    if (DELETE.equals(method)) {
+      do5GroupUserDelete(response, apiName, groupName, userName);
+    } else if (POST.equals(method)) {
+      do5GroupUserAdd(response, apiName, groupName, userName);
+    } else {
+      sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    }
+
+  }
+
+  private void do5GroupUserAdd(final HttpServletResponse response, final String apiName,
+    final String groupName, final String userName) {
+    this.apiService.apiGroupUserAdd(response, apiName, groupName, userName);
+  }
+
+  private void do5GroupUserDelete(final HttpServletResponse response, final String apiName,
+    final String groupName, final String userName) {
+    this.apiService.apiGroupUserDelete(response, apiName, groupName, userName);
+  }
+
+  @Override
+  protected void doService(final HttpServletRequest request, final HttpServletResponse response,
+    final String method) {
+    final List<String> paths = splitPathInfo(request);
+    final int pathCount = paths.size();
+    if (pathCount == 0) {
+      do0ApiList(request, response, method);
+      return;
+    } else if (pathCount == 1) {
+      do1Api(request, response, method, paths);
+      return;
+    } else if (pathCount == 2) {
+      final String path2 = paths.get(1);
+      if (PLUGINS.equals(path2)) {
+        do2PluginList(request, response, method, paths);
+        return;
+      }
+    } else if (pathCount == 3) {
+      final String path2 = paths.get(1);
+      if (PLUGINS.equals(path2)) {
+        do3Plugin(request, response, method, paths);
+        return;
+      }
+    } else if (pathCount == 4) {
+      if (GROUPS.equals(paths.get(1)) && USERS.equals(paths.get(3))) {
+        do4UserGroupList(request, response, paths);
+        return;
+      }
+    } else if (pathCount == 5 && GROUPS.equals(paths.get(1)) && USERS.equals(paths.get(3))) {
+      do5GroupUser(response, method, paths);
+      return;
+    }
+    sendError(response, HttpServletResponse.SC_NOT_FOUND);
   }
 }

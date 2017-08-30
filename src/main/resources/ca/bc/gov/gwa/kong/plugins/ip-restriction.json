@@ -1,0 +1,19 @@
+{
+  "fields":{
+      "blacklist":{
+         "title":"Blacklist IP or CIDR"
+      },
+      "whitelist":{
+         "title":"Whitelist IP or CIDR"
+      }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["whitelist"],
+        ["blacklist"]
+      ]
+    }
+  ]
+}

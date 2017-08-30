@@ -1,0 +1,12 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["api_endpoint", "keepalive", "timeout"],
+        ["bucket_key", "access_token"],
+        ["log_body"]
+      ]
+    }
+  ]
+}
