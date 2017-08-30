@@ -1,5 +1,6 @@
 package ca.bc.gov.gwa.servlet;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,7 +9,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-public class BasePrincipal implements Principal {
+public class BasePrincipal implements Principal, Serializable {
+  private static final long serialVersionUID = 1L;
 
   private final String id;
 
@@ -22,6 +24,10 @@ public class BasePrincipal implements Principal {
     this.id = id;
     this.name = name;
     this.roles = roles;
+  }
+
+  protected void addRole(final String role) {
+    this.roles.add(role);
   }
 
   @Override
@@ -55,11 +61,9 @@ public class BasePrincipal implements Principal {
   }
 
   public boolean isExpired(final long timeInMillis) {
-    if (this.timestamp + timeInMillis < System.currentTimeMillis()) {
-      return true;
-    } else {
-      return false;
-    }
+    final long time = System.currentTimeMillis();
+    final long expireTime = this.timestamp + timeInMillis;
+    return expireTime < time;
   }
 
   public boolean isInvalid(final String id, final long timeInMillis) {

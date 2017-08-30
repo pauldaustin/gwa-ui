@@ -22,6 +22,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.xml.DOMConfigurator;
 
 @WebListener
@@ -29,6 +30,7 @@ public class Log4jServletContextListener implements ServletContextListener {
 
   @Override
   public void contextDestroyed(final ServletContextEvent event) {
+    LogManager.resetConfiguration();
   }
 
   @Override
@@ -40,9 +42,8 @@ public class Log4jServletContextListener implements ServletContextListener {
       if (log4JConfig != null) {
         DOMConfigurator.configure(log4JConfig);
       }
-    } catch (final Throwable e) {
-      e.printStackTrace();
+    } catch (final Exception e) {
+      context.log("Unable to initialize logger", e);
     }
   }
-
 }

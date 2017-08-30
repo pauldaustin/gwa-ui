@@ -1,0 +1,16 @@
+{
+  "fields": {
+    "anonymous": {
+      "title": "Anonymous Consumer UUID"
+    }
+  },
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["anonymous"],
+        ["hide_credentials"]
+      ]
+    }
+  ]
+}

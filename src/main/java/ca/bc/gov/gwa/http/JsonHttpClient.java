@@ -17,7 +17,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -111,9 +110,8 @@ public class JsonHttpClient implements Closeable {
     }
   }
 
-  public <V> V executeRequest(final HttpUriRequest httpRequest)
-    throws IOException, ClientProtocolException {
-    httpRequest.addHeader("Accept", Json.MIME_TYPE);
+  public <V> V executeRequest(final HttpUriRequest httpRequest) throws IOException {
+    httpRequest.addHeader("Accept", "application/json");
 
     try (
       CloseableHttpResponse updateResponse = this.httpClient.execute(httpRequest)) {
@@ -130,13 +128,12 @@ public class JsonHttpClient implements Closeable {
   }
 
   public Map<String, Object> executeRequestJson(final HttpEntityEnclosingRequestBase httpRequest,
-    final Map<String, Object> data) throws IOException, ClientProtocolException {
+    final Map<String, Object> data) throws IOException {
     final String requestText = Json.toString(data);
     final StringEntity updateRequestEntity = new StringEntity(requestText,
       ContentType.APPLICATION_JSON);
     httpRequest.setEntity(updateRequestEntity);
-    final Map<String, Object> result = executeRequest(httpRequest);
-    return result;
+    return executeRequest(httpRequest);
   }
 
   public <V> V get(final String path) throws IOException {
@@ -144,7 +141,7 @@ public class JsonHttpClient implements Closeable {
     return getByUrl(url);
   }
 
-  public <V> V getByUrl(final String url) throws IOException, ClientProtocolException {
+  public <V> V getByUrl(final String url) throws IOException {
     final HttpGet request = new HttpGet(url);
     return executeRequest(request);
   }
@@ -174,6 +171,13 @@ public class JsonHttpClient implements Closeable {
     throws IOException {
     final HttpPost request = new HttpPost(this.serviceUrl + path);
     return executeRequestJson(request, data);
+  }
+
+  public Map<String, Object> put(final String path) throws IOException {
+    final HttpPut httpRequest = new HttpPut(this.serviceUrl + path);
+    final StringEntity updateRequestEntity = new StringEntity("", ContentType.TEXT_PLAIN);
+    httpRequest.setEntity(updateRequestEntity);
+    return executeRequest(httpRequest);
   }
 
   public Map<String, Object> put(final String path, final Map<String, Object> data)

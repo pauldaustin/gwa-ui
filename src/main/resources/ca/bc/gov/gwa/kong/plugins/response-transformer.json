@@ -1,0 +1,36 @@
+{
+  "layout": [
+    {
+      "title": "Add",
+      "name": "add",
+      "fields": [
+        ["add.headers"],
+        ["add.json"]
+      ]
+    },
+    {
+      "title": "Append",
+      "name": "append",
+      "fields": [
+        ["append.headers"],
+        ["append.json"]
+      ]
+    },
+    {
+      "title": "Replace",
+      "name": "replace",
+      "fields": [
+        ["replace.headers"],
+        ["replace.json"]
+      ]
+    },
+    {
+      "title": "Remove",
+      "name": "remove",
+      "fields": [
+        ["remove.headers"],
+        ["remove.json"]
+      ]
+    }
+  ]
+}

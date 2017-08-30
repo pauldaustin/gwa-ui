@@ -1,0 +1,13 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["host", "port", "https", "https_verify"],
+        ["service_token"],
+        ["environment"],
+        ["connection_timeout", "retry_count", "queue_size", "flush_timeout", "log_bodies"]
+      ]
+    }
+  ]
+}

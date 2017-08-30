@@ -16,33 +16,44 @@ public class PluginServlet extends BaseAdminServlet {
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     final List<String> paths = splitPathInfo(request);
-    switch (paths.size()) {
-      case 0:
-        this.apiService.pluginNameList(response);
-      break;
-      case 1: {
-        final String pluginName = paths.get(0);
-        if ("_names".equals(pluginName)) {
-          this.apiService.pluginNames(response);
-        } else {
-          this.apiService.pluginList(request, response, "/plugins?name=" + pluginName, null);
-        }
+    final int pathCount = paths.size();
+    if (pathCount == 0) {
+      doGetPluginNamesList(response);
+      return;
+    } else if (pathCount == 1) {
+      final String pluginName = paths.get(0);
+      if ("_names".equals(pluginName)) {
+        doGetPluginNames(response);
+      } else {
+        doGetPluginList(request, response, pluginName);
       }
-      break;
-      case 2: {
-        final String pluginName = paths.get(0);
-        final String type = paths.get(1);
-        if ("schema".equals(type)) {
-          final String schemaPath = "/plugins/schema/" + pluginName;
-          this.apiService.handleGet(request, response, schemaPath);
-        }
+      return;
+    } else if (pathCount == 2) {
+      final String type = paths.get(1);
+      if ("schema".equals(type)) {
+        doGetPluginSchema(response, paths);
+        return;
       }
-      break;
-      default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      break;
     }
-
+    sendError(response, HttpServletResponse.SC_NOT_FOUND);
   }
 
+  private void doGetPluginList(final HttpServletRequest request, final HttpServletResponse response,
+    final String pluginName) {
+    String path = "/plugins?name=" + pluginName;
+    this.apiService.pluginList(request, response, path, null);
+  }
+
+  private void doGetPluginNames(final HttpServletResponse response) {
+    this.apiService.pluginNames(response);
+  }
+
+  private void doGetPluginNamesList(final HttpServletResponse response) {
+    this.apiService.pluginNameList(response);
+  }
+
+  private void doGetPluginSchema(final HttpServletResponse response, final List<String> paths) {
+    final String pluginName = paths.get(0);
+    this.apiService.pluginSchemaGet(response, pluginName);
+  }
 }

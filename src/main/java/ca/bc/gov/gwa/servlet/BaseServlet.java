@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,11 +42,10 @@ public abstract class BaseServlet extends HttpServlet {
 
   protected static List<String> splitPathInfo(final HttpServletRequest request) {
     final String path = request.getPathInfo();
-    final List<String> paths = splitPath(path);
-    return paths;
+    return splitPath(path);
   }
 
-  protected ApiService apiService;
+  protected transient ApiService apiService;
 
   public BaseServlet() {
     super();
@@ -54,15 +54,26 @@ public abstract class BaseServlet extends HttpServlet {
   @Override
   public void destroy() {
     super.destroy();
-    this.apiService = ApiService.release();
+    this.apiService = null;
   }
 
-  public boolean isPathEmpty(final String pathInfo) {
-    return pathInfo == null || "/".equals(pathInfo);
+  protected void doService(final HttpServletRequest request, final HttpServletResponse response,
+    final String method) {
+    try {
+      if ("DELETE".equals(method)) {
+        doDelete(request, response);
+      } else {
+        super.service(request, response);
+      }
+    } catch (final Exception e) {
+      final Class<?> clazz = getClass();
+      final Logger logger = LoggerFactory.getLogger(clazz);
+      logger.error("Error handling request", e);
+    }
   }
 
   protected boolean hasRole(final HttpServletRequest request, final HttpServletResponse response,
-    final String roleName) throws IOException {
+    final String roleName) {
     final Principal userPrincipal = request.getUserPrincipal();
     if (userPrincipal instanceof BasePrincipal) {
       final BasePrincipal principal = (BasePrincipal)userPrincipal;
@@ -70,29 +81,47 @@ public abstract class BaseServlet extends HttpServlet {
         return true;
       }
     }
-    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+    sendError(response, HttpServletResponse.SC_FORBIDDEN);
     return false;
   }
 
   @Override
   public void init() throws ServletException {
-    super.init();
-    this.apiService = ApiService.get();
+    final ServletContext servletContext = getServletContext();
+    this.apiService = ApiService.get(servletContext);
+  }
+
+  public boolean isPathEmpty(final String pathInfo) {
+    return pathInfo == null || "/".equals(pathInfo);
+  }
+
+  protected void sendError(final HttpServletResponse response, final int statusCode) {
+    try {
+      response.sendError(statusCode);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(getClass()).debug("Unable to send status:" + statusCode, e);
+    }
+  }
+
+  protected void sendRedirect(final HttpServletResponse response, final String url) {
+    try {
+      response.sendRedirect(url);
+    } catch (final IOException e) {
+      LoggerFactory.getLogger(getClass()).debug("Unable to send redirect: " + url, e);
+    }
   }
 
   @Override
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
     try {
+      String method = request.getMethod();
       final String methodOverride = request.getHeader("X-HTTP-Method-Override");
-      if (methodOverride == null || !"POST".equals(request.getMethod())) {
-        super.service(request, response);
-      } else if ("DELETE".equals(methodOverride)) {
-        doDelete(request, response);
-      } else {
-        super.service(request, response);
+      if ("DELETE".equals(methodOverride) && "POST".equals(request.getMethod())) {
+        method = methodOverride;
       }
-    } catch (final Throwable e) {
+      doService(request, response, method);
+    } catch (final Exception e) {
       final Class<?> clazz = getClass();
       final Logger logger = LoggerFactory.getLogger(clazz);
       logger.error("Error handling request", e);

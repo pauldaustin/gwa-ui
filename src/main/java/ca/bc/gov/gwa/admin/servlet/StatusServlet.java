@@ -14,6 +14,6 @@ public class StatusServlet extends BaseAdminServlet {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException {
-    this.apiService.handleGet(request, response, "/status");
+    this.apiService.handleGet(response, "/status");
   }
 }

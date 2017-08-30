@@ -1,0 +1,12 @@
+{
+  "layout": [
+    {
+      "name": "core",
+      "fields": [
+        ["header_name"],
+        ["generator"],
+        ["echo_downstream"]
+      ]
+    }
+  ]
+}

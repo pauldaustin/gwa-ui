@@ -1,0 +1,18 @@
+{
+  "layout": [
+    {
+      "name": "login",
+      "title": "AWS Login",
+      "fields": [
+        ["aws_key", "aws_secret", "aws_region"]
+      ]
+    },{
+      "name": "function",
+      "title": "Lambda Function",
+      "fields": [
+        ["function_name", "qualifier", "invocation_type"],
+        ["log_type", "timeout", "keepalive"]
+      ]
+    }
+  ]
+}

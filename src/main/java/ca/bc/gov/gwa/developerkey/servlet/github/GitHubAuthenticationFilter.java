@@ -1,14 +1,15 @@
 package ca.bc.gov.gwa.developerkey.servlet.github;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -18,33 +19,39 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.http.conn.HttpHostConnectException;
-import org.slf4j.LoggerFactory;
-
 import ca.bc.gov.gwa.http.JsonHttpClient;
+import ca.bc.gov.gwa.servlet.AbstractFilter;
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebFilter(urlPatterns = {
-  "/", "/git/*", "/logout", "/rest/*", "/ui/*"
+  "/", "/login/*", "/git/*", "/logout", "/rest/*", "/ui/*"
 })
-public class GitHubAuthenticationFilter implements Filter {
+public class GitHubAuthenticationFilter extends AbstractFilter {
+
+  private static final int EXPIRY_TIME_MS = 10 * 60 * 1000;
+
+  private static final String GITHUB = "github_";
 
   private static final String GIT_HUB_PRINCIPAL = "GitHubPrincipal";
 
   private static final String GIT_HUB_STATE_URL_MAP = "GitHubStateUrlMap";
 
-  private String clientId;
+  protected transient ApiService apiService;
 
-  private String clientSecret;
-
-  private String organizationRole;
-
-  private ApiService apiService;
-
-  @Override
-  public void destroy() {
-    this.apiService = ApiService.release();
+  @SuppressWarnings("unchecked")
+  private void addGitHubGroups(final JsonHttpClient client, final String accessToken,
+    final Set<String> groups) throws IOException {
+    final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);
+    if (orgResponse instanceof List) {
+      final List<Map<String, Object>> orgList = (List<Map<String, Object>>)orgResponse;
+      for (final Map<String, Object> organization : orgList) {
+        final String role = (String)organization.get("login");
+        if (role != null) {
+          groups.add(GITHUB + role.toLowerCase());
+        }
+      }
+    }
   }
 
   @Override
@@ -56,105 +63,96 @@ public class GitHubAuthenticationFilter implements Filter {
       final HttpServletResponse httpResponse = (HttpServletResponse)response;
       final String servletPath = httpRequest.getServletPath();
       if ("/logout".equals(servletPath)) {
-        final HttpSession session = httpRequest.getSession(false);
-        if (session != null) {
-          session.invalidate();
-        }
-
-        httpResponse.sendRedirect("https://github.com/logout");
+        doFilterLogout(httpRequest, httpResponse);
       } else {
-        final HttpSession session = httpRequest.getSession();
-
-        final String fullPath = httpRequest.getServletPath();
-        if (fullPath.equals("/git/callback")) {
-          handleCallback(httpRequest, httpResponse, session);
-        } else {
-          final GitHubPrincipal principal = (GitHubPrincipal)session
-            .getAttribute(GIT_HUB_PRINCIPAL);
-          if (principal == null || principal.isExpired(120000)) {
-            handleRedirectToGitHub(httpRequest, httpResponse, session);
-          } else {
-            if (principal.isUserInRole(this.organizationRole)) {
-              final HttpServletRequestWrapper requestWrapper = principal
-                .newHttpServletRequestWrapper(httpRequest);
-              chain.doFilter(requestWrapper, response);
-            } else {
-              httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-            }
-          }
-        }
+        doFilterLogin(chain, httpRequest, httpResponse);
       }
     } else {
       chain.doFilter(request, response);
     }
   }
 
+  private void doFilterLogin(final FilterChain chain, final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) throws IOException, ServletException {
+    final HttpSession session = httpRequest.getSession();
+
+    final String fullPath = httpRequest.getServletPath();
+    if ("/git/callback".equals(fullPath)) {
+      handleCallback(httpRequest, httpResponse, session);
+    } else {
+      final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
+      if (principal == null || principal.isExpired(EXPIRY_TIME_MS)) {
+        handleRedirectToGitHub(chain, httpRequest, httpResponse, session);
+      } else {
+        final HttpServletRequestWrapper requestWrapper = principal
+          .newHttpServletRequestWrapper(httpRequest);
+        chain.doFilter(requestWrapper, httpResponse);
+      }
+    }
+  }
+
+  private void doFilterLogout(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    final HttpSession session = httpRequest.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+
+    sendRedirect(httpResponse, "https://github.com/logout");
+  }
+
   @SuppressWarnings("unchecked")
   private void handleCallback(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final HttpSession session) throws IOException {
-    final Map<String, String> stateUrlMap = (Map<String, String>)session
+    final LruMap<String, String> stateUrlMap = (LruMap<String, String>)session
       .getAttribute(GIT_HUB_STATE_URL_MAP);
     if (stateUrlMap != null) {
       final String state = httpRequest.getParameter("state");
       final String code = httpRequest.getParameter("code");
       final String redirectUrl = stateUrlMap.get(state);
       if (redirectUrl != null) {
-        final String accessToken;
+        final String accessToken = this.apiService.getGitHubAccessToken(state, code);
         try (
-          JsonHttpClient client = new JsonHttpClient("https://github.com/")) {
-          final Map<String, Object> accessResponse = client
-            .get("/login/oauth/access_token?client_id=" + this.clientId + "&client_secret="
-              + this.clientSecret + "&code=" + code + "&state=" + state);
-          accessToken = (String)accessResponse.get("access_token");
-        }
-        try (
-          JsonHttpClient client = new JsonHttpClient("https://api.github.com/")) {
+          JsonHttpClient client = new JsonHttpClient("https://api.github.com")) {
           final Map<String, Object> userResponse = client.get("/user?access_token=" + accessToken);
           final Number id = (Number)userResponse.get("id");
           final String login = (String)userResponse.get("login");
           if (id != null && login != null) {
-            final String userId = "github_" + id;
-            final String userName = "github_" + login.toLowerCase();
-            final Set<String> groups;
-            try {
-              groups = this.apiService.consumerGroups("github_bcgov", userId, userName);
-            } catch (final HttpHostConnectException e) {
-              httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            final String userId = GITHUB + id;
+            final String userName = GITHUB + login.toLowerCase();
+            final Set<String> groups = getGroups(httpResponse, userId, userName);
+            if (groups == Collections.<String> emptySet()) {
               return;
-            } catch (final Throwable e) {
-              LoggerFactory.getLogger(getClass()).error("Error getting ACL", e);
-              httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-              return;
-            }
-            final Object orgResponse = client.get("/user/orgs?access_token=" + accessToken);
-            if (orgResponse instanceof List) {
-              final List<Map<String, Object>> orgList = (List<Map<String, Object>>)orgResponse;
-              for (final Map<String, Object> organization : orgList) {
-                final String role = (String)organization.get("login");
-                if (role != null) {
-                  groups.add("github_" + role.toLowerCase());
-                }
+
+            } else {
+              addGitHubGroups(client, accessToken, groups);
+              final GitHubPrincipal principal = new GitHubPrincipal(userId, login, userName,
+                groups);
+              if (groups.contains(this.apiService.getGitHubOrganizationRole())) {
+                principal.addDeveloperRole();
               }
+              session.setAttribute(GIT_HUB_PRINCIPAL, principal);
+              sendRedirect(httpResponse, redirectUrl);
+              return;
             }
-            final GitHubPrincipal principal = new GitHubPrincipal(userId, userName, groups);
-            session.setAttribute(GIT_HUB_PRINCIPAL, principal);
-            httpResponse.sendRedirect(redirectUrl);
-            return;
           }
         }
       }
     }
-    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+    sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
   }
 
   @SuppressWarnings("unchecked")
-  public void handleRedirectToGitHub(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final HttpSession session) throws IOException {
-    if (httpRequest.getServletPath().startsWith("/rest")) {
-      httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-    } else {
+  public void handleRedirectToGitHub(final FilterChain chain, final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final HttpSession session)
+    throws IOException, ServletException {
+    final String servletPath = httpRequest.getServletPath();
+    if (servletPath.startsWith("/rest")) {
+      sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN);
+    } else if (!servletPath.startsWith("/ui")
+      || !"true".equals(httpRequest.getParameter("contentOnly"))) {
       final String state = UUID.randomUUID().toString();
-      Map<String, String> stateUrlMap = (Map<String, String>)session
+      LruMap<String, String> stateUrlMap = (LruMap<String, String>)session
         .getAttribute(GIT_HUB_STATE_URL_MAP);
       if (stateUrlMap == null) {
         stateUrlMap = new LruMap<>(10);
@@ -169,23 +167,20 @@ public class GitHubAuthenticationFilter implements Filter {
       }
       final String redirectUrl = redirectBuilder.toString();
       stateUrlMap.put(state, redirectUrl);
+      final String gitHubClientId = this.apiService.getGitHubClientId();
       final String authorizeUrl = "https://github.com/login/oauth/authorize?client_id="
-        + this.clientId + "&scope=read:org&state=" + state;
-      httpResponse.sendRedirect(authorizeUrl);
+        + gitHubClientId + "&scope=read:org&state=" + state;
+      sendRedirect(httpResponse, authorizeUrl);
+    } else {
+      chain.doFilter(httpRequest, httpResponse);
     }
   }
 
   @Override
   public void init(final FilterConfig filterConfig) throws ServletException {
-    this.apiService = ApiService.get();
-    this.organizationRole = "github_"
-      + this.apiService.getConfig("gwaGitHubOrganization", "gwa-qa");
-    this.clientId = this.apiService.getConfig("gwaGitHubClientId");
-    this.clientSecret = this.apiService.getConfig("gwaGitHubClientSecret");
-    if (this.clientId == null || this.clientSecret == null) {
-      LoggerFactory.getLogger(getClass())
-        .error("Missing gitHubClientId or gitHubClientSecret configuration");
-    }
+    super.init(filterConfig);
+    final ServletContext servletContext = filterConfig.getServletContext();
+    this.apiService = ApiService.get(servletContext);
   }
 
 }
