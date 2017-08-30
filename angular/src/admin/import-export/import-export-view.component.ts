@@ -7,13 +7,14 @@ import {
   MdDialogRef,
   MD_DIALOG_DATA
 } from '@angular/material';
+import {ImportExport} from './import-export';
 
 @Component({
   selector: 'app-import-export-view',
   templateUrl: './import-export-view.component.html',
 })
 export class ImportExportViewComponent {
-  row: string = this.data['row'];
+  row: ImportExport = this.data['row'];
 
   fieldNames: string = this.data['fieldNames'];
 

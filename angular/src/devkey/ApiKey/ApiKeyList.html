@@ -1,7 +1,7 @@
 <ng-container *ngIf="authService.username">
   <ng-container *ngIf="hasRole('gwa_github_developer'); else elseAcceptTerms">
   
-    <md-card *ngIf="appName && (appRedirectUrl || appSendMessage)" style="margin-bottom:10px">
+    <md-card *ngIf="appName && (appRedirectUrl || appSendMessage); else elseUserMode" style="margin-bottom:10px">
       <md-card-title>Authorize application {{appName}}</md-card-title>
       <md-card-content>
         <p>Allow application <b>{{appName}}</b> to use your API Key to access web services?</p>
@@ -19,39 +19,41 @@
         <button (click)="authorizeAccess()" md-raised-button color="primary" [disabled]="!hasApiKey">Authorize application {{appName}}</button>
       </md-card-actions>
     </md-card>
-    <div class="rowToColumn">
-      <md-card>
-        <md-card-title>Developer API Key <a href="https://github.com/bcgov/gwa/wiki/Developer-Guide" alt="Developer Guide" target="_blank"><md-icon fontSet="fa" fontIcon="fa-question-circle" ></md-icon></a></md-card-title>
-        <md-card-content>
-          
-          <div class="table-container">
-            <md-toolbar>
-              <button (click)="addApiKey()" md-raised-button color="primary">Create API Key</button>
-            </md-toolbar>
-       
-            <md-table #table [dataSource]="dataSource">
-              <ng-container cdkColumnDef="key">
-                <md-header-cell *cdkHeaderCellDef fxFlex="260px">API Key</md-header-cell>
-                <md-cell *cdkCellDef="let row" fxFlex="260px">{{row.key}}</md-cell>
-              </ng-container>
-  
-              <ng-container cdkColumnDef="actions">
-                <md-header-cell *cdkHeaderCellDef fxFlex="50px">Actions</md-header-cell>
-                <md-cell *cdkCellDef="let row" fxFlex="50px"><button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
-                  <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
-                </button></md-cell>
-              </ng-container>
-              
-              <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-              
-              <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-            </md-table>
-          </div>
-          <p>Use of the API keys is subject to the the <a href="/terms" target="_blank">API Key Terms of Use</a>.</p>
-        </md-card-content>
-      </md-card>
-      <app-api-list></app-api-list>
-    </div>
+    <ng-template #elseUserMode>
+      <div class="rowToColumn">
+        <md-card>
+          <md-card-title>Developer API Key <a href="https://github.com/bcgov/gwa/wiki/Developer-Guide" alt="Developer Guide" target="_blank"><md-icon fontSet="fa" fontIcon="fa-question-circle" ></md-icon></a></md-card-title>
+          <md-card-content>
+            
+            <div class="table-container">
+              <md-toolbar>
+                <button (click)="addApiKey()" md-raised-button color="primary">Create API Key</button>
+              </md-toolbar>
+         
+              <md-table #table [dataSource]="dataSource">
+                <ng-container cdkColumnDef="key">
+                  <md-header-cell *cdkHeaderCellDef fxFlex="260px">API Key</md-header-cell>
+                  <md-cell *cdkCellDef="let row" fxFlex="260px">{{row.key}}</md-cell>
+                </ng-container>
+    
+                <ng-container cdkColumnDef="actions">
+                  <md-header-cell *cdkHeaderCellDef fxFlex="50px">Actions</md-header-cell>
+                  <md-cell *cdkCellDef="let row" fxFlex="50px"><button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
+                    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+                  </button></md-cell>
+                </ng-container>
+                
+                <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+                
+                <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+              </md-table>
+            </div>
+            <p>Use of the API keys is subject to the the <a href="/terms" target="_blank">API Key Terms of Use</a>.</p>
+          </md-card-content>
+        </md-card>
+        <app-api-list></app-api-list>
+      </div>
+    </ng-template>
   </ng-container>
   <ng-template #elseAcceptTerms>
     <md-card>

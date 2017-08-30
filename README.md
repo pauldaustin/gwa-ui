@@ -123,7 +123,9 @@ NOTE: If both appSendMessage and appRedirectUrl are specified then the appSendMe
 
 Web browsers provide the [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) method to allow a web page to send messages to other web pages.
 
-The application requesting the API key will add an event listener for messages sent to their window.
+The GWA Developer Key page will send the API key as the message.data field when the user clicks the Authorize Application button.
+
+The application requesting the API key will add an event listener for messages sent to their window. The following code fragment shows how to register the event listener and get the API key.
 
 ```javascript
 window.addEventListener('message', function(message) {
@@ -133,6 +135,7 @@ window.addEventListener('message', function(message) {
 });
 ```
 
+The following code f
 ```html
 <html>
   <head>
