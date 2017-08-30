@@ -14,25 +14,26 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
 
-import { Params } from '@angular/router';
+import {Params} from '@angular/router';
 
-import { BaseDetailComponent } from '../../../shared/Component/BaseDetailComponent';
+import {BaseDetailComponent} from '../../../shared/Component/BaseDetailComponent';
 
-import { Api } from '../Api';
-import { ApiService } from '../ApiService';
+import {Api} from '../Api';
+import {ApiService} from '../ApiService';
 
-import { Plugin } from '../../Plugin/Plugin';
-import { PluginService } from '../../Plugin/PluginService';
+import {Plugin} from '../../Plugin/Plugin';
+import {PluginService} from '../../Plugin/PluginService';
 
-import { PluginFormGroup } from './PluginFormGroup';
-import { PluginFormField } from './PluginFormField';
+import {PluginFormGroup} from './PluginFormGroup';
+import {PluginFormField} from './PluginFormField';
 
 @Component({
-  selector: 'app-app-api-plugin-detail',
-  templateUrl: 'ApiPluginDetail.html'
+  selector: 'app-api-plugin-view',
+  templateUrl: 'api-plugin-view.component.html'
 })
-export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implements OnInit {
+export class ApiPluginViewComponent extends BaseDetailComponent<Plugin> implements OnInit {
   protected apiService: ApiService = this.injector.get(ApiService);
 
   api: Api;
@@ -45,7 +46,8 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
 
   constructor(
     protected injector: Injector,
-    protected service: PluginService
+    protected service: PluginService,
+    protected route: ActivatedRoute,
   ) {
     super(injector, service, 'Plugin - Gateway Admin');
   }
@@ -67,7 +69,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
       });
 
       const config = this.object.config;
-      const fieldsByName: { [name: string]: PluginFormField } = {};
+      const fieldsByName: {[name: string]: PluginFormField} = {};
       this.addFields(fieldsByName, '', form, 'config', pluginSchema, config);
 
       this.addLayout(pluginSchema, fieldsByName);
@@ -84,7 +86,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
 
   private addLayout(
     pluginSchema: any,
-    fieldsByName: { [name: string]: PluginFormField },
+    fieldsByName: {[name: string]: PluginFormField},
   ) {
     const layout = pluginSchema['layout'];
     for (const group of layout) {
@@ -108,7 +110,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
   }
 
   private addFields(
-    fieldsByName: { [name: string]: PluginFormField },
+    fieldsByName: {[name: string]: PluginFormField},
     prefix: string,
     parentForm: FormGroup,
     groupName: string,
@@ -128,7 +130,7 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
   }
 
   private addField(
-    fieldsByName: { [name: string]: PluginFormField },
+    fieldsByName: {[name: string]: PluginFormField},
     prefix: string,
     formGroup: FormGroup,
     fieldName: string,
@@ -187,27 +189,13 @@ export class ApiPluginDetailComponent extends BaseDetailComponent<Plugin> implem
   }
 
   ngOnInit(): void {
-    this.route.params
-      .switchMap((params: Params) => {
-        this.name = params['name'];
-        this.id = this.name;
-        return this.apiService.getObject(params['apiName']);
-      })
-      .subscribe((api: Api) => {
-        this.api = api;
-        for (const plugin of api.plugins) {
-          if (plugin.name === this.name) {
-            this.object = plugin;
-          }
-        }
-        if (this.object == null) {
-          this.object = this.service.newObject();
-          this.object.api_id = api.id;
-          this.object.api = api;
-          this.object.name = this.name;
-        }
-        this.setPluginName(this.name);
-      });
+    this.route.data
+      .subscribe((data: {plugin: Plugin}) => {
+        this.object = data.plugin;
+        this.api = this.object.api;
+        this.setPluginName(this.object.name);
+      }
+      );
   }
 
   protected saveDo(): Promise<Plugin> {

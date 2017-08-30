@@ -1,0 +1,17 @@
+<nav md-tab-nav-bar *ngIf="plugin">
+  <a md-tab-link
+     [routerLink]="['.']"
+     routerLinkActive
+     #rla1="routerLinkActive"
+     [active]="rla1.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
+  ><a [routerLink]="['/ui', 'apis', api.name]">Api: {{api.name}}</a> Plugin: {{plugin.name}}</a>
+<!--   <a md-tab-link
+     [routerLink]="['plugins']"
+     routerLinkActive
+     #rla2="routerLinkActive"
+     [active]="rla2.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
+  >Plugins</a>
+--></nav>
+<router-outlet></router-outlet>

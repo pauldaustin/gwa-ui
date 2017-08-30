@@ -6,15 +6,15 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
-import { Api } from '../Api';
-import { PluginListComponent } from '../../Plugin/PluginListComponent';
-import { PluginService } from '../../Plugin/PluginService';
+import {Api} from '../Api';
+import {PluginListComponent} from '../../Plugin/PluginListComponent';
+import {PluginService} from '../../Plugin/PluginService';
 
 @Component({
   selector: 'app-api-plugin-list',
-  templateUrl: 'ApiPluginList.html'
+  templateUrl: 'api-plugin-list.component.html'
 })
 export class ApiPluginListComponent extends PluginListComponent {
   api: Api;
@@ -39,7 +39,7 @@ export class ApiPluginListComponent extends PluginListComponent {
   }
 
   initParams(): void {
-    this.route.parent.data.subscribe((data: { api: Api }) => {
+    this.route.parent.data.subscribe((data: {api: Api}) => {
       this.api = data.api;
       this.path = `/apis/${this.api.id}/plugins`;
       this.refresh();

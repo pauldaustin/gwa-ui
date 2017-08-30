@@ -107,3 +107,76 @@ Wait 2 minutes for the cache of users groups to clear then access the Gateway Ad
 be granted access.
 
 https://gwa.apps.gov.bc.ca/int/
+
+## Embed API Key in Authorized Applications
+
+|Parameter|Description|Example|
+|-|-|-|
+| appName     | The name of the application that is requesting access to the user's API key. | API Console |
+| appRedirectUrl | The URL that the user's web browser will be redirected to when the Authorize Application button is clicked. | https://appConsole.apps.gov.bc.ca/authorizedApiKey |
+| appSendMessage | Flag indicating if the API key should be sent via JavaScript window.postMessage. | true |
+| contentOnly | Flag indicating if the header and footer should be hidden. | true |
+
+NOTE: If both appSendMessage and appRedirectUrl are specified then the appSendMessage will be used. 
+
+### JavaScript Post Message
+
+Web browsers provide the [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) method to allow a web page to send messages to other web pages.
+
+The application requesting the API key will add an event listener for messages sent to their window.
+
+```javascript
+window.addEventListener('message', function(message) {
+  $('#apiKeyModal').modal('hide');
+  var apiKey = message.data;
+  alert(apiKey);
+});
+```
+
+```html
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://unpkg.com/jquery@3.2.1" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
+  <body>
+
+  <button type="button" class="btn btn-primary btn-lg" onClick="getApiKey()">
+    Get API Key
+  </button>
+
+  <div class="modal fade" id="apiKeyModal" tabindex="-1" role="dialog" aria-labelledby="apiKeyModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="apiKeyModalLabel">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          <iframe
+            id="apiKeyFrame"
+            src="about:blank"
+            style="width: 100%; height: 600px; border: 0px"
+          >
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>
+  <script type="text/javascript">
+function getApiKey() {
+      $('#apiKeyModal').modal('show');
+      $('#apiKeyFrame').attr('src', 'https://gwa-d.apps.gov.bc.ca/ui/apiKeys?appName=Test&appSendMessage=true&contentOnly=true');
+}
+
+    window.addEventListener('message', function(message) {
+      $('#apiKeyModal').modal('hide');
+      var apiKey = message.data;
+      alert(apiKey);
+    });
+  </script>
+</html>
+```

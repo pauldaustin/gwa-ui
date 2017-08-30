@@ -12,9 +12,11 @@ import {ApiResolver} from './Api/ApiResolver';
 import {ApiGroupListComponent} from './Api/Group/ApiGroupListComponent';
 import {ApiGroupUserListComponent} from './Api/Group/ApiGroupUserListComponent';
 
-import {ApiPluginListComponent} from './Api/Plugin/ApiPluginListComponent';
-import {ApiPluginAddComponent} from './Api/Plugin/ApiPluginAddComponent';
-import {ApiPluginDetailComponent} from './Api/Plugin/ApiPluginDetailComponent';
+import {ApiPluginListComponent} from './Api/Plugin/api-plugin-list.component';
+import {ApiPluginAddComponent} from './Api/Plugin/api-plugin-add.component';
+import {ApiPluginDetailComponent} from './Api/Plugin/api-plugin-detail.component';
+import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
+import {ApiPluginResolver} from './Api/Plugin/api-plugin.resolver';
 
 import {UserAddComponent} from './User/UserAddComponent';
 import {UserListComponent} from './User/UserListComponent';
@@ -69,9 +71,21 @@ const routes: Routes = [
     component: ApiPluginAddComponent,
     pathMatch: 'full',
     canActivate: [RoleGuard],
-    data: {roles: ['gwa_admin']}
+    data: {roles: ['gwa_admin']},
+    resolve: {plugin: ApiPluginResolver},
   },
-  {path: 'ui/apis/:apiName/plugins/:name', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+  {path: '', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+  {
+    path: 'ui/apis/:apiName/plugins/:pluginName',
+    component: ApiPluginDetailComponent,
+    canActivate: [RoleGuard],
+    data: {roles: ['gwa_admin']},
+    resolve: {plugin: ApiPluginResolver},
+    children: [
+      {path: '', component: ApiPluginViewComponent, pathMatch: 'full'},
+      //      {path: 'plugins', component: ApiPluginListComponent, pathMatch: 'full'},
+    ]
+  },
 
 
   {path: 'ui/users', component: UserListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
