@@ -110,9 +110,15 @@ https://gwa.apps.gov.bc.ca/int/
 
 ## Embed API Key in Authorized Applications
 
+Applications such as the API Console can request access to a user's API key so that they can use it to access APIs.
+
+The applications request the API key via the following page and parameters. The user will be required to login to GitHub and authorize access for the application to their API key.
+
+https://gwa.apps.gov.bc.ca/ui/apiKeys
+
 |Parameter|Description|Example|
 |-|-|-|
-| appName     | The name of the application that is requesting access to the user's API key. | API Console |
+| appName     | The REQUIRED name of the application that is requesting access to the user's API key. | API Console |
 | appRedirectUrl | The URL that the user's web browser will be redirected to when the Authorize Application button is clicked. | https://appConsole.apps.gov.bc.ca/authorizedApiKey |
 | appSendMessage | Flag indicating if the API key should be sent via JavaScript window.postMessage. | true |
 | contentOnly | Flag indicating if the header and footer should be hidden. | true |
@@ -123,7 +129,7 @@ NOTE: If both appSendMessage and appRedirectUrl are specified then the appSendMe
 
 Web browsers provide the [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) method to allow a web page to send messages to other web pages.
 
-The GWA Developer Key page will send the API key as the message.data field when the user clicks the Authorize Application button.
+The GWA Developer Key page uses this method to send the API key int the message.data field when the user clicks the Authorize Application button. The page must be opened in either an iframe or frame.
 
 The application requesting the API key will add an event listener for messages sent to their window. The following code fragment shows how to register the event listener and get the API key.
 
@@ -135,7 +141,8 @@ window.addEventListener('message', function(message) {
 });
 ```
 
-The following code f
+The following code shows an example using a bootstrap dialog to get the API key.
+
 ```html
 <html>
   <head>
@@ -172,7 +179,7 @@ The following code f
   <script type="text/javascript">
 function getApiKey() {
       $('#apiKeyModal').modal('show');
-      $('#apiKeyFrame').attr('src', 'https://gwa-d.apps.gov.bc.ca/ui/apiKeys?appName=Test&appSendMessage=true&contentOnly=true');
+      $('#apiKeyFrame').attr('src', 'https://gwa.apps.gov.bc.ca/ui/apiKeys?appName=Test&appSendMessage=true&contentOnly=true');
 }
 
     window.addEventListener('message', function(message) {
@@ -183,3 +190,10 @@ function getApiKey() {
   </script>
 </html>
 ```
+
+### Redirect URL
+
+The alternate method is to include the appRedirectUrl with a URL to your application that will be called with the apiKey as a query string parameter when the user clicks the Authorize Application button.
+
+This method does not require the page to be in an iframe or frame.
+
