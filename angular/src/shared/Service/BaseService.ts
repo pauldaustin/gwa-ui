@@ -252,7 +252,7 @@ export abstract class BaseService<T> implements Service<T> {
     return this.getObjectDo(this.path + '/' + id);
   }
 
-  getObjectDo(path: string): Promise<T> {
+  getObjectDo(path: string, values?: any): Promise<T> {
     const url = this.getUrl(path);
     return this.httpRequest(
       http => {
@@ -264,7 +264,13 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return null;
         } else {
-          return this.toObject(json);
+          const object = this.toObject(json);
+          if (values) {
+            for (const key of Object.keys(values)) {
+              object[key] = values[key];
+            }
+          }
+          return object;
         }
       }
     );

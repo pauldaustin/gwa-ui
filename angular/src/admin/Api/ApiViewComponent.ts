@@ -5,11 +5,11 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
+import {BaseDetailComponent} from '../../shared/Component/BaseDetailComponent';
 
-import { Api } from './Api';
-import { Plugin } from '../Plugin/Plugin';
-import { ApiService } from './ApiService';
+import {Api} from './Api';
+import {Plugin} from '../Plugin/Plugin';
+import {ApiService} from './ApiService';
 
 @Component({
   selector: 'app-api-view',
@@ -55,7 +55,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
       super.ngOnInit();
     } else {
       this.route.parent.data
-        .subscribe((data: { api: Api }) => {
+        .subscribe((data: {api: Api}) => {
           this.setObject(data.api);
         }
         );
@@ -64,7 +64,11 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
 
   protected setObject(api: Api) {
     if (api) {
-      this.setTitle(`API: ${api.name} - Gateway Admin`);
+      if (api.id) {
+        this.setTitle(`API: ${api.name} - Gateway Admin`);
+      } else {
+        this.setTitle(`Add API - Gateway Admin`);
+      }
       const endpoint = api.plugin('bcgov-gwa-endpoint');
       if (endpoint == null) {
         api.pluginAdd(this.endpoint);
@@ -126,7 +130,7 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
   }
 
   routeDetail(): void {
-    this.router.navigate(['..', this.object.name], { relativeTo: this.route });
+    this.router.navigate(['..', this.object.name], {relativeTo: this.route});
   }
 
   formValid(): boolean {

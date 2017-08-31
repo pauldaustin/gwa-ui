@@ -1,0 +1,42 @@
+{
+  "primaryKey": "client_id",
+	"fields": {
+		"name": {
+      "name": "name",
+			"title": "Name",
+			"required": true
+		},
+		"client_id": {
+      "name": "client_id",
+			"title": "Client ID"
+		},
+		"client_secret": {
+      "name": "client_secret",
+			"title": "Client Secret"
+		},
+		"redirect_uri": {
+      "name": "redirect_uri",
+			"title": "Redirect URI",
+			"required": true
+		}
+	},
+	"layout": [
+		{
+			"name": "core",
+			"fields": [
+				[
+					"name"
+				],
+				[
+					"client_id"
+				],
+				[
+					"client_secret"
+				],
+				[
+					"redirect_uri"
+				]
+			]
+		}
+	]
+}

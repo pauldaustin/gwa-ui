@@ -52,36 +52,50 @@ export class ApiPluginViewComponent extends BaseDetailComponent<Plugin> implemen
     super(injector, service, 'Plugin - Gateway Admin');
   }
 
-  setPluginName(name: string) {
+  getPluginSchema(pluginName: String): Promise<any> {
     this.setTitle(`Plugin: ${name} - API ${this.api.name} - Gateway Admin`);
-    this.service.getPluginSchema(name).then((pluginSchema: any) => {
-      const formGroupCore = this.formBuilder.group({
-        enabled: true
-      });
+    return this.service.getPluginSchema(name);
+  }
 
-      this.groups[0].addField({
-        name: 'enabled',
-        title: 'Enabled',
-        fieldType: 'checkbox'
-      }, formGroupCore.controls['enabled']);
-      const form = this.formBuilder.group({
-        core: formGroupCore
-      });
+  setPluginName(name: string) {
+    this.getPluginSchema(name).then((pluginSchema: any) => {
+      const hasCoreFields = this.groups.length > 0;
+      let form;
+      if (hasCoreFields) {
+        const formGroupCore = this.formBuilder.group({
+          enabled: true
+        });
 
+        this.groups[0].addField({
+          name: 'enabled',
+          title: 'Enabled',
+          fieldType: 'checkbox'
+        }, formGroupCore.controls['enabled']);
+        form = this.formBuilder.group({
+          core: formGroupCore
+        });
+      } else {
+        form = this.formBuilder.group({});
+      }
       const config = this.object.config;
       const fieldsByName: {[name: string]: PluginFormField} = {};
       this.addFields(fieldsByName, '', form, 'config', pluginSchema, config);
 
       this.addLayout(pluginSchema, fieldsByName);
-      form.patchValue({
-        core: {
-          enabled: this.object.enabled
-        },
-        config: config
-      });
+      if (hasCoreFields) {
+        form.patchValue({
+          core: {
+            enabled: this.object.enabled
+          },
+          config: config
+        });
+      } else {
+        form.patchValue({
+          config: config
+        });
+      }
       this.form = form;
     });
-
   }
 
   private addLayout(
@@ -199,7 +213,9 @@ export class ApiPluginViewComponent extends BaseDetailComponent<Plugin> implemen
   }
 
   protected saveDo(): Promise<Plugin> {
-    this.saveValues(this.object, this.form.controls['core']);
+    if (this.form.controls['core']) {
+      this.saveValues(this.object, this.form.controls['core']);
+    }
     this.saveValues(this.object.config, this.form.controls['config']);
     return super.saveDo();
   }

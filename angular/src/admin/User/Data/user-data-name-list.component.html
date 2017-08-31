@@ -1,9 +1,5 @@
-<div>
+<div class="table-container">
   <md-toolbar>
-    <md-input-container>
-      <input mdInput placeholder="Add Group Name" [(ngModel)]="addGroupName" pattern="[a-z][a-z0-9_]*" />
-    </md-input-container>
-    <a [routerLink]="['/ui','groups', addGroupName]" md-raised-button color="primary" [disabled]="!addGroupName">Add Group</a>
     <span style="flex: 1 1 auto"></span>
     <md-progress-spinner
       *ngIf="refreshingCount"
@@ -24,8 +20,7 @@
     [count]="count"
     [cssClasses]="cssClasses"
     [scrollbarV]="true"
-  ></ngx-datatable>
+  ></ngx-datatable> 
 </div>
-<ng-template #idT let-row="row" let-value="value">
-  <a [routerLink]="['/ui','groups', value]">{{value}}</a>
-</ng-template>
+
+<ng-template #idT let-row="row" let-value="value"><a [routerLink]="[ value]">{{value}}</a></ng-template>

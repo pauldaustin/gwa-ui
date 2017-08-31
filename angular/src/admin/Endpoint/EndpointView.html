@@ -69,7 +69,7 @@
       </md-card-content>
         <md-card-actions>
           <button (click)="routeList()" md-button>Close</button>
-          <button (click)="save(false)" md-raised-button color="accent" [disabled]="!endpointForm.form.valid">Save</button>
+          <button (click)="save(false)" md-raised-button color="accent" [disabled]="!endpointForm.form.valid" *ngIf="object.id">Save</button>
           <button (click)="save(true)" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save &amp; Close</button>
       </md-card-actions>
     </md-card>

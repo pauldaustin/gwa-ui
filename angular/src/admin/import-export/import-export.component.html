@@ -19,9 +19,9 @@
     class="material striped flex-height expandable"
     [rows]="rows"
     [columnMode]="'force'"
-    [headerHeight]="30"
-    [footerHeight]="30"
-    [rowHeight]="30"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="50"
     [count]="count"
     [cssClasses]="cssClasses"
     [scrollbarV]="true"
@@ -56,7 +56,14 @@
       name="Result"
       [width]="150"
     >
-      <ng-template let-row="row" ngx-datatable-cell-template>{{row.result}}</ng-template>
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <md-chip-list>
+          <md-chip *ngIf="row.result == 'Inserted'" color="primary" selected="true">{{row.result}}</md-chip>
+          <md-chip *ngIf="row.result == 'Matched'">{{row.result}}</md-chip>
+          <md-chip *ngIf="row.result == 'Ignore - Changed Values'" color="accent" selected="true">{{row.result}}</md-chip>
+          <md-chip *ngIf="row.result == 'Ignore - Error'" color="warn" selected="true">{{row.result}}</md-chip>
+        </md-chip-list>   
+      </ng-template>
     </ngx-datatable-column>
   </ngx-datatable>
 </div>

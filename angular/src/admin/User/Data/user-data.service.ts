@@ -3,34 +3,34 @@ import {
   Injector
 } from '@angular/core';
 
-import {BaseService} from '../../shared/Service/BaseService';
+import {BaseService} from '../../../shared/Service/BaseService';
 
-import {Plugin} from '../Plugin/Plugin';
+import {Plugin} from '../../Plugin/Plugin';
 
 @Injectable()
-export class PluginService extends BaseService<Plugin> {
+export class UserDataService extends BaseService<Plugin> {
 
   constructor(injector: Injector) {
     super(injector);
-    this.path = '/plugins';
-    this.typeTitle = 'Plugins';
+    this.path = '/users/_data';
+    this.typeTitle = 'User Data';
     this.labelFieldName = 'name';
   }
 
-  getPluginNames(): Promise<string[]> {
-    const url = this.getUrl('/plugins/_names');
+  getDataNames(): Promise<string[]> {
+    const url = this.getUrl('/users/_data');
     return this.httpRequest(
       http => {
         return http.get(url);
       },
       response => {
-        return response.json().enabled_plugins;
+        return response.json().names;
       }
     );
   }
 
-  getPluginSchema(pluginName: String): Promise<any> {
-    const url = this.getUrl(`/plugins/${pluginName}/_schema`);
+  getSchema(username: string, dataName: string): Promise<any> {
+    const url = this.getUrl(`/users/${username}/data/${dataName}/_schema`);
     return this.httpRequest(
       http => {
         return http.get(url);
@@ -44,16 +44,15 @@ export class PluginService extends BaseService<Plugin> {
   addObject(plugin: Plugin): Promise<Plugin> {
     const api = plugin.api;
     return super.addObjectDo(
-      `/apis/${api.id}/plugins`,
-      plugin,
-      () => api.pluginAdd(plugin)
+      `/users/${plugin.user_username}/data/${plugin.name}`,
+      plugin
     );
   }
 
 
   deleteObject(plugin: Plugin, path?: string): Promise<boolean> {
     return this.deleteObjectDo(
-      `/apis/${plugin.api_id}/plugins/${plugin.id}`
+      `${path}/${plugin.id}`
     );
   }
 
@@ -62,8 +61,9 @@ export class PluginService extends BaseService<Plugin> {
   }
 
   updateObject(plugin: Plugin): Promise<Plugin> {
+    console.log(plugin);
     return this.updateObjectDo(
-      `/apis/${plugin.api.name}/plugins/${plugin.id}`,
+      `/users/${plugin.user_username}/data/${plugin.name}/${plugin.id}`,
       plugin
     );
   }

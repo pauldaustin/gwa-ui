@@ -1,0 +1,28 @@
+{
+  "primaryKey": "username",
+	"fields": {
+		"username": {
+			"name": "username",
+			"title": "Username",
+			"required": true
+		},
+		"password": {
+			"name": "password",
+			"title": "Password",
+			"fieldType": "password"
+		}
+	},
+	"layout": [
+		{
+			"name": "core",
+			"fields": [
+				[
+					"username"
+				],
+				[
+					"password"
+				]
+			]
+		}
+	]
+}

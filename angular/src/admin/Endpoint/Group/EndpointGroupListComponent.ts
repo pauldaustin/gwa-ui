@@ -17,9 +17,9 @@ import { Group } from '../../Group/Group';
   [rows]="rows"
   [columns]="columns"
   [columnMode]="'force'"
-  [headerHeight]="30"
-  [footerHeight]="30"
-  [rowHeight]="30"
+  [headerHeight]="50"
+  [footerHeight]="50"
+  [rowHeight]="50"
   [cssClasses]="cssClasses"
   [scrollbarV]="true"
 >

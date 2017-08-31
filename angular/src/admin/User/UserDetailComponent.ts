@@ -2,8 +2,8 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { User } from './User';
+import {ActivatedRoute} from '@angular/router';
+import {User} from './User';
 
 @Component({
   selector: 'app-user-detail',
@@ -30,6 +30,13 @@ import { User } from './User';
      [active]="rla3.isActive"
      [routerLinkActiveOptions]="{exact:true}"
   >Plugins</a>
+  <a md-tab-link
+     [routerLink]="['data']"
+     routerLinkActive
+     #rla4="routerLinkActive"
+     [active]="rla4.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
+  >Data</a>
 </nav>
 <router-outlet></router-outlet>
   `
@@ -44,7 +51,7 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { user: User }) => {
+      .subscribe((data: {user: User}) => {
         this.user = data.user;
       }
       );

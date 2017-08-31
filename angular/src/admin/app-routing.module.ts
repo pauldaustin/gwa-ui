@@ -24,6 +24,10 @@ import {UserDetailComponent} from './User/UserDetailComponent';
 import {UserViewComponent} from './User/UserViewComponent';
 import {UserResolver} from './User/UserResolver';
 
+import {UserDataNameListComponent} from './User/Data/user-data-name-list.component';
+import {UserDataListTabsComponent} from './User/Data/user-data-list-tabs.component';
+import {UserDataViewTabsComponent} from './User/Data/user-data-view-tabs.component';
+
 import {UserGroupListComponent} from './User/Group/UserGroupListComponent';
 
 import {UserPluginListComponent} from './User/Plugin/UserPluginListComponent';
@@ -98,9 +102,19 @@ const routes: Routes = [
     resolve: {user: UserResolver},
     children: [
       {path: '', component: UserViewComponent, pathMatch: 'full'},
+      {path: 'data', component: UserDataNameListComponent, pathMatch: 'full'},
       {path: 'groups', component: UserGroupListComponent, pathMatch: 'full'},
       {path: 'plugins', component: UserPluginListComponent, pathMatch: 'full'},
     ]
+  },
+
+  {path: 'ui/users/:username/data/:dataName', component: UserDataListTabsComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+
+  {
+    path: 'ui/users/:username/data/:dataName/:id',
+    component: UserDataViewTabsComponent,
+    canActivate: [RoleGuard],
+    data: {roles: ['gwa_admin']}
   },
 
   {path: 'ui/endpoints', component: EndpointListComponent},

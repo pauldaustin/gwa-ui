@@ -1,42 +1,23 @@
-<h1 md-dialog-title>Import {{row.type}} {{row.item}}</h1>
+<h1 md-dialog-title></h1>
 <div md-dialog-content style="padding:3px 24px">
   <md-card>
+     <md-card-title>{{row.index}}. Import: {{row.type}}</md-card-title>
+    <md-card-subtitle>{{row.item}}</md-card-subtitle>
     <md-card-content>
-      <div class="flexRowToColumn">
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Index" value="{{row.index}}" disabled />
-        </md-input-container>
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Type" value="{{row.type}}" disabled />
-        </md-input-container>
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Item" value="{{row.item}}" disabled />
-        </md-input-container>
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Result" value="{{row.result}}" disabled />
-        </md-input-container>
-      </div>
+      <md-chip-list>
+        <md-chip *ngIf="row.result == 'Inserted'" color="primary" selected="true">{{row.result}}</md-chip>
+        <md-chip *ngIf="row.result == 'Matched'" selected="true">{{row.result}}</md-chip>
+        <md-chip *ngIf="row.result == 'Ignore - Changed Values'" color="accent" selected="true">{{row.result}}</md-chip>
+        <md-chip *ngIf="row.result == 'Ignore - Error'" color="warn" selected="true">{{row.result}}</md-chip>
+      </md-chip-list>   
     </md-card-content>
   </md-card>
   
   <md-card *ngIf="row.error">
-    <md-card-title style="color:red">ERROR</md-card-title>
+    <md-card-title style="color:red">ERROR: {{row.error}}</md-card-title>
+    <md-card-subtitle>{{row.request}}</md-card-subtitle>
     <md-card-content>
-      <div class="flexRowToColumn">
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Error" value="{{row.error}}" disabled />
-        </md-input-container>
-      </div>
-      <div class="flexRowToColumn">
-        <md-input-container class="flexField">
-          <input mdInput placeholder="Request" value="{{row.request}}" disabled />
-        </md-input-container>
-      </div>
-      <div class="flexRowToColumn">
-        <md-input-container class="flexField">
-          <textarea mdInput placeholder="Body" value="{{row.body}}" disabled></textarea>
-        </md-input-container>
-      </div>
+      <pre>{{row.body}}</pre>
     </md-card-content>
   </md-card>
 

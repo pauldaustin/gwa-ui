@@ -10,6 +10,7 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {
   MdButtonModule,
   MdCardModule,
+  MdChipsModule,
   MdDialogModule,
   MdIconModule,
   MdIconRegistry,
@@ -45,7 +46,6 @@ import {ApiGroupUserListComponent} from './Api/Group/ApiGroupUserListComponent';
 import {ApiGroupUserService} from './Api/Group/ApiGroupUserService';
 import {ApiGroupUserPluginListComponent} from './Api/Group/ApiGroupUserPluginListComponent';
 
-
 import {ApiPluginListComponent} from './Api/Plugin/api-plugin-list.component';
 import {ApiPluginDetailComponent} from './Api/Plugin/api-plugin-detail.component';
 import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
@@ -65,6 +65,13 @@ import {UserGroupListComponent} from './User/Group/UserGroupListComponent';
 import {UserGroupService} from './User/Group/UserGroupService';
 
 import {UserPluginListComponent} from './User/Plugin/UserPluginListComponent';
+
+import {UserDataNameListComponent} from './User/Data/user-data-name-list.component';
+import {UserDataListTabsComponent} from './User/Data/user-data-list-tabs.component';
+import {UserDataListComponent} from './User/Data/user-data-list.component';
+import {UserDataViewTabsComponent} from './User/Data/user-data-view-tabs.component';
+import {UserDataViewComponent} from './User/Data/user-data-view.component';
+import {UserDataService} from './User/Data/user-data.service';
 
 import {EndpointDetailComponent} from './Endpoint/EndpointDetailComponent';
 import {EndpointViewComponent} from './Endpoint/EndpointViewComponent';
@@ -108,6 +115,7 @@ import {AppRoutingModule} from './app-routing.module';
 
     MdButtonModule,
     MdCardModule,
+    MdChipsModule,
     MdDialogModule,
     MdIconModule,
     MdInputModule,
@@ -177,6 +185,13 @@ import {AppRoutingModule} from './app-routing.module';
     UserDetailComponent,
     UserViewComponent,
     UserGroupListComponent,
+
+    UserDataNameListComponent,
+    UserDataViewTabsComponent,
+    UserDataListComponent,
+    UserDataListTabsComponent,
+    UserDataViewComponent,
+
     EndpointDetailComponent,
     EndpointListComponent,
     EndpointViewComponent,
@@ -207,6 +222,7 @@ import {AppRoutingModule} from './app-routing.module';
     GroupUserService,
     PluginService,
     StatusService,
+    UserDataService,
     UserGroupService,
     UserResolver,
     UserService,
