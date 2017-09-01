@@ -2,13 +2,12 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Api } from '../Api/Api';
+import {ActivatedRoute} from '@angular/router';
+import {Api} from './Api';
 
 @Component({
-  selector: 'app-endpoint-detail',
+  selector: 'app-api-detail',
   template: `
-<app-page-not-found *ngIf="!api"></app-page-not-found>
 <nav md-tab-nav-bar *ngIf="api">
   <a md-tab-link
      [routerLink]="['.']"
@@ -16,19 +15,26 @@ import { Api } from '../Api/Api';
      #rla1="routerLinkActive"
      [active]="rla1.isActive"
      [routerLinkActiveOptions]="{exact:true}"
-  >Endpoint: {{api.name}}</a>
+  >API: {{api.name}}</a>
   <a md-tab-link
-     [routerLink]="['groups']"
+     [routerLink]="['plugins']"
      routerLinkActive
      #rla2="routerLinkActive"
      [active]="rla2.isActive"
+     [routerLinkActiveOptions]="{exact:true}"
+  >Plugins</a>
+  <a md-tab-link
+     [routerLink]="['groups']"
+     routerLinkActive
+     #rla3="routerLinkActive"
+     [active]="rla3.isActive"
      [routerLinkActiveOptions]="{exact:true}"
   >Groups</a>
 </nav>
 <router-outlet></router-outlet>
   `
 })
-export class EndpointDetailComponent implements OnInit {
+export class ApiViewTabsComponent implements OnInit {
   api: Api;
 
   constructor(
@@ -38,7 +44,7 @@ export class EndpointDetailComponent implements OnInit {
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { api: Api }) => {
+      .subscribe((data: {api: Api}) => {
         this.api = data.api;
       }
       );

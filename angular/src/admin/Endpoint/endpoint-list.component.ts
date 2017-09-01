@@ -3,12 +3,12 @@ import {
   Injector
 } from '@angular/core';
 
-import { ApiListComponent } from '../Api/ApiListComponent';
-import { ApiService } from '../Api/ApiService';
+import {ApiListComponent} from '../Api/api-list.component';
+import {ApiService} from '../Api/api.service';
 
 @Component({
   selector: 'app-endpoint-list',
-  templateUrl: 'EndpointList.html'
+  templateUrl: 'endpoint-list.component.html'
 })
 export class EndpointListComponent extends ApiListComponent {
 

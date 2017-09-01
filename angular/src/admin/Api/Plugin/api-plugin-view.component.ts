@@ -21,10 +21,10 @@ import {Params} from '@angular/router';
 import {BaseDetailComponent} from '../../../shared/Component/BaseDetailComponent';
 
 import {Api} from '../Api';
-import {ApiService} from '../ApiService';
+import {ApiService} from '../api.service';
 
 import {Plugin} from '../../Plugin/Plugin';
-import {PluginService} from '../../Plugin/PluginService';
+import {PluginService} from '../../Plugin/plugin.service';
 
 import {PluginFormGroup} from './PluginFormGroup';
 import {PluginFormField} from './PluginFormField';
@@ -53,8 +53,8 @@ export class ApiPluginViewComponent extends BaseDetailComponent<Plugin> implemen
   }
 
   getPluginSchema(pluginName: String): Promise<any> {
-    this.setTitle(`Plugin: ${name} - API ${this.api.name} - Gateway Admin`);
-    return this.service.getPluginSchema(name);
+    this.setTitle(`Plugin: ${pluginName} - API ${this.api.name} - Gateway Admin`);
+    return this.service.getPluginSchema(pluginName);
   }
 
   setPluginName(name: string) {

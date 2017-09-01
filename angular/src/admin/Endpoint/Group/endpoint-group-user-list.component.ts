@@ -3,16 +3,16 @@ import {
   Injector,
   OnInit
 } from '@angular/core';
-import { Params } from '@angular/router';
+import {Params} from '@angular/router';
 
-import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
-import { Group } from '../../Group/Group';
-import { EndpointGroupUserService } from './EndpointGroupUserService';
+import {Group} from '../../Group/Group';
+import {EndpointGroupUserService} from './endpoint-group-user.service';
 
 @Component({
   selector: 'app-endpoint-group-app-user-list',
-  templateUrl: 'EndpointGroupUserList.html'
+  templateUrl: 'endpoint-group-user-list.component.html'
 })
 export class EndpointGroupUserListComponent extends BaseListComponent<Group> implements OnInit {
   apiName: string;
@@ -32,9 +32,9 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> imp
 
   ngOnInit() {
     this.columns = [
-      { prop: 'username', name: 'User', sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
-      { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
+      {prop: 'username', name: 'User', sortable: false},
+      {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false},
+      {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
     ];
     this.route.params
       .map(params => {

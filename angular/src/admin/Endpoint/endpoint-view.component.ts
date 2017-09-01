@@ -4,14 +4,14 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
-import { Api } from '../Api/Api';
-import { EndpointService } from './EndpointService';
-import { Plugin } from '../Plugin/Plugin';
+import {BaseDetailComponent} from '../../shared/Component/BaseDetailComponent';
+import {Api} from '../Api/Api';
+import {EndpointService} from './endpoint.service';
+import {Plugin} from '../Plugin/Plugin';
 
 @Component({
   selector: 'app-endpoint-view',
-  templateUrl: 'EndpointView.html'
+  templateUrl: 'endpoint-view.component.html'
 })
 export class EndpointViewComponent extends BaseDetailComponent<Api> implements OnInit {
 
@@ -33,7 +33,7 @@ export class EndpointViewComponent extends BaseDetailComponent<Api> implements O
 
   ngOnInit() {
     this.route.parent.data
-      .subscribe((data: { api: Api }) => {
+      .subscribe((data: {api: Api}) => {
         const api = data.api;
         if (api) {
           this.setTitle(`Endpoint: ${api.name} - Gateway Admin`);

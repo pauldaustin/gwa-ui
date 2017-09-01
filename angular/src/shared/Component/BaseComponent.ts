@@ -18,7 +18,7 @@ import {
 
 
 import {Config} from '../Config';
-import {AuthService} from '../Authentication/AuthService';
+import {AuthService} from '../Authentication/auth.service';
 import {Service} from '../Service/Service';
 import {MessageDialogComponent} from './MessageDialogComponent';
 

@@ -9,11 +9,11 @@ import {
 import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
 import {Api} from './Api';
-import {ApiService} from './ApiService';
+import {ApiService} from './api.service';
 
 @Component({
   selector: 'app-api-list',
-  templateUrl: 'ApiList.html'
+  templateUrl: 'api-list.component.html'
 })
 export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
 

@@ -3,51 +3,51 @@ import {RouterModule, Routes} from '@angular/router';
 import {RoleGuard} from '../shared/Authentication/RoleGuard';
 import {PageNotFoundComponent} from '../shared/Component/PageNotFoundComponent';
 
-import {ApiAddComponent} from './Api/ApiAddComponent';
-import {ApiListComponent} from './Api/ApiListComponent';
-import {ApiDetailComponent} from './Api/ApiDetailComponent';
-import {ApiViewComponent} from './Api/ApiViewComponent';
-import {ApiResolver} from './Api/ApiResolver';
+import {ApiAddComponent} from './Api/api-add.component';
+import {ApiListComponent} from './Api/api-list.component';
+import {ApiViewTabsComponent} from './Api/api-view-tabs.component';
+import {ApiViewComponent} from './Api/api-view.component';
+import {ApiResolver} from './Api/api.resolver';
 
-import {ApiGroupListComponent} from './Api/Group/ApiGroupListComponent';
-import {ApiGroupUserListComponent} from './Api/Group/ApiGroupUserListComponent';
+import {ApiGroupListComponent} from './Api/Group/api-group-list.component';
+import {ApiGroupUserListComponent} from './Api/Group/api-group-user-list.component';
 
 import {ApiPluginListComponent} from './Api/Plugin/api-plugin-list.component';
 import {ApiPluginAddComponent} from './Api/Plugin/api-plugin-add.component';
-import {ApiPluginDetailComponent} from './Api/Plugin/api-plugin-detail.component';
+import {ApiPluginViewTabsComponent} from './Api/Plugin/api-plugin-view-tabs.component';
 import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
 import {ApiPluginResolver} from './Api/Plugin/api-plugin.resolver';
 
-import {UserAddComponent} from './User/UserAddComponent';
-import {UserListComponent} from './User/UserListComponent';
-import {UserDetailComponent} from './User/UserDetailComponent';
-import {UserViewComponent} from './User/UserViewComponent';
-import {UserResolver} from './User/UserResolver';
+import {UserAddComponent} from './User/user-add.component';
+import {UserListComponent} from './User/user-list.component';
+import {UserDetailComponent} from './User/user-view-tabs.component';
+import {UserViewComponent} from './User/user-view.component';
+import {UserResolver} from './User/user-resolver';
 
 import {UserDataNameListComponent} from './User/Data/user-data-name-list.component';
 import {UserDataListTabsComponent} from './User/Data/user-data-list-tabs.component';
 import {UserDataViewTabsComponent} from './User/Data/user-data-view-tabs.component';
 
-import {UserGroupListComponent} from './User/Group/UserGroupListComponent';
+import {UserGroupListComponent} from './User/Group/user-group-list.component';
 
-import {UserPluginListComponent} from './User/Plugin/UserPluginListComponent';
+import {UserPluginListComponent} from './User/Plugin/user-plugin-list.component';
 
-import {EndpointListComponent} from './Endpoint/EndpointListComponent';
-import {EndpointDetailComponent} from './Endpoint/EndpointDetailComponent';
-import {EndpointResolver} from './Endpoint/EndpointResolver';
-import {EndpointViewComponent} from './Endpoint/EndpointViewComponent';
+import {EndpointListComponent} from './Endpoint/endpoint-list.component';
+import {EndpointViewTabsComponent} from './Endpoint/endpoint-view-tabs.component';
+import {EndpointResolver} from './Endpoint/endpoint.resolver';
+import {EndpointViewComponent} from './Endpoint/endpoint-view.component';
 
-import {EndpointGroupListComponent} from './Endpoint/Group/EndpointGroupListComponent';
-import {EndpointGroupUserListComponent} from './Endpoint/Group/EndpointGroupUserListComponent';
+import {EndpointGroupListComponent} from './Endpoint/Group/endpoint-group-list.component';
+import {EndpointGroupUserListComponent} from './Endpoint/Group/endpoint-group-user-list.component';
 
-import {GroupUserListComponent} from './Group/GroupUserListComponent';
+import {GroupUserListComponent} from './Group/group-user-list.component';
 
-import {GroupListComponent} from './Group/GroupListComponent';
+import {GroupListComponent} from './Group/group-list.component';
 
-import {PluginNameListComponent} from './Plugin/PluginNameListComponent';
-import {PluginListComponent} from './Plugin/PluginListComponent';
+import {PluginNameListComponent} from './Plugin/plugin-name-list.component';
+import {PluginListComponent} from './Plugin/plugin-list.component';
 
-import {StatusDetailComponent} from './Status/StatusDetailComponent';
+import {StatusViewComponent} from './Status/status-view.component';
 
 import {ImportExportComponent} from './import-export/import-export.component';
 
@@ -59,7 +59,7 @@ const routes: Routes = [
   {path: 'ui/apis/_add_', component: ApiAddComponent, pathMatch: 'full', canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
   {
     path: 'ui/apis/:apiName',
-    component: ApiDetailComponent,
+    component: ApiViewTabsComponent,
     canActivate: [RoleGuard],
     data: {roles: ['gwa_admin']},
     resolve: {api: ApiResolver},
@@ -78,10 +78,10 @@ const routes: Routes = [
     data: {roles: ['gwa_admin']},
     resolve: {plugin: ApiPluginResolver},
   },
-  {path: '', component: ApiPluginDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+  {path: '', component: ApiPluginViewTabsComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
   {
     path: 'ui/apis/:apiName/plugins/:pluginName',
-    component: ApiPluginDetailComponent,
+    component: ApiPluginViewTabsComponent,
     canActivate: [RoleGuard],
     data: {roles: ['gwa_admin']},
     resolve: {plugin: ApiPluginResolver},
@@ -120,7 +120,7 @@ const routes: Routes = [
   {path: 'ui/endpoints', component: EndpointListComponent},
   {
     path: 'ui/endpoints/:apiName',
-    component: EndpointDetailComponent,
+    component: EndpointViewTabsComponent,
     resolve: {api: EndpointResolver},
     children: [
       {path: '', component: EndpointViewComponent, pathMatch: 'full'},
@@ -135,7 +135,7 @@ const routes: Routes = [
   {path: 'ui/plugins', component: PluginNameListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
   {path: 'ui/plugins/:pluginName', component: PluginListComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
 
-  {path: 'ui/status', component: StatusDetailComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
+  {path: 'ui/status', component: StatusViewComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
 
   {path: 'ui/importExport', component: ImportExportComponent, canActivate: [RoleGuard], data: {roles: ['gwa_admin']}},
 

@@ -6,7 +6,7 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { User } from './User';
-import { UserService } from './UserService';
+import { UserService } from './user.service';
 
 @Injectable()
 export class UserResolver implements Resolve<User> {

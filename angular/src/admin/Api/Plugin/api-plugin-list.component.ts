@@ -9,8 +9,8 @@ import {
 import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
 import {Api} from '../Api';
-import {PluginListComponent} from '../../Plugin/PluginListComponent';
-import {PluginService} from '../../Plugin/PluginService';
+import {PluginListComponent} from '../../Plugin/plugin-list.component';
+import {PluginService} from '../../Plugin/plugin.service';
 
 @Component({
   selector: 'app-api-plugin-list',

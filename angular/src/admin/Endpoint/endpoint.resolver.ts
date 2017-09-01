@@ -5,13 +5,13 @@ import {
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
-import { Api } from './Api';
-import { ApiService } from './ApiService';
+import { Api } from '../Api/Api';
+import { EndpointService } from './endpoint.service';
 
 @Injectable()
-export class ApiResolver implements Resolve<Api> {
+export class EndpointResolver implements Resolve<Api> {
   constructor(
-    private service: ApiService,
+    private service: EndpointService,
     private router: Router
   ) { }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<Api> {

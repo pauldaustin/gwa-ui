@@ -7,11 +7,11 @@ import {
 import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
 import {User} from './User';
-import {UserService} from './UserService';
+import {UserService} from './user.service';
 
 @Component({
   selector: 'app-user-list',
-  templateUrl: 'UserList.html'
+  templateUrl: 'user-list.component.html'
 })
 export class UserListComponent extends BaseListComponent<User> implements OnInit {
 

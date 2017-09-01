@@ -30,41 +30,41 @@ import {
 } from '../shared/bcgov-template/BcGovTemplateComponent';
 import {SharedModule} from '../shared/shared.module';
 
-import {AuthService} from '../shared/Authentication/AuthService';
+import {AuthService} from '../shared/Authentication/auth.service';
 import {RoleGuard} from '../shared/Authentication/RoleGuard';
 
-import {ApiListComponent} from './Api/ApiListComponent';
-import {ApiAddComponent} from './Api/ApiAddComponent';
-import {ApiDetailComponent} from './Api/ApiDetailComponent';
-import {ApiViewComponent} from './Api/ApiViewComponent';
-import {ApiService} from './Api/ApiService';
-import {ApiResolver} from './Api/ApiResolver';
+import {ApiListComponent} from './Api/api-list.component';
+import {ApiAddComponent} from './Api/api-add.component';
+import {ApiViewTabsComponent} from './Api/api-view-tabs.component';
+import {ApiViewComponent} from './Api/api-view.component';
+import {ApiService} from './Api/api.service';
+import {ApiResolver} from './Api/api.resolver';
 
-import {ApiGroupListComponent} from './Api/Group/ApiGroupListComponent';
+import {ApiGroupListComponent} from './Api/Group/api-group-list.component';
 
-import {ApiGroupUserListComponent} from './Api/Group/ApiGroupUserListComponent';
-import {ApiGroupUserService} from './Api/Group/ApiGroupUserService';
-import {ApiGroupUserPluginListComponent} from './Api/Group/ApiGroupUserPluginListComponent';
+import {ApiGroupUserListComponent} from './Api/Group/api-group-user-list.component';
+import {ApiGroupUserService} from './Api/Group/api-group-user.service';
+import {ApiGroupUserPluginListComponent} from './Api/Group/api-group-user-plugin-list.component';
 
 import {ApiPluginListComponent} from './Api/Plugin/api-plugin-list.component';
-import {ApiPluginDetailComponent} from './Api/Plugin/api-plugin-detail.component';
+import {ApiPluginViewTabsComponent} from './Api/Plugin/api-plugin-view-tabs.component';
 import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
 import {ApiPluginAddComponent} from './Api/Plugin/api-plugin-add.component';
 import {ApiPluginResolver} from './Api/Plugin/api-plugin.resolver';
 
 import {Config} from '../shared/Config';
 
-import {UserListComponent} from './User/UserListComponent';
-import {UserAddComponent} from './User/UserAddComponent';
-import {UserDetailComponent} from './User/UserDetailComponent';
-import {UserViewComponent} from './User/UserViewComponent';
-import {UserService} from './User/UserService';
-import {UserResolver} from './User/UserResolver';
+import {UserListComponent} from './User/user-list.component';
+import {UserAddComponent} from './User/user-add.component';
+import {UserDetailComponent} from './User/user-view-tabs.component';
+import {UserViewComponent} from './User/user-view.component';
+import {UserService} from './User/user.service';
+import {UserResolver} from './User/user-resolver';
 
-import {UserGroupListComponent} from './User/Group/UserGroupListComponent';
-import {UserGroupService} from './User/Group/UserGroupService';
+import {UserGroupListComponent} from './User/Group/user-group-list.component';
+import {UserGroupService} from './User/Group/user-group.service';
 
-import {UserPluginListComponent} from './User/Plugin/UserPluginListComponent';
+import {UserPluginListComponent} from './User/Plugin/user-plugin-list.component';
 
 import {UserDataNameListComponent} from './User/Data/user-data-name-list.component';
 import {UserDataListTabsComponent} from './User/Data/user-data-list-tabs.component';
@@ -73,29 +73,29 @@ import {UserDataViewTabsComponent} from './User/Data/user-data-view-tabs.compone
 import {UserDataViewComponent} from './User/Data/user-data-view.component';
 import {UserDataService} from './User/Data/user-data.service';
 
-import {EndpointDetailComponent} from './Endpoint/EndpointDetailComponent';
-import {EndpointViewComponent} from './Endpoint/EndpointViewComponent';
-import {EndpointListComponent} from './Endpoint/EndpointListComponent';
-import {EndpointResolver} from './Endpoint/EndpointResolver';
-import {EndpointService} from './Endpoint/EndpointService';
+import {EndpointViewTabsComponent} from './Endpoint/endpoint-view-tabs.component';
+import {EndpointViewComponent} from './Endpoint/endpoint-view.component';
+import {EndpointListComponent} from './Endpoint/endpoint-list.component';
+import {EndpointResolver} from './Endpoint/endpoint.resolver';
+import {EndpointService} from './Endpoint/endpoint.service';
 
-import {EndpointGroupListComponent} from './Endpoint/Group/EndpointGroupListComponent';
+import {EndpointGroupListComponent} from './Endpoint/Group/endpoint-group-list.component';
 
-import {EndpointGroupUserListComponent} from './Endpoint/Group/EndpointGroupUserListComponent';
-import {EndpointGroupUserService} from './Endpoint/Group/EndpointGroupUserService';
+import {EndpointGroupUserListComponent} from './Endpoint/Group/endpoint-group-user-list.component';
+import {EndpointGroupUserService} from './Endpoint/Group/endpoint-group-user.service';
 
-import {GroupUserListComponent} from './Group/GroupUserListComponent';
-import {GroupUserService} from './Group/GroupUserService';
+import {GroupUserListComponent} from './Group/group-user-list.component';
+import {GroupUserService} from './Group/group-user.service';
 
-import {GroupListComponent} from './Group/GroupListComponent';
-import {GroupService} from './Group/GroupService';
+import {GroupListComponent} from './Group/group-list.component';
+import {GroupService} from './Group/group.service';
 
-import {PluginNameListComponent} from './Plugin/PluginNameListComponent';
-import {PluginListComponent} from './Plugin/PluginListComponent';
-import {PluginService} from './Plugin/PluginService';
+import {PluginNameListComponent} from './Plugin/plugin-name-list.component';
+import {PluginListComponent} from './Plugin/plugin-list.component';
+import {PluginService} from './Plugin/plugin.service';
 
-import {StatusDetailComponent} from './Status/StatusDetailComponent';
-import {StatusService} from './Status/StatusService';
+import {StatusViewComponent} from './Status/status-view.component';
+import {StatusService} from './Status/status.service';
 
 import {ImportExportComponent} from './import-export/import-export.component';
 import {ImportExportViewComponent} from './import-export/import-export-view.component';
@@ -171,13 +171,13 @@ import {AppRoutingModule} from './app-routing.module';
   ],
   declarations: [
     ApiAddComponent,
-    ApiDetailComponent,
+    ApiViewTabsComponent,
     ApiListComponent,
     ApiViewComponent,
     ApiGroupListComponent,
     ApiGroupUserListComponent,
     ApiGroupUserPluginListComponent,
-    ApiPluginDetailComponent,
+    ApiPluginViewTabsComponent,
     ApiPluginViewComponent,
     ApiPluginAddComponent,
     UserAddComponent,
@@ -192,7 +192,7 @@ import {AppRoutingModule} from './app-routing.module';
     UserDataListTabsComponent,
     UserDataViewComponent,
 
-    EndpointDetailComponent,
+    EndpointViewTabsComponent,
     EndpointListComponent,
     EndpointViewComponent,
     EndpointGroupListComponent,
@@ -203,7 +203,7 @@ import {AppRoutingModule} from './app-routing.module';
     PluginListComponent,
     ApiPluginListComponent,
     UserPluginListComponent,
-    StatusDetailComponent,
+    StatusViewComponent,
     ImportExportComponent,
     ImportExportViewComponent
   ],

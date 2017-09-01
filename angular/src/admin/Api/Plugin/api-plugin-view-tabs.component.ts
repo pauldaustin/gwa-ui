@@ -9,10 +9,19 @@ import {Api} from '../Api';
 import {Plugin} from '../../Plugin/Plugin';
 
 @Component({
-  selector: 'app-api-plugin-detail',
-  templateUrl: 'api-plugin-detail.component.html'
+  selector: 'app-api-plugin-view-tabs',
+  template: `
+<nav md-tab-nav-bar *ngIf="plugin">
+  <a md-tab-link [routerLink]="['../..']" >API: {{api.name}}</a>
+
+  <a md-tab-link [routerLink]="['..']" >Plugins</a>
+
+  <a md-tab-link [routerLink]="['.']" active="true">{{plugin.name}}</a>
+</nav>
+<router-outlet></router-outlet>
+`
 })
-export class ApiPluginDetailComponent implements OnInit {
+export class ApiPluginViewTabsComponent implements OnInit {
   api: Api;
   plugin: Plugin;
 

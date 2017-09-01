@@ -3,9 +3,9 @@ import {
   Injector,
   OnInit
 } from '@angular/core';
-import { Params } from '@angular/router';
-import { BaseDetailComponent } from '../../shared/Component/BaseDetailComponent';
-import { StatusService } from './StatusService';
+import {Params} from '@angular/router';
+import {BaseDetailComponent} from '../../shared/Component/BaseDetailComponent';
+import {StatusService} from './status.service';
 
 @Component({
   selector: 'app-status-detail',
@@ -35,11 +35,11 @@ import { StatusService } from './StatusService';
 </div>
   `
 })
-export class StatusDetailComponent extends BaseDetailComponent<any> implements OnInit {
+export class StatusViewComponent extends BaseDetailComponent<any> implements OnInit {
 
   columns = [
-    { name: 'Name', sortable: false },
-    { name: 'Value', sortable: false }
+    {name: 'Name', sortable: false},
+    {name: 'Value', sortable: false}
   ];
 
   constructor(

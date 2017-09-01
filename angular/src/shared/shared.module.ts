@@ -12,7 +12,7 @@ import {
 
 import {Config} from './Config';
 import {BcGovTemplateComponent} from './bcgov-template/BcGovTemplateComponent';
-import {AuthService} from './Authentication/AuthService';
+import {AuthService} from './Authentication/auth.service';
 import {DeleteDialogComponent} from './Component/DeleteDialogComponent';
 import {LoginDialogComponent} from './Component/LoginDialogComponent';
 import {MessageDialogComponent} from './Component/MessageDialogComponent';

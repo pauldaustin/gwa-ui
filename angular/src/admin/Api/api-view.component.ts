@@ -9,11 +9,11 @@ import {BaseDetailComponent} from '../../shared/Component/BaseDetailComponent';
 
 import {Api} from './Api';
 import {Plugin} from '../Plugin/Plugin';
-import {ApiService} from './ApiService';
+import {ApiService} from './api.service';
 
 @Component({
   selector: 'app-api-view',
-  templateUrl: 'ApiView.html'
+  templateUrl: 'api-view.component.html'
 })
 export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit {
   endpoint: Plugin = new Plugin(

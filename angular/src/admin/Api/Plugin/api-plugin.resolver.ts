@@ -6,9 +6,9 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import {Api} from '../Api';
-import {ApiService} from '../ApiService';
+import {ApiService} from '../api.service';
 import {Plugin} from '../../Plugin/Plugin';
-import {PluginService} from '../../Plugin/PluginService';
+import {PluginService} from '../../Plugin/plugin.service';
 
 @Injectable()
 export class ApiPluginResolver implements Resolve<Plugin> {

@@ -3,16 +3,16 @@ import {
   Injector,
   OnInit
 } from '@angular/core';
-import { Params } from '@angular/router';
+import {Params} from '@angular/router';
 
-import { BaseListComponent } from '../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
-import { Group } from './Group';
-import { GroupUserService } from './GroupUserService';
+import {Group} from './Group';
+import {GroupUserService} from './group-user.service';
 
 @Component({
   selector: 'app-user-group-list',
-  templateUrl: 'GroupUserList.html'
+  templateUrl: 'group-user-list.component.html'
 })
 export class GroupUserListComponent extends BaseListComponent<Group> implements OnInit {
 
@@ -30,9 +30,9 @@ export class GroupUserListComponent extends BaseListComponent<Group> implements 
 
   ngOnInit() {
     this.columns = [
-      { prop: 'username', name: 'User', cellTemplate: this.idTemplate, sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
-      { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
+      {prop: 'username', name: 'User', cellTemplate: this.idTemplate, sortable: false},
+      {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false},
+      {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
     ];
     this.route.params
       .map(params => params['groupName'])

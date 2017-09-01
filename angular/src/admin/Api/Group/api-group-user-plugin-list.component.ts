@@ -8,11 +8,11 @@ import {Params} from '@angular/router';
 import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
 import {Group} from '../../Group/Group';
-import {ApiGroupUserService} from './ApiGroupUserService';
+import {ApiGroupUserService} from './api-group-user.service';
 
 @Component({
   selector: 'app-api-group-app-user-list',
-  templateUrl: 'ApiGroupUserList.html'
+  templateUrl: 'api-group-user-plugin-list.component.html'
 })
 export class ApiGroupUserPluginListComponent extends BaseListComponent<Group> implements OnInit {
   apiName: string;

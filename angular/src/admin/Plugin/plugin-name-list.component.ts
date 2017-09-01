@@ -9,11 +9,11 @@ import {
 import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
 import {Plugin} from './Plugin';
-import {PluginService} from './PluginService';
+import {PluginService} from './plugin.service';
 
 @Component({
   selector: 'app-plugin-name-list',
-  templateUrl: 'PluginNameList.html'
+  templateUrl: 'plugin-name-list.component.html'
 })
 export class PluginNameListComponent extends BaseListComponent<Plugin> implements OnInit {
   constructor(

@@ -4,15 +4,15 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseListComponent } from '../../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
-import { User } from '../User';
-import { Group } from '../../Group/Group';
-import { UserGroupService } from './UserGroupService';
+import {User} from '../User';
+import {Group} from '../../Group/Group';
+import {UserGroupService} from './user-group.service';
 
 @Component({
   selector: 'app-user-group-list',
-  templateUrl: 'UserGroupList.html'
+  templateUrl: 'user-group-list.component.html'
 })
 export class UserGroupListComponent extends BaseListComponent<Group> implements OnInit {
   user: User;
@@ -26,22 +26,22 @@ export class UserGroupListComponent extends BaseListComponent<Group> implements 
     super(injector, service, 'Users - Gateway Admin');
     this.paging = true;
     this.filterFields = [
-      { prop: 'group', name: 'Group' },
+      {prop: 'group', name: 'Group'},
     ];
     this.filterFieldName = 'group';
   }
 
   ngOnInit(): void {
     this.route.parent.data
-      .subscribe((data: { user: User }) => {
+      .subscribe((data: {user: User}) => {
         this.user = data.user;
         this.path = '/users/' + data.user.username + '/groups';
       }
       );
     this.columns = [
-      { prop: 'group', name: 'Group', sortable: false },
-      { prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false },
-      { prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false }
+      {prop: 'group', name: 'Group', sortable: false},
+      {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false},
+      {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
     ];
     super.ngOnInit();
   }

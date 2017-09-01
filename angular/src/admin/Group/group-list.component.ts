@@ -4,14 +4,14 @@ import {
   OnInit
 } from '@angular/core';
 
-import { BaseListComponent } from '../../shared/Component/BaseListComponent';
+import {BaseListComponent} from '../../shared/Component/BaseListComponent';
 
-import { Group } from '../Group/Group';
-import { GroupService } from './GroupService';
+import {Group} from '../Group/Group';
+import {GroupService} from './group.service';
 
 @Component({
   selector: 'app-group-list',
-  templateUrl: 'GroupList.html'
+  templateUrl: 'group-list.component.html'
 })
 export class GroupListComponent extends BaseListComponent<Group> implements OnInit {
 
@@ -26,7 +26,7 @@ export class GroupListComponent extends BaseListComponent<Group> implements OnIn
 
   ngOnInit(): void {
     this.columns = [
-      { prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true },
+      {prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true},
     ];
     super.ngOnInit();
   }
