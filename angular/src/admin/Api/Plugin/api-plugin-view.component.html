@@ -1,3 +1,12 @@
+<nav md-tab-nav-bar *ngIf="api">
+  <a md-tab-link [routerLink]="['../..']" >API: {{api.name}}</a>
+
+  <a md-tab-link [routerLink]="['..']" >Plugins</a>
+
+  <a md-tab-link [routerLink]="['.']" active="true">{{name}}</a>
+
+  <a md-tab-link [routerLink]="['users']" >Users</a>
+</nav>
 <md-card *ngIf="form">
   <md-card-content>
     <form [formGroup]="form" class="form-horizontal" role="form">

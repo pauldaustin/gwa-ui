@@ -3,7 +3,7 @@
     <md-select placeholder="Plugin Name" [(ngModel)]="pluginName" (ngModelChange)="refresh()">
       <md-option *ngFor="let name of pluginNames" [value]="name">{{name}}</md-option>
     </md-select>
-    <a [routerLink]="['/ui','apis', api.name, 'plugins', '_add_', {pluginName: pluginName}]" md-raised-button color="primary">Add Plugin</a>
+    <a [routerLink]="['/ui','apis', api.name, 'plugins', pluginName]" md-raised-button color="primary">Add Plugin</a>
     <span style="flex: 1 1 auto"></span>
     <md-progress-spinner
       *ngIf="refreshingCount"

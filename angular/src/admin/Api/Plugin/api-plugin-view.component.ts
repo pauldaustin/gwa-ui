@@ -58,6 +58,7 @@ export class ApiPluginViewComponent extends BaseDetailComponent<Plugin> implemen
   }
 
   setPluginName(name: string) {
+    this.name = name;
     this.getPluginSchema(name).then((pluginSchema: any) => {
       const hasCoreFields = this.groups.length > 0;
       let form;

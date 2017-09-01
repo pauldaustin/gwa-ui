@@ -47,9 +47,7 @@ import {ApiGroupUserService} from './Api/Group/api-group-user.service';
 import {ApiGroupUserPluginListComponent} from './Api/Group/api-group-user-plugin-list.component';
 
 import {ApiPluginListComponent} from './Api/Plugin/api-plugin-list.component';
-import {ApiPluginViewTabsComponent} from './Api/Plugin/api-plugin-view-tabs.component';
 import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
-import {ApiPluginAddComponent} from './Api/Plugin/api-plugin-add.component';
 import {ApiPluginResolver} from './Api/Plugin/api-plugin.resolver';
 
 import {ApiPluginUserListComponent} from './Api/Plugin/User/api-plugin-user-list.component';
@@ -182,9 +180,7 @@ import {AppRoutingModule} from './app-routing.module';
     ApiGroupUserListComponent,
     ApiGroupUserPluginListComponent,
 
-    ApiPluginViewTabsComponent,
     ApiPluginViewComponent,
-    ApiPluginAddComponent,
 
     ApiPluginUserListComponent,
     ApiPluginUserViewComponent,
