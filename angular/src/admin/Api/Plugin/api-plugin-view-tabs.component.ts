@@ -17,6 +17,8 @@ import {Plugin} from '../../Plugin/Plugin';
   <a md-tab-link [routerLink]="['..']" >Plugins</a>
 
   <a md-tab-link [routerLink]="['.']" active="true">{{plugin.name}}</a>
+
+  <a md-tab-link [routerLink]="['users']" >Users</a>
 </nav>
 <router-outlet></router-outlet>
 `

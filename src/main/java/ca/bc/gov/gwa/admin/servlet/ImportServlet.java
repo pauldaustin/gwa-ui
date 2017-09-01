@@ -380,7 +380,7 @@ public class ImportServlet extends BaseAdminServlet implements GwaConstants {
       uiPath = pathPrefix + "/" + pluginName;
     } else {
       final String consumerLabel = consumerLabelById.get(consumerId);
-      uiPath = null; // TODO not supported yet
+      uiPath = pathPrefix + "/" + pluginName + "/users/" + consumerLabel;
       label += " : " + consumerLabel;
       type += " : user";
     }

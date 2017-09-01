@@ -10,7 +10,6 @@ import {BaseListComponent} from '../../../shared/Component/BaseListComponent';
 
 import {Api} from '../Api';
 import {PluginListComponent} from '../../Plugin/plugin-list.component';
-import {PluginService} from '../../Plugin/plugin.service';
 
 @Component({
   selector: 'app-api-plugin-list',
@@ -24,11 +23,10 @@ export class ApiPluginListComponent extends PluginListComponent {
   pluginName: string;
 
   constructor(
-    injector: Injector,
-    service: PluginService
+    injector: Injector
   ) {
-    super(injector, service);
-    service.getPluginNames().then(pluginNames => {
+    super(injector);
+    this.pluginService.getPluginNames().then(pluginNames => {
       this.pluginNames = pluginNames;
       if (pluginNames && pluginNames.length > 0) {
         this.pluginName = this.pluginNames[0];

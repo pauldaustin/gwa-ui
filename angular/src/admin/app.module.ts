@@ -52,6 +52,10 @@ import {ApiPluginViewComponent} from './Api/Plugin/api-plugin-view.component';
 import {ApiPluginAddComponent} from './Api/Plugin/api-plugin-add.component';
 import {ApiPluginResolver} from './Api/Plugin/api-plugin.resolver';
 
+import {ApiPluginUserListComponent} from './Api/Plugin/User/api-plugin-user-list.component';
+import {ApiPluginUserViewComponent} from './Api/Plugin/User/api-plugin-user-view.component';
+import {ApiPluginUserResolver} from './Api/Plugin/User/api-plugin-user.resolver';
+
 import {Config} from '../shared/Config';
 
 import {UserListComponent} from './User/user-list.component';
@@ -177,9 +181,14 @@ import {AppRoutingModule} from './app-routing.module';
     ApiGroupListComponent,
     ApiGroupUserListComponent,
     ApiGroupUserPluginListComponent,
+
     ApiPluginViewTabsComponent,
     ApiPluginViewComponent,
     ApiPluginAddComponent,
+
+    ApiPluginUserListComponent,
+    ApiPluginUserViewComponent,
+
     UserAddComponent,
     UserListComponent,
     UserDetailComponent,
@@ -214,6 +223,7 @@ import {AppRoutingModule} from './app-routing.module';
     ApiGroupUserService,
     ApiResolver,
     ApiPluginResolver,
+    ApiPluginUserResolver,
     ApiService,
     EndpointGroupUserService,
     EndpointResolver,

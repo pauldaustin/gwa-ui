@@ -1,5 +1,19 @@
-<div>
+<nav md-tab-nav-bar *ngIf="api">
+  <a md-tab-link [routerLink]="['../../../..']">API: {{api.name}}</a>
+
+  <a md-tab-link [routerLink]="['../../..']">Plugins</a>
+
+  <a md-tab-link [routerLink]="['../..']">{{pluginName}}</a>
+
+  <a md-tab-link [routerLink]="['..']" active="true">Users</a>
+</nav>
+<div *ngIf="api">
   <md-toolbar>
+    <md-input-container>
+      <input mdInput placeholder="Add Username" [(ngModel)]="addUsername" pattern="[a-z][a-z0-9_]*" />
+    </md-input-container>
+    <a [routerLink]="[addUsername]" md-raised-button color="primary" [disabled]="!addUsername">Add User</a>
+    
     <span style="flex: 1 1 auto"></span>
     <md-progress-spinner
       *ngIf="refreshingCount"
@@ -9,7 +23,8 @@
       <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
     </button>
   </md-toolbar>
-  <ngx-datatable 
+
+  <ngx-datatable
     class="material striped"
     [rows]="rows"
     [columns]="columns"
@@ -23,11 +38,7 @@
   ></ngx-datatable>
 </div>
 
-<ng-template #apiT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', value]">{{value}}</a></ng-template>
-
-<ng-template #userT let-row="row" let-value="value"><a [routerLink]="['/ui','users', value]">{{value}}</a></ng-template>
-
-<ng-template #idT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.api_name, 'plugins', value,'users', usernameParam]">{{value}}</a></ng-template>
+<ng-template #userT let-row="row" let-value="value"><a [routerLink]="['/ui','apis', row.api_name, 'plugins', pluginName, 'users', value]">{{value}}</a></ng-template>
 
 <ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
 

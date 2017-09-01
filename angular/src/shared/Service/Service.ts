@@ -25,7 +25,7 @@ export interface Service<T> {
 
   getObjectsFromJson(response): T[];
 
-  getObject(id: string): Promise<T>;
+  getObject(id: string, values?: any): Promise<T>;
 
   getPath(): string;
 

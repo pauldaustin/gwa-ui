@@ -23,6 +23,20 @@ public interface GwaConstants {
 
   static String API_OWNERS = "api_owners";
 
+  static String POST = "POST";
+
+  static String DELETE = "DELETE";
+
+  static String GET = "GET";
+
+  static String API = "api";
+
+  static List<String> PLUGIN_FIELD_NAMES = Arrays.asList("id", "name", "config", "enabled");
+
+  static long serialVersionUID = 1L;
+
+  static String PUT = "PUT";
+
   static String APIS = "apis";
 
   static String APIS_PATH = "/apis";
@@ -140,5 +154,9 @@ public interface GwaConstants {
   static String[] USERNAME_CUSTOM_ID = new String[] {
     USERNAME, CUSTOM_ID
   };
+
+  String API_NAME = "api_name";
+
+  String USER_USERNAME = "user_username";
 
 }

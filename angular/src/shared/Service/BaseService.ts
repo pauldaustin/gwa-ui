@@ -248,8 +248,8 @@ export abstract class BaseService<T> implements Service<T> {
     return value;
   }
 
-  getObject(id: string): Promise<T> {
-    return this.getObjectDo(this.path + '/' + id);
+  getObject(id: string, values?: any): Promise<T> {
+    return this.getObjectDo(this.path + '/' + id, values);
   }
 
   getObjectDo(path: string, values?: any): Promise<T> {

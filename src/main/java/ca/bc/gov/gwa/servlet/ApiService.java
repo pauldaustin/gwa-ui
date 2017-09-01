@@ -34,6 +34,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.bc.gov.gwa.admin.servlet.ImportServlet;
 import ca.bc.gov.gwa.admin.servlet.siteminder.SiteminderPrincipal;
 import ca.bc.gov.gwa.developerkey.servlet.github.GitHubPrincipal;
 import ca.bc.gov.gwa.http.HttpStatusException;
@@ -117,28 +118,8 @@ public class ApiService implements ServletContextListener, GwaConstants {
     }
   }
 
-  public void apiAdd(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
-    final Map<String, Object> requestData = Json.readJsonMap(httpRequest);
-    if (requestData == null) {
-      sendError(httpResponse, HttpServletResponse.SC_BAD_REQUEST);
-    } else {
-      handleRequest(httpResponse, httpClient -> {
-        final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
-        final Map<String, Object> apiResponse = httpClient.post(APIS_PATH, apiRequest);
-        final String apiId = (String)apiResponse.get(ID);
-        if (apiId != null) {
-          apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
-            ENDPOINT_DEFAULT_CONFIG, false);
-          apiAddPlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES, null, true);
-          apiAddPlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES, null, true);
-        }
-        Json.writeJson(httpResponse, apiResponse);
-      });
-    }
-  }
-
   @SuppressWarnings("unchecked")
-  private void apiAddPlugin(final JsonHttpClient client, final Map<String, Object> requestData,
+  public void apiAddPlugin(final JsonHttpClient client, final Map<String, Object> requestData,
     final String apiId, final String pluginName, final List<String> fieldNames,
     final Map<String, Object> defaultConfig, final boolean ignoreDisabled) {
     final Map<String, Object> pluginAdd = pluginGet(requestData, pluginName);
@@ -390,7 +371,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -409,7 +390,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -423,7 +404,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -580,7 +561,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -608,7 +589,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -869,6 +850,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
     final List<String> fieldNames) {
     final Map<String, Object> data = new LinkedHashMap<>();
     addData(data, requestData, fieldNames);
+    ImportServlet.removeEmptyValues(data);
     return data;
   }
 
@@ -891,6 +873,22 @@ public class ApiService implements ServletContextListener, GwaConstants {
       }
     }
     return 0;
+  }
+
+  public String getUserId(final String username) throws IOException {
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      final String usernameFilter = "/consumers/?username=" + username;
+      Map<String, Object> consumer = userGet(httpClient, usernameFilter);
+
+      if (consumer.isEmpty()) {
+        // Create if consumer doesn't exist
+        consumer = new HashMap<>();
+        consumer.put(USERNAME, username);
+        consumer = httpClient.put(CONSUMERS_PATH, consumer);
+      }
+      return (String)consumer.get(ID);
+    }
   }
 
   public String getVersion() {
@@ -973,6 +971,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
     if (requestData == null) {
       sendError(httpResponse, HttpServletResponse.SC_BAD_REQUEST);
     } else {
+      ImportServlet.removeEmptyValues(requestData);
       handleRequest(httpResponse, httpClient -> {
         final Map<String, Object> apiResponse = httpClient.post(path, requestData);
         Json.writeJson(httpResponse, apiResponse);
@@ -1091,7 +1090,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
     return kongResponse;
   }
 
-  private Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
+  public Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
     final JsonHttpClient httpClient, final String path) throws IOException {
     final List<Map<String, Object>> rows = new ArrayList<>();
 
@@ -1175,6 +1174,16 @@ public class ApiService implements ServletContextListener, GwaConstants {
     return response;
   }
 
+  public void pluginAddData(final JsonHttpClient httpClient, final Map<String, Object> plugin) {
+    final String apiId = (String)plugin.get(API_ID);
+    final String apiName = apiGetName(httpClient, apiId);
+    plugin.put(API_NAME, apiName);
+
+    final String consumerId = (String)plugin.get(CONSUMER_ID);
+    final String username = userGetUsername(httpClient, consumerId);
+    plugin.put(USER_USERNAME, username);
+  }
+
   @SuppressWarnings("unchecked")
   private Map<String, Object> pluginGet(final Map<String, Object> api, final String pluginName) {
     final Map<String, Map<String, Object>> plugins = (Map<String, Map<String, Object>>)api
@@ -1206,17 +1215,11 @@ public class ApiService implements ServletContextListener, GwaConstants {
     });
   }
 
-  private void pluginListAddData(final HttpServletResponse httpResponse,
+  public void pluginListAddData(final HttpServletResponse httpResponse,
     final JsonHttpClient httpClient, final Map<String, Object> kongResponse) {
     final List<Map<String, Object>> data = getList(kongResponse, DATA);
-    for (final Map<String, Object> acl : data) {
-      final String apiId = (String)acl.get(API_ID);
-      final String apiName = apiGetName(httpClient, apiId);
-      acl.put("api_name", apiName);
-
-      final String consumerId = (String)acl.get(CONSUMER_ID);
-      final String username = userGetUsername(httpClient, consumerId);
-      acl.put("consumer_username", username);
+    for (final Map<String, Object> plugin : data) {
+      pluginAddData(httpClient, plugin);
     }
     Json.writeJson(httpResponse, kongResponse);
   }

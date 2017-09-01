@@ -16,6 +16,7 @@ import {PluginService} from './plugin.service';
   templateUrl: 'plugin-list.component.html'
 })
 export class PluginListComponent extends BaseListComponent<Plugin> implements OnInit {
+  protected pluginService: PluginService = this.injector.get(PluginService);
 
   pluginName: string;
 
@@ -30,10 +31,9 @@ export class PluginListComponent extends BaseListComponent<Plugin> implements On
   showPlugin = true;
 
   constructor(
-    injector: Injector,
-    service: PluginService
+    injector: Injector
   ) {
-    super(injector, service, 'Plugin - Gateway Admin');
+    super(injector, injector.get(PluginService), 'Plugin - Gateway Admin');
   }
 
   initParams(): void {
@@ -47,11 +47,11 @@ export class PluginListComponent extends BaseListComponent<Plugin> implements On
 
   ngOnInit(): void {
     this.columns = [];
-    if (this.showApi) {
-      this.columns.push({prop: 'api_name', name: 'API', cellTemplate: this.apiTemplate, sortable: true});
-    }
     if (this.showPlugin) {
       this.columns.push({prop: 'name', name: 'Plugin', cellTemplate: this.idTemplate, sortable: true});
+    }
+    if (this.showApi) {
+      this.columns.push({prop: 'api_name', name: 'API', cellTemplate: this.apiTemplate, sortable: true});
     }
     if (this.showUser) {
       this.columns.push({prop: 'user_username', name: 'User', cellTemplate: this.userTemplate, sortable: true});

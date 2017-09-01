@@ -9,7 +9,7 @@ export class Plugin {
   api_id: string;
   api_name: string;
   api: Api;
-  user_id: string;
+  consumer_id: string;
   user_username: string;
   created_at: string;
 
@@ -26,7 +26,8 @@ export class Plugin {
       name: this.name,
       config: this.config,
       enabled: this.enabled,
-      created_at: this.created_at
+      created_at: this.created_at,
+      consumer_id: this.consumer_id
     };
   }
 
