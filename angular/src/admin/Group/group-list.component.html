@@ -29,3 +29,11 @@
 <ng-template #idT let-row="row" let-value="value">
   <a [routerLink]="['/ui','groups', value]">{{value}}</a>
 </ng-template>
+
+<ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
+
+<ng-template #actionsT let-row="row">
+  <button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
+    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+  </button>
+</ng-template>

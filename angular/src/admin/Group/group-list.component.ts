@@ -27,6 +27,8 @@ export class GroupListComponent extends BaseListComponent<Group> implements OnIn
   ngOnInit(): void {
     this.columns = [
       {prop: 'group', name: 'Group', cellTemplate: this.idTemplate, sortable: true},
+      {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: true},
+      {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: true},
     ];
     super.ngOnInit();
   }

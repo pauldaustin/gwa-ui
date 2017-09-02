@@ -10,36 +10,41 @@ import {StatusService} from './status.service';
 @Component({
   selector: 'app-status-detail',
   template: `
-<div class="row">
-  <div class="col-md-6">
     <h2>Server Status</h2>
     <ngx-datatable
-      [columns]="columns"
-      [rows]="serverRows"
       class="material striped"
-      columnMode="force"
+      [rows]="serverRows"
+      [columns]="serverColumns"
+      [columnMode]="'force'"
+      [headerHeight]="50"
+      [footerHeight]="0"
+      [rowHeight]="50">
     >
     </ngx-datatable>
-  </div>
 
-  <div class="col-md-6">
     <h2>Database Status</h2>
     <ngx-datatable
-      [columns]="columns"
-      [rows]="databaseRows"
       class="material striped"
-      columnMode="force"
+      [columns]="databaseColumns"
+      [rows]="databaseRows"
+      [columnMode]="'force'"
+      [headerHeight]="50"
+      [footerHeight]="0"
+      [rowHeight]="50">
     >
     </ngx-datatable>
-  </div>
-</div>
   `
 })
 export class StatusViewComponent extends BaseDetailComponent<any> implements OnInit {
 
-  columns = [
-    {name: 'Name', sortable: false},
-    {name: 'Value', sortable: false}
+  serverColumns = [
+    {prop: 'name', sortable: false},
+    {prop: 'text', sortable: false}
+  ];
+
+  databaseColumns = [
+    {prop: 'name', sortable: false},
+    {prop: 'text', sortable: false}
   ];
 
   constructor(
@@ -63,7 +68,7 @@ export class StatusViewComponent extends BaseDetailComponent<any> implements OnI
       for (const name of Object.keys(this.object.server)) {
         rows.push({
           name: name,
-          value: this.object.server[name]
+          text: this.object.server[name].toString()
         });
       }
     }
@@ -76,7 +81,7 @@ export class StatusViewComponent extends BaseDetailComponent<any> implements OnI
       for (const name of Object.keys(this.object.database)) {
         rows.push({
           name: name,
-          value: this.object.database[name]
+          text: this.object.database[name].toString()
         });
       }
     }

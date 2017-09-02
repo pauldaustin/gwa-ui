@@ -3,8 +3,8 @@ import {
   Injectable,
   Injector
 } from '@angular/core';
-import { BaseService } from '../../shared/Service/BaseService';
-import { Group } from './Group';
+import {BaseService} from '../../shared/Service/BaseService';
+import {Group} from './Group';
 
 @Injectable()
 export class GroupService extends BaseService<Group> {
@@ -12,10 +12,16 @@ export class GroupService extends BaseService<Group> {
     super(injector);
     this.path = '/groups';
     this.typeTitle = 'Group';
-    this.labelFieldName = 'config.name';
+    this.labelFieldName = 'group';
   }
 
   newObject(): Group {
     return new Group();
+  }
+
+  deleteObject(group: Group, path?: string): Promise<boolean> {
+    return this.deleteObjectDo(
+      `/groups/${group.group}`
+    );
   }
 }
