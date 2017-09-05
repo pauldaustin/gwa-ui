@@ -16,13 +16,17 @@ import {
   Router
 } from '@angular/router';
 
-import {AuthService} from '../Authentication/AuthService';
+
+import {Config} from '../Config';
+import {AuthService} from '../Authentication/auth.service';
 import {Service} from '../Service/Service';
 import {MessageDialogComponent} from './MessageDialogComponent';
 
 export class BaseComponent<T> implements OnInit {
 
   authService: AuthService = this.injector.get(AuthService);
+
+  protected config = this.injector.get(Config);
 
   dialog: MdDialog = this.injector.get(MdDialog);
 
@@ -58,6 +62,10 @@ export class BaseComponent<T> implements OnInit {
         message: message,
       }
     });
+  }
+
+  public getUrl(path: string): string {
+    return this.config.basePath + '/rest' + path;
   }
 
   hasRole(role: string): boolean {

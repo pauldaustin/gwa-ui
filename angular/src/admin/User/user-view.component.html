@@ -1,0 +1,22 @@
+<div *ngIf="object">
+  <form #userForm="ngForm" role="form">
+    <md-card>
+      <md-card-content>
+        <md-input-container class="full-width">
+          <input mdInput placeholder="Username" name="username" [(ngModel)]="object.username" required="true" />
+        </md-input-container>
+        <md-input-container *ngIf="object.custom_id" class="full-width">
+          <input mdInput placeholder="Custom Id" name="custom_id" [(ngModel)]="object.custom_id" disabled />
+        </md-input-container>
+        <md-input-container *ngIf="object.created_at" class="full-width">
+          <input mdInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
+        </md-input-container>
+      </md-card-content>
+      <md-card-actions>
+        <button (click)="routeList()" md-button>Close</button>
+        <button (click)="save(false)" md-raised-button color="accent" [disabled]="!userForm.form.valid" *ngIf="object.id">Save</button>
+        <button (click)="save(true)" md-raised-button color="primary" [disabled]="!userForm.form.valid">Save &amp; Close</button>
+      </md-card-actions>
+    </md-card>
+  </form>
+</div>

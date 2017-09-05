@@ -14,7 +14,7 @@ import {
 <h1 md-dialog-title>{{title}}</h1>
 <div md-dialog-content>{{message}}</div>
 <div md-dialog-actions>
-  <button md-raised-button md-dialog-close color="primary">Close</button>
+  <button md-raised-button (click)="dialogRef.close()" color="primary">Close</button>
 </div>
   `,
 })

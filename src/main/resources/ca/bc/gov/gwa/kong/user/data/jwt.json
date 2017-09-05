@@ -1,0 +1,46 @@
+{
+  "primaryKey": "key",
+	"fields": {
+		"key": {
+			"name": "key",
+			"title": "Key"
+		},
+		"algorithm": {
+			"name": "algorithm",
+			"title": "Algorithm",
+			"values": [
+				"HS256",
+				"RS256",
+				"ES256"
+			],
+			"defaultValue": "HS256"
+		},
+		"rsa_public_key": {
+			"name": "rsa_public_key",
+			"title": "RSA Public Key"
+		},
+		"secret": {
+			"name": "secret",
+			"title": "Secret"
+		}
+	},
+	"layout": [
+		{
+			"name": "core",
+			"fields": [
+				[
+					"key"
+				],
+				[
+					"algorithm"
+				],
+				[
+					"rsa_public_key"
+				],
+				[
+					"secret"
+				]
+			]
+		}
+	]
+}

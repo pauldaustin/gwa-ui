@@ -1,0 +1,77 @@
+<div *ngIf="object">
+  <form #endpointForm="ngForm" class="form-horizontal" role="form">
+    <md-card>
+      <md-card-content>
+        <div class="flexRowToColumn">
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Name" name="name" [(ngModel)]="object.name" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
+          </md-input-container>
+          <md-input-container class="flexField" *ngIf="object.created_at">
+            <input mdInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
+          </md-input-container>
+          <md-input-container class="flexField" *ngIf="endpoint.config['api_owners'].length > 0">
+            <input *ngFor="let owner of endpoint.config['api_owners']" mdInput placeholder="Owners" value="{{owner}}" disabled />
+          </md-input-container>
+        </div>
+
+        <div class="flexRowToColumn">
+          <md-input-container class="flexField" *ngIf="object.hosts.length > 0">
+            <input *ngFor="let host of object.hosts" mdInput placeholder="Hosts" value="{{host}}" disabled />
+          </md-input-container>
+          <md-input-container class="flexField" *ngIf="object.uris.length > 0">
+            <input *ngFor="let path of object.uris" mdInput placeholder="Paths" value="{{path}}" disabled />
+          </md-input-container>
+        </div>
+
+        <md-divider class="mat-divider"></md-divider>
+
+        <div class="flexRowToColumn">
+          <md-slide-toggle class="flexField" name="keyAuth_enabled" [checked]="keyAuth && keyAuth.enabled" color="primary">Allow Developer Keys</md-slide-toggle>
+        </div>
+
+        <md-divider class="mat-divider"></md-divider>
+
+        <div class="flexRowToColumn">
+          <md-slide-toggle class="flexField" name="acl_enabled" [checked]="acl && acl.enabled" color="primary" disabled="true">Groups Enabled</md-slide-toggle>
+          <ng-template [ngIf]="acl">
+            <label class="flexField">Group Names:</label>
+            <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config['whitelist']" [ngForTrackBy]="trackByIndex">
+              <md-input-container class="flexField">
+                <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true" disabled="true" pattern="[a-z][a-z0-9_]*" />
+              </md-input-container>
+            </ng-template>
+          </ng-template>
+        </div>
+
+        <md-divider class="mat-divider"></md-divider>
+        
+        <div *ngIf="rateLimit" class="flexRowToColumn">
+          <label class="flexField">Rate Limits:</label>
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Second" name="rateLimit_second" type="number" min="0" [(ngModel)]="rateLimit.config['second']" />
+          </md-input-container>
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Minute" name="rateLimit_minute" type="number" min="0" required="true" [(ngModel)]="rateLimit.config['minute']" />
+          </md-input-container>
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Hour" name="rateLimit_hour" type="number" min="0" [(ngModel)]="rateLimit.config['hour']" />
+          </md-input-container>
+          <md-input-container class="flexField"> 
+            <input mdInput placeholder="Day" name="rateLimit_day" type="number" min="0" [(ngModel)]="rateLimit.config['day']" />
+          </md-input-container>
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Month" name="rateLimit_month" type="number" min="0" [(ngModel)]="rateLimit.config['month']" />
+          </md-input-container>
+          <md-input-container class="flexField">
+            <input mdInput placeholder="Year" name="rateLimit_year" type="number" min="0" [(ngModel)]="rateLimit.config['year']" />
+          </md-input-container>
+        </div>
+      </md-card-content>
+        <md-card-actions>
+          <button (click)="routeList()" md-button>Close</button>
+          <button (click)="save(false)" md-raised-button color="accent" [disabled]="!endpointForm.form.valid" *ngIf="object.id">Save</button>
+          <button (click)="save(true)" md-raised-button color="primary" [disabled]="!endpointForm.form.valid">Save &amp; Close</button>
+      </md-card-actions>
+    </md-card>
+  </form>
+</div>

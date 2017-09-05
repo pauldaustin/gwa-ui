@@ -248,11 +248,11 @@ export abstract class BaseService<T> implements Service<T> {
     return value;
   }
 
-  getObject(id: string): Promise<T> {
-    return this.getObjectDo(this.path + '/' + id);
+  getObject(id: string, values?: any): Promise<T> {
+    return this.getObjectDo(this.path + '/' + id, values);
   }
 
-  getObjectDo(path: string): Promise<T> {
+  getObjectDo(path: string, values?: any): Promise<T> {
     const url = this.getUrl(path);
     return this.httpRequest(
       http => {
@@ -264,7 +264,13 @@ export abstract class BaseService<T> implements Service<T> {
           this.showError(json.error);
           return null;
         } else {
-          return this.toObject(json);
+          const object = this.toObject(json);
+          if (values) {
+            for (const key of Object.keys(values)) {
+              object[key] = values[key];
+            }
+          }
+          return object;
         }
       }
     );
@@ -292,22 +298,26 @@ export abstract class BaseService<T> implements Service<T> {
         );
       },
       response => {
-        const objects: T[] = [];
-        const json = response.json();
-        if (json.error) {
-          this.showError(json.error);
-        } else {
-          const data = json.data;
-          if (data) {
-            data.forEach((recordJson: any) => {
-              const record = this.toObject(recordJson);
-              objects.push(record);
-            });
-          }
-        }
-        return objects;
+        return this.getObjectsFromJson(response);
       }
     );
+  }
+
+  public getObjectsFromJson(response): T[] {
+    const objects: T[] = [];
+    const json = response.json();
+    if (json.error) {
+      this.showError(json.error);
+    } else {
+      const data = json.data;
+      if (data) {
+        data.forEach((recordJson: any) => {
+          const record = this.toObject(recordJson);
+          objects.push(record);
+        });
+      }
+    }
+    return objects;
   }
 
   getPath(): string {

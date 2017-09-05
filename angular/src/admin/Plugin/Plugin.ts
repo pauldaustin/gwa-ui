@@ -1,18 +1,19 @@
-import { Api } from '../Api/Api';
+import {Api} from '../Api/Api';
 
 export class Plugin {
   id: string;
   name: string;
-  config: { [key: string]: any } = {};
+  label: string;
+  config: {[key: string]: any} = {};
   enabled = true;
   api_id: string;
   api_name: string;
   api: Api;
-  user_id: string;
+  consumer_id: string;
   user_username: string;
   created_at: string;
 
-  constructor(name?: string, config: { [key: string]: any } = {}, enabled = true) {
+  constructor(name?: string, config: {[key: string]: any} = {}, enabled = true) {
     this.name = name;
     this.config = config;
     this.enabled = enabled;
@@ -25,7 +26,8 @@ export class Plugin {
       name: this.name,
       config: this.config,
       enabled: this.enabled,
-      created_at: this.created_at
+      created_at: this.created_at,
+      consumer_id: this.consumer_id
     };
   }
 

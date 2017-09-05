@@ -13,7 +13,7 @@ import {
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
-import {AuthService} from '../Authentication/AuthService';
+import {AuthService} from '../Authentication/auth.service';
 import {Config} from '../Config';
 import {MenuItem} from './MenuItem';
 

@@ -1,0 +1,27 @@
+{
+  "primaryKey": "username",
+	"fields": {
+		"username": {
+      "name": "username",
+			"title": "Username",
+      "required": true
+		},
+		"secret": {
+      "name": "secret",
+			"title": "Secret"
+		}
+	},
+	"layout": [
+		{
+			"name": "core",
+			"fields": [
+				[
+					"username"
+				],
+				[
+					"secret"
+				]
+			]
+		}
+	]
+}

@@ -25,7 +25,7 @@ public abstract class AbstractFilter implements Filter {
   protected Set<String> getGroups(final HttpServletResponse httpResponse, final String userId,
     final String username) {
     try {
-      return this.apiService.consumerGroups(userId, username);
+      return this.apiService.userGroups(userId, username);
     } catch (final HttpHostConnectException e) {
       LoggerFactory.getLogger(getClass()).error("Unable to connect to KONG", e);
       sendError(httpResponse, HttpServletResponse.SC_SERVICE_UNAVAILABLE);

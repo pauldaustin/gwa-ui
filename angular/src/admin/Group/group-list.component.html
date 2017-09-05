@@ -1,0 +1,39 @@
+<div>
+  <md-toolbar>
+    <md-input-container>
+      <input mdInput placeholder="Add Group Name" [(ngModel)]="addGroupName" pattern="[a-z][a-z0-9_]*" />
+    </md-input-container>
+    <a [routerLink]="['/ui','groups', addGroupName]" md-raised-button color="primary" [disabled]="!addGroupName">Add Group</a>
+    <span style="flex: 1 1 auto"></span>
+    <md-progress-spinner
+      *ngIf="refreshingCount"
+      mode="indeterminate"
+    ></md-progress-spinner>
+    <button (click)="refresh()" md-icon-button title="Refresh" >
+      <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
+    </button>
+  </md-toolbar>
+  <ngx-datatable
+    class="material striped"
+    [rows]="rows"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="50"
+    [count]="count"
+    [cssClasses]="cssClasses"
+    [scrollbarV]="true"
+  ></ngx-datatable>
+</div>
+<ng-template #idT let-row="row" let-value="value">
+  <a [routerLink]="['/ui','groups', value]">{{value}}</a>
+</ng-template>
+
+<ng-template #dateT let-value="value">{{value | date:'yyyy-MM-dd HH:mm:ss'}}</ng-template>
+
+<ng-template #actionsT let-row="row">
+  <button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
+    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+  </button>
+</ng-template>
