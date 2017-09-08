@@ -31,6 +31,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   dataSource = new ArrayDataSource<T>();
 
+  deleteRecordTitle: string;
+
   dialog: MdDialog = this.injector.get(MdDialog);
 
   refreshingCount = 0;
@@ -96,7 +98,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   deleteObject(object: T): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: {
-        typeTitle: this.service.getTypeTitle(),
+        typeTitle: this.deleteRecordTitle || this.service.getTypeTitle(),
         objectLabel: this.service.getLabel(object),
       }
     });

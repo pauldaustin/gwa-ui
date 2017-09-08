@@ -26,6 +26,7 @@ export class GroupUserListComponent extends BaseListComponent<Group> implements 
   ) {
     super(injector, service, 'Group Users - Gateway Admin');
     this.paging = true;
+    this.deleteRecordTitle = 'User from Group';
   }
 
   ngOnInit() {

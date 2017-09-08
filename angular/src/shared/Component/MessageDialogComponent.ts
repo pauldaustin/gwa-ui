@@ -12,7 +12,10 @@ import {
   selector: 'app-message-dialog',
   template: `
 <h1 md-dialog-title>{{title}}</h1>
-<div md-dialog-content>{{message}}</div>
+<div md-dialog-content>
+<p>{{message}}<p>
+<pre>{{body}}</pre>
+</div>
 <div md-dialog-actions>
   <button md-raised-button (click)="dialogRef.close()" color="primary">Close</button>
 </div>
@@ -22,6 +25,8 @@ export class MessageDialogComponent {
   title: string = this.data['title'];
 
   message: string = this.data['message'];
+
+  body: string = this.data['body'];
 
   constructor(
     public dialogRef: MdDialogRef<MessageDialogComponent>,

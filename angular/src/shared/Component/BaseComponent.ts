@@ -55,11 +55,12 @@ export class BaseComponent<T> implements OnInit {
     this.router.navigate(['..'], {relativeTo: this.route});
   }
 
-  protected showError(message: string) {
+  protected showError(message: string, body?: string) {
     const dialogRef = this.dialog.open(MessageDialogComponent, {
       data: {
         title: 'Error',
         message: message,
+        body: body,
       }
     });
   }
