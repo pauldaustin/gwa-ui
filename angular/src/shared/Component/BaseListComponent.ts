@@ -123,7 +123,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     if (this.paging) {
       this.refresh();
     } else {
-      this.rows = this.rows.filter(row => row !== object);
+      const rows = this.rows.filter(row => row !== object);
+      this.setRows(rows);
     }
   }
 
@@ -136,7 +137,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     this.fetch(offset, limit, (results: any) => {
       this.refreshingCount--;
       this.count = results.count;
-      this.rows = results.rows;
+      this.setRows(results.rows);
     });
   }
 
