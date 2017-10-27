@@ -45,6 +45,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   offset = 0;
 
+  private lastOffset = -1;
+
   limit = 100;
 
   filterFields: any[];
@@ -165,6 +167,9 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   }
 
   onPage(event: any) {
-    this.page(event.offset, event.limit);
+    if (this.lastOffset !== event.offset) {
+      this.lastOffset = event.offset;
+      this.page(event.offset, event.limit);
+    }
   }
 }
