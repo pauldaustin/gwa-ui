@@ -1231,23 +1231,27 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   private void readProperties() {
-    final File propertiesFile = new File("config/gwa.properties");
-    try {
-      if (propertiesFile.exists()) {
-        final Properties properties = new Properties();
-        try (
-          FileInputStream in = new FileInputStream(propertiesFile)) {
-          properties.load(in);
-          final Enumeration<?> propertyNames = properties.propertyNames();
-          while (propertyNames.hasMoreElements()) {
-            final String propertyName = (String)propertyNames.nextElement();
-            final String value = properties.getProperty(propertyName);
-            this.config.put(propertyName, value);
+    for (final String fileName : Arrays.asList("config/gwa.properties",
+      "../config/gwa.properties")) {
+      final File propertiesFile = new File(fileName);
+      try {
+        if (propertiesFile.exists()) {
+          final Properties properties = new Properties();
+          try (
+            FileInputStream in = new FileInputStream(propertiesFile)) {
+            properties.load(in);
+            final Enumeration<?> propertyNames = properties.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+              final String propertyName = (String)propertyNames.nextElement();
+              final String value = properties.getProperty(propertyName);
+              this.config.put(propertyName, value);
+            }
           }
+          return;
         }
+      } catch (final Exception e) {
+        LOG.error("Unable to read config from: " + propertiesFile, e);
       }
-    } catch (final Exception e) {
-      LOG.error("Unable to read config from: " + propertiesFile, e);
     }
   }
 
