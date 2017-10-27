@@ -138,8 +138,10 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     this.refreshingCount++;
     this.fetch(offset, limit, (results: any) => {
       this.refreshingCount--;
-      this.count = results.count;
-      this.setRows(results.rows);
+      if (results) {
+        this.count = results.count;
+        this.setRows(results.rows);
+      }
     });
   }
 
