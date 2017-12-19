@@ -61,7 +61,6 @@ export class UserDataService extends BaseService<Plugin> {
   }
 
   updateObject(plugin: Plugin): Promise<Plugin> {
-    console.log(plugin);
     return this.updateObjectDo(
       `/users/${plugin.user_username}/data/${plugin.name}/${plugin.id}`,
       plugin

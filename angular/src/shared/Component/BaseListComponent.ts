@@ -31,6 +31,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   dataSource = new ArrayDataSource<T>();
 
+  deleteRecordTitle: string;
+
   dialog: MdDialog = this.injector.get(MdDialog);
 
   refreshingCount = 0;
@@ -42,6 +44,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   hasRows = false;
 
   offset = 0;
+
+  private lastOffset = -1;
 
   limit = 100;
 
@@ -96,7 +100,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   deleteObject(object: T): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: {
-        typeTitle: this.service.getTypeTitle(),
+        typeTitle: this.deleteRecordTitle || this.service.getTypeTitle(),
         objectLabel: this.service.getLabel(object),
       }
     });
@@ -121,7 +125,8 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     if (this.paging) {
       this.refresh();
     } else {
-      this.rows = this.rows.filter(row => row !== object);
+      const rows = this.rows.filter(row => row !== object);
+      this.setRows(rows);
     }
   }
 
@@ -133,8 +138,10 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
     this.refreshingCount++;
     this.fetch(offset, limit, (results: any) => {
       this.refreshingCount--;
-      this.count = results.count;
-      this.rows = results.rows;
+      if (results) {
+        this.count = results.count;
+        this.setRows(results.rows);
+      }
     });
   }
 
@@ -162,6 +169,9 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
   }
 
   onPage(event: any) {
-    this.page(event.offset, event.limit);
+    if (this.lastOffset !== event.offset) {
+      this.lastOffset = event.offset;
+      this.page(event.offset, event.limit);
+    }
   }
 }

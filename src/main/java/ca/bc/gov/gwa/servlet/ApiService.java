@@ -371,7 +371,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -390,7 +390,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -404,7 +404,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -548,7 +548,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
     final HttpServletResponse httpResponse, final String apiName, final String groupName) {
     final boolean hasGroup = endpointHasGroup(apiName, groupName);
     if (hasGroup) {
-      final String groupPath = "/groups/" + groupName;
+      final String groupPath = GROUPS_PATH2 + groupName + USERS_PATH;
       groupUserList(httpRequest, httpResponse, groupPath);
     } else {
       sendError(httpResponse, HttpServletResponse.SC_NOT_FOUND);
@@ -561,7 +561,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -589,7 +589,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -1034,11 +1034,17 @@ public class ApiService implements ServletContextListener, GwaConstants {
       JsonHttpClient httpClient = newKongClient()) {
       return action.apply(httpClient);
     } catch (final HttpStatusException e) {
-      if (e.getCode() == 503) {
+      final int statusCode = e.getCode();
+      if (statusCode == 503) {
         writeJsonError(httpResponse, KONG_SERVER_NOT_AVAILABLE, e);
       } else {
-        LOG.error(e.toString() + "\n" + e.getBody(), e);
-        writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
+        final String body = e.getBody();
+        LOG.error(e.toString() + "\n" + body, e);
+        if (statusCode == 400) {
+          writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR, body);
+        } else {
+          writeJsonError(httpResponse, KONG_SERVER_RETURNED_AN_ERROR);
+        }
       }
     } catch (final HttpHostConnectException e) {
       LOG.debug("Kong not available", e);
@@ -1225,23 +1231,27 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   private void readProperties() {
-    final File propertiesFile = new File("config/gwa.properties");
-    try {
-      if (propertiesFile.exists()) {
-        final Properties properties = new Properties();
-        try (
-          FileInputStream in = new FileInputStream(propertiesFile)) {
-          properties.load(in);
-          final Enumeration<?> propertyNames = properties.propertyNames();
-          while (propertyNames.hasMoreElements()) {
-            final String propertyName = (String)propertyNames.nextElement();
-            final String value = properties.getProperty(propertyName);
-            this.config.put(propertyName, value);
+    for (final String fileName : Arrays.asList("config/gwa.properties",
+      "../config/gwa.properties")) {
+      final File propertiesFile = new File(fileName);
+      try {
+        if (propertiesFile.exists()) {
+          final Properties properties = new Properties();
+          try (
+            FileInputStream in = new FileInputStream(propertiesFile)) {
+            properties.load(in);
+            final Enumeration<?> propertyNames = properties.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+              final String propertyName = (String)propertyNames.nextElement();
+              final String value = properties.getProperty(propertyName);
+              this.config.put(propertyName, value);
+            }
           }
+          return;
         }
+      } catch (final Exception e) {
+        LOG.error("Unable to read config from: " + propertiesFile, e);
       }
-    } catch (final Exception e) {
-      LOG.error("Unable to read config from: " + propertiesFile, e);
     }
   }
 
@@ -1364,6 +1374,15 @@ public class ApiService implements ServletContextListener, GwaConstants {
     } catch (final IOException ioe) {
       LOG.debug("Unable to write error: " + message, ioe);
     }
+  }
+
+  public void writeJsonError(final HttpServletResponse httpResponse, final String message,
+    final String body) {
+    httpResponse.setContentType(APPLICATION_JSON);
+    final Map<String, Object> error = new LinkedHashMap<>();
+    error.put("error", message);
+    error.put("body", body);
+    Json.writeJson(httpResponse, error);
   }
 
   public void writeJsonError(final HttpServletResponse httpResponse, final String message,

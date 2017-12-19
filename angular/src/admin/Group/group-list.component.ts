@@ -32,4 +32,24 @@ export class GroupListComponent extends BaseListComponent<Group> implements OnIn
     ];
     super.ngOnInit();
   }
+
+  addGroup() {
+    let hasGroup = false;
+    for (const group of this.rows) {
+      if (group.group === this.addGroupName) {
+        hasGroup = true;
+      }
+    }
+    if (hasGroup) {
+      this.router.navigate([this.addGroupName], {relativeTo: this.route});
+    } else {
+      this.groupService.addObject({
+        group: this.addGroupName
+      }).then(group => {
+        if (group) {
+          this.router.navigate([group.group], {relativeTo: this.route});
+        }
+      });
+    }
+  }
 }

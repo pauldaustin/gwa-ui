@@ -134,7 +134,7 @@ export abstract class BaseService<T> implements Service<T> {
       response => {
         const json = response.json();
         if (json.error) {
-          this.showError(json.error);
+          this.showError(json.error, json.body);
           return null;
         } else {
           Object.assign(object, json);
@@ -157,11 +157,12 @@ export abstract class BaseService<T> implements Service<T> {
     }
   }
 
-  protected showError(message: string) {
+  protected showError(message: string, body?: string) {
     const dialogRef = this.dialog.open(MessageDialogComponent, {
       data: {
         title: 'Error',
         message: message,
+        body: body,
       }
     });
   }
@@ -186,7 +187,7 @@ export abstract class BaseService<T> implements Service<T> {
     const handler = httpResponse => {
       const json = httpResponse.json();
       if (json.error) {
-        this.showError(json.error);
+        this.showError(json.error, json.body);
         return false;
       } else {
         const deleted = json.deleted === true;
@@ -261,7 +262,7 @@ export abstract class BaseService<T> implements Service<T> {
       response => {
         const json = response.json();
         if (json.error) {
-          this.showError(json.error);
+          this.showError(json.error, json.body);
           return null;
         } else {
           const object = this.toObject(json);
@@ -307,7 +308,7 @@ export abstract class BaseService<T> implements Service<T> {
     const objects: T[] = [];
     const json = response.json();
     if (json.error) {
-      this.showError(json.error);
+      this.showError(json.error, json.body);
     } else {
       const data = json.data;
       if (data) {
@@ -361,7 +362,7 @@ export abstract class BaseService<T> implements Service<T> {
         let total = 0;
         const json = response.json();
         if (json.error) {
-          this.showError(json.error);
+          this.showError(json.error, json.body);
           return null;
         } else {
           const data = json.data;
@@ -413,7 +414,7 @@ export abstract class BaseService<T> implements Service<T> {
       response => {
         const json = response.json();
         if (json.error) {
-          this.showError(json.error);
+          this.showError(json.error, json.body);
           return null;
         } else {
           Object.assign(object, json);

@@ -27,12 +27,13 @@ export class ApiGroupUserListComponent extends BaseListComponent<Group> implemen
   ) {
     super(injector, service, 'API Group Users - Gateway Admin');
     this.paging = true;
+    this.deleteRecordTitle = 'User from Group';
   }
 
 
   ngOnInit() {
     this.columns = [
-      {prop: 'username', name: 'User', sortable: false},
+      {prop: 'username', name: 'User', cellTemplate: this.idTemplate, sortable: false},
       {prop: 'created_at', name: 'Created At', cellTemplate: this.dateTemplate, sortable: false},
       {prop: 'actions', name: 'Actions', cellTemplate: this.actionsTemplate, sortable: false}
     ];

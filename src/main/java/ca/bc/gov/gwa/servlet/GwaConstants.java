@@ -7,15 +7,19 @@ import java.util.Map;
 
 public interface GwaConstants {
 
-  public static final String OAUTH2 = "oauth2";
+  static final String OAUTH2 = "oauth2";
 
-  public static final String JWT = "jwt";
+  static final String JWT = "jwt";
 
-  public static final String HMAC_AUTH = "hmac-auth";
+  static final String HMAC_AUTH = "hmac-auth";
 
-  public static final String BASIC_AUTH = "basic-auth";
+  static final String BASIC_AUTH = "basic-auth";
 
   static String ACL = "acl";
+
+  static final String GROUPS_PATH = "/groups";
+
+  static final String GROUPS_PATH2 = "/groups/";
 
   static String ACLS_PATH = "/acls";
 

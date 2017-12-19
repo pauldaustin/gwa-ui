@@ -1,3 +1,8 @@
+body {
+  min-height: 100%;
+  margin: 0px;
+}
+
 .flexColumn {
   display:flex;
   flex-direction:column;
@@ -117,11 +122,6 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
 }
 .ngx-datatable .datatable-body-cell{
   user-select:initial!important;
-}
-
-body {
-  min-height: 100%;
-  margin: 0px;
 }
 
 .full-width {

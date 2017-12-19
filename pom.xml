@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.bc.gov</groupId>
   <artifactId>gwa</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Gateway Admin</name>
 
@@ -182,13 +182,10 @@
           <configuration>
             <type>standalone</type>
             <properties>
-              <cargo.servlet.port>8010</cargo.servlet.port>
-              <cargo.rmi.port>8011</cargo.rmi.port>
+              <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
+              <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
               <cargo.process.spawn>true</cargo.process.spawn>
-            <!--  -->
-              <cargo.start.jvmargs>
-                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8019
-              </cargo.start.jvmargs>
+              <cargo.start.jvmargs>${cargo.start.jvmargs}</cargo.start.jvmargs>
             </properties>
           </configuration>
           <deployables>
@@ -298,9 +295,26 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>local-jetty</id>
+      <properties>
+        <cargo.servlet.port>8010</cargo.servlet.port>
+        <cargo.rmi.port>8011</cargo.rmi.port>
+            <!--  -->
+        <cargo.start.jvmargs>
+          -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8019
+        </cargo.start.jvmargs>
+      </properties>
+    </profile>
+  </profiles>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <org.slf4j.version>1.7.21</org.slf4j.version>
     <skip.frontend>false</skip.frontend>
+    <cargo.servlet.port>9910</cargo.servlet.port>
+    <cargo.rmi.port>7010</cargo.rmi.port>
+    <cargo.start.jvmargs></cargo.start.jvmargs>
   </properties>
 </project>

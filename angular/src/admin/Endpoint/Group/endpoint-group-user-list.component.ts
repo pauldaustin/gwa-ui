@@ -27,6 +27,7 @@ export class EndpointGroupUserListComponent extends BaseListComponent<Group> imp
   ) {
     super(injector, service, 'Endpoint Group Users - Gateway Admin');
     this.paging = true;
+    this.deleteRecordTitle = 'User from Group';
   }
 
 

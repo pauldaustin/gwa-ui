@@ -150,7 +150,6 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
           return null;
         } else {
           this.authService.roles.push('gwa_github_developer');
-          this.addApiKey();
           return null;
         }
       }
