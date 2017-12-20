@@ -83,8 +83,8 @@
             </goals>
             <configuration>
               <workingDirectory>angular</workingDirectory>
-              <nodeVersion>v7.10.0</nodeVersion>
-              <npmVersion>4.5.0</npmVersion>
+              <nodeVersion>v9.3.0</nodeVersion>
+              <npmVersion>5.6.0</npmVersion>
               <arguments>update</arguments>
             </configuration>
           </execution>
