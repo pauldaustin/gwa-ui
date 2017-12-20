@@ -1,6 +1,6 @@
 {
   "name": "gwa-admin",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Gateway Admin",
   "scripts": {
     "ng": "ng",
@@ -38,7 +38,7 @@
     "@angular/language-service": "~4.3.6",
     "@types/jasmine": "^2.5.54",
     "@types/jasminewd2": "^2.0.3",
-    "@types/node": "^6.0.88",
+    "@types/node": "^6.0.95",
     "angular-ide": "^0.9.31",
     "codelyzer": "^3.1.2",
     "jasmine-core": "^2.8.0",
