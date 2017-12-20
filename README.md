@@ -2,9 +2,6 @@
 
 This project contains a web interface for managing the KONG Api Gateway.
 
-The GWA includes a  
-
-
 ## Installation
 
 ### Requirements
@@ -15,8 +12,6 @@ The GWA includes a
 4. J2EE Servlet Container 3.1
   * Jetty 9.4+
   * Tomcat 8.5
-5. npm 5.6.*
-6. @angular/cli
 
 ### BCGOV GWA Endpoint Kong Plugin
 

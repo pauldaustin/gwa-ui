@@ -371,7 +371,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -390,7 +390,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -404,7 +404,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+  
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -561,7 +561,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -589,7 +589,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-
+  
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -1231,8 +1231,9 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   private void readProperties() {
-    for (final String fileName : Arrays.asList("config/gwa.properties",
-      "../config/gwa.properties")) {
+    final String catalinaBase = System.getProperty("catalina.base");
+    for (final String dir : Arrays.asList(catalinaBase, ".", "..")) {
+      final String fileName = dir + "/config/gwa.properties";
       final File propertiesFile = new File(fileName);
       try {
         if (propertiesFile.exists()) {
