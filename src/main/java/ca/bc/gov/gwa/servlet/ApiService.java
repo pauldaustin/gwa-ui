@@ -118,6 +118,16 @@ public class ApiService implements ServletContextListener, GwaConstants {
     }
   }
 
+  public void addGitHubDeveloperGroup(final String username) throws IOException {
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      final Map<String, Object> aclRequest = Collections.singletonMap(GROUP,
+        GitHubPrincipal.DEVELOPER_ROLE);
+      final String aclPath = ApiService.CONSUMERS_PATH2 + username + ApiService.ACLS_PATH;
+      httpClient.post(aclPath, aclRequest);
+    }
+  }
+
   @SuppressWarnings("unchecked")
   public void apiAddPlugin(final JsonHttpClient client, final Map<String, Object> requestData,
     final String apiId, final String pluginName, final List<String> fieldNames,
@@ -350,7 +360,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
       this.kongAdminUsername = getConfig("gwaKongAdminUsername", this.kongAdminUsername);
       this.kongAdminPassword = getConfig("gwaKongAdminPassword", this.kongAdminPassword);
       this.gitHubOrganizationName = getConfig("gwaGitHubOrganization", "gwa-qa");
-      this.gitHubOrganizationRole = "github_" + this.gitHubOrganizationName;
+      this.gitHubOrganizationRole = "github_" + this.gitHubOrganizationName.toLowerCase();
       this.gitHubAccessToken = getConfig("gwaGitHubAccessToken");
       this.gitHubClientId = getConfig("gwaGitHubClientId");
       this.gitHubClientSecret = getConfig("gwaGitHubClientSecret");
@@ -371,7 +381,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -390,7 +400,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -404,7 +414,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-  
+
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -561,7 +571,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -589,7 +599,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    * @param apiName
    * @param groupName
    * @return
-  
+
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -915,11 +925,14 @@ public class ApiService implements ServletContextListener, GwaConstants {
     final Principal userPrincipal = request.getUserPrincipal();
     if (userPrincipal instanceof GitHubPrincipal) {
       final GitHubPrincipal gitHubPrincipal = (GitHubPrincipal)userPrincipal;
+      final String username = gitHubPrincipal.getLogin();
       try (
         JsonHttpClient client = new JsonHttpClient("https://api.github.com")) {
-        client.put("/orgs/" + this.gitHubOrganizationName + "/memberships/"
-          + gitHubPrincipal.getLogin() + "?access_token=" + this.gitHubAccessToken);
+        final String path = "/orgs/" + this.gitHubOrganizationName + "/memberships/" + username
+          + "?access_token=" + this.gitHubAccessToken;
+        client.put(path);
         gitHubPrincipal.addDeveloperRole();
+        addGitHubDeveloperGroup(username);
       }
     }
   }

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import ca.bc.gov.gwa.servlet.BasePrincipal;
 
 public class GitHubPrincipal extends BasePrincipal {
-  private static final String DEVELOPER_ROLE = "gwa_github_developer";
+  public static final String DEVELOPER_ROLE = "gwa_github_developer";
 
   private static final long serialVersionUID = 1L;
 

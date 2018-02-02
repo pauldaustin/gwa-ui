@@ -119,16 +119,19 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
           final String login = (String)userResponse.get("login");
           if (id != null && login != null) {
             final String userId = GITHUB + id;
-            final String userName = GITHUB + login.toLowerCase();
-            final Set<String> groups = getGroups(httpResponse, userId, userName);
+            final String username = GITHUB + login.toLowerCase();
+            final Set<String> groups = getGroups(httpResponse, userId, username);
             if (groups == Collections.<String> emptySet()) {
               return;
 
             } else {
               addGitHubGroups(client, accessToken, groups);
-              final GitHubPrincipal principal = new GitHubPrincipal(userId, login, userName,
+              final GitHubPrincipal principal = new GitHubPrincipal(userId, login, username,
                 groups);
               if (groups.contains(this.apiService.getGitHubOrganizationRole())) {
+                if (!groups.contains("gwa_github_developer")) {
+                  this.apiService.addGitHubDeveloperGroup(username);
+                }
                 principal.addDeveloperRole();
               }
               session.setAttribute(GIT_HUB_PRINCIPAL, principal);
