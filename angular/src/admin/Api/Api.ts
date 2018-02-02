@@ -1,4 +1,4 @@
-import { Plugin } from '../Plugin/Plugin';
+import {Plugin} from '../Plugin/Plugin';
 
 export interface HttpMethodState {
   name: string;
@@ -21,7 +21,7 @@ export class Api {
   upstream_url: string;
   preserve_host: string;
   name: string;
-  _hosts: string[] = [];
+  _hosts: string[] = [''];
   _uris: string[] = [];
   //  methods : string; getter function
   strip_uri = true;
@@ -34,7 +34,7 @@ export class Api {
 
 
   method_flags: Array<HttpMethodState> = [];
-  _pluginByName: { [name: string]: Plugin } = {};
+  _pluginByName: {[name: string]: Plugin} = {};
 
   static uri(uriTemplate: string, name: string): string {
     if (uriTemplate) {
@@ -72,7 +72,7 @@ export class Api {
       } else {
         enabled = method === 'GET';
       }
-      this.method_flags.push({ name: method, enabled: enabled });
+      this.method_flags.push({name: method, enabled: enabled});
     }
   }
 

@@ -7,20 +7,52 @@
             <input mdInput placeholder="Name" name="name" [(ngModel)]="object.name" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
           </md-input-container>
           <md-input-container class="flexField">
+            <input mdInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required="true" pattern="http(s)?://.+" />
+          </md-input-container>
+          <md-input-container class="flexField">
             <input mdInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
           </md-input-container>
         </div>
-
         <div class="flexRowToColumn">
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Hosts" name="hosts" [(ngModel)]="object.hosts" /> </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Paths" name="uris" type="text" [(ngModel)]="object.uris" pattern="/.+" /> </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required="true" pattern="http(s)?://.+" />
-          </md-input-container>
+          <div class="flexField labelWithButton">
+            <label>Hosts:</label>
+            <button (click)="addHost()" md-icon-button style="color: green">
+              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            </button>
+          </div>
+          <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.hosts" [ngForTrackBy]="trackByIndex">
+            <md-input-container class="flexField">
+              <input mdInput name="host_{{i}}" [(ngModel)]="object.hosts[i]" required="true" />
+              <button mdSuffix (click)="deleteHost(i)" md-icon-button style="color: red">
+                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+              </button>
+            </md-input-container>
+          </ng-template>
         </div>
+         <div class="flexRowToColumn">
+          <div class="flexField labelWithButton">
+            <label>Paths:</label>
+            <button (click)="addUri()" md-icon-button style="color: green">
+              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            </button>
+          </div>
+          <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.uris" [ngForTrackBy]="trackByIndex">
+            <md-input-container class="flexField">
+              <input mdInput name="uri_{{i}}" [(ngModel)]="object.uris[i]" required="true"  pattern="/.*" />
+              <button mdSuffix (click)="deleteUri(i)" md-icon-button style="color: red">
+                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+              </button>
+            </md-input-container>
+          </ng-template>
+        </div>
+        <div class="flexRowToColumn">
+          <label class="flexField">Methods:</label>
+          <md-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
+            (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</md-slide-toggle>
+        </div>
+     
         <md-divider class="mat-divider"></md-divider>
+
         <div *ngIf="endpoint" class="flexRowToColumn">
           <div class="flexField labelWithButton">
             <label>Owner Usernames:</label>
@@ -69,11 +101,6 @@
           </ng-template>
         </div>
         <md-divider class="mat-divider"></md-divider>
-        <div class="flexRowToColumn">
-          <label class="flexField">Methods:</label>
-          <md-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
-            (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</md-slide-toggle>
-        </div>
         <div class="flexRowToColumn">
           <md-slide-toggle class="flexField" name="preserve_host" [(ngModel)]="object.preserve_host" color="primary">Preserve Host</md-slide-toggle>
           <md-slide-toggle class="flexField" name="strip_uri" [(ngModel)]="object.strip_uri" color="primary">Strip URI</md-slide-toggle>

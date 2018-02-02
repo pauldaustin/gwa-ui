@@ -95,10 +95,18 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     this.endpoint.config.api_owners.push('');
   }
 
+  addHost() {
+    this.object.hosts.push('');
+  }
+
+  addUri() {
+    this.object.uris.push('');
+  }
+
   deleteApiOwner(index: number) {
     const api_owners = this.endpoint.config.api_owners;
     if (index < api_owners.length) {
-      api_owners.splice(index);
+      api_owners.splice(index, 1);
     }
   }
 
@@ -109,7 +117,22 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
   deleteGroupName(index: number) {
     const groupNames = this.acl.config.whitelist;
     if (index < groupNames.length) {
-      groupNames.splice(index);
+      groupNames.splice(index, 1);
+    }
+  }
+
+  deleteHost(index: number) {
+    const hosts = this.object.hosts;
+    if (index < hosts.length) {
+      hosts.splice(index, 1);
+      console.log(hosts);
+    }
+  }
+
+  deleteUri(index: number) {
+    const uris = this.object.uris;
+    if (index < uris.length) {
+      uris.splice(index, 1);
     }
   }
 
