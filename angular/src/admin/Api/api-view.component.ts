@@ -125,7 +125,6 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     const hosts = this.object.hosts;
     if (index < hosts.length) {
       hosts.splice(index, 1);
-      console.log(hosts);
     }
   }
 
