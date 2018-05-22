@@ -9,14 +9,14 @@ import {
 @Component({
   selector: 'app-user-data-view-tabs',
   template: `
-<nav md-tab-nav-bar>
-  <a md-tab-link [routerLink]="['../../..']" >User: {{usernameParam}}</a>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link [routerLink]="['../../..']" >User: {{usernameParam}}</a>
 
-  <a md-tab-link [routerLink]="['../..']" >Data</a>
+  <a mat-tab-link [routerLink]="['../..']" >Data</a>
 
-  <a md-tab-link [routerLink]="['..']">{{dataName}}</a>
+  <a mat-tab-link [routerLink]="['..']">{{dataName}}</a>
 
-  <a md-tab-link [routerLink]="['.']" active="true">{{id}}</a>
+  <a mat-tab-link [routerLink]="['.']" active="true">{{id}}</a>
 </nav>
 <app-user-data-view></app-user-data-view>
 `

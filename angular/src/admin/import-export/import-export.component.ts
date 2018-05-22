@@ -12,8 +12,8 @@ import {
   URLSearchParams
 } from '@angular/http';
 import {
-  MdDialog,
-  MdDialogRef
+  MatDialog,
+  MatDialogRef
 } from '@angular/material';
 
 import {BaseListComponent} from '../../shared/Component/BaseListComponent';
@@ -32,7 +32,7 @@ export class ImportExportComponent extends BaseListComponent<ImportExport> {
 
   @ViewChild('importTable') table: any;
 
-  dialog: MdDialog = this.injector.get(MdDialog);
+  dialog: MatDialog = this.injector.get(MatDialog);
 
   importFile: File;
 

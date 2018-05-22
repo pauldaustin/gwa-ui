@@ -4,9 +4,9 @@ import {
   AfterViewInit
 } from '@angular/core';
 import {
-  MdDialog,
-  MdDialogRef,
-  MD_DIALOG_DATA
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
 } from '@angular/material';
 
 import {Config} from '../Config';
@@ -14,14 +14,14 @@ import {Config} from '../Config';
 @Component({
   selector: 'app-login-dialog',
   template: `
-<h1 md-dialog-title>Login</h1>
-<div md-dialog-content>
+<h1 mat-dialog-title>Login</h1>
+<div mat-dialog-content>
   <p>You must be logged in to access this application. Click the Login button to open the login window.</p>
   <p><b>NOTE:</b> Web browsers may block automated pop-up windows.<br />Allow popups for this site in your
 web browser to open to allow the login popup.</p>
 </div>
-<div md-dialog-actions>
-  <button md-raised-button (click)="login()" color="primary">Login</button>
+<div mat-dialog-actions>
+  <button mat-raised-button (click)="login()" color="primary">Login</button>
 </div>
   `,
 })
@@ -30,8 +30,8 @@ export class LoginDialogComponent implements AfterViewInit {
 
   constructor(
     private config: Config,
-    public dialogRef: MdDialogRef<LoginDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<LoginDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
   }
 

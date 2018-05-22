@@ -1,10 +1,10 @@
 <input [accept]="accept" type="file" (change)="onNativeInputFileSelect($event)" #inputFile hidden />
 
-<md-input-container>
-  <input mdInput placeholder="File" name="file" [(ngModel)]="fileName" disabled="true" />
-</md-input-container>
+<mat-form-field>
+  <input matInput placeholder="File" name="file" [(ngModel)]="fileName" disabled="true" />
+</mat-form-field>
  
-<button type="button" md-raised-button (click)="selectFile()">
-  <md-icon fontSet="fa" fontIcon="fa-{{iconName}}"></md-icon>
+<button type="button" mat-raised-button (click)="selectFile()">
+  <mat-icon fontSet="fa" fontIcon="fa-{{iconName}}"></mat-icon>
   {{label}}
 </button>

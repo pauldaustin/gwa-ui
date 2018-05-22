@@ -5,8 +5,8 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  MdDialog,
-  MdDialogRef
+  MatDialog,
+  MatDialogRef
 } from '@angular/material';
 
 import {BaseComponent} from './BaseComponent';
@@ -33,7 +33,7 @@ export class BaseListComponent<T> extends BaseComponent<T> implements OnInit {
 
   deleteRecordTitle: string;
 
-  dialog: MdDialog = this.injector.get(MdDialog);
+  dialog: MatDialog = this.injector.get(MatDialog);
 
   refreshingCount = 0;
 

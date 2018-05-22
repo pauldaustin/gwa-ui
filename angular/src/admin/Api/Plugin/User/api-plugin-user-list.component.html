@@ -1,28 +1,28 @@
-<nav md-tab-nav-bar *ngIf="api">
-  <a md-tab-link [routerLink]="['../../../..']">API: {{api.name}}</a>
+<nav mat-tab-nav-bar *ngIf="api">
+  <a mat-tab-link [routerLink]="['../../../..']">API: {{api.name}}</a>
 
-  <a md-tab-link [routerLink]="['../../..']">Plugins</a>
+  <a mat-tab-link [routerLink]="['../../..']">Plugins</a>
 
-  <a md-tab-link [routerLink]="['../..']">{{pluginName}}</a>
+  <a mat-tab-link [routerLink]="['../..']">{{pluginName}}</a>
 
-  <a md-tab-link [routerLink]="['..']" active="true">Users</a>
+  <a mat-tab-link [routerLink]="['..']" active="true">Users</a>
 </nav>
 <div *ngIf="api">
-  <md-toolbar>
-    <md-input-container>
-      <input mdInput placeholder="Add Username" [(ngModel)]="addUsername" pattern="[a-z][a-z0-9_]*" />
-    </md-input-container>
-    <a [routerLink]="[addUsername]" md-raised-button color="primary" [disabled]="!addUsername">Add User</a>
+  <mat-toolbar>
+    <mat-form-field>
+      <input matInput placeholder="Add Username" [(ngModel)]="addUsername" pattern="[a-z][a-z0-9_]*" />
+    </mat-form-field>
+    <a [routerLink]="[addUsername]" mat-raised-button color="primary" [disabled]="!addUsername">Add User</a>
     
     <span style="flex: 1 1 auto"></span>
-    <md-progress-spinner
+    <mat-progress-spinner
       *ngIf="refreshingCount"
       mode="indeterminate"
-    ></md-progress-spinner>
-    <button (click)="refresh()" md-icon-button title="Refresh" >
-      <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
+    ></mat-progress-spinner>
+    <button (click)="refresh()" mat-icon-button title="Refresh" >
+      <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
     </button>
-  </md-toolbar>
+  </mat-toolbar>
 
   <ngx-datatable
     class="material striped"
@@ -50,7 +50,7 @@
 </ng-template>
 
 <ng-template #actionsT let-row="row">
-  <button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
-    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+  <button (click)="deleteObject(row)" mat-icon-button style="color: red" title="Delete">
+    <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
   </button>
 </ng-template>

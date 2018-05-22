@@ -8,19 +8,19 @@ import {
 import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
 import {
-  MdButtonModule,
-  MdCardModule,
-  MdChipsModule,
-  MdDialogModule,
-  MdIconModule,
-  MdIconRegistry,
-  MdInputModule,
-  MdProgressSpinnerModule,
-  MdSelectModule,
-  MdSlideToggleModule,
-  MdTabsModule,
-  MdTableModule,
-  MdToolbarModule
+  MatButtonModule,
+  MatCardModule,
+  MatChipsModule,
+  MatDialogModule,
+  MatIconModule,
+  MatIconRegistry,
+  MatInputModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
+  MatSlideToggleModule,
+  MatTabsModule,
+  MatTableModule,
+  MatToolbarModule
 } from '@angular/material';
 
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
@@ -115,18 +115,18 @@ import {AppRoutingModule} from './app-routing.module';
 
     CdkTableModule,
 
-    MdButtonModule,
-    MdCardModule,
-    MdChipsModule,
-    MdDialogModule,
-    MdIconModule,
-    MdInputModule,
-    MdProgressSpinnerModule,
-    MdSelectModule,
-    MdSlideToggleModule,
-    MdTabsModule,
-    MdTableModule,
-    MdToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDialogModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatTabsModule,
+    MatTableModule,
+    MatToolbarModule,
 
     NgxDatatableModule,
     SharedModule.forRoot({
@@ -237,7 +237,7 @@ import {AppRoutingModule} from './app-routing.module';
   bootstrap: [BcGovTemplateComponent]
 })
 export class AppModule {
-  constructor(mdIconRegistry: MdIconRegistry) {
+  constructor(mdIconRegistry: MatIconRegistry) {
     mdIconRegistry.registerFontClassAlias('fa', 'fa');
   }
 }

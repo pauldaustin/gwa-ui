@@ -144,7 +144,7 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   border-top-width: 1px;
   margin: 10px -24px 10px -24px;
 }
-.mat-toolbar .mat-input-container,
+.mat-toolbar .mat-form-field,
 .mat-toolbar .mat-select {
   font-size: 14px;
 }

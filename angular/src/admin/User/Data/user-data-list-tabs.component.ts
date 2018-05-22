@@ -9,12 +9,12 @@ import {
 @Component({
   selector: 'app-user-data-list-tabs',
   template: `
-<nav md-tab-nav-bar>
-  <a md-tab-link [routerLink]="['../..']" >User: {{usernameParam}}</a>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link [routerLink]="['../..']" >User: {{usernameParam}}</a>
 
-  <a md-tab-link [routerLink]="['..']" >Data</a>
+  <a mat-tab-link [routerLink]="['..']" >Data</a>
 
-  <a md-tab-link [routerLink]="['.']" active="true">{{dataName}}</a>
+  <a mat-tab-link [routerLink]="['.']" active="true">{{dataName}}</a>
 </nav>
 <app-user-data-list></app-user-data-list>
 `

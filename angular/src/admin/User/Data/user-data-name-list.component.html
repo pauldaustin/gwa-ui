@@ -1,14 +1,14 @@
 <div class="table-container">
-  <md-toolbar>
+  <mat-toolbar>
     <span style="flex: 1 1 auto"></span>
-    <md-progress-spinner
+    <mat-progress-spinner
       *ngIf="refreshingCount"
       mode="indeterminate"
-    ></md-progress-spinner>
-    <button (click)="refresh()" md-icon-button title="Refresh" >
-      <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
+    ></mat-progress-spinner>
+    <button (click)="refresh()" mat-icon-button title="Refresh" >
+      <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
     </button>
-  </md-toolbar>
+  </mat-toolbar>
   <ngx-datatable
     class="material striped"
     [rows]="rows"

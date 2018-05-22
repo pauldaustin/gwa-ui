@@ -1,29 +1,29 @@
-<h1 md-dialog-title></h1>
-<div md-dialog-content style="padding:3px 24px">
-  <md-card>
-     <md-card-title>{{row.index}}. Import: {{row.type}}</md-card-title>
-    <md-card-subtitle>{{row.item}}</md-card-subtitle>
-    <md-card-content>
-      <md-chip-list>
-        <md-chip *ngIf="row.result == 'Inserted'" color="primary" selected="true">{{row.result}}</md-chip>
-        <md-chip *ngIf="row.result == 'Matched'" selected="true">{{row.result}}</md-chip>
-        <md-chip *ngIf="row.result == 'Ignore - Changed Values'" color="accent" selected="true">{{row.result}}</md-chip>
-        <md-chip *ngIf="row.result == 'Ignore - Error'" color="warn" selected="true">{{row.result}}</md-chip>
-      </md-chip-list>   
-    </md-card-content>
-  </md-card>
+<h1 mat-dialog-title></h1>
+<div mat-dialog-content style="padding:3px 24px">
+  <mat-card>
+     <mat-card-title>{{row.index}}. Import: {{row.type}}</mat-card-title>
+    <mat-card-subtitle>{{row.item}}</mat-card-subtitle>
+    <mat-card-content>
+      <mat-chip-list>
+        <mat-chip *ngIf="row.result == 'Inserted'" color="primary" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Matched'" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Ignore - Changed Values'" color="accent" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Ignore - Error'" color="warn" selected="true">{{row.result}}</mat-chip>
+      </mat-chip-list>   
+    </mat-card-content>
+  </mat-card>
   
-  <md-card *ngIf="row.error">
-    <md-card-title style="color:red">ERROR: {{row.error}}</md-card-title>
-    <md-card-subtitle>{{row.request}}</md-card-subtitle>
-    <md-card-content>
+  <mat-card *ngIf="row.error">
+    <mat-card-title style="color:red">ERROR: {{row.error}}</mat-card-title>
+    <mat-card-subtitle>{{row.request}}</mat-card-subtitle>
+    <mat-card-content>
       <pre>{{row.body}}</pre>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card *ngIf="row.changedFieldNames.length">
-    <md-card-title>Changed Values</md-card-title>
-    <md-card-content>
+  <mat-card *ngIf="row.changedFieldNames.length">
+    <mat-card-title>Changed Values</mat-card-title>
+    <mat-card-content>
       <div class="table material">
         <table>
           <thead>
@@ -42,12 +42,12 @@
           </tbody>
         </table>
       </div>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card *ngIf="fieldNames.length">
-    <md-card-title>Import Values</md-card-title>
-    <md-card-content>
+  <mat-card *ngIf="fieldNames.length">
+    <mat-card-title>Import Values</mat-card-title>
+    <mat-card-content>
       <div class="table material">
         <table>
           <thead>
@@ -64,10 +64,10 @@
           </tbody>
         </table>
       </div>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 </div>
 
-<div md-dialog-actions>
-  <button md-raised-button md-dialog-close color="primary">Close</button>
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close color="primary">Close</button>
 </div>

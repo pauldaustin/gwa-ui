@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 
 @Component({
-  'moduleId': module.id,
   'selector': 'app-input-file',
   'templateUrl': './input-file-component.html'
 })

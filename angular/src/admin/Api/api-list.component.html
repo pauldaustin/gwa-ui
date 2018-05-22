@@ -1,22 +1,22 @@
 <div class="table-container">
-  <md-toolbar>
-    <a routerLink="/ui/apis/_add_" md-raised-button>Add API</a>
-    <md-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
-      <md-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</md-option>
-    </md-select>
+  <mat-toolbar>
+    <a routerLink="/ui/apis/_add_" mat-raised-button>Add API</a>
+    <mat-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
+      <mat-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</mat-option>
+    </mat-select>
     <span>=</span>
-    <md-input-container>
-      <input mdInput placeholder="Filter Value" [(ngModel)]="filterValue" (ngModelChange)="refresh()" />
-    </md-input-container>
+    <mat-form-field>
+      <input matInput placeholder="Filter Value" [(ngModel)]="filterValue" (ngModelChange)="refresh()" />
+    </mat-form-field>
     <span style="flex: 1 1 auto"></span>
-    <md-progress-spinner
+    <mat-progress-spinner
       *ngIf="refreshingCount"
       mode="indeterminate"
-    ></md-progress-spinner>
-    <button (click)="refresh()" md-icon-button title="Refresh" >
-      <md-icon fontSet="fa" fontIcon="fa-refresh"></md-icon>
+    ></mat-progress-spinner>
+    <button (click)="refresh()" mat-icon-button title="Refresh" >
+      <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
     </button>
-  </md-toolbar>
+  </mat-toolbar>
   <ngx-datatable
     class="material striped flex-height"
     [rows]="rows"
@@ -38,7 +38,7 @@
 <ng-template #arrayT let-value="value">{{stringValue(value)}}</ng-template>
 
 <ng-template #actionsT let-row="row">
-  <button (click)="deleteObject(row)" md-icon-button style="color: red" title="Delete">
-    <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+  <button (click)="deleteObject(row)" mat-icon-button style="color: red" title="Delete">
+    <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
   </button>
 </ng-template>

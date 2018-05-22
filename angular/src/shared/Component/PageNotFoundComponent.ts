@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
     <div class="error-box">
       <h1>404 Error</h1>
       <p>I'm sorry the page you requested could not be found.</p>
-      <button  (click)="back()" md-raised-button color="warn">
+      <button  (click)="back()" mat-raised-button color="warn">
         <span class="fa fa-chevron-left" aria-hidden="true"></span> Back
       </button>
     </div>

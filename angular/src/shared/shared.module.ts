@@ -5,9 +5,9 @@ import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 
 import {
-  MdButtonModule,
-  MdIconModule,
-  MdInputModule
+  MatButtonModule,
+  MatIconModule,
+  MatInputModule
 } from '@angular/material';
 
 import {Config} from './Config';
@@ -34,9 +34,9 @@ const COMMON_MODULES = [
     RouterModule,
     FormsModule,
 
-    MdButtonModule,
-    MdIconModule,
-    MdInputModule
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule
   ],
   exports: COMMON_MODULES,
   entryComponents: [

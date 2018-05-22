@@ -7,8 +7,8 @@ import {
 } from '@angular/common';
 import {Title} from '@angular/platform-browser';
 import {
-  MdDialog,
-  MdDialogRef
+  MatDialog,
+  MatDialogRef
 } from '@angular/material';
 import {DOCUMENT} from '@angular/platform-browser';
 import {
@@ -28,7 +28,7 @@ export class BaseComponent<T> implements OnInit {
 
   protected config = this.injector.get(Config);
 
-  dialog: MdDialog = this.injector.get(MdDialog);
+  dialog: MatDialog = this.injector.get(MatDialog);
 
   document: any = this.injector.get(DOCUMENT);
 

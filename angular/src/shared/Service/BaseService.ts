@@ -18,8 +18,8 @@ import {
 } from '@angular/http';
 
 import {
-  MdDialog,
-  MdDialogRef
+  MatDialog,
+  MatDialogRef
 } from '@angular/material';
 
 import {DOCUMENT} from '@angular/platform-browser';
@@ -35,7 +35,7 @@ import {MessageDialogComponent} from '../Component/MessageDialogComponent';
 @Injectable()
 export abstract class BaseService<T> implements Service<T> {
 
-  private static loginDialog: MdDialogRef<LoginDialogComponent>;
+  private static loginDialog: MatDialogRef<LoginDialogComponent>;
 
   protected config = this.injector.get(Config);
 
@@ -55,7 +55,7 @@ export abstract class BaseService<T> implements Service<T> {
 
   pathParamName = 'id';
 
-  dialog: MdDialog = this.injector.get(MdDialog);
+  dialog: MatDialog = this.injector.get(MatDialog);
 
   usePostForDelete = true;
 

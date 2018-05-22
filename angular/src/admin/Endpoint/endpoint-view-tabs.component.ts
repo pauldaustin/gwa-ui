@@ -9,15 +9,15 @@ import {Api} from '../Api/Api';
   selector: 'app-endpoint-detail',
   template: `
 <app-page-not-found *ngIf="!api"></app-page-not-found>
-<nav md-tab-nav-bar *ngIf="api">
-  <a md-tab-link
+<nav mat-tab-nav-bar *ngIf="api">
+  <a mat-tab-link
      [routerLink]="['.']"
      routerLinkActive
      #rla1="routerLinkActive"
      [active]="rla1.isActive"
      [routerLinkActiveOptions]="{exact:true}"
   >Endpoint: {{api.name}}</a>
-  <a md-tab-link
+  <a mat-tab-link
      [routerLink]="['groups']"
      routerLinkActive
      #rla2="routerLinkActive"

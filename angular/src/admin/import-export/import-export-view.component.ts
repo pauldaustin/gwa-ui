@@ -3,9 +3,9 @@ import {
   Inject
 } from '@angular/core';
 import {
-  MdDialog,
-  MdDialogRef,
-  MD_DIALOG_DATA
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
 } from '@angular/material';
 import {ImportExport} from './import-export';
 
@@ -19,8 +19,8 @@ export class ImportExportViewComponent {
   fieldNames: string = this.data['fieldNames'];
 
   constructor(
-    public dialogRef: MdDialogRef<ImportExportViewComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ImportExportViewComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
   }
 }

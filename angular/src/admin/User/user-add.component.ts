@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-user-add',
   template: `
-<md-tab-group>
-  <md-tab label="Add User">
+<mat-tab-group>
+  <mat-tab label="Add User">
     <app-user-view addPage="true"></app-user-view>
-  </md-tab>
-</md-tab-group>
+  </mat-tab>
+</mat-tab-group>
   `
 })
 export class UserAddComponent {

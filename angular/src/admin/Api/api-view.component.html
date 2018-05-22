@@ -1,132 +1,132 @@
 <div *ngIf="object">
   <form #apiForm="ngForm" role="form">
-    <md-card>
-      <md-card-content>
+    <mat-card>
+      <mat-card-content>
         <div class="flexRowToColumn">
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Name" name="name" [(ngModel)]="object.name" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
-          </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required="true" pattern="http(s)?://.+" />
-          </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
-          </md-input-container>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Name" name="name" [(ngModel)]="object.name" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
+          </mat-form-field>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required="true" pattern="http(s)?://.+" />
+          </mat-form-field>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
+          </mat-form-field>
         </div>
         <div class="flexRowToColumn">
           <div class="flexField labelWithButton">
             <label>Hosts:</label>
-            <button (click)="addHost()" md-icon-button style="color: green">
-              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            <button (click)="addHost()" mat-icon-button style="color: green">
+              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.hosts" [ngForTrackBy]="trackByIndex">
-            <md-input-container class="flexField">
-              <input mdInput name="host_{{i}}" [(ngModel)]="object.hosts[i]" required="true" />
-              <button mdSuffix (click)="deleteHost(i)" md-icon-button style="color: red">
-                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+            <mat-form-field class="flexField">
+              <input matInput name="host_{{i}}" [(ngModel)]="object.hosts[i]" required="true" />
+              <button mdSuffix (click)="deleteHost(i)" mat-icon-button style="color: red">
+                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
               </button>
-            </md-input-container>
+            </mat-form-field>
           </ng-template>
         </div>
          <div class="flexRowToColumn">
           <div class="flexField labelWithButton">
             <label>Paths:</label>
-            <button (click)="addUri()" md-icon-button style="color: green">
-              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            <button (click)="addUri()" mat-icon-button style="color: green">
+              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.uris" [ngForTrackBy]="trackByIndex">
-            <md-input-container class="flexField">
-              <input mdInput name="uri_{{i}}" [(ngModel)]="object.uris[i]" required="true"  pattern="/.*" />
-              <button mdSuffix (click)="deleteUri(i)" md-icon-button style="color: red">
-                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+            <mat-form-field class="flexField">
+              <input matInput name="uri_{{i}}" [(ngModel)]="object.uris[i]" required="true"  pattern="/.*" />
+              <button mdSuffix (click)="deleteUri(i)" mat-icon-button style="color: red">
+                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
               </button>
-            </md-input-container>
+            </mat-form-field>
           </ng-template>
         </div>
         <div class="flexRowToColumn">
           <label class="flexField">Methods:</label>
-          <md-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
-            (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</md-slide-toggle>
+          <mat-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
+            (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</mat-slide-toggle>
         </div>
      
-        <md-divider class="mat-divider"></md-divider>
+        <mat-divider class="mat-divider"></mat-divider>
 
         <div *ngIf="endpoint" class="flexRowToColumn">
           <div class="flexField labelWithButton">
             <label>Owner Usernames:</label>
-            <button (click)="addApiOwner()" md-icon-button style="color: green" title="Add">
-              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            <button (click)="addApiOwner()" mat-icon-button style="color: green" title="Add">
+              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-owner [ngForOf]="endpoint.config['api_owners']" [ngForTrackBy]="trackByIndex">
-            <md-input-container class="flexField">
-              <input mdInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config['api_owners'][i]" required="true" pattern="[a-z][a-z0-9_]*" />
-              <button mdSuffix (click)="deleteApiOwner(i)" md-icon-button style="color: red">
-                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+            <mat-form-field class="flexField">
+              <input matInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config['api_owners'][i]" required="true" pattern="[a-z][a-z0-9_]*" />
+              <button mdSuffix (click)="deleteApiOwner(i)" mat-icon-button style="color: red">
+                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
               </button>
-            </md-input-container>
+            </mat-form-field>
           </ng-template>
         </div>
-        <md-divider class="mat-divider"></md-divider>
+        <mat-divider class="mat-divider"></mat-divider>
         <div *ngIf="keyAuth" class="flexRowToColumn">
-          <md-slide-toggle class="flexField" name="keyAuth_enabled" [(ngModel)]="keyAuth.enabled" color="primary" >Allow Developer Keys</md-slide-toggle>
-          <md-slide-toggle class="flexField" name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config['hide_credentials']" color="primary" [disabled]="!keyAuth.enabled">Hide Credentials</md-slide-toggle>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Key Name" name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required="true" [disabled]="!keyAuth.enabled" />
-          </md-input-container>
-          <md-select class="flexField" placeholder="Developer Key Group" name="developer_key_group"
+          <mat-slide-toggle class="flexField" name="keyAuth_enabled" [(ngModel)]="keyAuth.enabled" color="primary" >Allow Developer Keys</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config['hide_credentials']" color="primary" [disabled]="!keyAuth.enabled">Hide Credentials</mat-slide-toggle>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Key Name" name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required="true" [disabled]="!keyAuth.enabled" />
+          </mat-form-field>
+          <mat-select class="flexField" placeholder="Developer Key Group" name="developer_key_group"
             [(ngModel)]="endpoint.config['developer_key_group']"
             [disabled]="!keyAuth.enabled || !acl.enabled || developerKeyGroupNames.length == 0">
-            <md-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</md-option>
-          </md-select>
+            <mat-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</mat-option>
+          </mat-select>
         </div>
-        <md-divider class="mat-divider"></md-divider>
+        <mat-divider class="mat-divider"></mat-divider>
         <div *ngIf="acl" class="flexRowToColumn">
-          <md-slide-toggle class="flexField" name="acl_enabled" [(ngModel)]="acl.enabled" color="primary">Groups Enabled</md-slide-toggle>
+          <mat-slide-toggle class="flexField" name="acl_enabled" [(ngModel)]="acl.enabled" color="primary">Groups Enabled</mat-slide-toggle>
           <div class="flexField labelWithButton">
             <label>Group Names:</label>
-            <button (click)="addGroupName()" md-icon-button style="color: green" [disabled]="!acl.enabled">
-              <md-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></md-icon>
+            <button (click)="addGroupName()" mat-icon-button style="color: green" [disabled]="!acl.enabled">
+              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
             </button>
           </div>
           <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config['whitelist']" [ngForTrackBy]="trackByIndex">
-            <md-input-container class="flexField">
-              <input mdInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true" [disabled]="!acl.enabled" pattern="[a-z][a-z0-9_]*" />
-              <button mdSuffix (click)="deleteGroupName(i)" md-icon-button style="color: red" [disabled]="!acl.enabled">
-                <md-icon fontSet="fa" fontIcon="fa-trash-o"></md-icon>
+            <mat-form-field class="flexField">
+              <input matInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true" [disabled]="!acl.enabled" pattern="[a-z][a-z0-9_]*" />
+              <button mdSuffix (click)="deleteGroupName(i)" mat-icon-button style="color: red" [disabled]="!acl.enabled">
+                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
               </button>
-            </md-input-container>
+            </mat-form-field>
           </ng-template>
         </div>
-        <md-divider class="mat-divider"></md-divider>
+        <mat-divider class="mat-divider"></mat-divider>
         <div class="flexRowToColumn">
-          <md-slide-toggle class="flexField" name="preserve_host" [(ngModel)]="object.preserve_host" color="primary">Preserve Host</md-slide-toggle>
-          <md-slide-toggle class="flexField" name="strip_uri" [(ngModel)]="object.strip_uri" color="primary">Strip URI</md-slide-toggle>
-          <md-slide-toggle class="flexField" name="https_only" [(ngModel)]="object.https_only" color="primary" style="display: inline-block">Https Only</md-slide-toggle>
-          <md-slide-toggle class="flexField" name="http_if_terminated" [(ngModel)]="object.http_if_terminated" color="primary" style="display: inline-block">Http if Terminated</md-slide-toggle>
+          <mat-slide-toggle class="flexField" name="preserve_host" [(ngModel)]="object.preserve_host" color="primary">Preserve Host</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="strip_uri" [(ngModel)]="object.strip_uri" color="primary">Strip URI</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="https_only" [(ngModel)]="object.https_only" color="primary" style="display: inline-block">Https Only</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="http_if_terminated" [(ngModel)]="object.http_if_terminated" color="primary" style="display: inline-block">Http if Terminated</mat-slide-toggle>
         </div>
         <div class="flexRowToColumn">
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Retries" name="retries" type="number" min="0" max="32767" [(ngModel)]="object.retries" />
-          </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Connect Timeout" name="upstream_connect_timeout" type="number" min="0" [(ngModel)]="object.upstream_connect_timeout" />
-          </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Send Timeout" name="upstream_send_timeout" type="number" min="0" [(ngModel)]="object.upstream_send_timeout" /> 
-          </md-input-container>
-          <md-input-container class="flexField">
-            <input mdInput placeholder="Read Timeout" name="upstream_read_timeout" type="number" min="0" [(ngModel)]="object.upstream_read_timeout" />
-          </md-input-container>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Retries" name="retries" type="number" min="0" max="32767" [(ngModel)]="object.retries" />
+          </mat-form-field>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Connect Timeout" name="upstream_connect_timeout" type="number" min="0" [(ngModel)]="object.upstream_connect_timeout" />
+          </mat-form-field>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Send Timeout" name="upstream_send_timeout" type="number" min="0" [(ngModel)]="object.upstream_send_timeout" /> 
+          </mat-form-field>
+          <mat-form-field class="flexField">
+            <input matInput placeholder="Read Timeout" name="upstream_read_timeout" type="number" min="0" [(ngModel)]="object.upstream_read_timeout" />
+          </mat-form-field>
         </div>
-      </md-card-content>
-      <md-card-actions>
-        <button (click)="routeList()" md-button>Close</button>
-        <button (click)="save(false)" md-raised-button color="accent" [disabled]="!apiForm.form.valid || !formValid()" *ngIf="object.id">Save</button>
-        <button (click)="save(true)" md-raised-button color="primary" [disabled]="!apiForm.form.valid || !formValid()">Save &amp; Close</button>
-      </md-card-actions>
-    </md-card>
+      </mat-card-content>
+      <mat-card-actions>
+        <button (click)="routeList()" mat-button>Close</button>
+        <button (click)="save(false)" mat-raised-button color="accent" [disabled]="!apiForm.form.valid || !formValid()" *ngIf="object.id">Save</button>
+        <button (click)="save(true)" mat-raised-button color="primary" [disabled]="!apiForm.form.valid || !formValid()">Save &amp; Close</button>
+      </mat-card-actions>
+    </mat-card>
   </form>
 </div>
