@@ -3,86 +3,6 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "admin": {
-      "root": "",
-      "sourceRoot": "src",
-      "projectType": "application",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/admin",
-            "index": "src/index.html",
-            "main": "src/admin/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets",
-              "src/favicon.ico"
-            ],
-            "styles": [
-              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "node_modules/@swimlane/ngx-datatable/release/index.css",
-              "node_modules/@swimlane/ngx-datatable/release/themes/material.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "src/styles.css"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "admin:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "admin:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "admin:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": []
-          }
-        }
-      }
-    },
-    "admin-e2e": {
-      "root": "",
-      "sourceRoot": "",
-      "projectType": "application"
-    },
     "gwa-devkey": {
       "root": "projects/gwa-devkey/",
       "sourceRoot": "projects/gwa-devkey/src",
@@ -103,10 +23,8 @@
             ],
             "styles": [
               "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "node_modules/@swimlane/ngx-datatable/release/index.css",
-              "node_modules/@swimlane/ngx-datatable/release/themes/material.css",
               "node_modules/font-awesome/css/font-awesome.css",
-               "src/styles.css"
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -198,9 +116,125 @@
           }
         }
       }
+    },
+    "gwa-admin": {
+      "root": "projects/gwa-admin/",
+      "sourceRoot": "projects/gwa-admin/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/gwa-admin",
+            "index": "projects/gwa-admin/src/index.html",
+            "main": "projects/gwa-admin/src/main.ts",
+            "polyfills": "projects/gwa-admin/src/polyfills.ts",
+            "tsConfig": "projects/gwa-admin/tsconfig.app.json",
+            "assets": [
+              "projects/gwa-admin/src/favicon.ico",
+              "projects/gwa-admin/src/assets"
+            ],
+            "styles": [
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "projects/gwa-admin/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/gwa-admin/src/environments/environment.ts",
+                  "with": "projects/gwa-admin/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "gwa-admin:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "gwa-admin:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "gwa-admin:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/gwa-admin/src/test.ts",
+            "polyfills": "projects/gwa-admin/src/polyfills.ts",
+            "tsConfig": "projects/gwa-admin/tsconfig.spec.json",
+            "karmaConfig": "projects/gwa-admin/karma.conf.js",
+            "styles": [
+              "projects/gwa-admin/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/gwa-admin/src/favicon.ico",
+              "projects/gwa-admin/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/gwa-admin/tsconfig.app.json",
+              "projects/gwa-admin/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "gwa-admin-e2e": {
+      "root": "projects/gwa-admin-e2e/",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/gwa-admin-e2e/protractor.conf.js",
+            "devServerTarget": "gwa-admin:serve"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "projects/gwa-admin-e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
-  "defaultProject": "admin",
+  "defaultProject": "gwa-admin",
   "cli": {
     "warnings": {
       "typescriptMismatch": false

@@ -3,7 +3,7 @@ import {
   Injector
 } from '@angular/core';
 
-import {BaseService} from '../../../../../src/shared/Service/BaseService';
+import {BaseService} from 'revolsys-angular-framework';
 
 import {Api} from './Api';
 

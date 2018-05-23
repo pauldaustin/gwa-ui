@@ -1,0 +1,30 @@
+<div class="table-container">
+  <mat-toolbar>
+    <span style="flex: 1 1 auto"></span>
+    <mat-progress-spinner
+      *ngIf="loading | async"
+      mode="indeterminate"
+    ></mat-progress-spinner>
+    <button (click)="refresh()" mat-icon-button title="Refresh" >
+      <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-table #pluginNameTable [dataSource]="dataSource" >
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>Data</mat-header-cell>
+      <mat-cell *matCellDef="let record"><a [routerLink]="[record.name]">{{record.name}}</a></mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnNames"></mat-row>
+  </mat-table>
+  <mat-paginator
+    #paginator
+    [length]="recordCount | async"
+    [pageSize]="pageSize"
+    [hidePageSize]="true"
+    [showFirstLastButtons]="true">
+  </mat-paginator>
+</div>

@@ -1,16 +1,14 @@
 import {
   Component,
-  Injector,
-  Input,
-  OnInit
+  Injector
 } from '@angular/core';
-import {BaseListComponent} from '../../../../../src/shared/Component/BaseListComponent';
+import {BaseListComponent} from 'revolsys-angular-framework';
 
 import {Api} from './Api';
 import {ApiService} from './ApiService';
 
 @Component({
-  selector: 'app-api-list',
+  selector: 'devkey-api-list',
   templateUrl: 'ApiList.html',
   styles: [`
 :host {
@@ -19,21 +17,13 @@ import {ApiService} from './ApiService';
 }
   `]
 })
-export class ApiListComponent extends BaseListComponent<Api> implements OnInit {
-
-  displayedColumns = ['name'];
+export class ApiListComponent extends BaseListComponent<Api> {
 
   constructor(
     injector: Injector,
     service: ApiService
   ) {
     super(injector, service, 'Developer API Keys');
-  }
-
-  ngOnInit(): void {
-    this.columns = [
-      {name: 'Name', sortable: true},
-    ];
-    super.ngOnInit();
+    this.columnNames = ['name'];
   }
 }
