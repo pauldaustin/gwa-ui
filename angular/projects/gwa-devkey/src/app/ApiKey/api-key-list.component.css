@@ -1,3 +1,6 @@
+:host {
+	margin: 5px;
+}
 .rowToColumn {
   display:flex;
   flex-direction:column;

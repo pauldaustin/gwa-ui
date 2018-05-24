@@ -1,11 +1,10 @@
-import {NgModule} from '@angular/core';
+import {NgModule, APP_INITIALIZER} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
-import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
 import {
   MatButtonModule,
@@ -15,13 +14,14 @@ import {
   MatIconModule,
   MatIconRegistry,
   MatInputModule,
-  MatProgressSpinnerModule,
   MatSelectModule,
   MatSlideToggleModule,
   MatTabsModule
 } from '@angular/material';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
@@ -53,6 +53,7 @@ import {
 } from 'revolsys-angular-framework';
 import {RevolsysAngularBcgovPageModule} from 'revolsys-angular-bcgov-page';
 
+import {AdminSecurityService} from './admim-security.service';
 import {AdminComponent} from './admin.component';
 import {UserListComponent} from './User/user-list.component';
 import {UserAddComponent} from './User/user-add.component';
@@ -109,10 +110,10 @@ import {AdminRoutingModule} from './admin-routing.module';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
 
     CdkTableModule,
 
+    MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -165,7 +166,10 @@ import {AdminRoutingModule} from './admin-routing.module';
       ]
     }
     ),
-    RevolsysAngularFrameworkModule.forRoot({title: 'GWA Admin', basePath: '/int'}),
+    RevolsysAngularFrameworkModule.forRoot({
+      title: 'GWA Admin',
+      basePath: '/int'
+    }),
     AdminRoutingModule,
   ],
   entryComponents: [
@@ -217,7 +221,16 @@ import {AdminRoutingModule} from './admin-routing.module';
   providers: [
     AuthService,
     RoleGuard,
-
+    AdminSecurityService,
+    {
+      // Initializes security service
+      provide: APP_INITIALIZER,
+      useFactory: (ds: AdminSecurityService) => function() {
+        return null;
+      },
+      deps: [AdminSecurityService],
+      multi: true
+    },
     ApiGroupUserService,
     ApiResolver,
     ApiPluginResolver,

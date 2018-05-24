@@ -12,7 +12,7 @@ import {GroupService} from './group.service';
   selector: 'admin-group-list',
   templateUrl: 'group-list.component.html'
 })
-export class GroupListComponent extends BaseListComponent<Group>{
+export class GroupListComponent extends BaseListComponent<Group> {
 
   addGroupName: string;
 

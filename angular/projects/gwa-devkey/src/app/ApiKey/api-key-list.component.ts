@@ -86,31 +86,32 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
 
   onDeleted(apiKey: ApiKey): void {
     super.onDeleted(apiKey);
-    if (this.rows.length === 0) {
+    const records = this.arrayDataSource.data;
+    if (records.length === 0) {
       this.hasApiKey = false;
       this.apiKey = null;
     } else {
       let setApiKey = true;
       if (this.apiKey) {
-        for (const row of this.rows) {
+        for (const row of records) {
           if (this.apiKey === row) {
             setApiKey = false;
           }
         }
       }
       if (setApiKey) {
-        this.apiKey = this.rows[0];
+        this.apiKey = records[0];
       }
     }
   }
 
-  protected setRows(rows: ApiKey[]) {
-    super.setRows(rows);
-    if (rows.length > 0) {
+  protected setRows(records: ApiKey[]) {
+    this.arrayDataSource.data = records;
+    if (records.length > 0) {
       this.hasApiKey = true;
       let setApiKey = true;
       if (this.apiKey) {
-        for (const row of rows) {
+        for (const row of records) {
           if (this.apiKey.key === row.key) {
             this.apiKey = row;
             setApiKey = false;
@@ -118,7 +119,7 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
         }
       }
       if (setApiKey) {
-        this.apiKey = this.rows[0];
+        this.apiKey = records[0];
       }
       this.acceptTerms = true;
     } else {

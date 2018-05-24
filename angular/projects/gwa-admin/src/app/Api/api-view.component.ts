@@ -4,7 +4,11 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-
+import {
+  FormControl
+} from '@angular/forms';
+import {MatChipInputEvent} from '@angular/material/chips';
+import {ENTER, COMMA} from '@angular/cdk/keycodes';
 import {BaseDetailComponent} from 'revolsys-angular-framework';
 
 import {Api} from './Api';
@@ -41,6 +45,8 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     },
     false
   );
+
+  separatorKeysCodes = [ENTER, COMMA];
 
   constructor(
     protected injector: Injector,
@@ -91,47 +97,54 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     super.setObject(api);
   }
 
-  addApiOwner() {
-    this.endpoint.config.api_owners.push('');
+  addApiOwner(event: MatChipInputEvent): void {
+    this.addValue(this.endpoint.config.api_owners, event);
   }
 
-  addHost() {
-    this.object.hosts.push('');
+  addGroupName(event: MatChipInputEvent): void {
+    this.addValue(this.acl.config.whitelist, event);
   }
 
-  addUri() {
-    this.object.uris.push('');
+  addHost(event: MatChipInputEvent): void {
+    this.addValue(this.object.hosts, event);
   }
 
-  deleteApiOwner(index: number) {
-    const api_owners = this.endpoint.config.api_owners;
-    if (index < api_owners.length) {
-      api_owners.splice(index, 1);
+  addUri(event: MatChipInputEvent): void {
+    this.addValue(this.object.uris, event);
+  }
+
+  private addValue(values: string[], event: MatChipInputEvent): void {
+    const value = event.value;
+    if (value) {
+      const uri = value.trim();
+      if (uri && values.indexOf(uri) === -1) {
+        values.push(uri);
+      }
     }
+    event.input.value = '';
   }
 
-  addGroupName() {
-    this.acl.config.whitelist.push('');
+
+  deleteApiOwner(apiOwner: string): void {
+    this.deleteValue(this.endpoint.config.api_owners, apiOwner);
   }
 
-  deleteGroupName(index: number) {
-    const groupNames = this.acl.config.whitelist;
-    if (index < groupNames.length) {
-      groupNames.splice(index, 1);
-    }
+  deleteGroupName(apiOwner: string): void {
+    this.deleteValue(this.acl.config.whitelist, apiOwner);
   }
 
-  deleteHost(index: number) {
-    const hosts = this.object.hosts;
-    if (index < hosts.length) {
-      hosts.splice(index, 1);
-    }
+  deleteHost(host: string): void {
+    this.deleteValue(this.object.hosts, host);
   }
 
-  deleteUri(index: number) {
-    const uris = this.object.uris;
-    if (index < uris.length) {
-      uris.splice(index, 1);
+  deleteUri(uri: string): void {
+    this.deleteValue(this.object.uris, uri);
+  }
+
+  private deleteValue(values: string[], value: string): void {
+    const index = values.indexOf(value);
+    if (index >= 0) {
+      values.splice(index, 1);
     }
   }
 

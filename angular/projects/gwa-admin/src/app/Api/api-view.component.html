@@ -4,103 +4,128 @@
       <mat-card-content>
         <div class="flexRowToColumn">
           <mat-form-field class="flexField">
-            <input matInput placeholder="Name" name="name" [(ngModel)]="object.name" required="true" pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
+            <input matInput placeholder="Name" name="name" [(ngModel)]="object.name" required pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
           </mat-form-field>
           <mat-form-field class="flexField">
-            <input matInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required="true" pattern="http(s)?://.+" />
+            <input matInput placeholder="Upstream URL" name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required pattern="http(s)?://.+" />
           </mat-form-field>
           <mat-form-field class="flexField">
             <input matInput placeholder="Created At" value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
           </mat-form-field>
         </div>
-        <div class="flexRowToColumn">
-          <div class="flexField labelWithButton">
-            <label>Hosts:</label>
-            <button (click)="addHost()" mat-icon-button style="color: green">
-              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
-            </button>
-          </div>
-          <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.hosts" [ngForTrackBy]="trackByIndex">
-            <mat-form-field class="flexField">
-              <input matInput name="host_{{i}}" [(ngModel)]="object.hosts[i]" required="true" />
-              <button mdSuffix (click)="deleteHost(i)" mat-icon-button style="color: red">
-                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
-              </button>
-            </mat-form-field>
-          </ng-template>
-        </div>
-         <div class="flexRowToColumn">
-          <div class="flexField labelWithButton">
-            <label>Paths:</label>
-            <button (click)="addUri()" mat-icon-button style="color: green">
-              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
-            </button>
-          </div>
-          <ng-template ngFor let-i="index" let-groupName [ngForOf]="object.uris" [ngForTrackBy]="trackByIndex">
-            <mat-form-field class="flexField">
-              <input matInput name="uri_{{i}}" [(ngModel)]="object.uris[i]" required="true"  pattern="/.*" />
-              <button mdSuffix (click)="deleteUri(i)" mat-icon-button style="color: red">
-                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
-              </button>
-            </mat-form-field>
-          </ng-template>
+        <div class="flexRowToColumn" style="align-items: flex-end">
+          <mat-form-field class="flexField">
+					  <mat-chip-list #hostList>
+					    <mat-chip
+					      *ngFor="let host of object.hosts"
+					      selectable="true"
+					      removable="true"
+					      (removed)="deleteHost(host)">
+					      {{host}}
+					      <mat-icon matChipRemove>cancel</mat-icon>
+					    </mat-chip>
+					    <input
+					      placeholder="Hosts"
+					      #hostInput
+					      [matChipInputFor]="hostList"
+					      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+					      matChipInputAddOnBlur="true"
+					      (matChipInputTokenEnd)="addHost($event)"
+					    />
+					  </mat-chip-list>
+					</mat-form-field>
+          <mat-form-field class="flexField">
+            <mat-chip-list #uriList>
+              <mat-chip
+                *ngFor="let uri of object.uris"
+                selectable="true"
+                removable="true"
+                (removed)="deleteUri(uri)">
+                {{uri}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                placeholder="Paths"
+                #uriInput
+                [matChipInputFor]="uriList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                matChipInputAddOnBlur="true"
+                (matChipInputTokenEnd)="addUri($event)"
+              />
+            </mat-chip-list>
+          </mat-form-field>
         </div>
         <div class="flexRowToColumn">
           <label class="flexField">Methods:</label>
           <mat-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
             (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</mat-slide-toggle>
         </div>
-     
-        <mat-divider class="mat-divider"></mat-divider>
 
         <div *ngIf="endpoint" class="flexRowToColumn">
-          <div class="flexField labelWithButton">
-            <label>Owner Usernames:</label>
-            <button (click)="addApiOwner()" mat-icon-button style="color: green" title="Add">
-              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
-            </button>
-          </div>
-          <ng-template ngFor let-i="index" let-owner [ngForOf]="endpoint.config['api_owners']" [ngForTrackBy]="trackByIndex">
-            <mat-form-field class="flexField">
-              <input matInput name="api_owner_{{i}}" [(ngModel)]="endpoint.config['api_owners'][i]" required="true" pattern="[a-z][a-z0-9_]*" />
-              <button mdSuffix (click)="deleteApiOwner(i)" mat-icon-button style="color: red">
-                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
-              </button>
-            </mat-form-field>
-          </ng-template>
+          <mat-form-field class="flexField">
+            <mat-chip-list #apiOwnerList>
+              <mat-chip
+                *ngFor="let apiOwner of endpoint.config['api_owners']"
+                selectable="true"
+                removable="true"
+                (removed)="deleteApiOwner(apiOwner)">
+                {{apiOwner}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                placeholder="Owner Usernames"
+                pattern="[a-z][a-z0-9_]*"
+                #uriInput
+                [matChipInputFor]="apiOwnerList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                matChipInputAddOnBlur="true"
+                (matChipInputTokenEnd)="addApiOwner($event)"
+              />
+            </mat-chip-list>
+          </mat-form-field>
         </div>
-        <mat-divider class="mat-divider"></mat-divider>
+
         <div *ngIf="keyAuth" class="flexRowToColumn">
           <mat-slide-toggle class="flexField" name="keyAuth_enabled" [(ngModel)]="keyAuth.enabled" color="primary" >Allow Developer Keys</mat-slide-toggle>
           <mat-slide-toggle class="flexField" name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config['hide_credentials']" color="primary" [disabled]="!keyAuth.enabled">Hide Credentials</mat-slide-toggle>
           <mat-form-field class="flexField">
-            <input matInput placeholder="Key Name" name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required="true" [disabled]="!keyAuth.enabled" />
+            <input matInput placeholder="Key Name" name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required [disabled]="!keyAuth.enabled" />
           </mat-form-field>
-          <mat-select class="flexField" placeholder="Developer Key Group" name="developer_key_group"
-            [(ngModel)]="endpoint.config['developer_key_group']"
-            [disabled]="!keyAuth.enabled || !acl.enabled || developerKeyGroupNames.length == 0">
-            <mat-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</mat-option>
-          </mat-select>
+          <mat-form-field class="flexField">
+	          <mat-select placeholder="Developer Key Group" name="developer_key_group"
+	            [(ngModel)]="endpoint.config['developer_key_group']"
+	            [disabled]="!keyAuth.enabled || !acl.enabled || developerKeyGroupNames.length == 0">
+	            <mat-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</mat-option>
+	          </mat-select>
+	        </mat-form-field>
         </div>
-        <mat-divider class="mat-divider"></mat-divider>
+
         <div *ngIf="acl" class="flexRowToColumn">
           <mat-slide-toggle class="flexField" name="acl_enabled" [(ngModel)]="acl.enabled" color="primary">Groups Enabled</mat-slide-toggle>
-          <div class="flexField labelWithButton">
-            <label>Group Names:</label>
-            <button (click)="addGroupName()" mat-icon-button style="color: green" [disabled]="!acl.enabled">
-              <mat-icon fontSet="fa" fontIcon="fa-plus-circle" aria-label="Add"></mat-icon>
-            </button>
-          </div>
-          <ng-template ngFor let-i="index" let-groupName [ngForOf]="acl.config['whitelist']" [ngForTrackBy]="trackByIndex">
-            <mat-form-field class="flexField">
-              <input matInput name="groupName_{{i}}" [(ngModel)]="acl.config['whitelist'][i]" required="true" [disabled]="!acl.enabled" pattern="[a-z][a-z0-9_]*" />
-              <button mdSuffix (click)="deleteGroupName(i)" mat-icon-button style="color: red" [disabled]="!acl.enabled">
-                <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
-              </button>
-            </mat-form-field>
-          </ng-template>
+          <mat-form-field class="flexField">
+            <mat-chip-list #groupList>
+              <mat-chip
+                *ngFor="let group of this.acl.config.whitelist"
+                selectable="true"
+                [removable]="acl.enabled"
+                (removed)="deleteGroupName(group)">
+                {{group}}
+                <mat-icon *ngIf="acl.enabled" matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                placeholder="Group Names"
+                pattern="[a-z][a-z0-9_]*"
+                #uriInput
+                [matChipInputFor]="groupList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                matChipInputAddOnBlur="true"
+                (matChipInputTokenEnd)="addGroupName($event)"
+                [disabled]="!acl.enabled"
+              />
+            </mat-chip-list>
+          </mat-form-field>
         </div>
-        <mat-divider class="mat-divider"></mat-divider>
+
         <div class="flexRowToColumn">
           <mat-slide-toggle class="flexField" name="preserve_host" [(ngModel)]="object.preserve_host" color="primary">Preserve Host</mat-slide-toggle>
           <mat-slide-toggle class="flexField" name="strip_uri" [(ngModel)]="object.strip_uri" color="primary">Strip URI</mat-slide-toggle>

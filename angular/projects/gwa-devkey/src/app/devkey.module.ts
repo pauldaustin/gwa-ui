@@ -5,6 +5,7 @@ import {
 } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {CdkTableModule} from '@angular/cdk/table';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {
   MatButtonModule,
   MatCheckboxModule,
@@ -17,20 +18,19 @@ import {
   MatTableModule,
   MatToolbarModule
 } from '@angular/material';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {BrowserModule} from '@angular/platform-browser';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 import {RevolsysAngularBcgovPageModule} from 'revolsys-angular-bcgov-page';
-import {
-  Config,
-  RevolsysAngularFrameworkModule
-} from 'revolsys-angular-framework';
+import {RevolsysAngularFrameworkModule} from 'revolsys-angular-framework';
 
 import {DevKeyRoutingModule} from './devkey-routing.module';
 
-import {ApiService} from './Api/ApiService';
+import {ApiService} from './Api/api.service';
 import {DevKeyComponent} from './devkey.component';
-import {ApiListComponent} from './Api/ApiListComponent';
+import {ApiListComponent} from './Api/api-list.component';
+import {RateLimitService} from './Api/rateLimit.service';
 
 import {ApiKeyService} from './ApiKey/api-key.service';
 import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
@@ -45,28 +45,26 @@ import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
 
     CdkTableModule,
 
+    MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatExpansionModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
     MatToolbarModule,
 
-    RevolsysAngularFrameworkModule.forRoot(new Config('API Keys')),
-
+    RevolsysAngularFrameworkModule.forRoot({
+      basePath: '',
+      title: 'API Keys'
+    }),
     RevolsysAngularBcgovPageModule.forRoot({
       basePath: '/',
       title: 'API Keys',
-      fullWidthContent: true,
-      headerMenuItems: [
-        {
-          title: 'API Keys',
-          routerLink: 'ui/apiKeys'
-        },
-      ]
+      fullWidthContent: true
     }),
     DevKeyRoutingModule
   ],
@@ -80,6 +78,7 @@ import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
   providers: [
     ApiService,
     ApiKeyService,
+    RateLimitService
   ],
   bootstrap: [DevKeyComponent]
 })

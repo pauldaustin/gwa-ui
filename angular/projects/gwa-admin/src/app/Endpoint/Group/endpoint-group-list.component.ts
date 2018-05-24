@@ -16,7 +16,8 @@ import {Group} from '../../Group/Group';
 
     <ng-container matColumnDef="group">
       <mat-header-cell *matHeaderCellDef>Group</mat-header-cell>
-      <mat-cell *matCellDef="let record"><a [routerLink]="['/ui','endpoints', api.name, 'groups', record.group]">{{record.group}}</a></mat-cell>
+      <mat-cell *matCellDef="let record">
+        <a [routerLink]="['/ui','endpoints', api.name, 'groups', record.group]">{{record.group}}</a></mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>

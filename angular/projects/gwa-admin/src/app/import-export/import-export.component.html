@@ -44,8 +44,8 @@
        </mat-chip-list></mat-cell>
      </ng-container>
   
-     <mat-header-record *matHeaderRowDef="columnNames"></mat-header-record>
-     <mat-record *matRowDef="let record; columns: columnNames"></mat-record>
+     <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
+     <mat-row *matRowDef="let record; columns: columnNames"></mat-row>
    </mat-table>
    <mat-paginator
      #paginator

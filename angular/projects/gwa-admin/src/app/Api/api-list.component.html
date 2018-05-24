@@ -1,18 +1,20 @@
 <div class="table-container">
   <mat-toolbar>
     <a routerLink="/ui/apis/_add_" mat-raised-button>Add API</a>
-    <mat-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
-      <mat-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</mat-option>
-    </mat-select>
+    <mat-form-field floatLabel="never">
+	    <mat-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
+	      <mat-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</mat-option>
+	    </mat-select>
+	  </mat-form-field>
     <span>=</span>
-    <mat-form-field>
+    <mat-form-field floatLabel="never">
       <input matInput placeholder="Filter Value" [(ngModel)]="filterValue" (ngModelChange)="refresh()" />
     </mat-form-field>
     <span style="flex: 1 1 auto"></span>
-    <mat-progress-spinner
-      *ngIf="loading | async"
-      mode="indeterminate"
-    ></mat-progress-spinner>
+    <div style="width: 20">
+      <mat-spinner *ngIf="loading | async" diameter="20">
+      </mat-spinner>
+    </div>
     <button (click)="refresh()" mat-icon-button title="Refresh" >
       <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
     </button>

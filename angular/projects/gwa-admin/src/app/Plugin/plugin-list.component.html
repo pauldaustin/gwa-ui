@@ -2,10 +2,10 @@
   <mat-tab>
     <mat-toolbar>
       <span style="flex: 1 1 auto"></span>
-      <mat-progress-spinner
-        *ngIf="loading | async"
-        mode="indeterminate"
-      ></mat-progress-spinner>
+	    <div style="width: 20">
+	      <mat-spinner *ngIf="loading | async" diameter="20">
+	      </mat-spinner>
+	    </div>
       <button (click)="refresh()" mat-icon-button title="Refresh" >
         <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
       </button>
@@ -15,8 +15,8 @@
 	  <mat-table #table [dataSource]="dataSource" >
 	    <ng-container matColumnDef="name">
 	      <mat-header-cell *matHeaderCellDef>Plugin</mat-header-cell>
-	      <mat-cell *matCellDef="let record"><a *ngIf="!record.user_username; else elseUser" [routerLink]="['/ui','apis', record.api_name, 'plugins', record.name]">{{record.name}}</a>
-        <ng-template #elseUser><a [routerLink]="['/ui','apis', record.api_name, 'plugins', record.name 'users', record.user_username]">{{record.name}}</a></ng-template></mat-cell>
+	      <mat-cell *matCellDef="let record"><a *ngIf="!record.user_username; else elseUser" [routerLink]="['/ui', 'apis', record.api_name, 'plugins', record.name]">{{record.name}}</a>
+        <ng-template #elseUser><a [routerLink]="['/ui', 'apis', record.api_name, 'plugins', record.name, 'users', record.user_username]">{{record.name}}</a></ng-template></mat-cell>
 	    </ng-container>
 	    
       <ng-container matColumnDef="api_name">

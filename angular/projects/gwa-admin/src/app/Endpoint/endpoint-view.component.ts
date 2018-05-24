@@ -11,7 +11,12 @@ import {Plugin} from '../Plugin/Plugin';
 
 @Component({
   selector: 'admin-endpoint-view',
-  templateUrl: 'endpoint-view.component.html'
+  templateUrl: 'endpoint-view.component.html',
+  styles: [`
+  .rateLimit .mat-form-field {
+    max-width: 90px;
+  }
+`]
 })
 export class EndpointViewComponent extends BaseDetailComponent<Api> implements OnInit {
 

@@ -16,13 +16,13 @@ import {MatTableDataSource} from '@angular/material';
     <mat-table #serverTable [dataSource]="serverDataSource" >
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-        <mat-cell *matCellDef="let record">{{record.name}}</ng-template></mat-cell>
+        <mat-cell *matCellDef="let record">{{record.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="text">
-        <mat-header-cell *matHeaderCellDef>Text</mat-header-cell>
-        <mat-cell *matCellDef="let record">{{record.text}}</ng-template></mat-cell>
+        <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
+        <mat-cell *matCellDef="let record">{{record.text}}</mat-cell>
       </ng-container>
-   
+
       <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columnNames"></mat-row>
     </mat-table>
@@ -32,13 +32,13 @@ import {MatTableDataSource} from '@angular/material';
     <mat-table #databaseTable [dataSource]="databaseDataSource" >
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-        <mat-cell *matCellDef="let record">{{record.name}}</ng-template></mat-cell>
+        <mat-cell *matCellDef="let record">{{record.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="text">
-        <mat-header-cell *matHeaderCellDef>Text</mat-header-cell>
-        <mat-cell *matCellDef="let record">{{record.text}}</ng-template></mat-cell>
+        <mat-header-cell *matHeaderCellDef>Value</mat-header-cell>
+        <mat-cell *matCellDef="let record">{{record.text}}</mat-cell>
       </ng-container>
-   
+
       <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columnNames"></mat-row>
     </mat-table>
@@ -74,7 +74,7 @@ export class StatusViewComponent extends BaseDetailComponent<any> implements OnI
             }
             this.serverDataSource.data = serverRecords;
             const databaseRecords = [];
-            for (const name of Object.keys(statusRecord.server)) {
+            for (const name of Object.keys(statusRecord.database)) {
               databaseRecords.push({
                 name: name,
                 text: statusRecord.database[name].toString()
@@ -83,7 +83,6 @@ export class StatusViewComponent extends BaseDetailComponent<any> implements OnI
             this.databaseDataSource.data = databaseRecords;
           }
         });
-      })
-
+      });
   }
 }

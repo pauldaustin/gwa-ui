@@ -32,8 +32,8 @@
                   </button>
                 </div>
                 <mat-form-field class="flexField" *ngFor="let control of formField.formArray.controls; index as i">
-                  <input matInput [name]="formField.name + i" [formControlName]="i" required="true" />
-                  <button mdSuffix
+                  <input matInput [name]="formField.name + i" [formControlName]="i" required />
+                  <button matSuffix
                     (click)="formField.formArrayRemove(i)"
                     mat-icon-button style="color: red">
                     <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>

@@ -9,16 +9,16 @@
 </nav>
 <div *ngIf="api">
   <mat-toolbar>
-    <mat-form-field>
+    <mat-form-field floatLabel="never">
       <input matInput placeholder="Add Username" [(ngModel)]="addUsername" pattern="[a-z][a-z0-9_]*" />
     </mat-form-field>
     <a [routerLink]="[addUsername]" mat-raised-button color="primary" [disabled]="!addUsername">Add User</a>
     
     <span style="flex: 1 1 auto"></span>
-    <mat-progress-spinner
-      *ngIf="loading | async"
-      mode="indeterminate"
-    ></mat-progress-spinner>
+    <div style="width: 20">
+      <mat-spinner *ngIf="loading | async" diameter="20">
+      </mat-spinner>
+    </div>
     <button (click)="refresh()" mat-icon-button title="Refresh" >
       <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
     </button>

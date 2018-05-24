@@ -2,10 +2,10 @@
 	<mat-toolbar>
 	  <a [routerLink]="['_add_']" mat-raised-button color="primary">Add {{dataName}} Data</a>
 	  <span style="flex: 1 1 auto"></span>
-	  <mat-progress-spinner
-	    *ngIf="loading | async"
-	    mode="indeterminate"
-	  ></mat-progress-spinner>
+    <div style="width: 20">
+      <mat-spinner *ngIf="loading | async" diameter="20">
+      </mat-spinner>
+    </div>
 	  <button (click)="refresh()" mat-icon-button title="Refresh" >
 	    <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
 	  </button>
