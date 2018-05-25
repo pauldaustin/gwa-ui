@@ -25,7 +25,7 @@ export class UserDataService extends BaseService<Plugin> {
         return http.get(url);
       },
       response => {
-        return response.json().names;
+        return response.names;
       }
     );
   }
@@ -37,7 +37,7 @@ export class UserDataService extends BaseService<Plugin> {
         return http.get(url);
       },
       response => {
-        return response.json();
+        return response;
       }
     );
   }

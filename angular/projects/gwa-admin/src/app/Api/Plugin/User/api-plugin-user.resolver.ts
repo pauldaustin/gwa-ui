@@ -1,4 +1,7 @@
-import {Observable} from 'rxjs';
+import {
+  Observable,
+  of
+} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {
@@ -34,7 +37,7 @@ export class ApiPluginUserResolver implements Resolve<Plugin> {
           });
         } else {
           this.router.navigate(['/ui/apis']);
-          return null;
+          return of(null);
         }
       })
     );

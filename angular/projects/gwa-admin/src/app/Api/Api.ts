@@ -21,7 +21,7 @@ export class Api {
   upstream_url: string;
   preserve_host: string;
   name: string;
-  _hosts: string[] = [''];
+  _hosts: string[] = [];
   _uris: string[] = [];
   //  methods : string; getter function
   strip_uri = true;

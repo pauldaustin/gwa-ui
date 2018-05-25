@@ -32,4 +32,5 @@ export class UserService extends BaseService<User> {
   newObject(): User {
     return new User();
   }
+
 }

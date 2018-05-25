@@ -180,4 +180,9 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   line-height: 30px;
   margin-top: -5px;
 }
-
+.mat-column-created_at {
+  max-width: 140px;
+}
+.mat-column-actions {
+	max-width: 50px;
+}

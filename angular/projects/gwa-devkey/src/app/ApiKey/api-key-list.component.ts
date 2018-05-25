@@ -111,9 +111,9 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
       this.hasApiKey = true;
       let setApiKey = true;
       if (this.apiKey) {
-        for (const row of records) {
-          if (this.apiKey.key === row.key) {
-            this.apiKey = row;
+        for (const record of records) {
+          if (this.apiKey.key === record.key) {
+            this.apiKey = record;
             setApiKey = false;
           }
         }
@@ -138,9 +138,8 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
         );
       },
       response => {
-        const json = response.json();
-        if (json.error) {
-          this.showError(json.error);
+        if (response.error) {
+          this.showError(response.error);
           return null;
         } else {
           this.authService.roles.push('gwa_github_developer');

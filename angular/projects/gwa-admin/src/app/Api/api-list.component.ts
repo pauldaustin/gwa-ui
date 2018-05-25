@@ -23,8 +23,6 @@ export class ApiListComponent extends BaseListComponent<Api> {
     this.columnNames = ['name', 'hosts', 'uris', 'created_at', 'actions'];
     this.filterFields = [
       {prop: 'name', name: 'Name'},
-      {prop: 'hosts', name: 'Host'},
-      {prop: 'uris', name: 'Path'},
     ];
     this.filterFieldName = 'name';
   }

@@ -1,8 +1,11 @@
+import {GroupService} from '../Group/group.service';
 import {
   Component,
   Injector,
   Input,
-  OnInit
+  OnInit,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormControl
@@ -14,18 +17,35 @@ import {BaseDetailComponent} from 'revolsys-angular-framework';
 import {Api} from './Api';
 import {Plugin} from '../Plugin/Plugin';
 import {ApiService} from './api.service';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'admin-api-view',
   templateUrl: 'api-view.component.html'
 })
 export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit {
+
+  acl: Plugin = new Plugin(
+    'acl',
+    {
+      whitelist: [],
+      blacklist: []
+    },
+    false
+  );
+
   endpoint: Plugin = new Plugin(
     'bcgov-gwa-endpoint',
     {
       api_owners: [],
     }
   );
+
+  groupNameControl = new FormControl();
+
+  @ViewChild('groupInput') groupNameInput: ElementRef;
+
+  groupNamesAuto = [];
 
   keyAuth: Plugin = new Plugin(
     'key-auth',
@@ -37,23 +57,21 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
     false
   );
 
-  acl: Plugin = new Plugin(
-    'acl',
-    {
-      whitelist: [],
-      blacklist: []
-    },
-    false
-  );
-
   separatorKeysCodes = [ENTER, COMMA];
 
   constructor(
     protected injector: Injector,
-    protected service: ApiService
+    protected service: ApiService,
+    private groupService: GroupService
   ) {
     super(injector, service, 'API - Gateway Admin');
     this.idParamName = 'apiName';
+  }
+
+  groupNameSelected(event: MatAutocompleteSelectedEvent): void {
+    this.acl.config.whitelist.push(event.option.viewValue);
+    this.groupNameInput.nativeElement.value = '';
+    this.groupNameControl.setValue(null);
   }
 
   ngOnInit() {
@@ -66,6 +84,20 @@ export class ApiViewComponent extends BaseDetailComponent<Api> implements OnInit
         }
         );
     }
+    this.groupNameControl.valueChanges.subscribe((searchName: string) => {
+      if (searchName) {
+        this.groupService.getObjects('/groups/?groupName=' + searchName.replace(/[^a-zA-Z0-9_]/, '_'), {})
+          .subscribe(groups => {
+            const groupNames = [];
+            for (const group of groups) {
+              groupNames.push(group['group']);
+            }
+            this.groupNamesAuto = groupNames;
+          });
+      } else {
+        this.groupNamesAuto = [];
+      }
+    });
   }
 
   protected setObject(api: Api) {

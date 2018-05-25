@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, APP_INITIALIZER} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule
@@ -34,6 +34,7 @@ import {RateLimitService} from './Api/rateLimit.service';
 
 import {ApiKeyService} from './ApiKey/api-key.service';
 import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
+import {DevKeySecurityService} from './devkey-security.service';
 
 @NgModule({
   imports: [
@@ -73,12 +74,22 @@ import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
   declarations: [
     DevKeyComponent,
     ApiListComponent,
-    ApiKeyListComponent,
+    ApiKeyListComponent
   ],
   providers: [
     ApiService,
     ApiKeyService,
-    RateLimitService
+    RateLimitService,
+    DevKeySecurityService,
+    {
+      // Initializes security service
+      provide: APP_INITIALIZER,
+      useFactory: (ds: DevKeySecurityService) => function() {
+        return null;
+      },
+      deps: [DevKeySecurityService],
+      multi: true
+    },
   ],
   bootstrap: [DevKeyComponent]
 })

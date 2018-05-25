@@ -134,6 +134,19 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   @SuppressWarnings("unchecked")
+  private void addLimits(final Map<String, Object> limits, final Map<String, Object> plugin) {
+    final Map<String, Object> config = (Map<String, Object>)plugin.getOrDefault("config",
+      Collections.emptyMap());
+    for (final String fieldName : Arrays.asList("year", "month", "day", "hour", "minute",
+      "second")) {
+      final Object fieldValue = config.get(fieldName);
+      if (fieldValue != null) {
+        limits.put(fieldName, fieldValue);
+      }
+    }
+  }
+
+  @SuppressWarnings("unchecked")
   public void apiAddPlugin(final JsonHttpClient client, final Map<String, Object> requestData,
     final String apiId, final String pluginName, final List<String> fieldNames,
     final Map<String, Object> defaultConfig, final boolean ignoreDisabled) {
@@ -208,7 +221,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   public String apiGetId(final String apiName) {
-    Map<String, Object> api = apiGet(apiName);
+    final Map<String, Object> api = apiGet(apiName);
     if (api == null) {
       return null;
     } else {
@@ -513,26 +526,26 @@ public class ApiService implements ServletContextListener, GwaConstants {
   @SuppressWarnings("unchecked")
   public void developerApiRateLimitGet(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiName) throws IOException {
-    String apiId = apiGetId(apiName);
+    final String apiId = apiGetId(apiName);
 
     final BasePrincipal principal = (BasePrincipal)httpRequest.getUserPrincipal();
     final String username = principal.getName();
-    String consumerId = getUserId(username);
+    final String consumerId = getUserId(username);
     handleRequest(httpResponse, httpClient -> {
-      String consumerPath = APIS_PATH2 + apiName + PLUGINS_PATH + "?name=rate-limiting&api_id="
-        + apiId + "&consumer_id=" + consumerId;
-      Map<String, Object> limits = new LinkedHashMap<>();
+      final String consumerPath = APIS_PATH2 + apiName + PLUGINS_PATH
+        + "?name=rate-limiting&api_id=" + apiId + "&consumer_id=" + consumerId;
+      final Map<String, Object> limits = new LinkedHashMap<>();
       final Map<String, Object> kongResponse = httpClient.get(consumerPath);
-      Number total = (Number)kongResponse.getOrDefault("total", 0);
+      final Number total = (Number)kongResponse.getOrDefault("total", 0);
       if (total.intValue() > 0) {
-        List<Map<String, Object>> plugins = (List<Map<String, Object>>)kongResponse
-          .getOrDefault("config", Collections.emptyList());
-        for (Map<String, Object> plugin : plugins) {
+        final List<Map<String, Object>> plugins = (List<Map<String, Object>>)kongResponse
+          .getOrDefault("data", Collections.emptyList());
+        for (final Map<String, Object> plugin : plugins) {
           addLimits(limits, plugin);
         }
       } else {
-        Map<String, Object> api = apiGet(apiName);
-        Map<String, Object> plugin = pluginGet(api, "rate-limiting");
+        final Map<String, Object> api = apiGet(apiName);
+        final Map<String, Object> plugin = pluginGet(api, "rate-limiting");
         if (plugin != null) {
           addLimits(limits, plugin);
         }
@@ -540,18 +553,6 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
       Json.writeJson(httpResponse, limits);
     });
-  }
-
-  @SuppressWarnings("unchecked")
-  private void addLimits(Map<String, Object> limits, Map<String, Object> plugin) {
-    Map<String, Object> config = (Map<String, Object>)plugin.getOrDefault("config",
-      Collections.emptyMap());
-    for (String fieldName : Arrays.asList("year", "month", "day", "hour", "minute", "second")) {
-      Object fieldValue = config.get(fieldName);
-      if (fieldValue != null) {
-        limits.put(fieldName, fieldValue);
-      }
-    }
   }
 
   public boolean endpointAccessAllowed(final HttpServletRequest httpRequest,
@@ -681,39 +682,88 @@ public class ApiService implements ServletContextListener, GwaConstants {
       final SiteminderPrincipal principal = (SiteminderPrincipal)httpRequest.getUserPrincipal();
       final String path = "/plugins?name=bcgov-gwa-endpoint";
       final Map<String, Object> kongResponse;
-      if (principal.isUserInRole(ROLE_GWA_ADMIN)) {
-        kongResponse = kongPageAll(httpRequest, httpClient, path);
-      } else {
-        final String username = principal.getName();
-        kongResponse = kongPageAll(httpRequest, httpClient, path, endpoint -> {
-          final Map<String, Object> config = (Map<String, Object>)endpoint.get(CONFIG);
-          final List<String> apiOwners = getList(config, API_OWNERS);
-          return apiOwners.contains(username);
-        });
-      }
-      final Map<String, Object> response = endpointListFromApiList(httpClient, kongResponse);
-      Json.writeJson(httpResponse, response);
-    });
-  }
-
-  private Map<String, Object> endpointListFromApiList(final JsonHttpClient httpClient,
-    final Map<String, Object> kongResponse) {
-    final List<Map<String, Object>> apiRows = new ArrayList<>();
-    final List<Map<String, Object>> data = getList(kongResponse, DATA);
-    for (final Map<String, Object> endpoint : data) {
-      final String apiId = (String)endpoint.get(API_ID);
-      final String apiName = apiGetName(httpClient, apiId);
-      final Map<String, Object> api = apiGet(apiName);
-      if (api != null) {
-        final Map<String, Object> apiRow = new LinkedHashMap<>();
-        for (final String fieldName : Arrays.asList(ID, NAME, CREATED_AT, HOSTS, "uris")) {
-          final Object values = api.get(fieldName);
-          apiRow.put(fieldName, values);
+      final boolean adminUser = principal.isUserInRole(ROLE_GWA_ADMIN);
+      final String username = principal.getName();
+      final List<Map<String, Object>> allEndpoints = new ArrayList<>();
+      try {
+        final StringBuilder urlBuilder = new StringBuilder(this.kongAdminUrl);
+        urlBuilder.append(path);
+        if (path.indexOf('?') == -1) {
+          urlBuilder.append('?');
+        } else {
+          urlBuilder.append('&');
         }
-        apiRows.add(apiRow);
+        urlBuilder.append("size=");
+        final String limit = httpRequest.getParameter("limit");
+        if (limit != null) {
+          urlBuilder.append(limit);
+        }
+
+        Predicate<Map<String, Object>> filter = record -> true;
+        final String filterFieldName = httpRequest.getParameter("filterFieldName");
+        String filterValue = httpRequest.getParameter("filterValue");
+        if (filterFieldName != null && filterValue != null) {
+          filterValue = filterValue.trim();
+          if (filterValue.length() > 0) {
+            final String expectedValue = filterValue;
+            filter = endpoint -> {
+              final Object value = endpoint.get(filterFieldName);
+              if (value == null) {
+                return false;
+              } else if ("hosts".equals(filterFieldName) || "uris".equals(filterFieldName)) {
+                final List<?> values = (List<?>)value;
+                return values.contains(expectedValue);
+              } else {
+                return expectedValue.equals(value);
+              }
+            };
+          }
+        }
+        String urlString = urlBuilder.toString();
+        do {
+          final Map<String, Object> pageKongResponse = httpClient.getByUrl(urlString);
+          final List<Map<String, Object>> pageRows = getList(pageKongResponse, DATA);
+          for (final Map<String, Object> plugin : pageRows) {
+            final String apiId = (String)plugin.get(API_ID);
+            final String apiName = apiGetName(httpClient, apiId);
+            final Map<String, Object> api = apiGet(apiName);
+            if (api != null) {
+              final Map<String, Object> endpoint = new LinkedHashMap<>();
+              for (final String fieldName : Arrays.asList(ID, NAME, CREATED_AT, HOSTS, "uris")) {
+                final Object values = api.get(fieldName);
+                endpoint.put(fieldName, values);
+              }
+              if (filter.test(endpoint)) {
+                if (adminUser) {
+                  allEndpoints.add(endpoint);
+                } else {
+                  final Map<String, Object> config = (Map<String, Object>)plugin.get(CONFIG);
+                  final List<String> apiOwners = getList(config, API_OWNERS);
+                  if (apiOwners.contains(username)) {
+                    allEndpoints.add(endpoint);
+                  }
+                }
+              }
+            }
+
+          }
+
+          urlString = (String)pageKongResponse.get(NEXT);
+        } while (urlString != null);
+      } catch (final NoSuchElementException e) {
       }
-    }
-    return newResponseRows(apiRows);
+      kongResponse = new LinkedHashMap<>();
+      final int offsetPage = getPageOffset(httpRequest);
+      if (offsetPage > 0) {
+        final List<Map<String, Object>> rows = allEndpoints.subList(offsetPage,
+          allEndpoints.size());
+        kongResponse.put(DATA, rows);
+      } else {
+        kongResponse.put(DATA, allEndpoints);
+      }
+      kongResponse.put(TOTAL, allEndpoints.size());
+      Json.writeJson(httpResponse, kongResponse);
+    });
   }
 
   @SuppressWarnings("unchecked")
@@ -941,7 +991,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
   private int getPageOffset(final HttpServletRequest httpRequest) {
     final String offset = httpRequest.getParameter("offset");
-    if (offset != null && offset.length() > 1) {
+    if (offset != null && offset.length() > 0) {
       try {
         return Integer.parseInt(offset);
       } catch (final Exception e) {
@@ -1098,6 +1148,15 @@ public class ApiService implements ServletContextListener, GwaConstants {
     final HttpServletResponse httpResponse, final String path) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> response = kongPageAll(httpRequest, httpClient, path);
+      Json.writeJson(httpResponse, response);
+    });
+  }
+
+  public void handleListAll(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String path,
+    final Predicate<Map<String, Object>> filter) {
+    handleRequest(httpResponse, httpClient -> {
+      final Map<String, Object> response = kongPageAll(httpRequest, httpClient, path, filter);
       Json.writeJson(httpResponse, response);
     });
   }

@@ -27,7 +27,7 @@
   <mat-table #table [dataSource]="dataSource" >
     <ng-container matColumnDef="user_username">
       <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
-      <mat-cell *matCellDef="let record"><a [routerLink]="['/ui','apis', row.api_name, 'plugins', pluginName, 'users', record.user_username]">{{record.user_username}}</a></mat-cell>
+      <mat-cell *matCellDef="let record"><a [routerLink]="['/ui','apis', record.api_name, 'plugins', pluginName, 'users', record.user_username]">{{record.user_username}}</a></mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="enabled">

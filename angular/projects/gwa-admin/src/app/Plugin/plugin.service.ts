@@ -25,9 +25,13 @@ export class PluginService extends BaseService<Plugin> {
         return http.get(url);
       },
       response => {
-        return response.json().enabled_plugins;
+        return response.enabled_plugins;
       }
     );
+  }
+
+  getObjectDo(path: string, values?: any): Observable<Plugin> {
+    return super.getObjectDo(path, values);
   }
 
   getPluginSchema(pluginName: String): Observable<any> {
@@ -37,7 +41,7 @@ export class PluginService extends BaseService<Plugin> {
         return http.get(url);
       },
       response => {
-        return response.json();
+        return response;
       }
     );
   }

@@ -10,7 +10,14 @@ import {UserService} from './user.service';
 
 @Component({
   selector: 'admin-user-list',
-  templateUrl: 'user-list.component.html'
+  templateUrl: 'user-list.component.html',
+  styles: [`
+.mat-column-custom_id,
+.mat-column-id {
+  max-width: 280px;
+  min-width: 280px;
+}
+  `]
 })
 export class UserListComponent extends BaseListComponent<User> {
 
@@ -27,4 +34,18 @@ export class UserListComponent extends BaseListComponent<User> {
     ];
     this.filterFieldName = 'username';
   }
+
+  newFilter(): {[fieldName: string]: string} {
+    const filter: {[fieldName: string]: string} = {};
+    if (this.filter) {
+      for (const fieldName of Object.keys(this.filter)) {
+        filter[fieldName] = this.filter[fieldName];
+      }
+    }
+    if (this.filterFieldName && !(this.filterValue == null)) {
+      filter[this.filterFieldName] = this.filterValue;
+    }
+    return filter;
+  }
+
 }

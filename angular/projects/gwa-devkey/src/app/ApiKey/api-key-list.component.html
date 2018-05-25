@@ -29,15 +29,15 @@
                 <button (click)="addApiKey()" mat-raised-button color="primary">Create API Key</button>
               </mat-toolbar>
          
-              <mat-table *ngIf="dataSource.rowCount | async; else noUserApikeys" #table [dataSource]="dataSource">
+              <mat-table *ngIf="dataSource.data.length; else noUserApikeys" #table [dataSource]="dataSource">
                 <ng-container cdkColumnDef="key">
                   <mat-header-cell *cdkHeaderCellDef>API Key</mat-header-cell>
-                  <mat-cell *cdkCellDef="let row">{{row.key}}</mat-cell>
+                  <mat-cell *cdkCellDef="let record">{{record.key}}</mat-cell>
                 </ng-container>
     
                 <ng-container cdkColumnDef="actions">
                   <mat-header-cell *cdkHeaderCellDef>Actions</mat-header-cell>
-                  <mat-cell *cdkCellDef="let row"><button (click)="deleteObject(row)" mat-icon-button style="color: red" title="Delete">
+                  <mat-cell *cdkCellDef="let record"><button (click)="deleteObject(record)" mat-icon-button style="color: red" title="Delete">
                     <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
                   </button></mat-cell>
                 </ng-container>

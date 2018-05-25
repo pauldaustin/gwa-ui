@@ -2,6 +2,8 @@ package ca.bc.gov.gwa.admin.servlet;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +52,16 @@ public class GroupServlet extends BaseServlet implements GwaConstants {
   private int groups(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
     final String method) {
     if (GET.equals(method)) {
-      this.apiService.handleListAll(httpRequest, httpResponse, GROUPS_PATH);
+      String groupName = httpRequest.getParameter("groupName");
+      if (groupName == null) {
+        this.apiService.handleListAll(httpRequest, httpResponse, GROUPS_PATH);
+      } else {
+        Predicate<Map<String, Object>> filter = group -> {
+          String name = (String)group.get("group");
+          return name.contains(groupName);
+        };
+        this.apiService.handleListAll(httpRequest, httpResponse, GROUPS_PATH, filter);
+      }
     } else if (POST.equals(method)) {
       this.apiService.handleAdd(httpRequest, httpResponse, GROUPS_PATH,
         Collections.singletonList(GROUP));
