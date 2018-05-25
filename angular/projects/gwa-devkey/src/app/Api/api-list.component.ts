@@ -8,6 +8,8 @@ import {BaseListComponent} from 'revolsys-angular-framework';
 import {Api} from './Api';
 import {ApiService} from './api.service';
 import {RateLimitService} from './rateLimit.service';
+import {DataSource} from '@angular/cdk/table';
+import {MatTableDataSource} from '@angular/material';
 
 @Component({
   selector: 'devkey-api-list',
@@ -21,9 +23,14 @@ import {RateLimitService} from './rateLimit.service';
 .mat-expansion-panel-header-description {
   flex-basis:0;
 }
+.mat-column-limit,
+.mat-column-period {
+  width: 100px;
+}
   `]
 })
 export class ApiListComponent extends BaseListComponent<Api> {
+  limitColumns = ['period', 'limit'];
 
   constructor(
     injector: Injector,
@@ -52,14 +59,24 @@ export class ApiListComponent extends BaseListComponent<Api> {
     }
   }
 
-  rateLimit(api: Api): BehaviorSubject<any> {
-    let rateLimit = api['rateLimit'];
-    if (!rateLimit) {
-      rateLimit = new BehaviorSubject<any>({});
-      api['rateLimit'] = rateLimit;
+  rateLimit(api: Api): DataSource<any> {
+    let dataSource = api['rateLimit'];
+    if (!dataSource) {
+      dataSource = new MatTableDataSource<any>();
+      api['rateLimit'] = dataSource;
       this.rateLimitService.getObject(api.name)
-        .subscribe(results => rateLimit.next(results));
+        .subscribe(limits => {
+          const records = [];
+          for (const limitPeriod of Object.keys(limits)) {
+            const limit = limits[limitPeriod];
+            records.push({
+              period: limitPeriod,
+              limit: limit
+            });
+          }
+          dataSource.data = records;
+        });
     }
-    return rateLimit;
+    return dataSource;
   }
 }

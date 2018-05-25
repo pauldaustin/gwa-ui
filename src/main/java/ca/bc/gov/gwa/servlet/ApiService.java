@@ -13,9 +13,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -71,6 +73,9 @@ public class ApiService implements ServletContextListener, GwaConstants {
     }
     return 0;
   };
+
+  private static final List<String> DEVELOPER_KEY_API_FIELD_NAMES = Arrays.asList(NAME, HOSTS,
+    "uris");
 
   public static ApiService get(final ServletContext servletContext) {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
@@ -161,18 +166,6 @@ public class ApiService implements ServletContextListener, GwaConstants {
     }
   }
 
-  private Map<String, String> apiAllNamesById(final HttpServletRequest httpRequest,
-    final JsonHttpClient httpClient) throws IOException {
-    final Map<String, String> namesById = new HashMap<>();
-    final String path = APIS_PATH;
-    kongPageAll(httpRequest, httpClient, path, api -> {
-      final String apiId = (String)api.get(ID);
-      final String name = (String)api.get(NAME);
-      namesById.put(apiId, name);
-    });
-    return namesById;
-  }
-
   public void apiGet(final HttpServletResponse httpResponse, final String apiName) {
     final Map<String, Object> api = apiGet(apiName);
     if (api == null) {
@@ -211,6 +204,15 @@ public class ApiService implements ServletContextListener, GwaConstants {
     } catch (final Exception e) {
       LOG.debug("Unable to get API:" + apiName, e);
       throw new IllegalStateException("Error getting API: " + apiName, e);
+    }
+  }
+
+  public String apiGetId(final String apiName) {
+    Map<String, Object> api = apiGet(apiName);
+    if (api == null) {
+      return null;
+    } else {
+      return (String)api.get("id");
     }
   }
 
@@ -381,7 +383,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+   *
    */
   public void developerApiKeyAdd(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -400,7 +402,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+   *
    */
   public void developerApiKeyDelete(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String apiKey) {
@@ -414,7 +416,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
    *
    * @param httpRequest
    * @param httpResponse
-
+   *
    */
   public void developerApiKeyDeleteAll(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
@@ -463,11 +465,12 @@ public class ApiService implements ServletContextListener, GwaConstants {
   public void developerApiList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse) {
     handleRequest(httpResponse, httpClient -> {
-      final Map<String, String> apiAllNamesById = apiAllNamesById(httpRequest, httpClient);
 
       final Set<String> groups = userGroups(httpRequest, httpClient);
 
       final Map<String, Map<String, Object>> apiByName = new TreeMap<>();
+
+      final LinkedList<String> apiIds = new LinkedList<>();
       final String path = "/plugins?name=acl";
       kongPageAll(httpRequest, httpClient, path, acl -> {
         if (acl.get(CONSUMER_ID) == null) {
@@ -478,8 +481,25 @@ public class ApiService implements ServletContextListener, GwaConstants {
             // Ignore blacklist
           } else if (whitelist.isEmpty() || containsAny(whitelist, groups)) {
             final String apiId = (String)acl.get(API_ID);
-            final String apiName = apiAllNamesById.get(apiId);
-            apiByName.put(apiName, Collections.singletonMap("name", apiName));
+            apiIds.add(apiId);
+          }
+        }
+      });
+
+      kongPageAll(httpRequest, httpClient, APIS_PATH, api -> {
+        final String apiId = (String)api.get(ID);
+        if (apiIds.remove(apiId)) {
+          final String name = (String)api.get(NAME);
+          final Map<String, Object> devkKeyApi = new LinkedHashMap<>();
+          for (final String fieldName : DEVELOPER_KEY_API_FIELD_NAMES) {
+            final Object fieldValue = api.get(fieldName);
+            if (fieldValue != null) {
+              devkKeyApi.put(fieldName, fieldValue);
+            }
+          }
+          apiByName.put(name, devkKeyApi);
+          if (apiIds.isEmpty()) {
+            throw new NoSuchElementException();
           }
         }
       });
@@ -488,6 +508,50 @@ public class ApiService implements ServletContextListener, GwaConstants {
       kongResponse.put(DATA, apiByName.values());
       Json.writeJson(httpResponse, kongResponse);
     });
+  }
+
+  @SuppressWarnings("unchecked")
+  public void developerApiRateLimitGet(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse, final String apiName) throws IOException {
+    String apiId = apiGetId(apiName);
+
+    final BasePrincipal principal = (BasePrincipal)httpRequest.getUserPrincipal();
+    final String username = principal.getName();
+    String consumerId = getUserId(username);
+    handleRequest(httpResponse, httpClient -> {
+      String consumerPath = APIS_PATH2 + apiName + PLUGINS_PATH + "?name=rate-limiting&api_id="
+        + apiId + "&consumer_id=" + consumerId;
+      Map<String, Object> limits = new LinkedHashMap<>();
+      final Map<String, Object> kongResponse = httpClient.get(consumerPath);
+      Number total = (Number)kongResponse.getOrDefault("total", 0);
+      if (total.intValue() > 0) {
+        List<Map<String, Object>> plugins = (List<Map<String, Object>>)kongResponse
+          .getOrDefault("config", Collections.emptyList());
+        for (Map<String, Object> plugin : plugins) {
+          addLimits(limits, plugin);
+        }
+      } else {
+        Map<String, Object> api = apiGet(apiName);
+        Map<String, Object> plugin = pluginGet(api, "rate-limiting");
+        if (plugin != null) {
+          addLimits(limits, plugin);
+        }
+      }
+
+      Json.writeJson(httpResponse, limits);
+    });
+  }
+
+  @SuppressWarnings("unchecked")
+  private void addLimits(Map<String, Object> limits, Map<String, Object> plugin) {
+    Map<String, Object> config = (Map<String, Object>)plugin.getOrDefault("config",
+      Collections.emptyMap());
+    for (String fieldName : Arrays.asList("year", "month", "day", "hour", "minute", "second")) {
+      Object fieldValue = config.get(fieldName);
+      if (fieldValue != null) {
+        limits.put(fieldName, fieldValue);
+      }
+    }
   }
 
   public boolean endpointAccessAllowed(final HttpServletRequest httpRequest,
@@ -566,12 +630,13 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   /**
-   * Check if the endpoint has the group in the api_groups. Ignore groups that start with github_ or idir_.
+   * Check if the endpoint has the group in the api_groups. Ignore groups that
+   * start with github_ or idir_.
    *
    * @param apiName
    * @param groupName
    * @return
-
+   *
    */
   @SuppressWarnings("unchecked")
   private boolean endpointHasGroup(final String apiName, final String groupName) {
@@ -594,12 +659,13 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   /**
-   * Check if the endpoint has the group in the api_groups. Ignore groups that start with github_ or idir_.
+   * Check if the endpoint has the group in the api_groups. Ignore groups that
+   * start with github_ or idir_.
    *
    * @param apiName
    * @param groupName
    * @return
-
+   *
    */
   private boolean endpointHasGroupEdit(final String apiName, final String groupName) {
     if (endpointHasGroup(apiName, groupName)) {
@@ -1120,15 +1186,19 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
   protected void kongPageAll(final HttpServletRequest httpRequest, final JsonHttpClient httpClient,
     final String path, final Consumer<Map<String, Object>> action) throws IOException {
-    String urlString = getKongPageUrl(httpRequest, path);
-    do {
-      final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
-      final List<Map<String, Object>> rows = getList(kongResponse, DATA);
-      for (final Map<String, Object> row : rows) {
-        action.accept(row);
-      }
-      urlString = (String)kongResponse.get(NEXT);
-    } while (urlString != null);
+    try {
+      String urlString = getKongPageUrl(httpRequest, path);
+      do {
+        final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
+        final List<Map<String, Object>> rows = getList(kongResponse, DATA);
+        for (final Map<String, Object> row : rows) {
+          action.accept(row);
+
+        }
+        urlString = (String)kongResponse.get(NEXT);
+      } while (urlString != null);
+    } catch (final NoSuchElementException e) {
+    }
   }
 
   public Map<String, Object> kongPageAll(final HttpServletRequest httpRequest,
