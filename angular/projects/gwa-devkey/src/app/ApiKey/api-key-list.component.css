@@ -13,8 +13,19 @@
   flex: 1 1 auto;
 }
 
+.cdk-column-expiryDays {
+  flex: 0 0 50px;
+}
+.mat-row .cdk-column-expiryDays {
+  justify-content: flex-end;
+  padding-right: 16px;
+}
 .cdk-column-actions {
   flex: 0 0 50px;
+}
+.expiring {
+	color:red;
+	font-weight: bold;
 }
 @media (min-width: 769px) {
   .rowToColumn {

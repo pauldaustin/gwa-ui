@@ -95,28 +95,6 @@
         }
       }
     },
-    "gwa-devkey-e2e": {
-      "root": "projects/gwa-devkey-e2e/",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/gwa-devkey-e2e/protractor.conf.js",
-            "devServerTarget": "gwa-devkey:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "projects/gwa-devkey-e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
     "gwa-admin": {
       "root": "projects/gwa-admin/",
       "sourceRoot": "projects/gwa-admin/src",
@@ -204,28 +182,6 @@
               "projects/gwa-admin/tsconfig.app.json",
               "projects/gwa-admin/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "gwa-admin-e2e": {
-      "root": "projects/gwa-admin-e2e/",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/gwa-admin-e2e/protractor.conf.js",
-            "devServerTarget": "gwa-admin:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "projects/gwa-admin-e2e/tsconfig.e2e.json",
             "exclude": [
               "**/node_modules/**"
             ]

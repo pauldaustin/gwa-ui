@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.bc.gov.gwa.developerkey.servlet.github.GitHubPrincipal;
+import ca.bc.gov.gwa.developerkey.servlet.authentication.GitHubPrincipal;
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.servlet.BaseServlet;
 

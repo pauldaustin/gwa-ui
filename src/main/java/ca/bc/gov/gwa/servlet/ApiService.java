@@ -5,11 +5,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -22,6 +28,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -38,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.gwa.admin.servlet.ImportServlet;
 import ca.bc.gov.gwa.admin.servlet.siteminder.SiteminderPrincipal;
-import ca.bc.gov.gwa.developerkey.servlet.github.GitHubPrincipal;
+import ca.bc.gov.gwa.developerkey.servlet.authentication.GitHubPrincipal;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.http.JsonHttpConsumer;
@@ -77,9 +86,13 @@ public class ApiService implements ServletContextListener, GwaConstants {
   private static final List<String> DEVELOPER_KEY_API_FIELD_NAMES = Arrays.asList(NAME, HOSTS,
     "uris");
 
+  private static final List<String> DEV_API_KEY_FIELD_NAMES = Arrays.asList(ID, KEY, CREATED_AT);
+
   public static ApiService get(final ServletContext servletContext) {
     return (ApiService)servletContext.getAttribute(API_SERVICE_NAME);
   }
+
+  private int apiKeyExpiryDays = 90;
 
   private final Map<String, String> apiNameById = new LruMap<>(1000);
 
@@ -108,6 +121,8 @@ public class ApiService implements ServletContextListener, GwaConstants {
   private final Map<String, String> usernameByConsumerId = new LruMap<>(1000);
 
   private String version;
+
+  private ScheduledExecutorService scheduler;
 
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
@@ -365,6 +380,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
   @Override
   public void contextDestroyed(final ServletContextEvent event) {
     this.apiNameById.clear();
+    this.scheduler.shutdownNow();
   }
 
   @Override
@@ -379,6 +395,8 @@ public class ApiService implements ServletContextListener, GwaConstants {
       this.gitHubAccessToken = getConfig("gwaGitHubAccessToken");
       this.gitHubClientId = getConfig("gwaGitHubClientId");
       this.gitHubClientSecret = getConfig("gwaGitHubClientSecret");
+      this.apiKeyExpiryDays = Integer.parseInt(getConfig("gwaApiKeyExpiryDays", "90"));
+
       if (this.gitHubClientId == null || this.gitHubClientSecret == null) {
         LoggerFactory.getLogger(getClass())
           .error("Missing gitHubClientId or gitHubClientSecret configuration");
@@ -388,6 +406,72 @@ public class ApiService implements ServletContextListener, GwaConstants {
     } catch (final Exception e) {
       LOG.error("Unable to initialize service", e);
       throw e;
+    }
+    {
+      this.scheduler = Executors.newScheduledThreadPool(1);
+      this.scheduler.schedule(this::deleteExpiredKeys, 0, TimeUnit.SECONDS);
+
+      final LocalDateTime localNow = LocalDateTime.now();
+      final ZoneId currentZone = ZoneId.systemDefault();
+      final ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+      final ZonedDateTime zonedNextTarget = zonedNow.withHour(5).withMinute(0).withSecond(0);
+
+      final Duration duration = Duration.between(zonedNow, zonedNextTarget);
+      final long delaySeconds = duration.getSeconds();
+      this.scheduler.scheduleAtFixedRate(this::deleteExpiredKeys, delaySeconds, 24 * 60 * 60,
+        TimeUnit.SECONDS);
+    }
+  }
+
+  private void deleteExpiredKeys() {
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      final Map<String, String> usernameById = new HashMap<>();
+      final Calendar oldestDate = new GregorianCalendar();
+      oldestDate.add(Calendar.DAY_OF_MONTH, -this.apiKeyExpiryDays);
+      final long oldestTime = oldestDate.getTimeInMillis();
+      try {
+        String urlString = this.kongAdminUrl + "/key-auths";
+        do {
+          final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
+          final List<Map<String, Object>> keyAuths = getList(kongResponse, DATA);
+          for (final Map<String, Object> keyAuth : keyAuths) {
+            final long createdAt = ((Number)keyAuth.get(CREATED_AT)).longValue();
+            if (createdAt < oldestTime) {
+              final String id = (String)keyAuth.get(ID);
+              final String consumerId = (String)keyAuth.get(CONSUMER_ID);
+              String username = usernameById.get(consumerId);
+              if (username == null) {
+                username = userGetUsername(httpClient, consumerId);
+                usernameById.put(consumerId, username);
+              }
+              if (username.startsWith("github_")) {
+                final String deletePath = CONSUMERS_PATH2 + consumerId + "/key-auth/" + id;
+                try {
+                  httpClient.delete(deletePath);
+                } catch (final Exception e) {
+                  LOG.error("Cannot delete:" + deletePath, e);
+                }
+              }
+            }
+          }
+          urlString = (String)kongResponse.get(NEXT);
+        } while (urlString != null);
+      } catch (final NoSuchElementException e) {
+      }
+
+    } catch (final HttpStatusException e) {
+      final int statusCode = e.getCode();
+      if (statusCode == 503) {
+        LOG.error(KONG_SERVER_NOT_AVAILABLE, e);
+      } else {
+        final String body = e.getBody();
+        LOG.error(e.toString() + "\n" + body, e);
+      }
+    } catch (final HttpHostConnectException e) {
+      LOG.error("Kong not available", e);
+    } catch (final Exception e) {
+      LOG.error("Unexpected kong error", e);
     }
   }
 
@@ -405,6 +489,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
       final String keyAuthPath = CONSUMERS_PATH2 + userId + "/" + KEY_AUTH;
       final Map<String, Object> apiKeyResponse = httpClient.post(keyAuthPath,
         Collections.emptyMap());
+      developerApiKeyRecordValues(apiKeyResponse);
       Json.writeJson(httpResponse, apiKeyResponse);
     });
 
@@ -459,19 +544,16 @@ public class ApiService implements ServletContextListener, GwaConstants {
       final Map<String, Object> keyAuthResponse = httpClient.get(keyAuthPath);
       final List<Map<String, Object>> keyAuthList = getList(keyAuthResponse, DATA);
 
-      final Map<String, Object> kongResponse = new LinkedHashMap<>();
-      final List<Map<String, Object>> apiKeys = new ArrayList<>();
       for (final Map<String, Object> keyAuth : keyAuthList) {
-        final String id = (String)keyAuth.get("id");
-        final String key = (String)keyAuth.get("key");
-        final Map<String, Object> apiKey = new LinkedHashMap<>();
-        apiKey.put("id", id);
-        apiKey.put("key", key);
-        apiKeys.add(apiKey);
+        developerApiKeyRecordValues(keyAuth);
       }
-      kongResponse.put(DATA, apiKeys);
-      Json.writeJson(httpResponse, kongResponse);
+      Json.writeJson(httpResponse, keyAuthResponse);
     });
+  }
+
+  private void developerApiKeyRecordValues(final Map<String, Object> keyAuth) {
+    keyAuth.keySet().retainAll(DEV_API_KEY_FIELD_NAMES);
+    keyAuth.put("maxAgeDays", this.apiKeyExpiryDays);
   }
 
   @SuppressWarnings("unchecked")
@@ -552,6 +634,26 @@ public class ApiService implements ServletContextListener, GwaConstants {
       }
 
       Json.writeJson(httpResponse, limits);
+    });
+  }
+
+  public void developerBasicAuthGet(final HttpServletRequest httpRequest,
+    final HttpServletResponse httpResponse) {
+    handleRequest(httpResponse, httpClient -> {
+
+      try {
+        final String username = httpRequest.getRemoteUser();
+        final String basicAuthPath = CONSUMERS_PATH2 + username + "/basic-auth/" + username;
+        final Map<String, Object> basicAuthResponse = httpClient.get(basicAuthPath);
+        basicAuthResponse.keySet().retainAll(Arrays.asList(ID));
+        Json.writeJson(httpResponse, basicAuthResponse);
+      } catch (final HttpStatusException e) {
+        if (e.getCode() == 404) {
+          Json.writeJson(httpResponse, Collections.emptyMap());
+        } else {
+          throw e;
+        }
+      }
     });
   }
 
@@ -857,6 +959,10 @@ public class ApiService implements ServletContextListener, GwaConstants {
         }
       }
     }
+  }
+
+  public int getApiKeyExpiryDays() {
+    return this.apiKeyExpiryDays;
   }
 
   private Map<String, Object> getCachedObject(final String type, final String id,

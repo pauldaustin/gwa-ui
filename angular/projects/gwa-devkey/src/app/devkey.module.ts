@@ -34,6 +34,7 @@ import {RateLimitService} from './Api/rateLimit.service';
 
 import {ApiKeyService} from './ApiKey/api-key.service';
 import {ApiKeyListComponent} from './ApiKey/api-key-list.component';
+import {BasicAuthService} from './BasicAuth/basic-auth.service';
 import {DevKeySecurityService} from './devkey-security.service';
 
 @NgModule({
@@ -79,6 +80,7 @@ import {DevKeySecurityService} from './devkey-security.service';
   providers: [
     ApiService,
     ApiKeyService,
+    BasicAuthService,
     RateLimitService,
     DevKeySecurityService,
     {

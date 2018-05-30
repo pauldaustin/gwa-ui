@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.developerkey.servlet.github;
+package ca.bc.gov.gwa.developerkey.servlet.authentication;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import ca.bc.gov.gwa.util.LruMap;
 @WebFilter(urlPatterns = {
   "/", "/login/*", "/git/*", "/logout", "/rest/*", "/ui/*"
 })
-public class GitHubAuthenticationFilter extends AbstractFilter {
+public class DeveloperKeyAuthenticationFilter extends AbstractFilter {
 
   private static final int EXPIRY_TIME_MS = 10 * 60 * 1000;
 
@@ -57,8 +57,8 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
   @Override
   public void doFilter(final ServletRequest request, final ServletResponse response,
     final FilterChain chain) throws IOException, ServletException {
-    if (request.getAttribute("gitFiltered") == null) {
-      request.setAttribute("gitFiltered", Boolean.TRUE);
+    if (request.getAttribute("gwaDeveloperKeyFiltered") == null) {
+      request.setAttribute("gwaDeveloperKeyFiltered", Boolean.TRUE);
       final HttpServletRequest httpRequest = (HttpServletRequest)request;
       final HttpServletResponse httpResponse = (HttpServletResponse)response;
       final String servletPath = httpRequest.getServletPath();
@@ -80,9 +80,24 @@ public class GitHubAuthenticationFilter extends AbstractFilter {
     if ("/git/callback".equals(fullPath)) {
       handleCallback(httpRequest, httpResponse, session);
     } else {
-      final GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
+      GitHubPrincipal principal = (GitHubPrincipal)session.getAttribute(GIT_HUB_PRINCIPAL);
       if (principal == null || principal.isExpired(EXPIRY_TIME_MS)) {
-        handleRedirectToGitHub(chain, httpRequest, httpResponse, session);
+        final String userId = httpRequest.getHeader("X-Consumer-Custom-Id");
+        final String username = httpRequest.getHeader("X-Consumer-Username");
+        if (userId != null && username != null && username.startsWith(GITHUB)) {
+          final Set<String> groups = getGroups(httpResponse, userId, username);
+          final String login = username.replaceFirst(GITHUB, "");
+          principal = new GitHubPrincipal(userId, login, username, groups);
+          if (groups.contains(this.apiService.getGitHubOrganizationRole())) {
+            principal.addDeveloperRole();
+          }
+          session.setAttribute(GIT_HUB_PRINCIPAL, principal);
+          final HttpServletRequestWrapper requestWrapper = principal
+            .newHttpServletRequestWrapper(httpRequest);
+          chain.doFilter(requestWrapper, httpResponse);
+        } else {
+          handleRedirectToGitHub(chain, httpRequest, httpResponse, session);
+        }
       } else {
         final HttpServletRequestWrapper requestWrapper = principal
           .newHttpServletRequestWrapper(httpRequest);

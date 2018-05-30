@@ -1,3 +1,5 @@
+import {BasicAuth} from '../BasicAuth/BasicAuth';
+import {BasicAuthService} from '../BasicAuth/basic-auth.service';
 import {
   Component,
   Injector,
@@ -28,12 +30,15 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
 
   hasApiKey = false;
 
+  basicAuth: BasicAuth;
+
   constructor(
     injector: Injector,
-    service: ApiKeyService
+    service: ApiKeyService,
+    private basicAuthService: BasicAuthService
   ) {
     super(injector, service, 'Developer API Keys');
-    this.columnNames = ['key', 'actions'];
+    this.columnNames = ['key', 'expiryDays', 'actions'];
   }
 
   ngOnInit(): void {
@@ -44,6 +49,8 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
         this.appSendMessage = params['appSendMessage'] === 'true';
         this.refresh();
       });
+    this.basicAuthService.getObject(null)
+      .subscribe(basicAuth => this.basicAuth = basicAuth);
     super.ngOnInit();
   }
 
@@ -81,6 +88,18 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
       }
       url += 'apiKey=' + key;
       this.document.location.href = url;
+    }
+  }
+
+  expiryDays(apiKey: ApiKey): number {
+    const millisPerDay = 24.0 * 60 * 60 * 1000;
+    const createdAtDay = apiKey.created_at;
+    const maxAgeDays = apiKey.maxAgeDays;
+    const expiryDays = Math.floor(createdAtDay / millisPerDay + maxAgeDays - Date.now() / millisPerDay);
+    if (expiryDays > 0) {
+      return expiryDays;
+    } else {
+      return 0;
     }
   }
 
@@ -137,16 +156,18 @@ export class ApiKeyListComponent extends BaseListComponent<ApiKey> implements On
           {headers: {'Content-Type': 'application/json'}}
         );
       },
-      response => {
-        if (response.error) {
-          this.showError(response.error);
-          return null;
-        } else {
-          this.authService.roles.push('gwa_github_developer');
-          this.refresh();
-          return null;
-        }
+      response => response
+    ).subscribe(response => {
+      if (response['error']) {
+        this.showError(response['error']);
+      } else {
+        this.authService.roles.push('gwa_github_developer');
+        this.refresh();
       }
-    );
+    });
+  }
+
+  setBasicAuthPassword() {
+
   }
 }
