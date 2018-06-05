@@ -27,21 +27,17 @@
             <div class="table-container">
               <mat-toolbar>
                 <button (click)="addApiKey()" mat-raised-button color="primary">Create API Key</button>
-                <button (click)="setBasicAuthPassword()" mat-raised-button color="primary" *ngIf="basicAuth" style="margin-left: 1em"><span
-                  *ngIf="!basicAuth.id">Create Basic Auth Password</span><span
-                  *ngIf="basicAuth.id">Reset Basic Auth Password</span
-                  ></button>
               </mat-toolbar>
          
               <mat-table *ngIf="dataSource.data.length; else noUserApikeys" #table [dataSource]="dataSource">
                 <ng-container cdkColumnDef="key">
                   <mat-header-cell *cdkHeaderCellDef>API Key</mat-header-cell>
-                  <mat-cell *cdkCellDef="let record"><span [ngClass]="{expiring:expiryDays(record) <=7}">{{record.key}}</span></mat-cell>
+                  <mat-cell *cdkCellDef="let record">{{record.key}}</mat-cell>
                 </ng-container>
 
-                <ng-container cdkColumnDef="expiryDays">
-                  <mat-header-cell *cdkHeaderCellDef>Expiry (Days)</mat-header-cell>
-                  <mat-cell *cdkCellDef="let record"><span [ngClass]="{expiring:expiryDays(record) <=7}">{{expiryDays(record)}}</span></mat-cell>
+                <ng-container cdkColumnDef="ageDays">
+                  <mat-header-cell *cdkHeaderCellDef>Age (Days)</mat-header-cell>
+                  <mat-cell *cdkCellDef="let record">{{apiKeyAgeDays(record)}}</mat-cell>
                 </ng-container>
 
                 <ng-container cdkColumnDef="actions">
@@ -53,7 +49,7 @@
                 
                 <mat-header-row *cdkHeaderRowDef="columnNames"></mat-header-row>
                 
-                <mat-row *cdkRowDef="let row; columns: columnNames"></mat-row>
+                <mat-row *cdkRowDef="let row; columns: columnNames" [ngClass]="{expiring:apiKeyAgeDays(row) > 6}"></mat-row>
               </mat-table>
               <ng-template #noUserApikeys><div style="padding: 0.5em 1em"><i>No API keys found</i></div></ng-template>
             </div>

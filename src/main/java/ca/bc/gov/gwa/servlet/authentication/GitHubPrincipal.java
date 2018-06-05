@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.developerkey.servlet.authentication;
+package ca.bc.gov.gwa.servlet.authentication;
 
 import java.security.Principal;
 import java.util.Set;

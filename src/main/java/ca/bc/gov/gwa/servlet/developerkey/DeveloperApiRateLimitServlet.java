@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.developerkey.servlet;
+package ca.bc.gov.gwa.servlet.developerkey;
 
 import java.io.IOException;
 import java.util.List;

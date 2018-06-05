@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.developerkey.servlet;
+package ca.bc.gov.gwa.servlet.developerkey;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,9 +8,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.bc.gov.gwa.developerkey.servlet.authentication.GitHubPrincipal;
 import ca.bc.gov.gwa.servlet.ApiService;
 import ca.bc.gov.gwa.servlet.BaseServlet;
+import ca.bc.gov.gwa.servlet.authentication.GitHubPrincipal;
 
 @WebServlet(urlPatterns = "/rest/apis", loadOnStartup = 1)
 public class DeveloperApiServlet extends BaseServlet {

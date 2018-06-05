@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.admin.servlet;
+package ca.bc.gov.gwa.servlet.admin;
 
 import javax.servlet.annotation.WebServlet;
 

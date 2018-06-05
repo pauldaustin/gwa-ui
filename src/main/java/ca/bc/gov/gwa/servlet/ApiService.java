@@ -45,18 +45,20 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.bc.gov.gwa.admin.servlet.ImportServlet;
-import ca.bc.gov.gwa.admin.servlet.siteminder.SiteminderPrincipal;
-import ca.bc.gov.gwa.developerkey.servlet.authentication.GitHubPrincipal;
 import ca.bc.gov.gwa.http.HttpStatusException;
 import ca.bc.gov.gwa.http.JsonHttpClient;
 import ca.bc.gov.gwa.http.JsonHttpConsumer;
 import ca.bc.gov.gwa.http.JsonHttpFunction;
+import ca.bc.gov.gwa.servlet.admin.ImportServlet;
+import ca.bc.gov.gwa.servlet.authentication.GitHubPrincipal;
+import ca.bc.gov.gwa.servlet.authentication.SiteminderPrincipal;
 import ca.bc.gov.gwa.util.Json;
 import ca.bc.gov.gwa.util.LruMap;
 
 @WebListener
 public class ApiService implements ServletContextListener, GwaConstants {
+
+  private static final String BASIC_AUTH = "/basic-auth";
 
   static String API_SERVICE_NAME = ApiService.class.getName();
 
@@ -445,7 +447,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
                 username = userGetUsername(httpClient, consumerId);
                 usernameById.put(consumerId, username);
               }
-              if (username.startsWith("github_")) {
+              if (username.startsWith("endpoint_")) {
                 final String deletePath = CONSUMERS_PATH2 + consumerId + "/key-auth/" + id;
                 try {
                   httpClient.delete(deletePath);
@@ -634,26 +636,6 @@ public class ApiService implements ServletContextListener, GwaConstants {
       }
 
       Json.writeJson(httpResponse, limits);
-    });
-  }
-
-  public void developerBasicAuthGet(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse) {
-    handleRequest(httpResponse, httpClient -> {
-
-      try {
-        final String username = httpRequest.getRemoteUser();
-        final String basicAuthPath = CONSUMERS_PATH2 + username + "/basic-auth/" + username;
-        final Map<String, Object> basicAuthResponse = httpClient.get(basicAuthPath);
-        basicAuthResponse.keySet().retainAll(Arrays.asList(ID));
-        Json.writeJson(httpResponse, basicAuthResponse);
-      } catch (final HttpStatusException e) {
-        if (e.getCode() == 404) {
-          Json.writeJson(httpResponse, Collections.emptyMap());
-        } else {
-          throw e;
-        }
-      }
     });
   }
 

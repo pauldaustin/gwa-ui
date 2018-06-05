@@ -1,4 +1,4 @@
-package ca.bc.gov.gwa.admin.servlet.siteminder;
+package ca.bc.gov.gwa.servlet.authentication;
 
 import java.io.IOException;
 import java.util.Collections;

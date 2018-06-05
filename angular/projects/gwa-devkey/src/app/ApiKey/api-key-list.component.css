@@ -13,21 +13,25 @@
   flex: 1 1 auto;
 }
 
-.cdk-column-expiryDays {
+.mat-column-key {
+	overflow: auto;
+}
+.mat-column-ageDays {
   flex: 0 0 50px;
 }
-.mat-row .cdk-column-expiryDays {
+.mat-row .mat-column-ageDays {
   justify-content: flex-end;
   padding-right: 16px;
 }
-.cdk-column-actions {
+.mat-column-actions {
   flex: 0 0 50px;
 }
-.expiring {
+.expiring .mat-cell {
 	color:red;
+	background-color: pink;
 	font-weight: bold;
 }
-@media (min-width: 769px) {
+@media (min-width: 950px) {
   .rowToColumn {
     flex-direction:row;
   }
