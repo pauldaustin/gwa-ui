@@ -58,8 +58,6 @@ import ca.bc.gov.gwa.util.LruMap;
 @WebListener
 public class ApiService implements ServletContextListener, GwaConstants {
 
-  private static final String BASIC_AUTH = "/basic-auth";
-
   static String API_SERVICE_NAME = ApiService.class.getName();
 
   public static final Logger LOG = LoggerFactory.getLogger(ApiService.class);
@@ -125,6 +123,8 @@ public class ApiService implements ServletContextListener, GwaConstants {
   private String version;
 
   private ScheduledExecutorService scheduler;
+
+  private boolean useEndpoints = true;
 
   private void addData(final Map<String, Object> data, final Map<String, Object> requestData,
     final List<String> fieldNames) {
@@ -299,12 +299,14 @@ public class ApiService implements ServletContextListener, GwaConstants {
           final Map<String, Object> apiRequest = getMap(requestData, APIS_FIELD_NAMES);
           final Map<String, Object> apiResponse = httpClient.patch(APIS_PATH2 + apiId, apiRequest);
           if (apiId != null) {
-            if (pluginGet(requestData, BCGOV_GWA_ENDPOINT) == null) {
-              apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT, ENDPOINT_FIELD_NAMES,
-                ENDPOINT_DEFAULT_CONFIG, false);
-            } else {
-              apiUpdatePlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT,
-                ENDPOINT_FIELD_NAMES);
+            if (this.useEndpoints) {
+              if (pluginGet(requestData, BCGOV_GWA_ENDPOINT) == null) {
+                apiAddPlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT,
+                  ENDPOINT_FIELD_NAMES, ENDPOINT_DEFAULT_CONFIG, false);
+              } else {
+                apiUpdatePlugin(httpClient, requestData, apiId, BCGOV_GWA_ENDPOINT,
+                  ENDPOINT_FIELD_NAMES);
+              }
             }
             apiUpdatePlugin(httpClient, requestData, apiId, KEY_AUTH, KEY_AUTH_FIELD_NAMES);
             apiUpdatePlugin(httpClient, requestData, apiId, ACL, ACL_FIELD_NAMES);
@@ -398,6 +400,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
       this.gitHubClientId = getConfig("gwaGitHubClientId");
       this.gitHubClientSecret = getConfig("gwaGitHubClientSecret");
       this.apiKeyExpiryDays = Integer.parseInt(getConfig("gwaApiKeyExpiryDays", "90"));
+      this.useEndpoints = !"false".equals(getConfig("gwaUseEndpoints", "true"));
 
       if (this.gitHubClientId == null || this.gitHubClientSecret == null) {
         LoggerFactory.getLogger(getClass())
@@ -657,20 +660,22 @@ public class ApiService implements ServletContextListener, GwaConstants {
   @SuppressWarnings("unchecked")
   private boolean endpointAccessAllowedApiOwner(final HttpServletResponse httpResponse,
     final List<String> paths, final SiteminderPrincipal principal) {
-    final String endpointName = paths.get(0);
-    final Map<String, Object> api = apiGet(endpointName);
-    if (api != null) {
-      final String username = principal.getName();
-      final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
-      if (endPoint != null) {
-        final Map<String, Object> config = (Map<String, Object>)endPoint.get(CONFIG);
-        final List<String> apiOwners = getList(config, API_OWNERS);
-        if (apiOwners.contains(username)) {
-          return true;
+    if (this.useEndpoints) {
+      final String endpointName = paths.get(0);
+      final Map<String, Object> api = apiGet(endpointName);
+      if (api != null) {
+        final String username = principal.getName();
+        final Map<String, Object> endPoint = pluginGet(api, BCGOV_GWA_ENDPOINT);
+        if (endPoint != null) {
+          final Map<String, Object> config = (Map<String, Object>)endPoint.get(CONFIG);
+          final List<String> apiOwners = getList(config, API_OWNERS);
+          if (apiOwners.contains(username)) {
+            return true;
+          }
         }
       }
+      sendError(httpResponse, HttpServletResponse.SC_NOT_FOUND);
     }
-    sendError(httpResponse, HttpServletResponse.SC_NOT_FOUND);
     return false;
   }
 
@@ -1462,7 +1467,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
   private void readProperties() {
     final String catalinaBase = System.getProperty("catalina.base");
-    for (final String dir : Arrays.asList(catalinaBase, ".", "..")) {
+    for (final String dir : Arrays.asList(catalinaBase, ".", "..", "/apps")) {
       final String fileName = dir + "/config/gwa.properties";
       final File propertiesFile = new File(fileName);
       try {
