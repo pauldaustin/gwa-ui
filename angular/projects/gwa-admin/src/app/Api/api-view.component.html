@@ -1,0 +1,169 @@
+<div *ngIf="object">
+  <form #apiForm="ngForm" role="form">
+    <mat-card>
+      <mat-card-content>
+        <div class="flexRowToColumn">
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Name</mat-label>
+            <input matInput name="name" [(ngModel)]="object.name" required pattern="[a-zA-Z][a-zA-Z0-9_\-]*" />
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Upstream URL</mat-label>
+            <input matInput name="upstream_url" type="url" [(ngModel)]="object.upstream_url" required pattern="http(s)?://.+" />
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Created At</mat-label>
+            <input matInput value="{{object.created_at | date:'yyyy-MM-dd HH:mm:ss'}}" disabled />
+          </mat-form-field>
+        </div>
+        <div class="flexRowToColumn" style="align-items: flex-end">
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Hosts</mat-label>
+					  <mat-chip-list #hostList>
+					    <mat-chip
+					      *ngFor="let host of object.hosts"
+					      selectable="true"
+					      removable="true"
+					      (removed)="deleteHost(host)">
+					      {{host}}
+					      <mat-icon matChipRemove>cancel</mat-icon>
+					    </mat-chip>
+					    <input
+					      #hostInput
+					      [matChipInputFor]="hostList"
+					      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+					      (matChipInputTokenEnd)="addHost($event)"
+					    />
+					  </mat-chip-list>
+					</mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Pahs</mat-label>
+            <mat-chip-list #uriList>
+              <mat-chip
+                *ngFor="let uri of object.uris"
+                selectable="true"
+                removable="true"
+                (removed)="deleteUri(uri)">
+                {{uri}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                #uriInput
+                [matChipInputFor]="uriList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addUri($event)"
+              />
+            </mat-chip-list>
+          </mat-form-field>
+        </div>
+        <div class="flexRowToColumn">
+          <label class="flexField">Methods:</label>
+          <mat-slide-toggle class="flexField" *ngFor="let methodFlag of object.method_flags" [checked]="methodFlag.enabled"
+            (change)="methodFlag.enabled = $event.checked" color="primary">{{methodFlag.name}}</mat-slide-toggle>
+        </div>
+
+        <div *ngIf="endpoint" class="flexRowToColumn">
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Owner Usernames</mat-label>
+            <mat-chip-list #apiOwnerList>
+              <mat-chip
+                *ngFor="let apiOwner of endpoint.config['api_owners']"
+                selectable="true"
+                removable="true"
+                (removed)="deleteApiOwner(apiOwner)">
+                {{apiOwner}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                pattern="[a-z][a-z0-9_]*"
+                #apiOwnerInput
+                [matChipInputFor]="apiOwnerList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addApiOwner($event)"
+              />
+            </mat-chip-list>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="keyAuth" class="flexRowToColumn">
+          <mat-slide-toggle class="flexField" name="keyAuth_enabled" [(ngModel)]="keyAuth.enabled" color="primary" >Allow Developer Keys</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="keyAuth_hide_credentials" [(ngModel)]="keyAuth.config['hide_credentials']" color="primary" [disabled]="!keyAuth.enabled">Hide Credentials</mat-slide-toggle>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Key Name</mat-label>
+            <input matInput name="keyAuth_key_names" [(ngModel)]="keyAuth.config['key_names']" required [disabled]="!keyAuth.enabled" />
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Developer Key Group</mat-label>
+	          <mat-select name="developer_key_group"
+	            [(ngModel)]="endpoint.config['developer_key_group']"
+	            [disabled]="!keyAuth.enabled || !acl.enabled || developerKeyGroupNames.length == 0">
+	            <mat-option *ngFor="let value of developerKeyGroupNames" [value]="value">{{value}}</mat-option>
+	          </mat-select>
+	        </mat-form-field>
+        </div>
+
+        <div *ngIf="acl" class="flexRowToColumn">
+          <mat-slide-toggle class="flexField" name="acl_enabled" [(ngModel)]="acl.enabled" color="primary">Groups Enabled</mat-slide-toggle>
+          <mat-form-field class="flexField" floatLabel="always" *ngIf="acl.enabled">
+            <mat-label>Group Names</mat-label>
+            <mat-chip-list #groupList>
+              <mat-chip
+                *ngFor="let group of this.acl.config.whitelist"
+                selectable="true"
+                [removable]="acl.enabled"
+                (removed)="deleteGroupName(group)">
+                {{group}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                pattern="[a-z][a-z0-9_]*"
+                #groupInput
+                [formControl]="groupNameControl"
+                [matAutocomplete]="groupNameAuto"
+                [matChipInputFor]="groupList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addGroupName($event)"
+              />
+            </mat-chip-list>
+            <mat-autocomplete #groupNameAuto="matAutocomplete" (optionSelected)="groupNameSelected($event)">
+					    <mat-option *ngFor="let groupName of groupNamesAuto" [value]="groupName">
+					      {{groupName}}
+					    </mat-option>
+					  </mat-autocomplete>
+            <mat-hint>e.g. gwa_github_developer</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="flexRowToColumn">
+          <mat-slide-toggle class="flexField" name="preserve_host" [(ngModel)]="object.preserve_host" color="primary">Preserve Host</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="strip_uri" [(ngModel)]="object.strip_uri" color="primary">Strip URI</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="https_only" [(ngModel)]="object.https_only" color="primary" style="display: inline-block">Https Only</mat-slide-toggle>
+          <mat-slide-toggle class="flexField" name="http_if_terminated" [(ngModel)]="object.http_if_terminated" color="primary" style="display: inline-block">Http if Terminated</mat-slide-toggle>
+        </div>
+        <div class="flexRowToColumn">
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Retries</mat-label>
+            <input matInput name="retries" type="number" min="0" max="32767" [(ngModel)]="object.retries" />
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Connect Timeout</mat-label>
+            <input matInput name="upstream_connect_timeout" type="number" min="0" [(ngModel)]="object.upstream_connect_timeout" />
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Send Timeout</mat-label>
+            <input matInput name="upstream_send_timeout" type="number" min="0" [(ngModel)]="object.upstream_send_timeout" /> 
+          </mat-form-field>
+          <mat-form-field class="flexField" floatLabel="always">
+            <mat-label>Read Timeout</mat-label>
+            <input matInput name="upstream_read_timeout" type="number" min="0" [(ngModel)]="object.upstream_read_timeout" />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button (click)="routeList()" mat-button>Close</button>
+        <button (click)="save(false)" mat-raised-button color="accent" [disabled]="!apiForm.form.valid || !formValid()" *ngIf="object.id">Save</button>
+        <button (click)="save(true)" mat-raised-button color="primary" [disabled]="!apiForm.form.valid || !formValid()">Save &amp; Close</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

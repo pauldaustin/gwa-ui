@@ -1,0 +1,183 @@
+/* You can add global styles to this file, and also import other style files */
+
+.mat-toolbar .mat-form-field {
+  font-size: 14px;
+  margin: 5px;
+}
+.mat-toolbar-row {
+  height: auto !important;
+  margin: -5px;
+}
+body {
+  min-height: 100%;
+  margin: 0px;
+}
+
+.flexColumn {
+  display:flex;
+  flex-direction:column;
+  align-items: stretch;
+}
+.flexRowToColumn {
+  display:flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin: -5px;
+}
+.flexRowToColumn .flexChild {
+  margin: 5px;
+  flex-grow: 1;
+}
+.flexRowToColumn .flexField {
+  margin: 5px;
+  flex-grow: 1;
+}
+.flexRowToColumn .flexField.mat-slide-toggle {
+  margin-top: 18px;
+  flex-grow: 0;
+}
+.flexRowToColumn > label.flexField {
+  flex-grow: 0;
+  margin-top: 18px;
+  line-height: 24px;
+}
+.mat-toolbar-row .mat-input-wrapper,
+.flexRowToColumn .mat-input-wrapper{
+  padding-bottom: 0px;
+}
+.mat-toolbar-row .mat-input-underline,
+.flexRowToColumn .mat-input-underline{
+  bottom: 0px;
+}
+.mat-toolbar-row .mat-input-infix {
+  padding-bottom: 0px;
+}
+.mat-toolbar-row .mat-floating-placeholder,
+span.mat-select-placeholder, span.mat-floating-placeholder {
+  width: auto !important;
+}
+@media (max-width: 768px) {
+  .flexRowToColumn {
+    flex-direction:column;
+  }
+  .flexRowToColumn .flexChild {
+    width: 100%;
+  }
+  .flexRowToColumn .flexField {
+    width: 100%;
+  }
+  .flexRowToColumn .flexField.mat-slide-toggle {
+    margin-top: 10px;
+    flex-grow: 0;
+  }
+  .flexRowToColumn > label.flexField {
+    flex-grow: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    line-height: auto;
+  }
+}
+.mat-tab-body-wrapper {
+   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+
+.mat-toolbar .mat-toolbar-row {
+  display: flex;
+  align-items: flex-end!important;
+  padding-bottom: 10px;
+}
+
+.table-container {
+  display: flex;
+  flex-direction:column;
+  flex-grow: 1;
+}
+.table-container.fill-height {
+  flex: 1 1 auto;
+  max-height: calc(100vh - 300px);
+}
+.table-container.fill-height .mat-table {
+  overflow: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+.mat-toolbar-row > .mat-raised-button,
+.mat-toolbar-row > * {
+  margin-right: 1em;
+}
+/* To Fix bugs*/
+.margin-top-1em {
+  margin-top: 1em;
+}
+.mat-dialog-container {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+/* .mat-card .mat-card-content .mat-divider {
+  position: relative;
+  display: block;
+  border-top-style: solid;
+  border-top-width: 1px;
+  margin: 10px -24px 10px -24px;
+} */
+.mat-toolbar .mat-form-field,
+.mat-toolbar .mat-select {
+  font-size: 14px;
+}
+.mat-slide-toggle {
+  display:inline-block;
+}
+.mat-option,
+.mat-select-placeholder {
+  font-size: 14px;
+}
+/* .mat-select {
+  margin-top: 20px;
+} */
+.mat-select-value-text {
+  font-size: 14px;
+}
+.mat-select-placeholder,
+.mat-floating-placeholder {
+  margin-top: 4px;
+}
+.mat-input-underline span.mat-input-ripple {
+  height: 1px;
+}
+.mat-select-value-text {
+  font-size: 14px;
+}
+.mat-input-table .mat-icon-button {
+  margin: -10px 0px -10px 0px;
+}
+.mat-raised-button .mat-button-wrapper .mat-icon {
+  vertical-align: baseline;
+}
+/* End To Fix bugs*/
+
+.table-container {
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+.row .form-group {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.form-control .checkbox-inline {
+  padding-top: 0px;
+}
+
+.nav-tabs {
+  margin-bottom: 0;
+}
+
+.datatable-body-cell-label .mat-icon-button {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  margin-top: -5px;
+}
+

@@ -1,0 +1,208 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "gwa-devkey": {
+      "root": "projects/gwa-devkey/",
+      "sourceRoot": "projects/gwa-devkey/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/gwa-devkey",
+            "index": "projects/gwa-devkey/src/index.html",
+            "main": "projects/gwa-devkey/src/main.ts",
+            "polyfills": "projects/gwa-devkey/src/polyfills.ts",
+            "tsConfig": "projects/gwa-devkey/tsconfig.app.json",
+            "assets": [
+              "projects/gwa-devkey/src/assets"
+            ],
+            "styles": [
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "projects/gwa-devkey/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/gwa-devkey/src/environments/environment.ts",
+                  "with": "projects/gwa-devkey/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "gwa-devkey:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "gwa-devkey:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "gwa-devkey:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/gwa-devkey/src/test.ts",
+            "polyfills": "projects/gwa-devkey/src/polyfills.ts",
+            "tsConfig": "projects/gwa-devkey/tsconfig.spec.json",
+            "karmaConfig": "projects/gwa-devkey/karma.conf.js",
+            "styles": [
+              "projects/gwa-devkey/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/gwa-devkey/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/gwa-devkey/tsconfig.app.json",
+              "projects/gwa-devkey/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "gwa-admin": {
+      "root": "projects/gwa-admin/",
+      "sourceRoot": "projects/gwa-admin/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/gwa-admin",
+            "index": "projects/gwa-admin/src/index.html",
+            "main": "projects/gwa-admin/src/main.ts",
+            "polyfills": "projects/gwa-admin/src/polyfills.ts",
+            "tsConfig": "projects/gwa-admin/tsconfig.app.json",
+            "assets": [
+              "projects/gwa-admin/src/favicon.ico",
+              "projects/gwa-admin/src/assets"
+            ],
+            "styles": [
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "projects/gwa-admin/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/gwa-admin/src/environments/environment.ts",
+                  "with": "projects/gwa-admin/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "gwa-admin:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "gwa-admin:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "gwa-admin:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/gwa-admin/src/test.ts",
+            "polyfills": "projects/gwa-admin/src/polyfills.ts",
+            "tsConfig": "projects/gwa-admin/tsconfig.spec.json",
+            "karmaConfig": "projects/gwa-admin/karma.conf.js",
+            "styles": [
+              "projects/gwa-admin/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/gwa-admin/src/favicon.ico",
+              "projects/gwa-admin/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/gwa-admin/tsconfig.app.json",
+              "projects/gwa-admin/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "gwa-admin",
+  "cli": {
+    "warnings": {
+      "typescriptMismatch": false
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "css"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  }
+}

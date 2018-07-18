@@ -1,0 +1,73 @@
+<h1 mat-dialog-title></h1>
+<div mat-dialog-content style="padding:3px 24px">
+  <mat-card>
+     <mat-card-title>{{row.index}}. Import: {{row.type}}</mat-card-title>
+    <mat-card-subtitle>{{row.item}}</mat-card-subtitle>
+    <mat-card-content>
+      <mat-chip-list>
+        <mat-chip *ngIf="row.result == 'Inserted'" color="primary" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Matched'" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Ignore - Changed Values'" color="accent" selected="true">{{row.result}}</mat-chip>
+        <mat-chip *ngIf="row.result == 'Ignore - Error'" color="warn" selected="true">{{row.result}}</mat-chip>
+      </mat-chip-list>   
+    </mat-card-content>
+  </mat-card>
+  
+  <mat-card *ngIf="row.error">
+    <mat-card-title style="color:red">ERROR: {{row.error}}</mat-card-title>
+    <mat-card-subtitle>{{row.request}}</mat-card-subtitle>
+    <mat-card-content>
+      <pre>{{row.body}}</pre>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="row.changedFieldNames.length">
+    <mat-card-title>Changed Values</mat-card-title>
+    <mat-card-content>
+      <div class="table material">
+        <table>
+          <thead>
+            <tr>
+              <th>Field Name</th>
+              <th>Import Value</th>
+              <th>Current Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fieldName of row.changedFieldNames; let i=index">
+              <td>{{fieldName}}</td>
+              <td>{{row.newValues[i]}}</td>
+              <td>{{row.oldValues[i]}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="fieldNames.length">
+    <mat-card-title>Import Values</mat-card-title>
+    <mat-card-content>
+      <div class="table material">
+        <table>
+          <thead>
+            <tr>
+              <th>Field Name</th>
+              <th>Import Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fieldName of fieldNames">
+              <td>{{fieldName}}</td>
+              <td>{{row.config[fieldName]}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close color="primary">Close</button>
+</div>

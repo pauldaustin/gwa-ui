@@ -1,0 +1,61 @@
+<nav mat-tab-nav-bar *ngIf="api">
+  <a mat-tab-link [routerLink]="['../../../..']" >API: {{api.name}}</a>
+
+  <a mat-tab-link [routerLink]="['../../..']" >Plugins</a>
+
+  <a mat-tab-link [routerLink]="['../..']" active="true">{{object.name}}</a>
+
+  <a mat-tab-link [routerLink]="['..']" >Users</a>
+
+  <a mat-tab-link [routerLink]="['.']" active="true">{{object.user_username}}</a>
+</nav>
+<mat-card *ngIf="form">
+  <mat-card-content>
+    <form [formGroup]="form" class="form-horizontal" role="form">
+      <ng-container *ngFor="let group of groups; first as first">
+        <mat-divider *ngIf="!first" class="mat-divider"></mat-divider>
+        <h3 *ngIf="group.title">{{group.title}}</h3>
+        <div *ngFor="let row of group.rows" class="flexRowToColumn">
+          <ng-container *ngFor="let formField of row">
+            <ng-container [ngSwitch]="formField.fieldType" [formGroup]="formField.formGroup">
+              <mat-slide-toggle *ngSwitchCase="'checkbox'"
+                 class="flexField" [formControlName]="formField.name" color="primary">{{formField.title}}</mat-slide-toggle>
+              <mat-select *ngSwitchCase="'select'" class="flexField"  [placeholder]="formField.title" [formControlName]="formField.name">
+                <mat-option *ngFor="let value of formField.values" [value]="value">{{value}}</mat-option>
+              </mat-select>
+              <div *ngSwitchCase="'array'" [formArrayName]="formField.name" class="flexField flexRowToColumn">
+                <div class="flexField" style="flex-grow:0;margin-top:17px">
+                  <label >{{formField.title}}:</label>
+                  <button (click)="formField.formArrayAdd()"
+                    mat-icon-button style="color: green; margin: -8px 0px -8px 0px">
+                    <mat-icon fontSet="fa" fontIcon="fa-plus-circle" alt="Add" aria-label="Add"></mat-icon>
+                  </button>
+                </div>
+                <mat-form-field class="flexField" *ngFor="let control of formField.formArray.controls; index as i">
+                  <input matInput [name]="formField.name + i" [formControlName]="i" required />
+                  <button matSuffix
+                    (click)="formField.formArrayRemove(i)"
+                    mat-icon-button style="color: red">
+                    <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+              <mat-form-field *ngSwitchDefault class="flexField">
+                <input
+                  matInput
+                  [placeholder]="formField.title" [name]="formField.name" [type]="formField.fieldType"
+                  [required]="formField.required" [formControlName]="formField.name"
+                />
+              </mat-form-field>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button (click)="routeList()" mat-button>Close</button>
+    <button (click)="save(false)" mat-raised-button color="accent" [disabled]="!form.valid" *ngIf="object.id">Save</button>
+    <button (click)="save(true)" mat-raised-button color="primary" [disabled]="!form.valid">Save &amp; Close</button>
+  </mat-card-actions>
+</mat-card>

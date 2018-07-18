@@ -1,0 +1,62 @@
+<div>
+  <mat-toolbar>
+    <a routerLink="/ui/users/_add_" mat-raised-button>Add User</a>
+    <mat-form-field floatLabel="never">
+	    <mat-select placeholder="Filter Field" [(ngModel)]="filterFieldName" (ngModelChange)="refresh()">
+	      <mat-option *ngFor="let field of filterFields" [value]="field.prop">{{field.name}}</mat-option>
+	    </mat-select>
+	  </mat-form-field>
+    <span>=</span>
+    <mat-form-field floatLabel="never">
+      <input matInput placeholder="Filter Value" [(ngModel)]="filterValue" (ngModelChange)="refresh()" />
+    </mat-form-field>
+    <span style="flex: 1 1 auto"></span>
+    <div style="width: 20">
+      <mat-spinner *ngIf="loading | async" diameter="20">
+      </mat-spinner>
+    </div>
+    <button (click)="refresh()" mat-icon-button title="Refresh" >
+      <mat-icon fontSet="fa" fontIcon="fa-refresh"></mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-table #usersTable [dataSource]="dataSource" >
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+      <mat-cell *matCellDef="let record"><a *ngIf="record.id" [routerLink]="['/ui', 'users', record.username]">{{record.id}}</a></mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="username">
+      <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+      <mat-cell  *matCellDef="let record"><a *ngIf="record.username" [routerLink]="['/ui', 'users', record.username]">{{record.username}}</a></mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="custom_id">
+      <mat-header-cell *matHeaderCellDef>Custom ID</mat-header-cell>
+      <mat-cell  *matCellDef="let record"><a *ngIf="record.custom_id" [routerLink]="['/ui', 'users', record.username]">{{record.custom_id}}</a></mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="created_at">
+      <mat-header-cell *matHeaderCellDef>Created At</mat-header-cell>
+      <mat-cell  *matCellDef="let record">{{record.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell  *matCellDef="let record"><button (click)="deleteObject(record)" mat-icon-button style="color: red" title="Delete">
+        <mat-icon fontSet="fa" fontIcon="fa-trash-o"></mat-icon>
+      </button></mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnNames"></mat-row>
+  </mat-table>
+  <mat-paginator
+    #paginator
+    [length]="recordCount | async"
+    [pageSize]="pageSize"
+    [hidePageSize]="true"
+    [showFirstLastButtons]="true">
+  </mat-paginator>
+</div>
