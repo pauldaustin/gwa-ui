@@ -49,7 +49,7 @@
                 
                 <mat-header-row *cdkHeaderRowDef="columnNames"></mat-header-row>
                 
-                <mat-row *cdkRowDef="let row; columns: columnNames" [ngClass]="{expiring:apiKeyAgeDays(row) > 6}"></mat-row>
+                <mat-row *cdkRowDef="let row; columns: columnNames" [ngClass]="{expiring:apiKeyAgeDays(row) > row.maxAgeDays}"></mat-row>
               </mat-table>
               <ng-template #noUserApikeys><div style="padding: 0.5em 1em"><i>No API keys found</i></div></ng-template>
             </div>

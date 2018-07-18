@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -356,6 +357,87 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
   }
 
+  private void cleanExpiringKeys() {
+    try (
+      JsonHttpClient httpClient = newKongClient()) {
+      final Map<String, String> usernameById = new HashMap<>();
+      final Calendar oldestDate = new GregorianCalendar();
+      oldestDate.add(Calendar.DAY_OF_MONTH, -this.apiKeyExpiryDays);
+      final long oldestTime = oldestDate.getTimeInMillis();
+
+      oldestDate.add(Calendar.DAY_OF_MONTH, (int)(this.apiKeyExpiryDays * 0.1));
+      final long createNewTime = oldestDate.getTimeInMillis();
+
+      final Map<String, Long> keyAgeByConsumerId = new HashMap<>();
+      final Set<String> createKeyConsumerIds = new HashSet<>();
+      try {
+        String urlString = this.kongAdminUrl + "/key-auths";
+        do {
+          final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
+          final List<Map<String, Object>> keyAuths = getList(kongResponse, DATA);
+          for (final Map<String, Object> keyAuth : keyAuths) {
+            final String consumerId = (String)keyAuth.get(CONSUMER_ID);
+            final long createdAt = ((Number)keyAuth.get(CREATED_AT)).longValue();
+            final long mostRecentKeyAge = keyAgeByConsumerId.getOrDefault(consumerId, 0L);
+            if (createdAt > mostRecentKeyAge) {
+              keyAgeByConsumerId.put(consumerId, createdAt);
+            }
+            if (createdAt < createNewTime) {
+              final String id = (String)keyAuth.get(ID);
+              String username = usernameById.get(consumerId);
+              if (username == null) {
+                username = userGetUsername(httpClient, consumerId);
+                usernameById.put(consumerId, username);
+              }
+              if (username.startsWith("github_")) {
+                createKeyConsumerIds.add(consumerId);
+
+                if (createdAt < oldestTime) {
+                  // DELETE expired key
+                  final String deletePath = CONSUMERS_PATH2 + consumerId + "/key-auth/" + id;
+                  try {
+                    httpClient.delete(deletePath);
+                  } catch (final Exception e) {
+                    LOG.error("Cannot delete:" + deletePath, e);
+                  }
+                }
+              }
+            }
+          }
+          urlString = (String)kongResponse.get(NEXT);
+        } while (urlString != null);
+      } catch (final NoSuchElementException e) {
+      }
+
+      for (final String consumerId : createKeyConsumerIds) {
+        final long mostRecentKeyAge = keyAgeByConsumerId.getOrDefault(consumerId, Long.MAX_VALUE);
+        if (mostRecentKeyAge < createNewTime) {
+
+          // Create a new key
+          final String keyAuthPath = CONSUMERS_PATH2 + consumerId + "/" + KEY_AUTH;
+          try {
+            httpClient.post(keyAuthPath, Collections.emptyMap());
+
+          } catch (final Exception e) {
+            LOG.error("Cannot created:" + keyAuthPath, e);
+          }
+        }
+      }
+    } catch (final HttpStatusException e) {
+      final int statusCode = e.getCode();
+      if (statusCode == 503) {
+        LOG.error(KONG_SERVER_NOT_AVAILABLE, e);
+      } else {
+        final String body = e.getBody();
+        LOG.error(e.toString() + "\n" + body, e);
+      }
+    } catch (final HttpHostConnectException e) {
+      LOG.error("Kong not available", e);
+    } catch (final Exception e) {
+      LOG.error("Unexpected kong error", e);
+    }
+  }
+
   public void clearCachedObject(final String type, final String id) {
     final Map<String, Map<String, Object>> objectById = this.objectByTypeAndId.get(type);
     if (objectById != null) {
@@ -414,7 +496,7 @@ public class ApiService implements ServletContextListener, GwaConstants {
     }
     {
       this.scheduler = Executors.newScheduledThreadPool(1);
-      this.scheduler.schedule(this::deleteExpiredKeys, 0, TimeUnit.SECONDS);
+      this.scheduler.schedule(this::cleanExpiringKeys, 10, TimeUnit.SECONDS);
 
       final LocalDateTime localNow = LocalDateTime.now();
       final ZoneId currentZone = ZoneId.systemDefault();
@@ -423,60 +505,8 @@ public class ApiService implements ServletContextListener, GwaConstants {
 
       final Duration duration = Duration.between(zonedNow, zonedNextTarget);
       final long delaySeconds = duration.getSeconds();
-      this.scheduler.scheduleAtFixedRate(this::deleteExpiredKeys, delaySeconds, 24 * 60 * 60,
+      this.scheduler.scheduleAtFixedRate(this::cleanExpiringKeys, delaySeconds, 24 * 60 * 60,
         TimeUnit.SECONDS);
-    }
-  }
-
-  private void deleteExpiredKeys() {
-    try (
-      JsonHttpClient httpClient = newKongClient()) {
-      final Map<String, String> usernameById = new HashMap<>();
-      final Calendar oldestDate = new GregorianCalendar();
-      oldestDate.add(Calendar.DAY_OF_MONTH, -this.apiKeyExpiryDays);
-      final long oldestTime = oldestDate.getTimeInMillis();
-      try {
-        String urlString = this.kongAdminUrl + "/key-auths";
-        do {
-          final Map<String, Object> kongResponse = httpClient.getByUrl(urlString);
-          final List<Map<String, Object>> keyAuths = getList(kongResponse, DATA);
-          for (final Map<String, Object> keyAuth : keyAuths) {
-            final long createdAt = ((Number)keyAuth.get(CREATED_AT)).longValue();
-            if (createdAt < oldestTime) {
-              final String id = (String)keyAuth.get(ID);
-              final String consumerId = (String)keyAuth.get(CONSUMER_ID);
-              String username = usernameById.get(consumerId);
-              if (username == null) {
-                username = userGetUsername(httpClient, consumerId);
-                usernameById.put(consumerId, username);
-              }
-              if (username.startsWith("endpoint_")) {
-                final String deletePath = CONSUMERS_PATH2 + consumerId + "/key-auth/" + id;
-                try {
-                  httpClient.delete(deletePath);
-                } catch (final Exception e) {
-                  LOG.error("Cannot delete:" + deletePath, e);
-                }
-              }
-            }
-          }
-          urlString = (String)kongResponse.get(NEXT);
-        } while (urlString != null);
-      } catch (final NoSuchElementException e) {
-      }
-
-    } catch (final HttpStatusException e) {
-      final int statusCode = e.getCode();
-      if (statusCode == 503) {
-        LOG.error(KONG_SERVER_NOT_AVAILABLE, e);
-      } else {
-        final String body = e.getBody();
-        LOG.error(e.toString() + "\n" + body, e);
-      }
-    } catch (final HttpHostConnectException e) {
-      LOG.error("Kong not available", e);
-    } catch (final Exception e) {
-      LOG.error("Unexpected kong error", e);
     }
   }
 
@@ -552,6 +582,12 @@ public class ApiService implements ServletContextListener, GwaConstants {
       for (final Map<String, Object> keyAuth : keyAuthList) {
         developerApiKeyRecordValues(keyAuth);
       }
+      keyAuthList.sort((a, b) -> {
+        final BigDecimal time1 = (BigDecimal)a.get(CREATED_AT);
+        final BigDecimal time2 = (BigDecimal)b.get(CREATED_AT);
+        final int compare = time1.compareTo(time2);
+        return -compare; // Largest first
+      });
       Json.writeJson(httpResponse, keyAuthResponse);
     });
   }
