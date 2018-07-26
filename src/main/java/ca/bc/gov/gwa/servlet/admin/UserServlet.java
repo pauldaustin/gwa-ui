@@ -416,7 +416,7 @@ public class UserServlet extends BaseAdminServlet implements GwaConstants {
 
   private void userRecordList(final HttpServletRequest request,
     final HttpServletResponse response) {
-    this.apiService.handleList(request, response, "/consumers");
+    this.apiService.handleListAll(request, response, "/consumers");
   }
 
   private void userRecordUpdate(final HttpServletRequest request,
