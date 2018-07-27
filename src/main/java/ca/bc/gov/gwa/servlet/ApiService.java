@@ -818,9 +818,9 @@ public class ApiService implements ServletContextListener, GwaConstants {
         } else {
           urlBuilder.append('&');
         }
-        urlBuilder.append("size=");
         final String limit = httpRequest.getParameter("limit");
         if (limit != null) {
+          urlBuilder.append("size=");
           urlBuilder.append(limit);
         }
 
@@ -1042,17 +1042,16 @@ public class ApiService implements ServletContextListener, GwaConstants {
   }
 
   private String getKongPageUrl(final HttpServletRequest httpRequest, final String path) {
-    final StringBuilder url1 = new StringBuilder(this.kongAdminUrl);
-    url1.append(path);
-    final StringBuilder url = url1;
+    final StringBuilder url = new StringBuilder(this.kongAdminUrl);
+    url.append(path);
     if (path.indexOf('?') == -1) {
       url.append('?');
     } else {
       url.append('&');
     }
-    url.append("size=");
     final String limit = httpRequest.getParameter("limit");
     if (limit != null) {
+      url.append("size=");
       url.append(limit);
     }
 
@@ -1212,13 +1211,13 @@ public class ApiService implements ServletContextListener, GwaConstants {
   public void groupUserList(final HttpServletRequest httpRequest,
     final HttpServletResponse httpResponse, final String path) {
     handleRequest(httpResponse, httpClient -> {
-      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
-      final List<Map<String, Object>> data = getList(kongResponse, DATA);
-      for (final Map<String, Object> acl : data) {
+      final Predicate<Map<String, Object>> action = acl -> {
         final String consumerId = (String)acl.get(CONSUMER_ID);
         final String username = userGetUsername(httpClient, consumerId);
         acl.put(USERNAME, username);
-      }
+        return true;
+      };
+      final Map<String, Object> kongResponse = kongPageAll(httpRequest, httpClient, path, action);
       Json.writeJson(httpResponse, kongResponse);
     });
   }
@@ -1261,14 +1260,6 @@ public class ApiService implements ServletContextListener, GwaConstants {
   public void handleGet(final HttpServletResponse httpResponse, final String path) {
     handleRequest(httpResponse, httpClient -> {
       final Map<String, Object> kongResponse = httpClient.get(path);
-      Json.writeJson(httpResponse, kongResponse);
-    });
-  }
-
-  public void handleList(final HttpServletRequest httpRequest,
-    final HttpServletResponse httpResponse, final String path) {
-    handleRequest(httpResponse, httpClient -> {
-      final Map<String, Object> kongResponse = kongPage(httpRequest, httpClient, path);
       Json.writeJson(httpResponse, kongResponse);
     });
   }

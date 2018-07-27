@@ -25,7 +25,6 @@ export class GroupUserListComponent extends BaseListComponent<Group> implements 
     service: GroupUserService
   ) {
     super(injector, service, 'Group Users - Gateway Admin');
-    this.paging = true;
     this.deleteRecordTitle = 'User from Group';
     this.columnNames = ['username', 'created_at', 'actions'];
   }

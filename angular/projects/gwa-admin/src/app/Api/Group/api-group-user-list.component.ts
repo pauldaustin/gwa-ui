@@ -27,7 +27,6 @@ export class ApiGroupUserListComponent extends BaseListComponent<Group> implemen
     service: ApiGroupUserService
   ) {
     super(injector, service, 'API Group Users - Gateway Admin');
-    this.paging = true;
     this.deleteRecordTitle = 'User from Group';
     this.columnNames = ['username', 'created_at', 'actions'];
   }
