@@ -1,23 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
 
-.mat-toolbar .mat-form-field {
-  font-size: 14px;
-  margin: 5px;
+
+@font-face {
+  font-family: 'Myriad-Web-Pro';
+  src: url('assets/fonts/MyriadWebPro.ttf');
 }
-.mat-toolbar-row {
-  height: auto !important;
-  margin: -5px;
-}
+
 body {
   min-height: 100%;
+  font-family: 'Myriad-Web-Pro',Calibri,Arial,sans serif;
+  padding: 0;
   margin: 0px;
 }
 
-.flexColumn {
-  display:flex;
-  flex-direction:column;
-  align-items: stretch;
-}
 .flexRowToColumn {
   display:flex;
   flex-direction:row;
@@ -72,11 +66,11 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
     flex-grow: 0;
   }
   .flexRowToColumn > label.flexField {
-	  flex-grow: 0;
-	  margin-top: 5px;
-	  margin-bottom: 5px;
-	  line-height: auto;
-	}
+    flex-grow: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    line-height: auto;
+  }
 }
 .mat-tab-body-wrapper {
    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
@@ -117,7 +111,7 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 /* .mat-card .mat-card-content .mat-divider {
-	position: relative;
+  position: relative;
   display: block;
   border-top-style: solid;
   border-top-width: 1px;
@@ -180,9 +174,19 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   line-height: 30px;
   margin-top: -5px;
 }
+
+.mat-toolbar .mat-form-field {
+  font-size: 14px;
+  margin: 5px;
+}
+.mat-toolbar-row {
+  height: auto !important;
+  margin: -5px;
+}
+
 .mat-column-created_at {
   max-width: 140px;
 }
 .mat-column-actions {
-	max-width: 50px;
+  max-width: 50px;
 }
