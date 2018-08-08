@@ -392,7 +392,7 @@ public class UserServlet extends BaseAdminServlet implements GwaConstants {
   private void userGroupList(final HttpServletRequest request, final HttpServletResponse response,
     final String username) {
     final String groupsPath = CONSUMERS_PATH2 + username + "/acls";
-    this.apiService.handleList(request, response, groupsPath);
+    this.apiService.handleListAll(request, response, groupsPath);
   }
 
   private void userPluginList(final HttpServletRequest request, final HttpServletResponse response,
