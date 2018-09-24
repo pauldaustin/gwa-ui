@@ -23,7 +23,6 @@
             ],
             "styles": [
               "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "projects/gwa-devkey/src/styles.css"
             ],
             "scripts": []
@@ -115,6 +114,7 @@
               "projects/gwa-admin/src/assets"
             ],
             "styles": [
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "projects/gwa-admin/src/styles.css"
             ],
             "scripts": []

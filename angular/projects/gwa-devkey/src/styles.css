@@ -182,3 +182,6 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
 .mat-column-actions {
   max-width: 50px;
 }
+button.mat-icon-button {
+	background-color: initial;
+}
