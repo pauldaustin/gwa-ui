@@ -96,6 +96,7 @@ span.mat-select-placeholder, span.mat-floating-placeholder {
   overflow: auto;
 }
 
+.mat-table,
 .full-width {
   width: 100%;
 }
