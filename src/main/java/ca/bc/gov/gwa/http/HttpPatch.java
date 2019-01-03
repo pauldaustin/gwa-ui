@@ -2,10 +2,8 @@ package ca.bc.gov.gwa.http;
 
 import java.net.URI;
 
-import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
-@NotThreadSafe
 public class HttpPatch extends HttpEntityEnclosingRequestBase {
 
   public static final String METHOD_NAME = "PATCH";

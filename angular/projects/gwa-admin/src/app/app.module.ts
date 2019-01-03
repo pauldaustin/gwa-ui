@@ -143,12 +143,12 @@ import {AdminRoutingModule} from './admin-routing.module';
         },
         {
           title: 'Users',
-          icon: 'person',
+          icon: 'account_circle',
           routerLink: 'ui/users'
         },
         {
           title: 'Groups',
-          icon: 'people',
+          icon: 'group',
           routerLink: 'ui/groups'
         },
         {
