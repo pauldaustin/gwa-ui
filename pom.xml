@@ -296,7 +296,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <org.slf4j.version>1.7.21</org.slf4j.version>
+    <org.slf4j.version>1.7.25</org.slf4j.version>
     <skip.frontend>false</skip.frontend>
   </properties>
 </project>
